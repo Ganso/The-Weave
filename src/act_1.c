@@ -18,15 +18,18 @@ void start_act_1(void)
     SYS_doVBlankProcess();
 
     // Conversation
-    look_right(CHR_clio,false);
-    look_right(CHR_linus,true);
+    look_left(CHR_clio,false);
+    look_left(CHR_linus,true);
     show_character(CHR_clio, true);
     show_character(CHR_linus, true);
-    wait_seconds(3);
+    move_character(CHR_linus, 200, 110,1);
     talk(FACE_clio, true, "It's late, Linus", "And you shouldn' be late", "at your birthday", 0);
-    talk(FACE_linus, false, "I have had the strangest", "dream, mother.", NULL, 0);
+    talk(FACE_linus, false, "I have had the strangest", "dream, mother", NULL, 0);
     talk(FACE_linus, false, "A swan came to my room", "and...", NULL, 0);
     talk(FACE_clio, true, "You can tell me la", "Xander is wating for us", NULL, 0);
+    move_character(CHR_clio, 100, 90, 1);
+    wait_seconds(1);
+    look_left(CHR_clio, true);
 
     while (1)
     {

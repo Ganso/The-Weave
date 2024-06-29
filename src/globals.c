@@ -16,6 +16,17 @@ void initialize_character(u8 nchar)
     SPR_setVisibility (spr_chr[nchar], HIDDEN);
 }
 
+// Update a character based on every parameter
+void update_character(u8 nchar)
+{
+    SPR_setPosition(spr_chr[nchar],obj_character[nchar].x,obj_character[nchar].y);
+    SPR_setPriority(spr_chr[nchar],obj_character[nchar].priority);
+    SPR_setVisibility(spr_chr[nchar],obj_character[nchar].visible?VISIBLE:HIDDEN);
+    SPR_setHFlip(spr_chr[nchar],obj_character[nchar].flipH);
+    SPR_setAnim(spr_chr[nchar],obj_character[nchar].animation);
+    SPR_update();
+}
+
 // Initialize a face
 void initialize_face(u8 nface)
 {
@@ -27,16 +38,22 @@ void initialize_face(u8 nface)
 // Show or hide a character
 void show_character(u8 nchar, bool show)
 {
-    if (show)
-        SPR_setVisibility (spr_chr[nchar], VISIBLE);
-    else
-        SPR_setVisibility (spr_chr[nchar], HIDDEN);
+    obj_character[nchar].visible=show;
+    SPR_setVisibility(spr_chr[nchar],show?VISIBLE:HIDDEN);
     SPR_update();
 }
 
-// Make a character look to the left (or right)
-void look_right(u8 nchar, bool direction_right)
+// Change a character's animation
+void anim_character(u8 nchar, u8 newanimation)
 {
+    obj_character[nchar].animation=newanimation;
+    SPR_setAnim(spr_chr[nchar],obj_character[nchar].animation);
+}
+
+// Make a character look to the left (or right)
+void look_left(u8 nchar, bool direction_right)
+{
+    obj_character[nchar].flipH=direction_right;
     SPR_setHFlip (spr_chr[nchar], direction_right);
     SPR_update();
 }
@@ -103,4 +120,31 @@ void talk(u8 nface, bool isinleft, char *text_line1, char *text_line2, char *tex
     VDP_clearTextLine(25);
     SPR_update();
     SYS_doVBlankProcess();
+}
+
+// Move a character to a new position
+void move_character(u8 nchar,s16 newx,s16 newy,u8 frameskip)
+{
+    u8 nframe=0;
+
+    show_character(nchar, true);
+    while (obj_character[nchar].x!=newx || obj_character[nchar].y!=newy)
+    {
+        if (obj_character[nchar].x<newx) {
+                obj_character[nchar].x++;
+                look_left(nchar,false);
+        }
+        if (obj_character[nchar].x>newx) {
+                obj_character[nchar].x--;
+                look_left(nchar,true);
+        }
+        if (obj_character[nchar].y<newy) obj_character[nchar].y++;
+        if (obj_character[nchar].y>newy) obj_character[nchar].y--;
+        SPR_setPosition(spr_chr[nchar],obj_character[nchar].x,obj_character[nchar].y);
+        if (nframe%frameskip==0) {
+            SPR_update();
+            SYS_doVBlankProcess();
+        }
+        nframe++;
+    }
 }

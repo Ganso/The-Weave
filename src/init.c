@@ -30,14 +30,14 @@ void init(void)
 
     // Character sprites
     // * Sprite definition, x, y, palette, priority, flipH, animation
-    obj_character[CHR_linus] = (Entity) { &linus_sprite, 200, 110, PAL1, false, false, ANIM_IDLE };
-    obj_character[CHR_clio] = (Entity) { &clio_sprite, 40, 110, PAL1, false, false, ANIM_IDLE };
+    obj_character[CHR_linus] = (Entity) { &linus_sprite, 400, 110, PAL1, false, false, ANIM_IDLE, false };
+    obj_character[CHR_clio] = (Entity) { &clio_sprite, 40, 110, PAL1, false, false, ANIM_IDLE, false };
     for (counter=0; counter<MAX_CHR; counter++) initialize_character(counter);
 
     // Character faces
     // * Sprite definition, x, y, palette, priority, flipH, animation
-    obj_face[FACE_linus] = (Entity) { &linus_face_sprite, 0, 160, PAL1, false, false, ANIM_IDLE };
-    obj_face[FACE_clio] = (Entity) { &clio_face_sprite, 0, 160, PAL1, false, false, ANIM_IDLE };
+    obj_face[FACE_linus] = (Entity) { &linus_face_sprite, 0, 160, PAL1, false, false, ANIM_IDLE, false };
+    obj_face[FACE_clio] = (Entity) { &clio_face_sprite, 0, 160, PAL1, false, false, ANIM_IDLE, false };
     for (counter=0; counter<MAX_FACE; counter++) initialize_face(counter);
 
     // Face backgrounds

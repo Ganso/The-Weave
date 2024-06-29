@@ -41,6 +41,7 @@ typedef struct
     u8                       priority;
     u8                       flipH;
     u8                       animation;
+    bool                     visible;
 } Entity;
 
 // Characters
@@ -69,8 +70,11 @@ void initialize_character(u8); // Initialize a character
 void initialize_face(u8); // Initialize a face
 
 // In game functions
+void update_character(u8); // Update a character based on every parameter
 void show_character(u8, bool); // Show or hide a character
-void look_right(u8, bool); // Make a character look to the left (or right)
+void anim_character(u8 nchar, u8 newanimation); // Change a character's animation
+void look_left(u8, bool); // Make a character look to the left (or right)
 void talk(u8, bool, char *, char *, char *, u16); // Make a character talk
+void move_character(u8,s16,s16,u8); // Move a character to a new position
 
 #endif
