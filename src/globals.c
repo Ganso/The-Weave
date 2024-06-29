@@ -59,13 +59,14 @@ void look_left(u8 nchar, bool direction_right)
 }
 
 // Displays a face, in the left (or not), and a text string, during a maximum of maxtime milisecons
-void talk(u8 nface, bool isinleft, char *text_line1, char *text_line2, char *text_line3, u16 maxtime)
+void talk(u8 nface, bool isinleft, char *text_line1, char *text_line2, char *text_line3, u16 max_ticks)
 {
-    u16 faceposx;
+    u16 faceposx,buttonposx;
     u16 textposx_line1=0, textposx_line2=0, textposx_line3=0;
     u16 joy_state;
+    u16 num_ticks;
 
-    if (maxtime==0) maxtime=MAX_TALK_TIME; // If maximum time is 0, set it to the deafult value
+    if (max_ticks==0) max_ticks=MAX_TALK_TIME; // If maximum time is 0, set it to the default value
 
     textposx_line1=8 + ((33 - strlen(text_line1)) >> 1);
     if (text_line2!=NULL) textposx_line2=8 + ((33 - strlen(text_line2)) >> 1);
@@ -79,29 +80,38 @@ void talk(u8 nface, bool isinleft, char *text_line1, char *text_line2, char *tex
 
     if (isinleft) {
         faceposx=0;
+        buttonposx=296;
         SPR_setHFlip (spr_face[nface], false);
         SPR_setVisibility (spr_face_left, VISIBLE);
     }
     else{
         faceposx=256;
+        buttonposx=232;
         SPR_setHFlip (spr_face[nface], true);
         SPR_setVisibility (spr_face_right, VISIBLE);
     }
 
     // Show everything
-    VDP_clearTextLine(23);
-    VDP_clearTextLine(24);
-    VDP_clearTextLine(25);
     SPR_setPosition (spr_face[nface], faceposx, 160);
     SPR_setVisibility (spr_face[nface], VISIBLE);
     VDP_drawText(text_line1,textposx_line1,23);
     if (textposx_line2!=NULL) VDP_drawText(text_line2,textposx_line2,24);
     if (textposx_line3!=NULL) VDP_drawText(text_line3,textposx_line3,25);
+    SPR_setVisibility (spr_button_A, VISIBLE);
+    SPR_setPosition (spr_button_A, buttonposx, 208);
     SPR_update();
     SYS_doVBlankProcess();
 
     // Wait for time or button A
-    JOY_waitPressTime (JOY_ALL, BUTTON_A, maxtime);
+    num_ticks=0;
+    joy_state=JOY_readJoypad (JOY_ALL);
+    while (num_ticks<max_ticks && ((joy_state & BUTTON_A)==0))
+    {
+        SPR_update();
+        SYS_doVBlankProcess();
+        joy_state=JOY_readJoypad (JOY_ALL);
+        num_ticks++;
+    }
 
     // Is button A is still pressed, wait until release
     joy_state=JOY_readJoypad (JOY_ALL);
@@ -115,6 +125,7 @@ void talk(u8 nface, bool isinleft, char *text_line1, char *text_line2, char *tex
     SPR_setVisibility (spr_face_left, HIDDEN);
     SPR_setVisibility (spr_face_right, HIDDEN);
     SPR_setVisibility (spr_face[nface], HIDDEN);
+    SPR_setVisibility (spr_button_A, HIDDEN);
     VDP_clearTextLine(23);
     VDP_clearTextLine(24);
     VDP_clearTextLine(25);
@@ -123,28 +134,30 @@ void talk(u8 nface, bool isinleft, char *text_line1, char *text_line2, char *tex
 }
 
 // Move a character to a new position
-void move_character(u8 nchar,s16 newx,s16 newy,u8 frameskip)
+void move_character(u8 nchar, s16 newx, s16 newy)
 {
-    u8 nframe=0;
-
+    // Bresenham algorithm
     show_character(nchar, true);
-    while (obj_character[nchar].x!=newx || obj_character[nchar].y!=newy)
+
+    s16 x = obj_character[nchar].x;
+    s16 y = obj_character[nchar].y;
+    s16 dx = newx - x;
+    s16 dy = newy - y;
+    s16 sx = dx > 0 ? 1 : -1;
+    s16 sy = dy > 0 ? 1 : -1;
+    s16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
+    s16 e2;
+
+    for(;;)
     {
-        if (obj_character[nchar].x<newx) {
-                obj_character[nchar].x++;
-                look_left(nchar,false);
-        }
-        if (obj_character[nchar].x>newx) {
-                obj_character[nchar].x--;
-                look_left(nchar,true);
-        }
-        if (obj_character[nchar].y<newy) obj_character[nchar].y++;
-        if (obj_character[nchar].y>newy) obj_character[nchar].y--;
-        SPR_setPosition(spr_chr[nchar],obj_character[nchar].x,obj_character[nchar].y);
-        if (nframe%frameskip==0) {
-            SPR_update();
-            SYS_doVBlankProcess();
-        }
-        nframe++;
+        SPR_setPosition(spr_chr[nchar], x, y);
+        SPR_update();
+        SYS_doVBlankProcess();
+
+        if (x == newx && y == newy) break;
+
+        e2 = err;
+        if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }
+        if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
 }

@@ -17,17 +17,19 @@
 #define ANIM_MAGIC      3
 
 // Characters
-#define MAX_CHR       2
+#define MAX_CHR       3
 #define CHR_linus     0
 #define CHR_clio      1
+#define CHR_xander    2
 
 // Faces
-#define MAX_FACE      2
+#define MAX_FACE      3
 #define FACE_linus    0
 #define FACE_clio     1
+#define FACE_xander   2
 
 // Other In Game Parameters
-#define MAX_TALK_TIME   10000   // Default maximum time in conversations (10 seconds)
+#define MAX_TALK_TIME   600   // Default maximum time in conversations (600 ticks, 10 seconds)
 
 u16 tile_ind; // Tiles index
 
@@ -49,10 +51,10 @@ Entity obj_character[MAX_CHR];
 Sprite *spr_chr[MAX_CHR];
 
 
-// Faces backgrounds
+// Interface sprites
 Sprite *spr_face_left; // Left face BG
 Sprite *spr_face_right; // Right face BG
-
+Sprite *spr_button_A; // Button with an A
 
 // Faces
 Entity obj_face[MAX_FACE];
@@ -75,6 +77,6 @@ void show_character(u8, bool); // Show or hide a character
 void anim_character(u8 nchar, u8 newanimation); // Change a character's animation
 void look_left(u8, bool); // Make a character look to the left (or right)
 void talk(u8, bool, char *, char *, char *, u16); // Make a character talk
-void move_character(u8,s16,s16,u8); // Move a character to a new position
+void move_character(u8,s16,s16); // Move a character to a new position
 
 #endif

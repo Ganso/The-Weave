@@ -3,10 +3,13 @@
 
 extern const SpriteDefinition linus_sprite;
 extern const SpriteDefinition clio_sprite;
+extern const SpriteDefinition xander_sprite;
 extern const SpriteDefinition linus_face_sprite;
 extern const SpriteDefinition clio_face_sprite;
+extern const SpriteDefinition xander_face_sprite;
 extern const SpriteDefinition face_left_sprite;
 extern const SpriteDefinition face_right_sprite;
+extern const SpriteDefinition button_A_sprite;
 extern const TileSet historians_tile;
 extern const MapDefinition historians_map;
 extern const Palette bg_pal;
