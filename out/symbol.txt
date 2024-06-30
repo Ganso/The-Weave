@@ -461,7 +461,7 @@
 0000948c T XGM_doVBlankProcess
 000094ea T XGM_unloadDriver
 00009502 T XGM2_loadDriver
-000096b8 T talk_text.constprop.41
+000096b8 T talk_dialog.constprop.41
 00009c5c T MAP_scrollToEx.constprop.36
 0000a3aa T MAP_create.constprop.33
 0000a6d6 T VRAM_alloc.constprop.29
@@ -631,7 +631,7 @@
 e0ff0000 d randbase
 e0ff0004 d __compound_literal.1
 e0ff0020 d __compound_literal.0
-e0ff00c4 d game_texts
+e0ff00c4 d dialog
 e0ff00cc D task_sr
 e0ff00ce D task_pc
 e0ff00d2 D task_regs

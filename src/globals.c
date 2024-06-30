@@ -165,10 +165,10 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     SYS_doVBlankProcess();
 }
 
-// Make a character talk a game message
-void talk_text(u8 nface, bool isinleft, u16 act_seq, u16 nmessage, u16 max_ticks)
+// Make a character talk a dialog line
+void talk_dialog(u8 nface, bool isinleft, u16 act_seq, u16 nmessage, u16 max_ticks)
 {
-    talk(nface, isinleft, getText(act_seq, nmessage, game_language), max_ticks);
+    talk(nface, isinleft, getDialog(act_seq, nmessage, game_language), max_ticks);
 }
 
 // Move a character to a new position

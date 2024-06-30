@@ -6,10 +6,10 @@
 #define ACT1_SEQ2 1
 
 // Game texts
-extern const char **game_texts[];
+extern const char **dialog[];
 
 // Functions
-const char* getText(int, int, int);
+const char* getDialog(int, int, int); // Gets a line of dialog
 
 
 #endif
