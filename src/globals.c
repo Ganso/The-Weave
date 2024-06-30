@@ -4,7 +4,14 @@
 // Wait for N seconds
 void wait_seconds(int sec)
 {
-    waitMs(sec*1000);
+    u16 num_ticks=0;
+    u16 max_ticks=sec*60; // Ticks (at 60fps)
+    while (num_ticks<max_ticks)
+    {
+        next_frame();
+        num_ticks++;
+    }
+
 }
 
 // Initialize a character
@@ -126,21 +133,19 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
         textposx_line2=textposx_line1;
         strcpy(text_line1,"");
     }
-    VDP_drawText(text_line1,textposx_line1,23);
-    VDP_drawText(text_line2,textposx_line2,24);
-    VDP_drawText(text_line3,textposx_line3,25);
+    VDP_drawTextBG(WINDOW,text_line1,textposx_line1,23);
+    VDP_drawTextBG(WINDOW,text_line2,textposx_line2,24);
+    VDP_drawTextBG(WINDOW,text_line3,textposx_line3,25);
     SPR_setVisibility (spr_button_A, VISIBLE);
     SPR_setPosition (spr_button_A, buttonposx, 208);
-    SPR_update();
-    SYS_doVBlankProcess();
+    next_frame();
 
     // Wait for time or button A
     num_ticks=0;
     joy_state=JOY_readJoypad (JOY_ALL);
     while (num_ticks<max_ticks && ((joy_state & BUTTON_A)==0))
     {
-        SPR_update();
-        SYS_doVBlankProcess();
+        next_frame();
         joy_state=JOY_readJoypad (JOY_ALL);
         num_ticks++;
     }
@@ -150,7 +155,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     while (joy_state & BUTTON_A)
     {
         joy_state=JOY_readJoypad (JOY_ALL);
-        SYS_doVBlankProcess();
+        next_frame();
     }
 
     // Hide everything
@@ -158,11 +163,10 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     SPR_setVisibility (spr_face_right, HIDDEN);
     SPR_setVisibility (spr_face[nface], HIDDEN);
     SPR_setVisibility (spr_button_A, HIDDEN);
-    VDP_clearTextLine(23);
-    VDP_clearTextLine(24);
-    VDP_clearTextLine(25);
-    SPR_update();
-    SYS_doVBlankProcess();
+    VDP_clearTextLineBG(WINDOW,23);
+    VDP_clearTextLineBG(WINDOW,24);
+    VDP_clearTextLineBG(WINDOW,25);
+    next_frame();
 }
 
 // Make a character talk a dialog line
@@ -189,8 +193,7 @@ void move_character(u8 nchar, s16 newx, s16 newy)
     for(;;)
     {
         SPR_setPosition(spr_chr[nchar], x, y);
-        SPR_update();
-        SYS_doVBlankProcess();
+        next_frame();
 
         if (x == newx && y == newy) break;
 
@@ -198,4 +201,19 @@ void move_character(u8 nchar, s16 newx, s16 newy)
         if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }
         if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
+}
+
+// Update_background
+void update_bg(void)
+{
+    MAP_scrollTo(background_BGB, offset_BGB>>3, 0);
+    offset_BGB++;
+}
+
+// Wait for next frame
+void next_frame(void)
+{
+    update_bg();
+    SPR_update();
+    SYS_doVBlankProcess();
 }

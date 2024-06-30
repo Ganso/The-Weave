@@ -63,7 +63,6 @@ typedef struct
 Entity obj_character[MAX_CHR];
 Sprite *spr_chr[MAX_CHR];
 
-
 // Interface sprites
 Sprite *spr_face_left; // Left face BG
 Sprite *spr_face_right; // Right face BG
@@ -72,6 +71,12 @@ Sprite *spr_button_A; // Button with an A
 // Faces
 Entity obj_face[MAX_FACE];
 Sprite *spr_face[MAX_FACE];
+
+// Backgrounds
+Map *background_BGA;
+Map *background_BGB;
+u32 offset_BGA;
+u32 offset_BGB;
 
 // Global functions
 void wait_seconds(int); // Wait for N seconds
@@ -86,5 +91,7 @@ void look_left(u8, bool); // Make a character look to the left (or right)
 void talk(u8, bool, char *, u16); // Make a character talk
 void talk_dialog(u8, bool, u16, u16, u16); // Make a character talk a dialog line
 void move_character(u8,s16,s16); // Move a character to a new position
+void update_bg(void); // Update background
+void next_frame(void); // Wait for next frame
 
 #endif

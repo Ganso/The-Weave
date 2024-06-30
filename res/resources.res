@@ -10,7 +10,12 @@ SPRITE face_left_sprite "Sprites\Interface\face_left.png" 8 8 BEST
 SPRITE face_right_sprite "Sprites\Interface\face_right.png" 8 8 BEST
 
 SPRITE button_A_sprite "Sprites\Interface\button_A.png" 2 2 BEST 10
+PALETTE interface_pal "Sprites\Interface\PAL.png"
 
-TILESET historians_tile "Backgrounds\historians_bg.png" BEST
-MAP historians_map "Backgrounds\historians_bg.png" historians_tile BEST
-PALETTE bg_pal "Backgrounds\historians_bg.png"
+TILESET historians_front_tile "Backgrounds\historians_bg_front.png" BEST
+MAP historians_front_map "Backgrounds\historians_bg_front.png" historians_front_tile BEST
+
+TILESET historians_bg_tile "Backgrounds\historians_bg_back.png" BEST
+MAP historians_bg_map "Backgrounds\historians_bg_back.png" historians_bg_tile BEST
+
+PALETTE bg_pal "Backgrounds\historians_bg_front.png"

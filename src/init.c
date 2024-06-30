@@ -27,10 +27,13 @@ void init(void)
     // Default language
     game_language=LANG_ENGLISH;
 
+    //  Plane A scrolls up to line 22 (176px)
+    VDP_setWindowVPos(TRUE, 22);
+
     // Initialize palettes
     PAL_setPalette(PAL0, bg_pal.data, DMA); // Backgrounds palette
     PAL_setPalette(PAL1, linus_sprite.palette->data, DMA); // Characters palette
-    PAL_setPalette(PAL2, button_A_sprite.palette->data, DMA); // Interface palette
+    PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
 
     // Character sprites
     // * Sprite definition, x, y, palette, priority, flipH, animation
@@ -57,4 +60,5 @@ void init(void)
     // Interface: Button A
     spr_button_A = SPR_addSprite (&button_A_sprite, 0, 0, TILE_ATTR(PAL2, false, false, false));
     SPR_setVisibility (spr_button_A, HIDDEN);
+
 }
