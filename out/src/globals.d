@@ -19,4 +19,5 @@ out/src/globals.o: src/globals.c C:/sgdk/inc/genesis.h \
  C:/sgdk/inc/ext/flash-save/saveman.h C:/sgdk/inc/ext/console.h \
  C:/sgdk/inc/config.h C:/sgdk/inc/string.h C:/sgdk/inc/maths.h \
  C:/sgdk/inc/dma.h src/globals.h res/resources.h C:/sgdk/inc/KDebug.h \
- C:/sgdk/inc/tools.h C:/sgdk/inc/timer.h src/init.h src/act_1.h
+ C:/sgdk/inc/tools.h C:/sgdk/inc/timer.h src/texts.h src/init.h \
+ src/act_1.h

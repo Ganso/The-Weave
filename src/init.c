@@ -24,6 +24,9 @@ void init(void)
     // Initialize globals
     tile_ind = TILE_USER_INDEX;
 
+    // Default language
+    game_language=LANG_ENGLISH;
+
     // Initialize palettes
     PAL_setPalette(PAL0, bg_pal.data, DMA); // Backgrounds palette
     PAL_setPalette(PAL1, linus_sprite.palette->data, DMA); // Characters palette

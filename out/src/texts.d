@@ -1,4 +1,4 @@
-out/src/init.o: src/init.c C:/sgdk/inc/genesis.h C:/sgdk/inc/types.h \
+out/src/texts.o: src/texts.c C:/sgdk/inc/genesis.h C:/sgdk/inc/types.h \
  C:/sgdk/inc/config.h C:/sgdk/inc/asm.h C:/sgdk/inc/sys.h \
  C:/sgdk/inc/sram.h C:/sgdk/inc/mapper.h C:/sgdk/inc/memory.h \
  C:/sgdk/inc/memory_base.h C:/sgdk/inc/tools.h C:/sgdk/inc/bmp.h \
