@@ -8,8 +8,4 @@
 // Game texts
 extern const char **dialog[];
 
-// Functions
-const char* getDialog(int, int, int); // Gets a line of dialog
-
-
 #endif

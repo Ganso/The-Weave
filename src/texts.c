@@ -28,23 +28,15 @@ const char **dialog[] =
         "Un ano antes de que|le acogieramos|como uno de los nuestros", "A year before we|took him as one of ours",
         "Pero...", "But...",
         "Madre, necesito visitar|esa isla", "Mother, I need to visit|that island",
-        "Si Xander lo quiere,|asi será|Pero no iras solo", "If Xander wants it that way,|so it will be|But you'll not go alone", // 19 - Intro end
+        "Si Xander lo quiere,|asi serï¿½|Pero no iras solo", "If Xander wants it that way,|so it will be|But you'll not go alone", // 19 - Intro end
         NULL
     },
     // Act 1, Sequence 2...
     (const char *[])
     {
-        "Texto en español A1S2 M1", "English text A1S2 M1",
-        "Texto en español A1S2 M2", "English text A1S2 M2",
-        "Texto en español A1S2 M3", "English text A1S2 M3", NULL
+        "Texto en espaï¿½ol A1S2 M1", "English text A1S2 M1",
+        "Texto en espaï¿½ol A1S2 M2", "English text A1S2 M2",
+        "Texto en espaï¿½ol A1S2 M3", "English text A1S2 M3", NULL
     }
     // ... Add more text arrays for each act and sequence combination
 };
-
-
-
-// Get a text in a given language
-const char* getDialog(int actSeq, int message, int language)
-{
-    return dialog[actSeq][message * 2 + language];
-}

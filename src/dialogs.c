@@ -91,6 +91,12 @@ void talk_dialog(u8 nface, bool isinleft, u16 act_seq, u16 nmessage, u16 max_tic
     talk(nface, isinleft, getDialog(act_seq, nmessage, game_language), max_ticks);
 }
 
+// Get a text in a given language
+const char* getDialog(int actSeq, int message, int language)
+{
+    return dialog[actSeq][message * 2 + language];
+}
+
 // Split a text in up to three lines
 void split_text(char *text, char *line1, char *line2, char *line3) {
     u16 len = strlen(text);
