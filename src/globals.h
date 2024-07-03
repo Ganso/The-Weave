@@ -82,15 +82,6 @@ u32 offset_BGB;
 void wait_seconds(int); // Wait for N seconds
 void initialize_character(u8); // Initialize a character
 void initialize_face(u8); // Initialize a face
-
-// In game functions
-void update_character(u8); // Update a character based on every parameter
-void show_character(u8, bool); // Show or hide a character
-void anim_character(u8 nchar, u8 newanimation); // Change a character's animation
-void look_left(u8, bool); // Make a character look to the left (or right)
-void talk(u8, bool, char *, u16); // Make a character talk
-void talk_dialog(u8, bool, u16, u16, u16); // Make a character talk a dialog line
-void move_character(u8,s16,s16); // Move a character to a new position
 void update_bg(void); // Update background
 void next_frame(void); // Wait for next frame
 
