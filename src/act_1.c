@@ -23,7 +23,7 @@ void start_act_1(void)
     MAP_scrollTo(background_BGA, 0, 0);
     MAP_scrollTo(background_BGB, 0, 0);
 
-    next_frame();
+    update_bg();
 
     // Conversation
     look_left(CHR_clio,false);
