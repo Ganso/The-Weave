@@ -9,6 +9,7 @@ Desktop.ini
 $RECYCLE.BIN/
 
 # game/data/
+.vscode
 out/
 sgdk/
 *.bat
