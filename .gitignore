@@ -15,6 +15,7 @@ sgdk/
 *.bat
 *.conf
 *.layout
+*.cbp
 
 # Windows Installer files
 *.cab
