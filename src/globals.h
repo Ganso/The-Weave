@@ -1,19 +1,27 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
-// Genesis
+// Sega Genesis
 #include <genesis.h>
-#include "resources.h"
 
 // Debug
 #include "KDebug.h"
 #include "tools.h"
 #include "timer.h"
 
+// Resources
+#include "resources.h"
+#include "res_backgrounds.h"
+#include "res_characters.h"
+#include "res_faces.h"
+
 // Game files
 #include "texts.h"
 #include "init.h"
 #include "act_1.h"
+#include "dialogs.h"
+#include "texts.h"
+#include "characters.h"
 
 // Animations
 #define ANIM_IDLE       0
