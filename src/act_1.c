@@ -3,10 +3,6 @@
 
 #include "act_1.h"
 
-// Maps
-Map *bg_historians_front = NULL; // Historians background (front)
-Map *bg_historians_back = NULL; // Historians background (back)
-
 void start_act_1(void)
 {
     VDP_loadTileSet(&historians_front_tile, tile_ind, DMA);
