@@ -3,7 +3,7 @@
 
 // Acts and sequences
 #define ACT1_SEQ1 0
-#define ACT1_SEQ2 1
+#define ACT1_SEQ0 1
 
 // Game texts
 extern const char **dialog[];

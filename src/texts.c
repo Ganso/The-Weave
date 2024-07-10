@@ -6,7 +6,7 @@
 
 const char **dialog[] =
 {
-    // Act 1, Sequence 1 with 2 messages
+    // Act 1, Sequence 1
     (const char *[])
     {
         "Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleanos", "It's late, Linus|And you shouldn' be late|at your birthday", // 0 - Intro start
@@ -31,12 +31,12 @@ const char **dialog[] =
         "Si Xander lo quiere,|asi ser�|Pero no iras solo", "If Xander wants it that way,|so it will be|But you'll not go alone", // 19 - Intro end
         NULL
     },
-    // Act 1, Sequence 2...
+    // Act 1, Sequence 0
     (const char *[])
     {
-        "Texto en espa�ol A1S2 M1", "English text A1S2 M1",
-        "Texto en espa�ol A1S2 M2", "English text A1S2 M2",
-        "Texto en espa�ol A1S2 M3", "English text A1S2 M3", NULL
+        "Gremio de los historiadores", "Historians guild",
+        "Por la manana temprano", "Early morning",
+        NULL
     }
     // ... Add more text arrays for each act and sequence combination
 };
