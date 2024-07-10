@@ -9,12 +9,6 @@
 #include "tools.h"
 #include "timer.h"
 
-// Resources
-#include "resources.h"
-#include "res_backgrounds.h"
-#include "res_characters.h"
-#include "res_faces.h"
-
 // Game files
 #include "texts.h"
 #include "init.h"
@@ -40,6 +34,7 @@
 #define FACE_linus    0
 #define FACE_clio     1
 #define FACE_xander   2
+#define FACE_none     250
 
 // Languages
 #define NUM_LANGUAGES 2

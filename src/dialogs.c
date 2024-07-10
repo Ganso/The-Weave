@@ -24,26 +24,33 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     textposx_line2=8 + ((33 - strlen(text_line2)) >> 1);
     textposx_line3=8 + ((33 - strlen(text_line3)) >> 1);
 
-    // Check if face is in left or right
-    if (isinleft) {
-        faceposx=0;
-        buttonposx=296;
-        SPR_setHFlip (spr_face[nface], false);
-        SPR_setVisibility (spr_face_left, VISIBLE);
+    // Check if face is in left or right (or none)
+    if (nface!=FACE_none) {
+        if (isinleft) {
+            faceposx=0;
+            buttonposx=296;
+            SPR_setHFlip (spr_face[nface], false);
+            SPR_setVisibility (spr_face_left, VISIBLE);
+        }
+        else{
+            faceposx=256;
+            buttonposx=232;
+            textposx_line1-=8;
+            textposx_line2-=8;
+            textposx_line3-=8;
+            SPR_setHFlip (spr_face[nface], true);
+            SPR_setVisibility (spr_face_right, VISIBLE);
+        }
+        SPR_setPosition (spr_face[nface], faceposx, 160); // Show face
+        SPR_setVisibility (spr_face[nface], VISIBLE);
     }
-    else{
-        faceposx=256;
-        buttonposx=232;
-        textposx_line1-=8;
-        textposx_line2-=8;
-        textposx_line3-=8;
-        SPR_setHFlip (spr_face[nface], true);
-        SPR_setVisibility (spr_face_right, VISIBLE);
+    else { // No face
+        textposx_line1=((04 - strlen(text_line1)) >> 1); // Center text
+        textposx_line2=((40 - strlen(text_line2)) >> 1); // Center text
+        textposx_line3=((40 - strlen(text_line3)) >> 1); // Center text
     }
 
-    // Show everything
-    SPR_setPosition (spr_face[nface], faceposx, 160);
-    SPR_setVisibility (spr_face[nface], VISIBLE);
+    // Show text and button
     if (strlen(text_line2)<1) { // One line -> Center vertically
         strcpy(text_line2,text_line1);
         textposx_line2=textposx_line1;
@@ -77,7 +84,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     // Hide everything
     SPR_setVisibility (spr_face_left, HIDDEN);
     SPR_setVisibility (spr_face_right, HIDDEN);
-    SPR_setVisibility (spr_face[nface], HIDDEN);
+    if (nface!=FACE_none) (spr_face[nface], HIDDEN);
     SPR_setVisibility (spr_button_A, HIDDEN);
     VDP_clearTextLineBG(WINDOW,23);
     VDP_clearTextLineBG(WINDOW,24);
