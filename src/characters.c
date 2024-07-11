@@ -63,4 +63,16 @@ void move_character(u8 nchar, s16 newx, s16 newy)
         if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }
         if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
+
+    obj_character[nchar].x = x;
+    obj_character[nchar].y = y;
+}
+
+// Move a character to a new position (instantly)
+void move_character_instant(u8 nchar,s16 x,s16 y)
+{
+    SPR_setPosition(spr_chr[nchar], x, y);
+    obj_character[nchar].x = x;
+    obj_character[nchar].y = y;
+    update_bg();
 }

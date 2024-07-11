@@ -22,6 +22,7 @@
 #include "dialogs.h"
 #include "texts.h"
 #include "characters.h"
+#include "controler.h"
 
 // Animations
 #define ANIM_IDLE       0
@@ -71,6 +72,7 @@ typedef struct
 // Characters
 Entity obj_character[MAX_CHR];
 Sprite *spr_chr[MAX_CHR];
+u8 active_character;
 
 // Interface sprites
 Sprite *spr_face_left; // Left face BG
@@ -86,6 +88,20 @@ Map *background_BGA;
 Map *background_BGB;
 u32 offset_BGA;
 u32 offset_BGB;
+
+// Background scroll modes
+u8  background_scroll_mode;
+#define BG_SCRL_AUTO_RIGHT   0  // auto mode (updated every frame)
+#define BG_SCRL_AUTO_LEFT    1
+#define BG_SCRL_USER_RIGHT   10 // user mode (updated on character walk)
+#define BG_SCRL_USER_LEFT    11
+
+
+// Screen limits
+u16 x_limit_min; // Minimum x position
+u16 x_limit_max; // Maximum x position
+u16 y_limit_min; // Minimum y position
+u16 y_limit_max; // Maximum y position
 
 // Global functions
 void wait_seconds(int); // Wait for N seconds
