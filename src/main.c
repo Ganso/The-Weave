@@ -2,7 +2,6 @@
 #include "globals.h"
 
 
-
 int main(bool hard)
 {
     init();

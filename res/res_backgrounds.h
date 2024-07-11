@@ -5,5 +5,9 @@ extern const TileSet historians_front_tile;
 extern const MapDefinition historians_front_map;
 extern const TileSet historians_bg_tile;
 extern const MapDefinition historians_bg_map;
+extern const TileSet weavers_front_tile;
+extern const MapDefinition weavers_front_map;
+extern const TileSet weavers_bg_tile;
+extern const MapDefinition weavers_bg_map;
 
 #endif // _RES_RES_BACKGROUNDS_H_

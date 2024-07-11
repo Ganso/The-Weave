@@ -1,15 +1,13 @@
 #include <genesis.h>
 #include "globals.h"
 
-#include "texts.h"
-
 
 const char **dialog[] =
 {
     // Act 1, Sequence 1
     (const char *[])
     {
-        "Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleanos", "It's late, Linus|And you shouldn' be late|at your birthday", // 0 - Intro start
+        "Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleanos", "It's late, Linus|And you shouldn' be late|at your birthday", // 0 - First dialog, start
         "He tenido el sueno|mas extano, madre", "I have had the strangest|dream, mother",
         "Un cisne venia a|mi cuarto, y...", "A swan came to my room|and...",
         "Luego me lo cuentas|Xander nos espera", "You can tell me later|Xander is wating for us",
@@ -28,14 +26,14 @@ const char **dialog[] =
         "Un ano antes de que|le acogieramos|como uno de los nuestros", "A year before we|took him as one of ours",
         "Pero...", "But...",
         "Madre, necesito visitar|esa isla", "Mother, I need to visit|that island",
-        "Si Xander lo quiere,|asi ser�|Pero no iras solo", "If Xander wants it that way,|so it will be|But you'll not go alone", // 19 - Intro end
+        "Si Xander lo quiere,|asi sera|Pero no iras solo", "If Xander wants it that way,|so it will be|But you'll not go alone", // 19 - First dialog, end
         NULL
     },
-    // Act 1, Sequence 0
+    // Act 1, Sequence 2 (intro)
     (const char *[])
     {
-        "Gremio de los historiadores", "Historians guild",
-        "Por la manana temprano", "Early morning",
+        "Gremio de los historiadores|Ano 8121", "Historians guild|Year 8121", // 0 - Intro, start
+        "Lunes|Primera hora de la manana", "Monday|Early morning",
         NULL
     }
     // ... Add more text arrays for each act and sequence combination
