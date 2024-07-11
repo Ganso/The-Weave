@@ -6,5 +6,5 @@ int main(bool hard)
 {
     init();
 
-    start_act_1();
+    act_1_scene_1();
 }
