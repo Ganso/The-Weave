@@ -1,8 +1,6 @@
 #include <genesis.h>
 #include "globals.h"
 
-#include "act_1.h"
-
 void start_act_1(void)
 {
     VDP_loadTileSet(&historians_front_tile, tile_ind, DMA);
@@ -26,8 +24,8 @@ void start_act_1(void)
     look_left(CHR_linus,true);
     show_character(CHR_clio, true);
     show_character(CHR_linus, true);
-    talk_dialog(FACE_none, true, ACT1_SEQ0, 0, 0);
-    talk_dialog(FACE_none, true, ACT1_SEQ0, 1, 0);
+    talk_dialog(FACE_none, true, ACT1_SEQ2, 0, 0);
+    talk_dialog(FACE_none, true, ACT1_SEQ2, 1, 0);
     move_character(CHR_linus, 200, 110);
     talk_dialog(FACE_clio, true, ACT1_SEQ1, 0, 0);
     talk_dialog(FACE_linus, false, ACT1_SEQ1, 1,  0);

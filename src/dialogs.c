@@ -1,8 +1,6 @@
 #include <genesis.h>
 #include "globals.h"
 
-#include "dialogs.h"
-
 // Displays a face, in the left (or not), and a text string, during a maximum of maxtime milisecons
 void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
 {
@@ -45,7 +43,8 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
         SPR_setVisibility (spr_face[nface], VISIBLE);
     }
     else { // No face
-        textposx_line1=((04 - strlen(text_line1)) >> 1); // Center text
+        buttonposx=232;
+        textposx_line1=((40 - strlen(text_line1)) >> 1); // Center text
         textposx_line2=((40 - strlen(text_line2)) >> 1); // Center text
         textposx_line3=((40 - strlen(text_line3)) >> 1); // Center text
     }
@@ -84,7 +83,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     // Hide everything
     SPR_setVisibility (spr_face_left, HIDDEN);
     SPR_setVisibility (spr_face_right, HIDDEN);
-    if (nface!=FACE_none) (spr_face[nface], HIDDEN);
+    if (nface!=FACE_none) SPR_setVisibility (spr_face[nface], HIDDEN);
     SPR_setVisibility (spr_button_A, HIDDEN);
     VDP_clearTextLineBG(WINDOW,23);
     VDP_clearTextLineBG(WINDOW,24);

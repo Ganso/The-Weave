@@ -9,6 +9,12 @@
 #include "tools.h"
 #include "timer.h"
 
+// Resources
+#include "../res/resources.h"
+#include "../res/res_backgrounds.h"
+#include "../res/res_characters.h"
+#include "../res/res_faces.h"
+
 // Game files
 #include "texts.h"
 #include "init.h"
