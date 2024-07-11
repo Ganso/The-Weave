@@ -32,8 +32,10 @@ void initialize_face(u8 nface)
 // Update_background
 void update_bg(void)
 {
-    MAP_scrollTo(background_BGB, offset_BGB>>3, 0);
-    offset_BGB++;
+    if (background_scroll_mode==BG_SCRL_AUTO_LEFT) {
+        MAP_scrollTo(background_BGB, offset_BGB>>3, 0);
+        offset_BGB++;
+    }
 }
 
 // Wait for next frame

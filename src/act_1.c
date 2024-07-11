@@ -11,6 +11,8 @@ void act_1_scene_1(void)
     background_BGB = MAP_create(&historians_bg_map, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += historians_bg_tile.numTile;
 
+    background_scroll_mode=BG_SCRL_AUTO_LEFT;
+
     PAL_setPalette(PAL0, historians_pal.data, DMA); // Backgrounds palette
 
     MAP_scrollTo(background_BGA, 0, 0);
@@ -77,8 +79,24 @@ void act_1_scene_5(void)
 
     PAL_setPalette(PAL0, weavers_pal.data, DMA); // Backgrounds palette
 
+    background_scroll_mode=BG_SCRL_USER_RIGHT;
+
     MAP_scrollTo(background_BGA, 0, 0);
     MAP_scrollTo(background_BGB, 0, 0);
+    offset_BGA=0;
+    offset_BGB=0;
 
-    update_bg();   
+    x_limit_min=20;
+    y_limit_min=70;
+    x_limit_max=270;
+    y_limit_max=108;
+
+    move_character_instant(CHR_linus, -20, 90);
+    move_character(CHR_linus, 30, 90);
+    active_character=CHR_linus;
+
+    while (1) {
+        joy_check();
+        next_frame();
+    }
 }
