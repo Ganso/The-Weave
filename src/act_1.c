@@ -1,18 +1,17 @@
 #include <genesis.h>
 #include "globals.h"
 
-void start_act_1(void)
+void act_1_scene_1(void)
 {
     VDP_loadTileSet(&historians_front_tile, tile_ind, DMA);
-    bg_historians_front = MAP_create(&historians_front_map, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    background_BGA = MAP_create(&historians_front_map, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += historians_front_tile.numTile;
 
     VDP_loadTileSet(&historians_bg_tile, tile_ind, DMA);
-    bg_historians_back = MAP_create(&historians_bg_map, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    background_BGB = MAP_create(&historians_bg_map, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += historians_bg_tile.numTile;
 
-    background_BGA=bg_historians_front;
-    background_BGB=bg_historians_back;
+    PAL_setPalette(PAL0, historians_pal.data, DMA); // Backgrounds palette
 
     MAP_scrollTo(background_BGA, 0, 0);
     MAP_scrollTo(background_BGB, 0, 0);
@@ -64,3 +63,22 @@ void start_act_1(void)
     }
 }
 
+
+
+void act_1_scene_5(void)
+{
+    VDP_loadTileSet(&weavers_front_tile, tile_ind, DMA);
+    background_BGA = MAP_create(&weavers_front_map, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    tile_ind += weavers_front_tile.numTile;
+
+    VDP_loadTileSet(&weavers_bg_tile, tile_ind, DMA);
+    background_BGB = MAP_create(&weavers_bg_map, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    tile_ind += weavers_bg_tile.numTile;
+
+    PAL_setPalette(PAL0, weavers_pal.data, DMA); // Backgrounds palette
+
+    MAP_scrollTo(background_BGA, 0, 0);
+    MAP_scrollTo(background_BGB, 0, 0);
+
+    update_bg();   
+}

@@ -21,6 +21,9 @@ void init(void)
     VDP_setScreenWidth320();
     VDP_setScreenHeight224();
 
+    // Load font
+    VDP_loadFont(font.tileset, DMA);
+
     // Initialize globals
     tile_ind = TILE_USER_INDEX;
 
@@ -31,7 +34,6 @@ void init(void)
     VDP_setWindowVPos(TRUE, 22);
 
     // Initialize palettes
-    PAL_setPalette(PAL0, bg_pal.data, DMA); // Backgrounds palette
     PAL_setPalette(PAL1, linus_sprite.palette->data, DMA); // Characters palette
     PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
 
