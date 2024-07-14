@@ -14,6 +14,14 @@ void joy_check(void)
                 obj_character[active_character].flipH=true;
                 moved=true;
             }
+            else { // Minimum X position
+                if (background_scroll_mode==BG_SCRL_USER_RIGHT && offset_BGA>0) {
+                    offset_BGA--;
+                    offset_BGB=offset_BGA>>background_speed;
+                    MAP_scrollTo(background_BGA, offset_BGA, 0);
+                    MAP_scrollTo(background_BGB, offset_BGB, 0);
+                }
+            }
         }
 
     if (value & BUTTON_RIGHT)
@@ -26,7 +34,7 @@ void joy_check(void)
             else { // Maximum X position
                 if (background_scroll_mode==BG_SCRL_USER_RIGHT) {
                     offset_BGA++;
-                    offset_BGB=offset_BGA>>2;
+                    offset_BGB=offset_BGA>>background_speed;
                     MAP_scrollTo(background_BGA, offset_BGA, 0);
                     MAP_scrollTo(background_BGB, offset_BGB, 0);
                 }

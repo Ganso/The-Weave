@@ -33,7 +33,7 @@ void initialize_face(u8 nface)
 void update_bg(void)
 {
     if (background_scroll_mode==BG_SCRL_AUTO_LEFT) {
-        MAP_scrollTo(background_BGB, offset_BGB>>3, 0);
+        MAP_scrollTo(background_BGB, offset_BGB>>background_speed, 0);
         offset_BGB++;
     }
 }

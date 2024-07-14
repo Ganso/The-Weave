@@ -43,7 +43,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
         SPR_setVisibility (spr_face[nface], VISIBLE);
     }
     else { // No face
-        buttonposx=232;
+        buttonposx=296;
         textposx_line1=((40 - strlen(text_line1)) >> 1); // Center text
         textposx_line2=((40 - strlen(text_line2)) >> 1); // Center text
         textposx_line3=((40 - strlen(text_line3)) >> 1); // Center text
@@ -92,15 +92,15 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
 }
 
 // Make a character talk a dialog line
-void talk_dialog(u8 nface, bool isinleft, u16 act_seq, u16 nmessage, u16 max_ticks)
+void talk_dialog(u8 nface, bool isinleft, u16 act_dialog, u16 nmessage, u16 max_ticks)
 {
-    talk(nface, isinleft, getDialog(act_seq, nmessage, game_language), max_ticks);
+    talk(nface, isinleft, getDialog(act_dialog, nmessage, game_language), max_ticks);
 }
 
 // Get a text in a given language
-const char* getDialog(int actSeq, int message, int language)
+const char* getDialog(int actDialog, int message, int language)
 {
-    return dialog[actSeq][message * 2 + language];
+    return dialog[actDialog][message * 2 + language];
 }
 
 // Split a text in up to three lines

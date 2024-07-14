@@ -7,6 +7,9 @@ void init(void)
 {
     u8 counter;
 
+    // Initialize VPD
+    VDP_init();
+
     // Initialize audio driver
     Z80_init();
     Z80_loadDriver(Z80_DRIVER_XGM, 1);
@@ -28,7 +31,7 @@ void init(void)
     tile_ind = TILE_USER_INDEX;
 
     // Default language
-    game_language=LANG_SPANISH;
+    game_language=LANG_ENGLISH;
 
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);
