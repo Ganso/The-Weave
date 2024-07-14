@@ -90,7 +90,8 @@ u32 offset_BGA;
 u32 offset_BGB;
 
 // Background scroll modes
-u8  background_scroll_mode;
+u8 background_scroll_mode;
+u8 background_speed;
 #define BG_SCRL_AUTO_RIGHT   0  // auto mode (updated every frame)
 #define BG_SCRL_AUTO_LEFT    1
 #define BG_SCRL_USER_RIGHT   10 // user mode (updated on character walk)
