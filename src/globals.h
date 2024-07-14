@@ -42,6 +42,9 @@
 #define FACE_clio     1
 #define FACE_xander   2
 #define FACE_none     250
+#define SIDE_left     true
+#define SIDE_right    false
+#define SIDE_none     true
 
 // Languages
 #define NUM_LANGUAGES 2
@@ -91,7 +94,7 @@ u32 offset_BGB;
 
 // Background scroll modes
 u8 background_scroll_mode;
-u8 background_speed;
+u8 scroll_speed;
 #define BG_SCRL_AUTO_RIGHT   0  // auto mode (updated every frame)
 #define BG_SCRL_AUTO_LEFT    1
 #define BG_SCRL_USER_RIGHT   10 // user mode (updated on character walk)
@@ -105,10 +108,12 @@ u16 y_limit_min; // Minimum y position
 u16 y_limit_max; // Maximum y position
 
 // Global functions
-void wait_seconds(int); // Wait for N seconds
-void initialize_character(u8); // Initialize a character
-void initialize_face(u8); // Initialize a face
+void wait_seconds(int sec); // Wait for N seconds
+void initialize_character(u8 nchar); // Initialize a character
+void initialize_face(u8 nface); // Initialize a face
 void update_bg(void); // Update background
 void next_frame(void); // Wait for next frame
+void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDefinition map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed); // Initialice level 
+void set_limits(u16 x1, u16 y1, u16 x2, u16 y2); // Set background limits
 
 #endif

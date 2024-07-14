@@ -1,9 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-#include "init.h"
-
-void init(void)
+void initialize(void)
 {
     u8 counter;
 
@@ -31,7 +29,7 @@ void init(void)
     tile_ind = TILE_USER_INDEX;
 
     // Default language
-    game_language=LANG_ENGLISH;
+    game_language=LANG_SPANISH;
 
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);
