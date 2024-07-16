@@ -1,5 +1,5 @@
-#ifndef _CONTROLER_H_
-#define _CONTROLER_H_
+#ifndef _CONTROLLER_H_
+#define _CONTROLLER_H_
 
 
 void joy_check(void); // Check for joystick input
