@@ -22,7 +22,7 @@
 #include "dialogs.h"
 #include "texts.h"
 #include "characters.h"
-#include "controler.h"
+#include "controller.h"
 
 // Animations
 #define ANIM_IDLE       0
