@@ -38,20 +38,6 @@ void initialize(void)
     PAL_setPalette(PAL1, linus_sprite.palette->data, DMA); // Characters palette
     PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
 
-    // Character sprites
-    // * Sprite definition, x, y, palette, priority, flipH, animation
-    obj_character[CHR_linus] = (Entity) { &linus_sprite, 400, 100, PAL1, false, false, ANIM_IDLE, false };
-    obj_character[CHR_clio] = (Entity) { &clio_sprite, 40, 110, PAL1, false, false, ANIM_IDLE, false };
-    obj_character[CHR_xander] = (Entity) { &xander_sprite, -40, 110, PAL1, false, false, ANIM_IDLE, false };
-    for (counter=0; counter<MAX_CHR; counter++) initialize_character(counter);
-
-    // Character faces
-    // * Sprite definition, x, y, palette, priority, flipH, animation
-    obj_face[FACE_linus] = (Entity) { &linus_face_sprite, 0, 160, PAL1, false, false, ANIM_IDLE, false };
-    obj_face[FACE_clio] = (Entity) { &clio_face_sprite, 0, 160, PAL1, false, false, ANIM_IDLE, false };
-    obj_face[FACE_xander] = (Entity) { &xander_face_sprite, 0, 160, PAL1, false, false, ANIM_IDLE, false };
-    for (counter=0; counter<MAX_FACE; counter++) initialize_face(counter);
-
     // Interface: Face backgrounds
     spr_face_left = SPR_addSprite ( &face_left_sprite, 0, 160, TILE_ATTR(PAL1, false, false, true));
     SPR_setVisibility (spr_face_left, HIDDEN);
@@ -63,5 +49,4 @@ void initialize(void)
     // Interface: Button A
     spr_button_A = SPR_addSprite (&button_A_sprite, 0, 0, TILE_ATTR(PAL2, false, false, false));
     SPR_setVisibility (spr_button_A, HIDDEN);
-
 }
