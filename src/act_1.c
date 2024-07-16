@@ -3,13 +3,26 @@
 
 void act_1_scene_1(void)
 {
+    // Initialize level
     new_level(historians_bg_tile, historians_bg_map, historians_front_tile, historians_front_map, historians_pal, BG_SCRL_AUTO_LEFT, 3);
 
+    // Initialize characters and dialog faces
+    initialize_character(CHR_linus);
+    initialize_face(FACE_linus);
+    initialize_character(CHR_clio);
+    initialize_face(FACE_clio);
+    initialize_character(CHR_xander);
+    initialize_face(FACE_xander);
+
+    // Starting positions
+    move_character_instant(CHR_clio,20,110);
+    move_character_instant(CHR_linus,360,90);
     look_left(CHR_clio,false);
     look_left(CHR_linus,true);
-
     show_character(CHR_clio, true);
     show_character(CHR_linus, true);
+
+    // Dialog
     talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG2, 0, 0);
     talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG2, 1, 0);
     move_character(CHR_linus, 200, 110);
@@ -20,6 +33,7 @@ void act_1_scene_1(void)
     move_character(CHR_clio, 100, 90);
     wait_seconds(1);
     look_left(CHR_clio, true);
+    move_character_instant(CHR_xander,-30,110);
     show_character(CHR_xander, true);
     move_character(CHR_xander, 40, 110);
     talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 4, 0);
@@ -49,10 +63,18 @@ void act_1_scene_1(void)
 
 void act_1_scene_5(void)
 {
+    // Initialize level
     new_level(weavers_bg_tile, weavers_bg_map, weavers_front_tile, weavers_front_map, weavers_pal, BG_SCRL_USER_RIGHT, 3);
     set_limits(20,70,270,108);
 
+    // Initialize characters and dialog faces
+    initialize_character(CHR_linus);
+    initialize_face(FACE_linus);
+
+    // Starting positions
     active_character=CHR_linus;
+
+    // Dialog
     talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG3, 0, 0);
     move_character_instant(CHR_linus, -20, 90);
     move_character(CHR_linus, 30, 90);
@@ -63,6 +85,7 @@ void act_1_scene_5(void)
         next_frame();
     }
 
+    // TODO - COMBAT SCENE
     talk_dialog(FACE_linus, SIDE_left, ACT1_DIALOG3, 1, 0);
 
      while (1) {

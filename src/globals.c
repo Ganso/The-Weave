@@ -17,6 +17,23 @@ void wait_seconds(int sec)
 // Initialize a character
 void initialize_character(u8 nchar)
 {
+    u8 npal=PAL1;
+    SpriteDefinition nsprite;
+    switch (nchar)
+    {
+    case CHR_linus:
+        nsprite=linus_sprite;        
+        break;
+    case CHR_clio:
+        nsprite=clio_sprite;
+        break;
+    case CHR_xander:
+        nsprite=xander_sprite;
+    default:
+        break;
+    }
+    // * Sprite definition, x, y, palette, priority, flipH, animation, visible
+    obj_character[nchar] = (Entity) { &nsprite, 0, 0, npal, false, false, ANIM_IDLE, false };
     spr_chr[nchar] = SPR_addSprite ( obj_character[nchar].sd, obj_character[nchar].x, obj_character[nchar].y, TILE_ATTR(obj_character[nchar].palette, obj_character[nchar].priority, false, obj_character[nchar].flipH));
     SPR_setVisibility (spr_chr[nchar], HIDDEN);
 }
@@ -24,6 +41,22 @@ void initialize_character(u8 nchar)
 // Initialize a face
 void initialize_face(u8 nface)
 {
+    u8 npal=PAL1;
+    SpriteDefinition nsprite;
+    switch (nface)
+    {
+    case CHR_linus:
+        nsprite=linus_face_sprite;        
+        break;
+    case CHR_clio:
+        nsprite=clio_face_sprite;
+        break;
+    case CHR_xander:
+        nsprite=xander_face_sprite;
+    default:
+        break;
+    }
+    obj_face[nface] = (Entity) { &nsprite, 0, 160, npal, false, false, ANIM_IDLE, false };
     spr_face[nface] = SPR_addSprite ( obj_face[nface].sd, obj_face[nface].x, obj_face[nface].y, TILE_ATTR(obj_face[nface].palette, obj_face[nface].priority, false, obj_face[nface].flipH));
     SPR_setVisibility (spr_face[nface], HIDDEN);
     SPR_setDepth (spr_face[nface], SPR_MIN_DEPTH); // Faces are above any other sprite
