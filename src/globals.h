@@ -14,6 +14,7 @@
 #include "../res/res_backgrounds.h"
 #include "../res/res_characters.h"
 #include "../res/res_faces.h"
+#include "../res/res_enemies.h"
 
 // Game files
 #include "texts.h"
@@ -31,10 +32,11 @@
 #define ANIM_MAGIC      3
 
 // Characters
-#define MAX_CHR       3
+#define MAX_CHR       4
 #define CHR_linus     0
 #define CHR_clio      1
 #define CHR_xander    2
+#define CHR_badbobbin 3
 
 // Faces
 #define MAX_FACE      3

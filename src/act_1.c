@@ -71,6 +71,12 @@ void act_1_scene_5(void)
     initialize_character(CHR_linus);
     initialize_face(FACE_linus);
 
+    // Enemies palette
+    PAL_setPalette(PAL3, badbobbin_sprite.palette->data, DMA); // Characters palette
+
+    // Initialize enemies
+    initialize_character(CHR_badbobbin);
+
     // Starting positions
     active_character=CHR_linus;
 
@@ -85,8 +91,11 @@ void act_1_scene_5(void)
         next_frame();
     }
 
-    // TODO - COMBAT SCENE
-    talk_dialog(FACE_linus, SIDE_left, ACT1_DIALOG3, 1, 0);
+    // COMBAT SCENE
+    move_character_instant(CHR_badbobbin, 350, 110);
+    move_character(CHR_linus, 250, 80);
+    look_left(CHR_badbobbin, false);
+    move_character(CHR_badbobbin, 200, 106);
 
      while (1) {
         joy_check();

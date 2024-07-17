@@ -29,6 +29,11 @@ void initialize_character(u8 nchar)
         break;
     case CHR_xander:
         nsprite=xander_sprite;
+        break;
+    case CHR_badbobbin:
+        nsprite=badbobbin_sprite;
+        npal=PAL3;
+        break;
     default:
         break;
     }
