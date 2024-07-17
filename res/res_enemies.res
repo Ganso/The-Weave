@@ -1,0 +1,1 @@
+SPRITE badbobbin_sprite "Sprites\Enemies\BadBobbin.png" 4 8 BEST 10

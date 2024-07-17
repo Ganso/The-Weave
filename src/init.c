@@ -3,8 +3,6 @@
 
 void initialize(void)
 {
-    u8 counter;
-
     // Initialize VPD
     VDP_init();
 

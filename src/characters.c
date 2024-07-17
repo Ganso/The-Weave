@@ -52,6 +52,13 @@ void move_character(u8 nchar, s16 newx, s16 newy)
     s16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
     s16 e2;
 
+    // Look in the appropiate direction
+    if (sx < 0) {
+        look_left(nchar, true);
+    } else if (sx > 0) {
+        look_left(nchar, false);
+    }
+
     for(;;)
     {
         SPR_setPosition(spr_chr[nchar], x, y);
