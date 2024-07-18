@@ -15,6 +15,7 @@
 #include "../res/res_characters.h"
 #include "../res/res_faces.h"
 #include "../res/res_enemies.h"
+#include "../res/res_interface.h"
 
 // Game files
 #include "texts.h"
@@ -24,6 +25,7 @@
 #include "texts.h"
 #include "characters.h"
 #include "controller.h"
+#include "display.h"
 
 // Animations
 #define ANIM_IDLE       0
@@ -82,7 +84,10 @@ u8 active_character;
 // Interface sprites
 Sprite *spr_face_left; // Left face BG
 Sprite *spr_face_right; // Right face BG
-Sprite *spr_button_A; // Button with an A
+Sprite *spr_int_button_A; // Button with an A
+Sprite *spr_int_rod; // Rod
+Sprite *spr_int_pentagram; // Pentragram (empty)
+Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6; // Pentagram (notes)
 
 // Faces
 Entity obj_face[MAX_FACE];
@@ -113,9 +118,5 @@ u16 y_limit_max; // Maximum y position
 void wait_seconds(int sec); // Wait for N seconds
 void initialize_character(u8 nchar); // Initialize a character
 void initialize_face(u8 nface); // Initialize a face
-void update_bg(void); // Update background
-void next_frame(void); // Wait for next frame
-void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDefinition map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed); // Initialice level 
-void set_limits(u16 x1, u16 y1, u16 x2, u16 y2); // Set background limits
 
 #endif
