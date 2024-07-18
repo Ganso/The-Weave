@@ -16,6 +16,7 @@
 #include "../res/res_faces.h"
 #include "../res/res_enemies.h"
 #include "../res/res_interface.h"
+#include "../res/res_sound.h"
 
 // Game files
 #include "texts.h"
@@ -26,6 +27,7 @@
 #include "characters.h"
 #include "controller.h"
 #include "display.h"
+#include "patterns.h"
 
 // Animations
 #define ANIM_IDLE       0
@@ -59,7 +61,8 @@ enum Languages {
 u8 game_language;
 
 // Other In Game Parameters
-#define MAX_TALK_TIME   600   // Default maximum time in conversations (600 ticks, 10 seconds)
+#define MAX_TALK_TIME          600   // Default maximum time in conversations (600 ticks, 10 seconds)
+#define MAX_NOTE_PLAYING_TIME  60   // Note playing time (90 ticks, 1 second)
 
 u16 tile_ind; // Tiles index
 
@@ -86,6 +89,7 @@ Sprite *spr_face_left; // Left face BG
 Sprite *spr_face_right; // Right face BG
 Sprite *spr_int_button_A; // Button with an A
 Sprite *spr_int_rod; // Rod
+Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6; // Rod (notes)
 Sprite *spr_int_pentagram; // Pentragram (empty)
 Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6; // Pentagram (notes)
 
@@ -107,7 +111,6 @@ u8 scroll_speed;
 #define BG_SCRL_USER_RIGHT   10 // user mode (updated on character walk)
 #define BG_SCRL_USER_LEFT    11
 
-
 // Screen limits
 u16 x_limit_min; // Minimum x position
 u16 x_limit_max; // Maximum x position
@@ -118,5 +121,6 @@ u16 y_limit_max; // Maximum y position
 void wait_seconds(int sec); // Wait for N seconds
 void initialize_character(u8 nchar); // Initialize a character
 void initialize_face(u8 nface); // Initialize a face
+void next_frame(void); // Wait for next frame and do each-frame actions
 
 #endif
