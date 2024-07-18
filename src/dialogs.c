@@ -58,8 +58,8 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     VDP_drawTextBG(WINDOW,text_line1,textposx_line1,23);
     VDP_drawTextBG(WINDOW,text_line2,textposx_line2,24);
     VDP_drawTextBG(WINDOW,text_line3,textposx_line3,25);
-    SPR_setVisibility (spr_button_A, VISIBLE);
-    SPR_setPosition (spr_button_A, buttonposx, 208);
+    SPR_setVisibility (spr_int_button_A, VISIBLE);
+    SPR_setPosition (spr_int_button_A, buttonposx, 208);
     next_frame();
 
     // Wait for time or button A
@@ -84,7 +84,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     SPR_setVisibility (spr_face_left, HIDDEN);
     SPR_setVisibility (spr_face_right, HIDDEN);
     if (nface!=FACE_none) SPR_setVisibility (spr_face[nface], HIDDEN);
-    SPR_setVisibility (spr_button_A, HIDDEN);
+    SPR_setVisibility (spr_int_button_A, HIDDEN);
     VDP_clearTextLineBG(WINDOW,23);
     VDP_clearTextLineBG(WINDOW,24);
     VDP_clearTextLineBG(WINDOW,25);

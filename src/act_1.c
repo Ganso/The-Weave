@@ -86,6 +86,7 @@ void act_1_scene_5(void)
     move_character(CHR_linus, 30, 90);
     talk_dialog(FACE_linus, SIDE_left, ACT1_DIALOG3, 1, 0);
 
+    show_interface(true);
     while (offset_BGA<200) {
         joy_check();
         next_frame();
@@ -93,9 +94,9 @@ void act_1_scene_5(void)
 
     // COMBAT SCENE
     move_character_instant(CHR_badbobbin, 350, 110);
-    move_character(CHR_linus, 250, 80);
+    move_character(CHR_linus, 210, 80);
     look_left(CHR_badbobbin, false);
-    move_character(CHR_badbobbin, 200, 106);
+    move_character(CHR_badbobbin, 270, 106);
 
      while (1) {
         joy_check();

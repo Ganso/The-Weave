@@ -45,6 +45,23 @@ void initialize(void)
     SPR_setDepth (spr_face_right, SPR_MIN_DEPTH+1); // Face background are above anything but faces
 
     // Interface: Button A
-    spr_button_A = SPR_addSprite (&button_A_sprite, 0, 0, TILE_ATTR(PAL2, false, false, false));
-    SPR_setVisibility (spr_button_A, HIDDEN);
+    spr_int_button_A = SPR_addSprite (&int_button_A_sprite, 0, 0, TILE_ATTR(PAL2, false, false, false));
+    SPR_setVisibility (spr_int_button_A, HIDDEN);
+
+    // Interface: Rod & Pentagram
+    spr_int_rod = SPR_addSprite (&int_rod_sprite, 4, 190, TILE_ATTR(PAL2, false, false, false));
+    spr_int_pentagram = SPR_addSprite (&int_pentagram_sprite, 219, 182, TILE_ATTR(PAL2, false, false, false));
+    spr_int_pentagram_1 = SPR_addSprite (&int_pentagram_1_sprite, 219, 182, TILE_ATTR(PAL2, false, false, false));
+    spr_int_pentagram_2 = SPR_addSprite (&int_pentagram_2_sprite, 219+16, 182, TILE_ATTR(PAL2, false, false, false));
+    spr_int_pentagram_3 = SPR_addSprite (&int_pentagram_3_sprite, 219+32, 182, TILE_ATTR(PAL2, false, false, false));
+    spr_int_pentagram_4 = SPR_addSprite (&int_pentagram_4_sprite, 219+48, 182, TILE_ATTR(PAL2, false, false, false));
+    spr_int_pentagram_5 = SPR_addSprite (&int_pentagram_5_sprite, 219+64, 182, TILE_ATTR(PAL2, false, false, false));
+    spr_int_pentagram_6 = SPR_addSprite (&int_pentagram_6_sprite, 219+80, 182, TILE_ATTR(PAL2, false, false, false));
+    SPR_setDepth(spr_int_pentagram_1, SPR_MIN_DEPTH);
+    SPR_setDepth(spr_int_pentagram_2, SPR_MIN_DEPTH);
+    SPR_setDepth(spr_int_pentagram_3, SPR_MIN_DEPTH);
+    SPR_setDepth(spr_int_pentagram_4, SPR_MIN_DEPTH);
+    SPR_setDepth(spr_int_pentagram_5, SPR_MIN_DEPTH);
+    SPR_setDepth(spr_int_pentagram_6, SPR_MIN_DEPTH);
+    show_interface(false);
 }
