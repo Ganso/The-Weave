@@ -39,7 +39,7 @@ void initialize_character(u8 nchar)
     }
     // * Sprite definition, x, y, palette, priority, flipH, animation, visible
     obj_character[nchar] = (Entity) { &nsprite, 0, 0, npal, false, false, ANIM_IDLE, false };
-    spr_chr[nchar] = SPR_addSprite ( obj_character[nchar].sd, obj_character[nchar].x, obj_character[nchar].y, TILE_ATTR(obj_character[nchar].palette, obj_character[nchar].priority, false, obj_character[nchar].flipH));
+    spr_chr[nchar] = SPR_addSpriteSafe ( obj_character[nchar].sd, obj_character[nchar].x, obj_character[nchar].y, TILE_ATTR(obj_character[nchar].palette, obj_character[nchar].priority, false, obj_character[nchar].flipH));
     SPR_setVisibility (spr_chr[nchar], HIDDEN);
 }
 
@@ -62,7 +62,23 @@ void initialize_face(u8 nface)
         break;
     }
     obj_face[nface] = (Entity) { &nsprite, 0, 160, npal, false, false, ANIM_IDLE, false };
-    spr_face[nface] = SPR_addSprite ( obj_face[nface].sd, obj_face[nface].x, obj_face[nface].y, TILE_ATTR(obj_face[nface].palette, obj_face[nface].priority, false, obj_face[nface].flipH));
+    spr_face[nface] = SPR_addSpriteSafe ( obj_face[nface].sd, obj_face[nface].x, obj_face[nface].y, TILE_ATTR(obj_face[nface].palette, obj_face[nface].priority, false, obj_face[nface].flipH));
     SPR_setVisibility (spr_face[nface], HIDDEN);
     SPR_setDepth (spr_face[nface], SPR_MIN_DEPTH); // Faces are above any other sprite
+}
+
+// Wait for next frame and do each-frame actions
+void next_frame(void)
+{
+    if (note_playing_time!=0) { // A note is being played
+        if (note_playing_time==MAX_NOTE_PLAYING_TIME) { // Finished
+            show_note(note_playing, false);
+            note_playing=NOTE_NONE;
+            note_playing_time=0;
+        }
+        else note_playing_time++; // Keep playing
+    }
+    update_bg();
+    SPR_update();
+    SYS_doVBlankProcess();
 }

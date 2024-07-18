@@ -11,5 +11,11 @@ extern const SpriteDefinition int_pentagram_4_sprite;
 extern const SpriteDefinition int_pentagram_5_sprite;
 extern const SpriteDefinition int_pentagram_6_sprite;
 extern const SpriteDefinition int_rod_sprite;
+extern const SpriteDefinition int_rod_1_sprite;
+extern const SpriteDefinition int_rod_2_sprite;
+extern const SpriteDefinition int_rod_3_sprite;
+extern const SpriteDefinition int_rod_4_sprite;
+extern const SpriteDefinition int_rod_5_sprite;
+extern const SpriteDefinition int_rod_6_sprite;
 
 #endif // _RES_RES_INTERFACE_H_

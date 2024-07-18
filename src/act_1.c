@@ -13,7 +13,7 @@ void act_1_scene_1(void)
     initialize_face(FACE_clio);
     initialize_character(CHR_xander);
     initialize_face(FACE_xander);
-
+    
     // Starting positions
     move_character_instant(CHR_clio,20,110);
     move_character_instant(CHR_linus,360,90);

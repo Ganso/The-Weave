@@ -10,14 +10,6 @@ void update_bg(void)
     }
 }
 
-// Wait for next frame
-void next_frame(void)
-{
-    update_bg();
-    SPR_update();
-    SYS_doVBlankProcess();
-}
-
 // Initialice level and load background
 void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDefinition map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed)
 {
@@ -60,6 +52,12 @@ void show_interface(bool visible)
     } 
     else {
         SPR_setVisibility(spr_int_rod, HIDDEN);
+        SPR_setVisibility(spr_int_rod_1, HIDDEN);
+        SPR_setVisibility(spr_int_rod_2, HIDDEN);
+        SPR_setVisibility(spr_int_rod_3, HIDDEN);
+        SPR_setVisibility(spr_int_rod_4, HIDDEN);
+        SPR_setVisibility(spr_int_rod_5, HIDDEN);
+        SPR_setVisibility(spr_int_rod_6, HIDDEN);
         SPR_setVisibility(spr_int_pentagram, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_1, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_2, HIDDEN);
