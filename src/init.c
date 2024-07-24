@@ -51,4 +51,6 @@ void initialize(void)
     // Notes and patterns;
     note_playing=0;
     note_playing_time=0;
+    num_played_notes=0;
+    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, "Electric"};
 }
