@@ -120,7 +120,9 @@ u16 y_limit_max; // Maximum y position
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
 void initialize_character(u8 nchar); // Initialize a character
+void release_character(u8 nchar); // Release a character from memory
 void initialize_face(u8 nface); // Initialize a face
+void release_face(u8 nface); // Release a face from memory
 void next_frame(void); // Wait for next frame and do each-frame actions
 
 #endif

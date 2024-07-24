@@ -8,11 +8,11 @@ void act_1_scene_1(void)
 
     // Initialize characters and dialog faces
     initialize_character(CHR_linus);
-    initialize_face(FACE_linus);
+    //initialize_face(FACE_linus);  
     initialize_character(CHR_clio);
-    initialize_face(FACE_clio);
+    //initialize_face(FACE_clio);
     initialize_character(CHR_xander);
-    initialize_face(FACE_xander);
+    //initialize_face(FACE_xander);
     
     // Starting positions
     move_character_instant(CHR_clio,20,110);
@@ -67,15 +67,14 @@ void act_1_scene_5(void)
     new_level(weavers_bg_tile, weavers_bg_map, weavers_front_tile, weavers_front_map, weavers_pal, BG_SCRL_USER_RIGHT, 3);
     set_limits(20,70,270,108);
 
-    // Initialize characters and dialog faces
+    // Initialize characters
     initialize_character(CHR_linus);
-    initialize_face(FACE_linus);
-
-    // Enemies palette
-    PAL_setPalette(PAL3, badbobbin_sprite.palette->data, DMA); // Characters palette
 
     // Initialize enemies
     initialize_character(CHR_badbobbin);
+
+    // Enemies palette
+    PAL_setPalette(PAL3, badbobbin_sprite.palette->data, DMA); // Characters palette
 
     // Starting positions
     active_character=CHR_linus;
@@ -87,18 +86,21 @@ void act_1_scene_5(void)
     talk_dialog(FACE_linus, SIDE_left, ACT1_DIALOG3, 1, 0);
 
     show_interface(true);
+
     while (offset_BGA<200) {
         joy_check();
         next_frame();
     }
 
     // COMBAT SCENE
+    show_interface(false);
     move_character_instant(CHR_badbobbin, 350, 110);
     move_character(CHR_linus, 210, 80);
     look_left(CHR_badbobbin, false);
     move_character(CHR_badbobbin, 270, 106);
+    show_interface(true);
 
-     while (1) {
+    while (1) {
         joy_check();
         next_frame();
     }
