@@ -47,23 +47,55 @@ void set_limits(u16 x1, u16 y1, u16 x2, u16 y2)
 void show_interface(bool visible)
 {
     if (visible == true) {
+        spr_int_rod = SPR_addSpriteSafe (&int_rod_sprite, 4, 190, TILE_ATTR(PAL2, false, false, false));
+        spr_int_rod_1 = SPR_addSpriteSafe (&int_rod_1_sprite, 24, 212, TILE_ATTR(PAL2, false, false, false));
+        spr_int_rod_2 = SPR_addSpriteSafe (&int_rod_2_sprite, 24+32, 212, TILE_ATTR(PAL2, false, false, false));
+        spr_int_rod_3 = SPR_addSpriteSafe (&int_rod_3_sprite, 24+64, 212, TILE_ATTR(PAL2, false, false, false));
+        spr_int_rod_4 = SPR_addSpriteSafe (&int_rod_4_sprite, 24+96, 212, TILE_ATTR(PAL2, false, false, false));
+        spr_int_rod_5 = SPR_addSpriteSafe (&int_rod_5_sprite, 24+128, 212, TILE_ATTR(PAL2, false, false, false));
+        spr_int_rod_6 = SPR_addSpriteSafe (&int_rod_6_sprite, 24+160, 212, TILE_ATTR(PAL2, false, false, false));
+        spr_int_pentagram = SPR_addSpriteSafe (&int_pentagram_sprite, 219, 180, TILE_ATTR(PAL2, false, false, false));
+        spr_int_pentagram_1 = SPR_addSpriteSafe (&int_pentagram_1_sprite, 219, 180, TILE_ATTR(PAL2, false, false, false));
+        spr_int_pentagram_2 = SPR_addSpriteSafe (&int_pentagram_2_sprite, 219+16, 180, TILE_ATTR(PAL2, false, false, false));
+        spr_int_pentagram_3 = SPR_addSpriteSafe (&int_pentagram_3_sprite, 219+32, 180, TILE_ATTR(PAL2, false, false, false));
+        spr_int_pentagram_4 = SPR_addSpriteSafe (&int_pentagram_4_sprite, 219+48, 180, TILE_ATTR(PAL2, false, false, false));
+        spr_int_pentagram_5 = SPR_addSpriteSafe (&int_pentagram_5_sprite, 219+64, 180, TILE_ATTR(PAL2, false, false, false));
+        spr_int_pentagram_6 = SPR_addSpriteSafe (&int_pentagram_6_sprite, 219+80, 180, TILE_ATTR(PAL2, false, false, false));
+        SPR_setDepth(spr_int_pentagram_1, SPR_MIN_DEPTH);
+        SPR_setDepth(spr_int_pentagram_2, SPR_MIN_DEPTH);
+        SPR_setDepth(spr_int_pentagram_3, SPR_MIN_DEPTH);
+        SPR_setDepth(spr_int_pentagram_4, SPR_MIN_DEPTH);
+        SPR_setDepth(spr_int_pentagram_5, SPR_MIN_DEPTH);
+        SPR_setDepth(spr_int_pentagram_6, SPR_MIN_DEPTH);
         SPR_setVisibility(spr_int_rod, VISIBLE);
         SPR_setVisibility(spr_int_pentagram, VISIBLE);
-    } 
-    else {
-        SPR_setVisibility(spr_int_rod, HIDDEN);
-        SPR_setVisibility(spr_int_rod_1, HIDDEN);
-        SPR_setVisibility(spr_int_rod_2, HIDDEN);
-        SPR_setVisibility(spr_int_rod_3, HIDDEN);
-        SPR_setVisibility(spr_int_rod_4, HIDDEN);
-        SPR_setVisibility(spr_int_rod_5, HIDDEN);
-        SPR_setVisibility(spr_int_rod_6, HIDDEN);
-        SPR_setVisibility(spr_int_pentagram, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_1, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_2, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_3, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_4, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_5, HIDDEN);
         SPR_setVisibility(spr_int_pentagram_6, HIDDEN);
+        SPR_setVisibility(spr_int_rod_1,HIDDEN);
+        SPR_setVisibility(spr_int_rod_2,HIDDEN);
+        SPR_setVisibility(spr_int_rod_3,HIDDEN);
+        SPR_setVisibility(spr_int_rod_4,HIDDEN);
+        SPR_setVisibility(spr_int_rod_5,HIDDEN);
+        SPR_setVisibility(spr_int_rod_6,HIDDEN);
+    } 
+    else {
+        SPR_releaseSprite(spr_int_rod);
+        SPR_releaseSprite(spr_int_rod_1);
+        SPR_releaseSprite(spr_int_rod_2);
+        SPR_releaseSprite(spr_int_rod_3);
+        SPR_releaseSprite(spr_int_rod_4);
+        SPR_releaseSprite(spr_int_rod_5);
+        SPR_releaseSprite(spr_int_rod_6);
+        SPR_releaseSprite(spr_int_pentagram);
+        SPR_releaseSprite(spr_int_pentagram_1);
+        SPR_releaseSprite(spr_int_pentagram_2);
+        SPR_releaseSprite(spr_int_pentagram_3);
+        SPR_releaseSprite(spr_int_pentagram_4);
+        SPR_releaseSprite(spr_int_pentagram_5);
+        SPR_releaseSprite(spr_int_pentagram_6);
     }
 }
