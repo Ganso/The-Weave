@@ -112,14 +112,11 @@ void release_face(u8 nface)
 // Wait for next frame and do each-frame actions
 void next_frame(void)
 {
-    if (note_playing_time!=0) { // A note is being played
-        if (note_playing_time==MAX_NOTE_PLAYING_TIME) { // Finished
-            show_note(note_playing, false);
-            note_playing=NOTE_NONE;
-            note_playing_time=0;
-        }
-        else note_playing_time++; // Keep playing
-    }
+
+   // Pattern related actions 
+   check_note();
+
+    // Screen related actions
     update_bg();
     SPR_update();
     SYS_doVBlankProcess();

@@ -60,10 +60,6 @@ enum Languages {
 };
 u8 game_language;
 
-// Other In Game Parameters
-#define MAX_TALK_TIME          600   // Default maximum time in conversations (600 ticks, 10 seconds)
-#define MAX_NOTE_PLAYING_TIME  60   // Note playing time (90 ticks, 1 second)
-
 u16 tile_ind; // Tiles index
 
 // Game entity definition

@@ -58,10 +58,42 @@ void show_note(u8 nnote, bool visible)
 void play_note(u8 nnote)
 {
     if (note_playing==NOTE_NONE) {
-        if (note_playing_time==0) { // Note start
+        if (note_playing_time==0) { // Note starting
             show_note(nnote, true);
             note_playing=nnote;
             note_playing_time++;
+            played_notes[num_played_notes]=nnote;
+            num_played_notes++;
         }
     }
+}
+
+// Check if a note is being played
+void check_note(void)
+{
+    if (note_playing_time!=0) { // A note is being played
+        if (note_playing_time==MAX_NOTE_PLAYING_TIME) { // Finished
+            show_note(note_playing, false); // Hide the npte
+            note_playing=NOTE_NONE;
+            time_since_last_note=1; // A pattern is possible. Start counting ticks to cancel it
+            note_playing_time=0;
+            if (num_played_notes==4) {
+                check_pattern(); // Pattern finished
+            }
+        }
+        else note_playing_time++; // Keep playing
+    }
+    else if (time_since_last_note!=0) {
+        time_since_last_note++;
+        if (time_since_last_note==MAX_PATTERN_WAIT_TIME) { // Done waiting. The pattern is cancelled
+            time_since_last_note=0;
+            num_played_notes=0;
+        }
+    }
+}
+// Check the finished pattern
+void check_pattern(void)
+{
+    num_played_notes=0;
+    time_since_last_note=0;
 }
