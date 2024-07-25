@@ -94,6 +94,22 @@ void check_note(void)
 // Check the finished pattern
 void check_pattern(void)
 {
+    u8 npattern,nnote; // Loop indexes
+    u8 matches,matched_pattern;
+
+    matched_pattern=254;
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
+        matches=0;
+        for (nnote=0;nnote<4;nnote++) {
+            if (played_notes[nnote]==obj_pattern[npattern].notes[nnote]) {
+                matches++;
+            }
+        }
+        if (matches==4) matched_pattern=npattern;
+    }
+
+    if (matched_pattern!=254) KDebug_Alert(obj_pattern[matched_pattern].name); // Debug -> Show spell name
+
     num_played_notes=0;
     time_since_last_note=0;
 }

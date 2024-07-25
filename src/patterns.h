@@ -18,9 +18,10 @@ u16 note_playing_time; // How long has the note been played (in ticks)
 u16 time_since_last_note; // How long are we waiting for the pattern to finish
 
 // Patterns
-#define MAX_PATTERNS 1
+#define MAX_PATTERNS 2
 #define PTRN_NONE         254
 #define PTRN_ELECTIC      0   // Electricity spell
+#define PTRN_HIDE         1   // Hide spell
 
 u8 played_notes[4]; // Notes played in the current pattern
 u8 num_played_notes; // Number of notes of the current pattern
