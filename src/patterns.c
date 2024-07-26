@@ -108,7 +108,15 @@ void check_pattern(void)
         if (matches==4) matched_pattern=npattern;
     }
 
-    if (matched_pattern!=254) KDebug_Alert(obj_pattern[matched_pattern].name); // Debug -> Show spell name
+    if (matched_pattern==PTRN_ELECTIC) { // THUNDER !!!
+        u8 i;
+        for (i=0;i<50;i++) {
+            PAL_setColor(1,PAL_getColor(15));
+            next_frame();
+            PAL_setColor(1,PAL_getColor(0));
+            next_frame();
+        }
+    }
 
     num_played_notes=0;
     time_since_last_note=0;
