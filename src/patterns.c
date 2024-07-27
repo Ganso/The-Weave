@@ -114,7 +114,7 @@ void check_pattern(void)
     // Pattern effects
     if (matched_pattern!=254) { // We have a match!
         SPR_setVisibility(spr_int_rod, HIDDEN); // Hide the rod itself
-        show_pattern_icon(matched_pattern, true); // Show appropiate icon
+        show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
         if (matched_pattern==PTRN_ELECTIC) { // THUNDER !!!
             u8 i;
             play_pattern_sound(PTRN_ELECTIC);
@@ -125,8 +125,18 @@ void check_pattern(void)
                 SYS_doVBlankProcess();
             }
         }
+        if (matched_pattern==PTRN_HIDE) { // HIDE!!
+            u8 i;
+            play_pattern_sound(PTRN_HIDE);
+            for (i=0;i<100;i++) {
+                show_character(active_character, false);
+                SYS_doVBlankProcess();
+                show_character(active_character, true);
+                SYS_doVBlankProcess();
+            }
+        }
         SPR_setVisibility(spr_int_rod, VISIBLE); // Show the rod again
-        show_pattern_icon(matched_pattern, false); // Hide the icon
+        show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
     }
 
     num_played_notes=0;
@@ -150,20 +160,27 @@ void hide_rod_icons(void)
 // Play the sound of a pattern spell
 void play_pattern_sound(u16 npattern)
 {
-    // Only thunder by now
-    XGM2_playPCM(snd_pattern_thunder,sizeof(snd_pattern_thunder),SOUND_PCM_CH_AUTO);
-}
+    switch (npattern)
+    {
+    case PTRN_ELECTIC:
+        XGM2_playPCM(snd_pattern_thunder,sizeof(snd_pattern_thunder),SOUND_PCM_CH_AUTO);
+        break;
+    case PTRN_HIDE:
+        XGM2_playPCM(snd_pattern_hide,sizeof(snd_pattern_hide),SOUND_PCM_CH_AUTO);
+        break;
+    }
+}  
 
 // Show the icon of a pattern spell
-void show_pattern_icon(u16 npattern, bool show)
+void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
 {
     u8 npal = PAL2;
     const SpriteDefinition *nsprite = NULL;
 
     if (show==TRUE) {
-        nsprite = &int_pattern_thunder; // Ya daremos soporte a los demás
-        KDebug_Alert("MOSTRANDO ICONO");
-        obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, 96, 182, TILE_ATTR(npal, true, false, false)); // Priority TRUE
+        if (npattern==PTRN_ELECTIC) nsprite = &int_pattern_thunder;
+        if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
+        obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
         SPR_setAlwaysOnTop(obj_pattern[npattern].sd);
     }
     else {

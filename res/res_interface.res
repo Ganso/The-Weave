@@ -18,3 +18,4 @@ SPRITE int_rod_5_sprite "Sprites/Interface/rod_5.png" 2 1 BEST
 SPRITE int_rod_6_sprite "Sprites/Interface/rod_6.png" 2 1 BEST 
 
 SPRITE int_pattern_thunder "Sprites/Interface/pattern_thunder.png" 4 4 BEST
+SPRITE int_pattern_hide "Sprites/Interface/pattern_hide.png" 4 4 BEST
