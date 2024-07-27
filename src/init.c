@@ -8,7 +8,7 @@ void initialize(void)
 
     // Initialize audio driver
     Z80_init();
-    Z80_loadDriver(Z80_DRIVER_XGM, 1);
+    Z80_loadDriver(Z80_DRIVER_XGM2, 1);
 
     // Initialize sprite Engine
     SPR_init();
@@ -53,6 +53,6 @@ void initialize(void)
     note_playing_time=0;
     num_played_notes=0;
     time_since_last_note=0;
-    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, "Electric"};
-    obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,3,4,5}, "Hide"};
+    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, "Electric", NULL};
+    obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,3,4,5}, "Hide", NULL};
 }
