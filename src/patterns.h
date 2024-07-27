@@ -31,6 +31,7 @@ typedef struct
     bool active;
     u8 notes[4];
     u8 name[10];
+    Sprite *sd;
 } Pattern;
 Pattern obj_pattern[MAX_PATTERNS];
 
@@ -39,5 +40,8 @@ void show_note(u8 nnote, bool visible); // Show or hide notespentsprite
 void play_note(u8 nnote); // Play a note
 void check_note(void); // Check if a note is being played
 void check_pattern(void); // Check the finished pattern
+void hide_rod_icons(void); // Hide icons in the rod
+void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
+void show_pattern_icon(u16 npattern, bool show); // Show or hide the icon of a pattern spell
 
 #endif

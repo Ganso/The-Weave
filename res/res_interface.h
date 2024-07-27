@@ -17,5 +17,6 @@ extern const SpriteDefinition int_rod_3_sprite;
 extern const SpriteDefinition int_rod_4_sprite;
 extern const SpriteDefinition int_rod_5_sprite;
 extern const SpriteDefinition int_rod_6_sprite;
+extern const SpriteDefinition int_pattern_thunder;
 
 #endif // _RES_RES_INTERFACE_H_
