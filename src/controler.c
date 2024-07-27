@@ -95,4 +95,15 @@ void joy_check(void)
         play_note(NOTE_DO);
     }
 
+    // Pause / State button
+
+    if (value & BUTTON_START )
+    {
+        while ( value & BUTTON_START ) { // First, wait until released
+            value = JOY_readJoypad(JOY_ALL);
+            next_frame();
+        }
+        pause_screen();
+    }
+
 }

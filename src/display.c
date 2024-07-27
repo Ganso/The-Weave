@@ -99,3 +99,134 @@ void show_interface(bool visible)
         SPR_releaseSprite(spr_int_pentagram_6);
     }
 }
+
+// Pause / State screen
+void pause_screen(void) {
+    u16 value; // Joypad value
+    u8 selected_pattern,npattern;
+    bool next_pattern_found;
+
+    VDP_setHilightShadow(true); // Dim screen
+    show_interface(false); // Hide interface
+    
+    selected_pattern=254;
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++)
+        if (obj_pattern[npattern].active==true && selected_pattern==254) selected_pattern=npattern; // Find first active spell
+
+    show_pattern_list(true,selected_pattern);
+
+    value = JOY_readJoypad(JOY_ALL);
+    while ( (value & BUTTON_START) == 0 ) { // Wait until button is pressed again
+        value = JOY_readJoypad(JOY_ALL);
+        if (value & BUTTON_RIGHT) { // Find next active pattern
+            KDebug_Alert("RIGHT pressed");
+            next_pattern_found=false;
+            selected_pattern++;
+            while (next_pattern_found==false)
+            {
+                if (selected_pattern==MAX_PATTERNS) selected_pattern=0;
+                if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
+                else selected_pattern++;
+            }
+            show_pattern_list(false,selected_pattern); // Show pattern list again
+            show_pattern_list(true,selected_pattern);
+        }
+        if (value & BUTTON_LEFT) { // Find last active pattern
+            KDebug_Alert("LEFT pressed");
+            next_pattern_found=false;
+            selected_pattern--;
+            while (next_pattern_found==false)
+            {
+                if (selected_pattern==255) selected_pattern=MAX_PATTERNS-1;
+                if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
+                else selected_pattern--;
+            }            
+            show_pattern_list(false,selected_pattern); // Show pattern list again
+            show_pattern_list(true,selected_pattern);
+        }
+        while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
+        {
+            KDebug_Alert("WAITING FOR RELEASE");
+            value = JOY_readJoypad(JOY_ALL);
+            next_frame();
+        }
+        next_frame();
+    }
+    while ( value & BUTTON_START ) { // Now wait until released
+        value = JOY_readJoypad(JOY_ALL);
+        next_frame();
+    }
+
+    show_pattern_list(false, 0);
+    VDP_setHilightShadow(false); // Relit screen
+    show_interface(true); // Show interface again
+}
+
+// Show or hide pattern list
+void show_pattern_list(bool show, u8 active_pattern)
+{
+    u16 x_initial,x;
+    u8 nnote, npattern, num_active_patterns=0;
+    bool priority;
+
+    KDebug_AlertNumber(active_pattern);
+
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) // How many patterns you have?
+        if (obj_pattern[npattern].active==true) num_active_patterns++;
+
+    x_initial = (118 - 24 * num_active_patterns); // Initial X position
+    x = x_initial;
+
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
+        if (obj_pattern[npattern].active==true) {
+            if (npattern==active_pattern) priority=true; // Lit active pattern
+            else priority=false;
+            show_pattern_icon(npattern,x,show,priority); // Show or hide pattern icon
+            x+=48;
+        }
+    }
+
+    for (nnote=0;nnote<4;nnote++) {
+        show_note_in_pattern_list(active_pattern,nnote,show); // Show notes for the active pattern
+    }
+}
+
+// Show one of the notes of a pattern in the pattern list
+void show_note_in_pattern_list(u8 npattern, u8 nnote, bool show)
+{
+    SpriteDefinition *pentsprite;
+    u8 note;
+    u16 x;
+
+    note=obj_pattern[npattern].notes[nnote]; // Which note is in that position of the pattern
+
+    switch (note) 
+    {
+    case NOTE_MI:
+        pentsprite=(SpriteDefinition*) &int_pentagram_1_sprite;
+        break;
+    case NOTE_FA:
+        pentsprite=(SpriteDefinition*) &int_pentagram_2_sprite;
+        break;
+    case NOTE_SOL:
+        pentsprite=(SpriteDefinition*) &int_pentagram_3_sprite;
+        break;
+    case NOTE_LA:
+        pentsprite=(SpriteDefinition*) &int_pentagram_4_sprite;
+        break;
+    case NOTE_SI:
+        pentsprite=(SpriteDefinition*) &int_pentagram_5_sprite;
+        break;
+    default:
+        pentsprite=(SpriteDefinition*) &int_pentagram_6_sprite;
+        break;
+    }
+
+    if (show==true) {
+        x=219+nnote*16;
+        spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,false,false,false));
+    }
+    else {
+        SPR_releaseSprite(spr_pattern_list_note[nnote]);
+    }
+}

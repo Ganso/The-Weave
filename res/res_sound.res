@@ -5,4 +5,5 @@ XGM snd_note_la "Sound/Player/la.vgm"
 XGM snd_note_si "Sound/Player/si.vgm"
 XGM snd_note_do "Sound/Player/do.vgm"
 
-WAV snd_pattern_thunder "Sound/Player/pattern_thunder.wav" XGM2
+WAV snd_pattern_thunder "Sound/Patterns/pattern_thunder.wav" XGM2
+WAV snd_pattern_hide "Sound/Patterns/pattern_hide.wav" XGM2
