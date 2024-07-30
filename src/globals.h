@@ -78,16 +78,8 @@ typedef struct
 // Characters
 Entity obj_character[MAX_CHR];
 Sprite *spr_chr[MAX_CHR];
-u8 active_character;
-
-// Interface sprites
-Sprite *spr_face_left; // Left face BG
-Sprite *spr_face_right; // Right face BG
-Sprite *spr_int_button_A; // Button with an A
-Sprite *spr_int_rod; // Rod
-Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6; // Rod (notes)
-Sprite *spr_int_pentagram; // Pentragram (empty)
-Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6; // Pentagram (notes)
+u8 active_character; // Which character is the active one
+bool movement_active; // Can you move ?
 
 // Faces
 Entity obj_face[MAX_FACE];
@@ -100,12 +92,13 @@ u32 offset_BGA;
 u32 offset_BGB;
 
 // Background scroll modes
-u8 background_scroll_mode;
-u8 scroll_speed;
+u8 background_scroll_mode; // Scroll modes (BG_SCRL_*)
+u8 scroll_speed; // Scroll speed (each mode uses it in a way)
+bool player_scroll_active; // Can you scroll ?
 #define BG_SCRL_AUTO_RIGHT   0  // auto mode (updated every frame)
-#define BG_SCRL_AUTO_LEFT    1
+#define BG_SCRL_AUTO_LEFT    1  // no use
 #define BG_SCRL_USER_RIGHT   10 // user mode (updated on character walk)
-#define BG_SCRL_USER_LEFT    11
+#define BG_SCRL_USER_LEFT    11 // no use
 
 // Screen limits
 u16 x_limit_min; // Minimum x position

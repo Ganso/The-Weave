@@ -33,8 +33,10 @@ void initialize(void)
     VDP_setWindowVPos(TRUE, 22);
 
     // Initialize palettes
+    // PAL0 is the background palette. It's initialized with the background
     PAL_setPalette(PAL1, linus_sprite.palette->data, DMA); // Characters palette
     PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
+    // PAL2 is the enemies palette. It's initialized with the enemies
 
     // Interface: Face backgrounds
     spr_face_left = SPR_addSpriteSafe ( &face_left_sprite, 0, 160, TILE_ATTR(PAL1, false, false, true));
@@ -53,8 +55,8 @@ void initialize(void)
     note_playing_time=0;
     num_played_notes=0;
     time_since_last_note=0;
-    obj_pattern[PTRN_ELECTIC]=(Pattern) {false, {1,2,3,4}, NULL};
-    obj_pattern[PTRN_HIDE]=(Pattern) {false, {2,5,3,6}, NULL};
+    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, NULL};
+    obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,5,3,6}, NULL};
     obj_pattern[PTRN_OPEN]=(Pattern) {true, {2,3,3,2}, NULL};
 }
 
@@ -78,6 +80,10 @@ void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDef
 
     MAP_scrollTo(background_BGA, 0, 0);
     MAP_scrollTo(background_BGB, 0, 0);
+
+    interface_active=false; // No interface by default
+    player_scroll_active=false; // You can scroll the screen by default
+    movement_active=false; // You can't move by default
 
     update_bg();
 }

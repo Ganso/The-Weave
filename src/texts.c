@@ -15,7 +15,7 @@ const char **dialog[] =
         "Perdoname, maestro|Un extrano sue^o me ha|mantenido despierto", "Forgive me, master|A strange dream has|kept me awake",
         "Ciertamente eres el|hijo de tu padre.|Aiden tenia grandes sue^os,", "You are certainly your|father's son.|Aiden had big dreams,",
         "y estamos aqui para hablar|sobre uno que|nunca llego a cumplir", "and we are here to talk|about one that he|never achieved",
-        "He leido sus historias|mil veces|<De cual hablamos?", "I've read his stories a thousand times|Which one is this?",
+        "He leido sus historias|mil veces|<De cual hablamos?", "I've read his stories|a thousand times|Which one is this?",
         "Una que no encontraras en|un libro. La de la isla|del gremio de los Tejedores", "One you won't find in a book|The one about Weavers|guild island",
         "La leyenda de los Tejedores|siempre fue mi favorita", "Weavers legend was always|my favourite",  // 10
         "Para el no era una leyenda|Los pastores la cantaban|como cierta","That was no legend for him|Shepards sang it as a fact",

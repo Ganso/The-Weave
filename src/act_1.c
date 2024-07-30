@@ -8,11 +8,8 @@ void act_1_scene_1(void)
 
     // Initialize characters and dialog faces
     initialize_character(CHR_linus);
-    //initialize_face(FACE_linus);  
     initialize_character(CHR_clio);
-    //initialize_face(FACE_clio);
     initialize_character(CHR_xander);
-    //initialize_face(FACE_xander);
     
     // Starting positions
     move_character_instant(CHR_clio,20,110);
@@ -85,20 +82,26 @@ void act_1_scene_5(void)
     move_character(CHR_linus, 30, 90);
     talk_dialog(FACE_linus, SIDE_left, ACT1_DIALOG3, 1, 0);
 
+    // Show the interface and allow character to move
+    player_scroll_active=true;
+    movement_active=true;
+    interface_active=true;
     show_interface(true);
 
-    while (offset_BGA<200) {
+    while (offset_BGA<100) {
         joy_check();
         next_frame();
     }
 
     // COMBAT SCENE
     show_interface(false);
-    move_character_instant(CHR_badbobbin, 350, 110);
-    move_character(CHR_linus, 210, 80);
+    move_character_instant(CHR_badbobbin, 350, 80);
+    move_character(CHR_linus, 200, 80);
     look_left(CHR_badbobbin, false);
-    move_character(CHR_badbobbin, 270, 106);
+    move_character(CHR_badbobbin, 250, 60);
     show_interface(true);
+
+    player_scroll_active=false; // Disable player scroll - Screen is fixed
 
     while (1) {
         joy_check();
