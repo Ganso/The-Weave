@@ -115,6 +115,7 @@ void check_pattern(void)
     if (matched_pattern!=254) { // We have a match!
         SPR_setVisibility(spr_int_rod, HIDDEN); // Hide the rod itself
         show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
+        SPR_update();
         if (matched_pattern==PTRN_ELECTIC) { // THUNDER !!!
             u8 i;
             play_pattern_sound(PTRN_ELECTIC);
@@ -137,6 +138,7 @@ void check_pattern(void)
         }
         SPR_setVisibility(spr_int_rod, VISIBLE); // Show the rod again
         show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
+        SPR_update();
     }
 
     num_played_notes=0;
@@ -162,11 +164,14 @@ void play_pattern_sound(u16 npattern)
 {
     switch (npattern)
     {
-    case PTRN_ELECTIC:
-        XGM2_playPCM(snd_pattern_thunder,sizeof(snd_pattern_thunder),SOUND_PCM_CH_AUTO);
-        break;
     case PTRN_HIDE:
         XGM2_playPCM(snd_pattern_hide,sizeof(snd_pattern_hide),SOUND_PCM_CH_AUTO);
+        break;
+    case PTRN_OPEN:
+        XGM2_playPCM(snd_pattern_hide,sizeof(snd_pattern_hide),SOUND_PCM_CH_AUTO);
+        break;
+    default: // Pattern: Electric
+        XGM2_playPCM(snd_pattern_thunder,sizeof(snd_pattern_thunder),SOUND_PCM_CH_AUTO);
         break;
     }
 }  
@@ -180,6 +185,7 @@ void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
     if (show==TRUE) {
         if (npattern==PTRN_ELECTIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
+        if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
         obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
         SPR_setAlwaysOnTop(obj_pattern[npattern].sd);
     }
@@ -187,5 +193,4 @@ void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
         SPR_releaseSprite(obj_pattern[npattern].sd);
         obj_pattern[npattern].sd=NULL;
     }
-    next_frame();
 }

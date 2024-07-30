@@ -40,7 +40,7 @@ const char **dialog[] =
     (const char *[])
     {
         "Algun tiempo despues", "Some time later", // 0 - Act 1, Seq 5, start
-        "Bueno, pues ya aprendi|mi segundo patron", "Well, so I learned|my second patten",
+        "Bueno, pues ya aprendi|algunos patrones", "Well, so I learned|some patterns",
         NULL
     }
 };
