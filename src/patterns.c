@@ -60,6 +60,7 @@ void check_pattern(void)
 
     // Pattern effects
     if (matched_pattern!=254) { // We have a match!
+        anim_character(active_character,ANIM_MAGIC); // Magic animation
         SPR_setVisibility(spr_int_rod, HIDDEN); // Hide the rod itself
         show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
         SPR_update();
@@ -68,9 +69,9 @@ void check_pattern(void)
             play_pattern_sound(PTRN_ELECTIC);
             for (i=0;i<100;i++) {
                 VDP_setHilightShadow(true);
-                SYS_doVBlankProcess();
+                next_frame();
                 VDP_setHilightShadow(false);
-                SYS_doVBlankProcess();
+                next_frame();
             }
         }
         if (matched_pattern==PTRN_HIDE) { // HIDE!!
@@ -78,13 +79,14 @@ void check_pattern(void)
             play_pattern_sound(PTRN_HIDE);
             for (i=0;i<100;i++) {
                 show_character(active_character, false);
-                SYS_doVBlankProcess();
+                next_frame();
                 show_character(active_character, true);
-                SYS_doVBlankProcess();
+                next_frame();
             }
         }
         SPR_setVisibility(spr_int_rod, VISIBLE); // Show the rod again
         show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
+        anim_character(active_character,ANIM_IDLE); // Stop magic animation
         SPR_update();
     }
 

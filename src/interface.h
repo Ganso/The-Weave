@@ -1,6 +1,17 @@
 #ifndef _INTERFACE_H_
 #define _INTERFACE_H_
 
+// Interface sprites
+Sprite *spr_face_left; // Left face BG
+Sprite *spr_face_right; // Right face BG
+Sprite *spr_int_button_A; // Button with an A
+Sprite *spr_int_rod; // Rod
+Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6; // Rod (notes)
+Sprite *spr_int_pentagram; // Pentragram (empty)
+Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6; // Pentagram (notes)
+
+bool interface_active; // Do we have to show the interface?
+
 void update_bg(void); // Update background
 void set_limits(u16 x1, u16 y1, u16 x2, u16 y2); // Set background limits
 void show_interface(bool visible); // Show or hide the bottom interface

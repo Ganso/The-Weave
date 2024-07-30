@@ -58,9 +58,6 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
         textposx_line2=textposx_line1;
         strcpy(text_line1,"");
     }
-    //VDP_drawTextBG(WINDOW,text_line1,textposx_line1,23);
-    //VDP_drawTextBG(WINDOW,text_line2,textposx_line2,24);
-    //VDP_drawTextBG(WINDOW,text_line3,textposx_line3,25);
     print_line(text_line1, textposx_line1, 23);
     print_line(text_line2, textposx_line2, 24);
     print_line(text_line3, textposx_line3, 25);

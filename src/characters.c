@@ -40,8 +40,11 @@ void look_left(u8 nchar, bool direction_right)
 // Move a character to a new position
 void move_character(u8 nchar, s16 newx, s16 newy)
 {
-    // Bresenham algorithm
+    // We use Bresenham algorithm to draw a straight line
+
     show_character(nchar, true);
+
+    anim_character(nchar,ANIM_WALK);
 
     s16 x = obj_character[nchar].x;
     s16 y = obj_character[nchar].y;
@@ -73,6 +76,8 @@ void move_character(u8 nchar, s16 newx, s16 newy)
 
     obj_character[nchar].x = x;
     obj_character[nchar].y = y;
+
+    anim_character(nchar,ANIM_IDLE);
 }
 
 // Move a character to a new position (instantly)

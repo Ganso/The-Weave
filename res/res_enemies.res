@@ -1,1 +1,1 @@
-SPRITE badbobbin_sprite "Sprites/Enemies/BadBobbin.png" 4 8 BEST 10
+SPRITE badbobbin_sprite "Sprites/Enemies/bad_bobbin.png" 6 12 BEST 15
