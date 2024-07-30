@@ -26,7 +26,7 @@
 #include "texts.h"
 #include "characters.h"
 #include "controller.h"
-#include "display.h"
+#include "interface.h"
 #include "patterns.h"
 
 // Animations

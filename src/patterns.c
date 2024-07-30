@@ -1,59 +1,6 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Show or hide notes
-void show_note(u8 nnote, bool visible)
-{
-    Sprite *pentsprite;
-    Sprite *rodsprite;
-    u8 *notesong;
-
-    switch (nnote) 
-    {
-    case NOTE_MI:
-        pentsprite=spr_int_pentagram_1;
-        rodsprite=spr_int_rod_1;
-        notesong=(u8*)snd_note_mi;
-        break;
-    case NOTE_FA:
-        pentsprite=spr_int_pentagram_2;
-        rodsprite=spr_int_rod_2;
-        notesong=(u8*)snd_note_fa;
-        break;
-    case NOTE_SOL:
-        pentsprite=spr_int_pentagram_3;
-        rodsprite=spr_int_rod_3;
-        notesong=(u8*)snd_note_sol;
-        break;
-    case NOTE_LA:
-        pentsprite=spr_int_pentagram_4;
-        rodsprite=spr_int_rod_4;
-        notesong=(u8*)snd_note_la;
-        break;
-    case NOTE_SI:
-        pentsprite=spr_int_pentagram_5;
-        rodsprite=spr_int_rod_5;
-        notesong=(u8*)snd_note_si;
-        break;
-    default:
-        pentsprite=spr_int_pentagram_6;
-        rodsprite=spr_int_rod_6;
-        notesong=(u8*)snd_note_do;
-        break;
-    }
-
-    if (visible == true) {
-        SPR_setVisibility(pentsprite, VISIBLE);
-        SPR_setVisibility(rodsprite, VISIBLE);
-        XGM_setLoopNumber(0);
-        XGM_startPlay(notesong);
-    }
-    else {
-        SPR_setVisibility(pentsprite, HIDDEN);
-        //SPR_setVisibility(rodsprite, HIDDEN);
-    }
-}
-
 // Play a note
 void play_note(u8 nnote)
 {
@@ -107,7 +54,7 @@ void check_pattern(void)
                 matches++;
             }
         }
-        if (matches==4) matched_pattern=npattern;
+        if (matches==4 && obj_pattern[npattern].active==true) matched_pattern=npattern; // We have a match!
     }
     hide_rod_icons(); // Hide the rod pattern icons
 
@@ -146,19 +93,6 @@ void check_pattern(void)
     next_frame();
 }
 
-
-// Hide icons in the rod
-void hide_rod_icons(void)
-{
-    SPR_setVisibility(spr_int_rod_1,HIDDEN);
-    SPR_setVisibility(spr_int_rod_2,HIDDEN);
-    SPR_setVisibility(spr_int_rod_3,HIDDEN);
-    SPR_setVisibility(spr_int_rod_4,HIDDEN);
-    SPR_setVisibility(spr_int_rod_5,HIDDEN);
-    SPR_setVisibility(spr_int_rod_6,HIDDEN);
-    SPR_update();
-}
-
 // Play the sound of a pattern spell
 void play_pattern_sound(u16 npattern)
 {
@@ -175,22 +109,3 @@ void play_pattern_sound(u16 npattern)
         break;
     }
 }  
-
-// Show the icon of a pattern spell
-void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
-{
-    u8 npal = PAL2;
-    const SpriteDefinition *nsprite = NULL;
-
-    if (show==TRUE) {
-        if (npattern==PTRN_ELECTIC) nsprite = &int_pattern_thunder;
-        if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
-        if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
-        obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
-        SPR_setAlwaysOnTop(obj_pattern[npattern].sd);
-    }
-    else {
-        SPR_releaseSprite(obj_pattern[npattern].sd);
-        obj_pattern[npattern].sd=NULL;
-    }
-}

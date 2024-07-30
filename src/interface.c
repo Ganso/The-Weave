@@ -10,30 +10,6 @@ void update_bg(void)
     }
 }
 
-// Initialice level and load background
-void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDefinition map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed)
-{
-    initialize();
-    
-    VDP_loadTileSet(&tile_bg, tile_ind, DMA);
-    background_BGB = MAP_create(&map_bg, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
-    tile_ind += tile_bg.numTile;
-
-    VDP_loadTileSet(&tile_front, tile_ind, DMA);
-    background_BGA = MAP_create(&map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
-    tile_ind += tile_front.numTile;
-
-    background_scroll_mode=new_scroll_mode;
-    scroll_speed=new_scroll_speed;
-
-    PAL_setPalette(PAL0, new_pal.data, DMA);
-
-    MAP_scrollTo(background_BGA, 0, 0);
-    MAP_scrollTo(background_BGB, 0, 0);
-
-    update_bg();
-}
-
 // Set background limits
 void set_limits(u16 x1, u16 y1, u16 x2, u16 y2)
 {
@@ -174,7 +150,7 @@ void show_pattern_list(bool show, u8 active_pattern)
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) // How many patterns you have?
         if (obj_pattern[npattern].active==true) num_active_patterns++;
 
-    x_initial = (118 - 24 * num_active_patterns); // Initial X position
+    x_initial = (134 - 24 * num_active_patterns); // Initial X position
     x = x_initial;
 
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
@@ -223,10 +199,94 @@ void show_note_in_pattern_list(u8 npattern, u8 nnote, bool show)
     }
 
     if (show==true) {
-        x=219+nnote*16;
+        x=251+nnote*16;
         spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,false,false,false));
     }
     else {
         SPR_releaseSprite(spr_pattern_list_note[nnote]);
+    }
+}
+
+// Show or hide notes
+void show_note(u8 nnote, bool visible)
+{
+    Sprite *pentsprite;
+    Sprite *rodsprite;
+    u8 *notesong;
+
+    switch (nnote) 
+    {
+    case NOTE_MI:
+        pentsprite=spr_int_pentagram_1;
+        rodsprite=spr_int_rod_1;
+        notesong=(u8*)snd_note_mi;
+        break;
+    case NOTE_FA:
+        pentsprite=spr_int_pentagram_2;
+        rodsprite=spr_int_rod_2;
+        notesong=(u8*)snd_note_fa;
+        break;
+    case NOTE_SOL:
+        pentsprite=spr_int_pentagram_3;
+        rodsprite=spr_int_rod_3;
+        notesong=(u8*)snd_note_sol;
+        break;
+    case NOTE_LA:
+        pentsprite=spr_int_pentagram_4;
+        rodsprite=spr_int_rod_4;
+        notesong=(u8*)snd_note_la;
+        break;
+    case NOTE_SI:
+        pentsprite=spr_int_pentagram_5;
+        rodsprite=spr_int_rod_5;
+        notesong=(u8*)snd_note_si;
+        break;
+    default:
+        pentsprite=spr_int_pentagram_6;
+        rodsprite=spr_int_rod_6;
+        notesong=(u8*)snd_note_do;
+        break;
+    }
+
+    if (visible == true) {
+        SPR_setVisibility(pentsprite, VISIBLE);
+        SPR_setVisibility(rodsprite, VISIBLE);
+        XGM_setLoopNumber(0);
+        XGM_startPlay(notesong);
+    }
+    else {
+        SPR_setVisibility(pentsprite, HIDDEN);
+        //SPR_setVisibility(rodsprite, HIDDEN);
+    }
+}
+
+// Hide icons in the rod
+void hide_rod_icons(void)
+{
+    SPR_setVisibility(spr_int_rod_1,HIDDEN);
+    SPR_setVisibility(spr_int_rod_2,HIDDEN);
+    SPR_setVisibility(spr_int_rod_3,HIDDEN);
+    SPR_setVisibility(spr_int_rod_4,HIDDEN);
+    SPR_setVisibility(spr_int_rod_5,HIDDEN);
+    SPR_setVisibility(spr_int_rod_6,HIDDEN);
+    SPR_update();
+}
+
+// Show the icon of a pattern spell
+void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
+{
+    u8 npal = PAL2;
+    const SpriteDefinition *nsprite = NULL;
+
+    if (show==TRUE) {
+        if (npattern==PTRN_ELECTIC) nsprite = &int_pattern_thunder;
+        if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
+        if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
+        obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
+        SPR_setAlwaysOnTop(obj_pattern[npattern].sd);
+    }
+    else {
+        SPR_releaseSprite(obj_pattern[npattern].sd);
+        obj_pattern[npattern].sd=NULL;
     }
 }
