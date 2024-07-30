@@ -58,9 +58,12 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
         textposx_line2=textposx_line1;
         strcpy(text_line1,"");
     }
-    VDP_drawTextBG(WINDOW,text_line1,textposx_line1,23);
-    VDP_drawTextBG(WINDOW,text_line2,textposx_line2,24);
-    VDP_drawTextBG(WINDOW,text_line3,textposx_line3,25);
+    //VDP_drawTextBG(WINDOW,text_line1,textposx_line1,23);
+    //VDP_drawTextBG(WINDOW,text_line2,textposx_line2,24);
+    //VDP_drawTextBG(WINDOW,text_line3,textposx_line3,25);
+    print_line(text_line1, textposx_line1, 23);
+    print_line(text_line2, textposx_line2, 24);
+    print_line(text_line3, textposx_line3, 25);
     SPR_setVisibility (spr_int_button_A, VISIBLE);
     SPR_setPosition (spr_int_button_A, buttonposx, 208);
     next_frame();
@@ -111,7 +114,8 @@ const char* getDialog(int actDialog, int message, int language)
 }
 
 // Split a text in up to three lines
-void split_text(char *text, char *line1, char *line2, char *line3) {
+void split_text(char *text, char *line1, char *line2, char *line3)
+{
     u16 len = strlen(text);
     u16 i, lineStart = 0;
     u16 line = 0;
@@ -131,5 +135,19 @@ void split_text(char *text, char *line1, char *line2, char *line3) {
             lineStart = i + 1;
             line++;
         }
+    }
+}
+
+// Print a line of text, character by character
+void print_line(char *text, u16 x, u16 y)
+{
+    int i = 0;
+    char temp[2] = {0, 0};  // Temporal para almacenar un solo carácter
+
+    while (text[i] != '\0') {
+        temp[0] = text[i];  // Copiamos el carácter actual a temp
+        VDP_drawTextBG(WINDOW, temp, x + i, y);
+        next_frame();
+        i++;
     }
 }

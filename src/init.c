@@ -53,7 +53,31 @@ void initialize(void)
     note_playing_time=0;
     num_played_notes=0;
     time_since_last_note=0;
-    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, NULL};
-    obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,5,3,6}, NULL};
+    obj_pattern[PTRN_ELECTIC]=(Pattern) {false, {1,2,3,4}, NULL};
+    obj_pattern[PTRN_HIDE]=(Pattern) {false, {2,5,3,6}, NULL};
     obj_pattern[PTRN_OPEN]=(Pattern) {true, {2,3,3,2}, NULL};
+}
+
+// Initialice level and load background
+void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDefinition map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed)
+{
+    initialize();
+    
+    VDP_loadTileSet(&tile_bg, tile_ind, DMA);
+    background_BGB = MAP_create(&map_bg, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    tile_ind += tile_bg.numTile;
+
+    VDP_loadTileSet(&tile_front, tile_ind, DMA);
+    background_BGA = MAP_create(&map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    tile_ind += tile_front.numTile;
+
+    background_scroll_mode=new_scroll_mode;
+    scroll_speed=new_scroll_speed;
+
+    PAL_setPalette(PAL0, new_pal.data, DMA);
+
+    MAP_scrollTo(background_BGA, 0, 0);
+    MAP_scrollTo(background_BGB, 0, 0);
+
+    update_bg();
 }
