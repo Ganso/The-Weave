@@ -18,7 +18,7 @@
 #include "../res/res_interface.h"
 #include "../res/res_sound.h"
 
-// Game files
+// Game libraries
 #include "texts.h"
 #include "init.h"
 #include "act_1.h"
@@ -28,6 +28,7 @@
 #include "controller.h"
 #include "interface.h"
 #include "patterns.h"
+#include "enemies.h"
 
 // Animations
 #define ANIM_IDLE       0
