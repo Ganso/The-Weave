@@ -15,7 +15,7 @@ void wait_seconds(int sec)
 }
 
 // Initialize a character
-void initialize_character(u8 nchar)
+void init_character(u8 nchar)
 {
     u8 npal = PAL1;
     const SpriteDefinition *nsprite = NULL;
@@ -65,7 +65,7 @@ void release_character(u8 nchar)
 }
 
 // Initialize a face
-void initialize_face(u8 nface)
+void init_face(u8 nface)
 {
     u8 npal = PAL1;
     const SpriteDefinition *nsprite = NULL;

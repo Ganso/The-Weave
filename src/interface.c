@@ -102,7 +102,6 @@ void pause_screen(void) {
         value = JOY_readJoypad(JOY_ALL);
         if (num_active_patterns>1) { // You can only press left or right if you have more than a activepattern
             if (value & BUTTON_RIGHT) { // Find next active pattern
-                KDebug_Alert("RIGHT pressed");
                 next_pattern_found=false;
                 selected_pattern++;
                 while (next_pattern_found==false)
@@ -115,7 +114,6 @@ void pause_screen(void) {
                 show_pattern_list(true,selected_pattern);
             }
             if (value & BUTTON_LEFT) { // Find last active pattern
-                KDebug_Alert("LEFT pressed");
                 next_pattern_found=false;
                 selected_pattern--;
                 while (next_pattern_found==false)
@@ -129,7 +127,6 @@ void pause_screen(void) {
             }
             while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
             {
-                KDebug_Alert("WAITING FOR RELEASE");
                 value = JOY_readJoypad(JOY_ALL);
                 next_frame();
             }
@@ -152,8 +149,6 @@ void show_pattern_list(bool show, u8 active_pattern)
     u16 x_initial,x;
     u8 nnote, npattern, num_active_patterns=0;
     bool priority;
-
-    KDebug_AlertNumber(active_pattern);
 
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) // How many patterns you have?
         if (obj_pattern[npattern].active==true) num_active_patterns++;

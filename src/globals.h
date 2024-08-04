@@ -18,18 +18,6 @@
 #include "../res/res_interface.h"
 #include "../res/res_sound.h"
 
-// Game libraries
-#include "texts.h"
-#include "init.h"
-#include "act_1.h"
-#include "dialogs.h"
-#include "texts.h"
-#include "characters.h"
-#include "controller.h"
-#include "interface.h"
-#include "patterns.h"
-#include "enemies.h"
-
 // Animations
 #define ANIM_IDLE       0
 #define ANIM_WALK       1
@@ -107,11 +95,23 @@ u16 x_limit_max; // Maximum x position
 u16 y_limit_min; // Minimum y position
 u16 y_limit_max; // Maximum y position
 
+// Game libraries
+#include "texts.h"
+#include "init.h"
+#include "act_1.h"
+#include "dialogs.h"
+#include "texts.h"
+#include "characters.h"
+#include "controller.h"
+#include "interface.h"
+#include "patterns.h"
+#include "enemies.h"
+
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
-void initialize_character(u8 nchar); // Initialize a character
+void init_character(u8 nchar); // Initialize a character
 void release_character(u8 nchar); // Release a character from memory
-void initialize_face(u8 nface); // Initialize a face
+void init_face(u8 nface); // Initialize a face
 void release_face(u8 nface); // Release a face from memory
 void next_frame(void); // Wait for next frame and do each-frame actions
 

@@ -12,7 +12,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     char text_line1[40]={0},text_line2[40]={0},text_line3[40]={0};
 
     // Initialize the needed face
-    if (nface!=FACE_none) initialize_face(nface);
+    if (nface!=FACE_none) init_face(nface);
 
     // Divide the text in up to three lines
     split_text(text, text_line1, text_line2, text_line3);
