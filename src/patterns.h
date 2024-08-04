@@ -43,5 +43,6 @@ void play_note(u8 nnote); // Play a note
 void check_note(void); // Check if a note is being played
 void check_pattern(void); // Check the finished pattern
 void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
+void init_patterns(void); // initialize patters
 
 #endif

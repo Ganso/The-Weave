@@ -55,12 +55,14 @@ void initialize(void)
     note_playing_time=0;
     num_played_notes=0;
     time_since_last_note=0;
-    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, NULL};
-    obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,5,3,6}, NULL};
-    obj_pattern[PTRN_OPEN]=(Pattern) {true, {2,3,3,2}, NULL};
+    init_patterns();
+
+    // Enemys
+    init_enemy_classes();
+    init_enemy_patterns();
 }
 
-// Initialice level and load background
+// initialize level and load background
 void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDefinition map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed)
 {
     initialize();

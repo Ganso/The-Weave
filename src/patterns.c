@@ -111,3 +111,12 @@ void play_pattern_sound(u16 npattern)
         break;
     }
 }  
+
+// initialize patters
+void init_patterns(void)
+{
+    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, NULL};
+    obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,5,3,6}, NULL};
+    obj_pattern[PTRN_OPEN]=(Pattern) {true, {2,3,3,2}, NULL};
+
+}

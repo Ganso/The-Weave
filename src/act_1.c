@@ -7,9 +7,9 @@ void act_1_scene_1(void)
     new_level(historians_bg_tile, historians_bg_map, historians_front_tile, historians_front_map, historians_pal, BG_SCRL_AUTO_LEFT, 3);
 
     // Initialize characters and dialog faces
-    initialize_character(CHR_linus);
-    initialize_character(CHR_clio);
-    initialize_character(CHR_xander);
+    init_character(CHR_linus);
+    init_character(CHR_clio);
+    init_character(CHR_xander);
     
     // Starting positions
     move_character_instant(CHR_clio,20,110);
@@ -65,10 +65,11 @@ void act_1_scene_5(void)
     set_limits(20,70,270,108);
 
     // Initialize characters
-    initialize_character(CHR_linus);
+    init_character(CHR_linus);
 
     // Initialize enemies
-    initialize_character(CHR_badbobbin);
+    init_character(CHR_badbobbin);
+    init_enemy(0,ENEMY_CLS_BADBOBBIN);
 
     // Enemies palette
     PAL_setPalette(PAL3, badbobbin_sprite.palette->data, DMA); // Characters palette
