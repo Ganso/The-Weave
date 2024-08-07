@@ -61,7 +61,6 @@ void check_pattern(void)
     // Pattern effects
     if (matched_pattern!=254) { // We have a match!
         anim_character(active_character,ANIM_MAGIC); // Magic animation
-        SPR_setVisibility(spr_int_rod, HIDDEN); // Hide the rod itself
         show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
         SPR_update();
         if (matched_pattern==PTRN_ELECTIC) { // THUNDER !!!
@@ -84,7 +83,6 @@ void check_pattern(void)
                 next_frame();
             }
         }
-        SPR_setVisibility(spr_int_rod, VISIBLE); // Show the rod again
         show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
         anim_character(active_character,ANIM_IDLE); // Stop magic animation
         SPR_update();

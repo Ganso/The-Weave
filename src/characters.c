@@ -5,7 +5,12 @@
 void init_character(u8 nchar)
 {
     u8 npal = PAL1;
+    u8 x_size = 48;
     u8 y_size = 64;
+    u8 collision_x_offset=4;
+    u8 collision_y_offset=63;
+    u8 collision_width=36;
+    u8 collision_height=1;
     const SpriteDefinition *nsprite = NULL;
 
     if (obj_character[nchar].sd == NULL) {
@@ -23,8 +28,7 @@ void init_character(u8 nchar)
         default:
             return; 
         }
-        // * Sprite definition, x, y, palette, priority, flipH, animation, visible
-        obj_character[nchar] = (Entity) { nsprite, 0, 0, y_size, npal, false, false, ANIM_IDLE, false };
+        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height };
     } else {
         nsprite = obj_character[nchar].sd;
         npal = obj_character[nchar].palette;
@@ -41,6 +45,7 @@ void init_character(u8 nchar)
 // Release a character from memory (Just the sprite, keep the Entity)
 void release_character(u8 nchar)
 {
+    obj_character[nchar].active = false;
     if (spr_chr[nchar] != NULL)
     {
         SPR_releaseSprite(spr_chr[nchar]);
@@ -69,7 +74,7 @@ void init_face(u8 nface)
         default:
             return; // Salir si la cara no es válida
         }
-        obj_face[nface] = (Entity) { nsprite, 0, 160, 64, npal, false, false, ANIM_IDLE, false };
+        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0 };
     } else {
         nsprite = obj_face[nface].sd;
     }
@@ -86,6 +91,7 @@ void init_face(u8 nface)
 // Release a face from memory (Just the sprite, keep the Entity)
 void release_face(u8 nface)
 {
+    obj_face[nface].active = false;
     if (spr_face[nface] != NULL)
     {
         SPR_releaseSprite(spr_face[nface]);
@@ -162,15 +168,68 @@ void update_sprites_depth(void)
 
     // Update character depth
     for (i = 0; i < MAX_CHR; i++) {
-        if (spr_chr[i] != NULL) {
+        if (obj_character[i].active==true) {
             SPR_setDepth(spr_chr[i], -obj_character[i].y-obj_character[i].y_size); // Negative of the bottom line of the sprite
         }
     }
 
     // Update enemies depth
     for (i = 0; i < MAX_ENEMIES; i++) {
-        if (spr_enemy[i] != NULL) {
+        if (obj_enemy[i].obj_character.active==true) {
             SPR_setDepth(spr_enemy[i], -obj_enemy[i].obj_character.y-obj_enemy[i].obj_character.y_size); // Negative of the bottom line of the sprite
         }
     }
+}
+
+u8 detect_char_collision(u8 nchar, u16 x, u8 y)
+{
+    u8 nenemy;
+
+    if (obj_character[nchar].active == true) {
+        // Compute character collision box
+        u16 char_col_x1, char_col_x2;
+        if (obj_character[nchar].flipH) {
+            char_col_x1 = x + obj_character[nchar].x_size - obj_character[nchar].collision_x_offset - obj_character[nchar].collision_width;
+            char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
+        } else {
+            char_col_x1 = x + obj_character[nchar].collision_x_offset;
+            char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
+        }
+        u8 char_col_y1 = y + obj_character[nchar].collision_y_offset;
+        u8 char_col_y2 = char_col_y1 + obj_character[nchar].collision_height;
+
+        for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
+            if (obj_enemy[nenemy].obj_character.active == true) {
+                // Compute enemy collision box
+                u16 enemy_col_x1, enemy_col_x2;
+                if (obj_enemy[nenemy].obj_character.flipH) {
+                    enemy_col_x1 = obj_enemy[nenemy].obj_character.x + obj_enemy[nenemy].obj_character.x_size - obj_enemy[nenemy].obj_character.collision_x_offset - obj_enemy[nenemy].obj_character.collision_width;
+                    enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
+                } else {
+                    enemy_col_x1 = obj_enemy[nenemy].obj_character.x + obj_enemy[nenemy].obj_character.collision_x_offset;
+                    enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
+                }
+                u8 enemy_col_y1 = obj_enemy[nenemy].obj_character.y + obj_enemy[nenemy].obj_character.collision_y_offset;
+                u8 enemy_col_y2 = enemy_col_y1 + obj_enemy[nenemy].obj_character.collision_height;
+
+                // Check collision
+                if (char_col_x1 < enemy_col_x2 &&
+                    char_col_x2 > enemy_col_x1 &&
+                    char_col_y1 < enemy_col_y2 &&
+                    char_col_y2 > enemy_col_y1) {
+                    if (num_colls<MAX_COLLISIONS) { // CHANGE THIS!!! HACK TO AVOID PLAYER BEING TRAPPED
+                        num_colls++;
+                        return nenemy;
+                        KDebug_AlertNumber(num_colls);
+                    } else {
+                        num_colls=0;
+                        return MAX_ENEMIES;
+                    }
+                }
+            }
+        }
+    }
+    
+    // No collision detected
+    return MAX_ENEMIES;
 }

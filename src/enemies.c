@@ -18,7 +18,12 @@ void init_enemy_classes(void)
 void init_enemy(u8 numenemy, u8 class)
 {
     u8 npal = PAL3;
+    u8 x_size = 48;
     u8 y_size = 96;
+    u8 collision_x_offset=4;
+    u8 collision_y_offset=95;
+    u8 collision_width=32;
+    u8 collision_height=1;
     const SpriteDefinition *nsprite = NULL;
     obj_enemy[numenemy].class=obj_enemy_class[class];
     obj_enemy[numenemy].hitpoints=obj_enemy_class[class].max_hitpoints;
@@ -32,7 +37,7 @@ void init_enemy(u8 numenemy, u8 class)
         return; 
     }
     // * Sprite definition, x, y, palette, priority, flipH, animation, visible
-    obj_enemy[numenemy].obj_character = (Entity) { nsprite, 0, 0, y_size, npal, false, false, ANIM_IDLE, false };
+    obj_enemy[numenemy].obj_character = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height };
 
     spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
                                        TILE_ATTR(npal, obj_enemy[numenemy].obj_character.priority, false, obj_enemy[numenemy].obj_character.flipH));
@@ -45,6 +50,7 @@ void init_enemy(u8 numenemy, u8 class)
 // Release an enemy from memory (Just the sprite, keep the Enemy struct)
 void release_enemy(u8 nenemy)
 {
+    obj_enemy[nenemy].obj_character.active=false;
     if (spr_enemy[nenemy] != NULL)
     {
         SPR_releaseSprite(spr_enemy[nenemy]);
