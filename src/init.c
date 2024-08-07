@@ -3,6 +3,8 @@
 
 void initialize(void)
 {
+    u8 i;
+
     // Initialize VPD
     VDP_init();
 
@@ -60,6 +62,11 @@ void initialize(void)
     // Enemys
     init_enemy_classes();
     init_enemy_patterns();
+
+    // Mark all entities as inactive
+    for (i=0;i<MAX_CHR;i++) obj_character[i].active=false;
+    for (i=0;i<MAX_FACE;i++) obj_face[i].active=false;
+    for (i=0;i<MAX_ENEMIES;i++) obj_enemy[i].obj_character.active=false;
 }
 
 // initialize level and load background

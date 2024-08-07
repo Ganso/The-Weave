@@ -98,7 +98,7 @@ void act_1_scene_5(void)
     move_enemy_instant(2, -20, 80);
     move_character(CHR_linus, 200, 80);
     move_enemy(0, 250, 40);
-    move_enemy(1, 240, 60);
+    move_enemy(1, 180, 60);
     move_enemy(2, 20, 50);
     show_interface(true);
 
