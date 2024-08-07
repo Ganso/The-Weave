@@ -7,6 +7,7 @@ typedef struct
     const SpriteDefinition   *sd;
     s16                      x;
     s16                      y;
+    u8                       y_size;
     u16                      palette;
     u8                       priority;
     u8                       flipH;
@@ -14,6 +15,6 @@ typedef struct
     bool                     visible;
 } Entity;
 
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Mode an entity
+void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Move an entity
 
 #endif

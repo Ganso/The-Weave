@@ -2,7 +2,7 @@
 #include "globals.h"
 
 
-// Mode an entity
+// Move an entity
 void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
 {
     s16 x = entity->x;

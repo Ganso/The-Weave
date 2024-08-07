@@ -1,6 +1,28 @@
 #ifndef _CHARACTERS_H_
 #define _CHARACTERS_H_
 
+// Animations
+#define ANIM_IDLE       0
+#define ANIM_WALK       1
+#define ANIM_ACTION     2
+#define ANIM_MAGIC      3
+
+// Characters
+#define MAX_CHR       4
+#define CHR_linus     0
+#define CHR_clio      1
+#define CHR_xander    2
+
+// Faces
+#define MAX_FACE      3
+#define FACE_linus    0
+#define FACE_clio     1
+#define FACE_xander   2
+#define FACE_none     250
+#define SIDE_left     true
+#define SIDE_right    false
+#define SIDE_none     true
+
 // Characters
 Entity obj_character[MAX_CHR];
 Sprite *spr_chr[MAX_CHR];
