@@ -66,15 +66,6 @@ void act_1_scene_5(void)
 
     // Initialize characters
     init_character(CHR_linus);
-
-    // Initialize enemies
-    init_character(CHR_badbobbin);
-    init_enemy(0,ENEMY_CLS_BADBOBBIN);
-
-    // Enemies palette
-    PAL_setPalette(PAL3, badbobbin_sprite.palette->data, DMA); // Characters palette
-
-    // Starting positions
     active_character=CHR_linus;
 
     // Dialog
@@ -96,10 +87,14 @@ void act_1_scene_5(void)
 
     // COMBAT SCENE
     show_interface(false);
-    move_character_instant(CHR_badbobbin, 350, 80);
+
+    // Initialize enemies
+    init_enemy(0,ENEMY_CLS_BADBOBBIN);
+    PAL_setPalette(PAL3, badbobbin_sprite.palette->data, DMA); // Enemy palette
+    move_enemy_instant(0, 350, 80);
     move_character(CHR_linus, 200, 80);
-    look_left(CHR_badbobbin, false);
-    move_character(CHR_badbobbin, 250, 60);
+    look_enemy_left(0, false);
+    move_enemy(0, 250, 60);
     show_interface(true);
 
     player_scroll_active=false; // Disable player scroll - Screen is fixed

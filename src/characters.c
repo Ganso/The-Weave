@@ -1,7 +1,100 @@
 #include <genesis.h>
 #include "globals.h"
 
-#include "characters.h"
+// Initialize a character
+void init_character(u8 nchar)
+{
+    u8 npal = PAL1;
+    const SpriteDefinition *nsprite = NULL;
+
+    if (obj_character[nchar].sd == NULL) {
+        switch (nchar)
+        {
+        case CHR_linus:
+            nsprite = &linus_sprite;        
+            break;
+        case CHR_clio:
+            nsprite = &clio_sprite;
+            break;
+        case CHR_xander:
+            nsprite = &xander_sprite;
+            break;
+        case CHR_badbobbin:
+            nsprite = &badbobbin_sprite;
+            npal = PAL3;
+            break;
+        default:
+            return; 
+        }
+        // * Sprite definition, x, y, palette, priority, flipH, animation, visible
+        obj_character[nchar] = (Entity) { nsprite, 0, 0, npal, false, false, ANIM_IDLE, false };
+    } else {
+        nsprite = obj_character[nchar].sd;
+        npal = obj_character[nchar].palette;
+    }
+
+    spr_chr[nchar] = SPR_addSpriteSafe(nsprite, obj_character[nchar].x, obj_character[nchar].y, 
+                                       TILE_ATTR(npal, obj_character[nchar].priority, false, obj_character[nchar].flipH));
+    
+    if (spr_chr[nchar] != NULL) {
+        SPR_setVisibility(spr_chr[nchar], HIDDEN);
+    }
+}
+
+// Release a character from memory (Just the sprite, keep the Entity)
+void release_character(u8 nchar)
+{
+    if (spr_chr[nchar] != NULL)
+    {
+        SPR_releaseSprite(spr_chr[nchar]);
+        spr_chr[nchar] = NULL;
+    }
+}
+
+// Initialize a face
+void init_face(u8 nface)
+{
+    u8 npal = PAL1;
+    const SpriteDefinition *nsprite = NULL;
+
+    if (obj_face[nface].sd == NULL) { // Object never initialized
+        switch (nface)
+        {
+        case CHR_linus:
+            nsprite = &linus_face_sprite;        
+            break;
+        case CHR_clio:
+            nsprite = &clio_face_sprite;
+            break;
+        case CHR_xander:
+            nsprite = &xander_face_sprite;
+            break;
+        default:
+            return; // Salir si la cara no es válida
+        }
+        obj_face[nface] = (Entity) { nsprite, 0, 160, npal, false, false, ANIM_IDLE, false };
+    } else {
+        nsprite = obj_face[nface].sd;
+    }
+
+    spr_face[nface] = SPR_addSpriteSafe(nsprite, obj_face[nface].x, obj_face[nface].y, 
+                                        TILE_ATTR(obj_face[nface].palette, obj_face[nface].priority, false, obj_face[nface].flipH));
+    
+    if (spr_face[nface] != NULL) {
+        SPR_setVisibility(spr_face[nface], HIDDEN);
+        SPR_setDepth(spr_face[nface], SPR_MIN_DEPTH); // Faces are above any other sprite
+    }
+}
+
+// Release a face from memory (Just the sprite, keep the Entity)
+void release_face(u8 nface)
+{
+    if (spr_face[nface] != NULL)
+    {
+        SPR_releaseSprite(spr_face[nface]);
+        spr_face[nface] = NULL;
+    }
+}
 
 // Update a character based on every parameter
 void update_character(u8 nchar)
@@ -40,44 +133,20 @@ void look_left(u8 nchar, bool direction_right)
 // Move a character to a new position
 void move_character(u8 nchar, s16 newx, s16 newy)
 {
-    // We use Bresenham algorithm to draw a straight line
-
     show_character(nchar, true);
+    anim_character(nchar, ANIM_WALK);
 
-    anim_character(nchar,ANIM_WALK);
-
-    s16 x = obj_character[nchar].x;
-    s16 y = obj_character[nchar].y;
-    s16 dx = newx - x;
-    s16 dy = newy - y;
-    s16 sx = dx > 0 ? 1 : -1;
-    s16 sy = dy > 0 ? 1 : -1;
-    s16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
-    s16 e2;
-
-    // Look in the appropiate direction
-    if (sx < 0) {
+    // Look in the appropriate direction
+    s16 dx = newx - obj_character[nchar].x;
+    if (dx < 0) {
         look_left(nchar, true);
-    } else if (sx > 0) {
+    } else if (dx > 0) {
         look_left(nchar, false);
     }
 
-    for(;;)
-    {
-        SPR_setPosition(spr_chr[nchar], x, y);
-        next_frame();
+    move_entity(&obj_character[nchar], spr_chr[nchar], newx, newy);
 
-        if (x == newx && y == newy) break;
-
-        e2 = err;
-        if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }
-        if (e2 < abs(dy)) { err += abs(dx); y += sy; }
-    }
-
-    obj_character[nchar].x = x;
-    obj_character[nchar].y = y;
-
-    anim_character(nchar,ANIM_IDLE);
+    anim_character(nchar, ANIM_IDLE);
 }
 
 // Move a character to a new position (instantly)
@@ -87,4 +156,24 @@ void move_character_instant(u8 nchar,s16 x,s16 y)
     obj_character[nchar].x = x;
     obj_character[nchar].y = y;
     update_bg();
+}
+
+// Update characters and enemies depth
+void update_sprites_depth(void)
+{
+    u8 i;
+
+    // Update character depth
+    for (i = 0; i < MAX_CHR; i++) {
+        if (spr_chr[i] != NULL) {
+            SPR_setDepth(spr_chr[i], obj_character[i].y);
+        }
+    }
+
+    // Update enemies depth
+    for (i = 0; i < MAX_ENEMIES; i++) {
+        if (spr_enemy[i] != NULL) {
+            SPR_setDepth(spr_enemy[i], obj_enemy[i].obj_character.y);
+        }
+    }
 }
