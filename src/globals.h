@@ -51,29 +51,6 @@ u8 game_language;
 
 u16 tile_ind; // Tiles index
 
-// Game entity definition
-typedef struct
-{
-    const SpriteDefinition   *sd;
-    s16                      x;
-    s16                      y;
-    u16                      palette;
-    u8                       priority;
-    u8                       flipH;
-    u8                       animation;
-    bool                     visible;
-} Entity;
-
-// Characters
-Entity obj_character[MAX_CHR];
-Sprite *spr_chr[MAX_CHR];
-u8 active_character; // Which character is the active one
-bool movement_active; // Can you move ?
-
-// Faces
-Entity obj_face[MAX_FACE];
-Sprite *spr_face[MAX_FACE];
-
 // Backgrounds
 Map *background_BGA;
 Map *background_BGB;
@@ -96,6 +73,7 @@ u16 y_limit_min; // Minimum y position
 u16 y_limit_max; // Maximum y position
 
 // Game libraries
+#include "entity.h"
 #include "texts.h"
 #include "init.h"
 #include "act_1.h"
@@ -109,10 +87,6 @@ u16 y_limit_max; // Maximum y position
 
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
-void init_character(u8 nchar); // Initialize a character
-void release_character(u8 nchar); // Release a character from memory
-void init_face(u8 nface); // Initialize a face
-void release_face(u8 nface); // Release a face from memory
 void next_frame(void); // Wait for next frame and do each-frame actions
 
 #endif

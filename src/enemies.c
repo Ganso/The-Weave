@@ -40,3 +40,75 @@ void init_enemy(u8 numenemy, u8 class)
         SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
     }
 }
+
+// Release an enemy from memory (Just the sprite, keep the Enemy struct)
+void release_enemy(u8 nenemy)
+{
+    if (spr_enemy[nenemy] != NULL)
+    {
+        SPR_releaseSprite(spr_enemy[nenemy]);
+        spr_enemy[nenemy] = NULL;
+    }
+}
+
+// Update an enemy based on every parameter
+void update_enemy(u8 nenemy)
+{
+    SPR_setPosition(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.x, obj_enemy[nenemy].obj_character.y);
+    SPR_setPriority(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.priority);
+    SPR_setVisibility(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.visible ? VISIBLE : HIDDEN);
+    SPR_setHFlip(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.flipH);
+    SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
+    SPR_update();
+}
+
+// Show or hide an enemy
+void show_enemy(u8 nenemy, bool show)
+{
+    obj_enemy[nenemy].obj_character.visible = show;
+    SPR_setVisibility(spr_enemy[nenemy], show ? VISIBLE : HIDDEN);
+    SPR_update();
+}
+
+// Change an enemy's animation
+void anim_enemy(u8 nenemy, u8 newanimation)
+{
+    obj_enemy[nenemy].obj_character.animation = newanimation;
+    SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
+}
+
+// Make an enemy look to the left (or right)
+void look_enemy_left(u8 nenemy, bool direction_right)
+{
+    obj_enemy[nenemy].obj_character.flipH = direction_right;
+    SPR_setHFlip(spr_enemy[nenemy], direction_right);
+    SPR_update();
+}
+
+// Move an enemy to a new position
+void move_enemy(u8 nenemy, s16 newx, s16 newy)
+{
+    show_enemy(nenemy, true);
+    anim_enemy(nenemy, ANIM_WALK);
+
+    // Look in the appropriate direction
+    s16 dx = newx - obj_enemy[nenemy].obj_character.x;
+    if (dx < 0) {
+        look_enemy_left(nenemy, true);
+    } else if (dx > 0) {
+        look_enemy_left(nenemy, false);
+    }
+
+    move_entity(&obj_enemy[nenemy].obj_character, spr_enemy[nenemy], newx, newy);
+
+    anim_enemy(nenemy, ANIM_IDLE);
+}
+
+// Move an enemy to a new position (instantly)
+void move_enemy_instant(u8 nenemy, s16 x, s16 y)
+{
+    SPR_setPosition(spr_enemy[nenemy], x, y);
+    obj_enemy[nenemy].obj_character.x = x;
+    obj_enemy[nenemy].obj_character.y = y;
+    update_bg();
+}
