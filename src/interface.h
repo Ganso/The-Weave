@@ -5,9 +5,8 @@
 Sprite *spr_face_left; // Left face BG
 Sprite *spr_face_right; // Right face BG
 Sprite *spr_int_button_A; // Button with an A
-Sprite *spr_int_rod; // Rod
+Map *map_int_rod; // Rod
 Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6; // Rod (notes)
-Sprite *spr_int_pentagram; // Pentragram (empty)
 Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6; // Pentagram (notes)
 
 bool interface_active; // Do we have to show the interface?

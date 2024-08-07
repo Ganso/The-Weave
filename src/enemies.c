@@ -18,6 +18,7 @@ void init_enemy_classes(void)
 void init_enemy(u8 numenemy, u8 class)
 {
     u8 npal = PAL3;
+    u8 y_size = 96;
     const SpriteDefinition *nsprite = NULL;
     obj_enemy[numenemy].class=obj_enemy_class[class];
     obj_enemy[numenemy].hitpoints=obj_enemy_class[class].max_hitpoints;
@@ -31,7 +32,7 @@ void init_enemy(u8 numenemy, u8 class)
         return; 
     }
     // * Sprite definition, x, y, palette, priority, flipH, animation, visible
-    obj_enemy[numenemy].obj_character = (Entity) { nsprite, 0, 0, npal, false, false, ANIM_IDLE, false };
+    obj_enemy[numenemy].obj_character = (Entity) { nsprite, 0, 0, y_size, npal, false, false, ANIM_IDLE, false };
 
     spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
                                        TILE_ATTR(npal, obj_enemy[numenemy].obj_character.priority, false, obj_enemy[numenemy].obj_character.flipH));

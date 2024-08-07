@@ -18,8 +18,8 @@ void wait_seconds(int sec)
 void next_frame(void)
 {
 
-   // Pattern related actions 
-   check_note();
+    // Pattern related actions 
+    check_note();
 
     // Screen related actions
     update_bg();

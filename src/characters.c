@@ -5,6 +5,7 @@
 void init_character(u8 nchar)
 {
     u8 npal = PAL1;
+    u8 y_size = 64;
     const SpriteDefinition *nsprite = NULL;
 
     if (obj_character[nchar].sd == NULL) {
@@ -19,15 +20,11 @@ void init_character(u8 nchar)
         case CHR_xander:
             nsprite = &xander_sprite;
             break;
-        case CHR_badbobbin:
-            nsprite = &badbobbin_sprite;
-            npal = PAL3;
-            break;
         default:
             return; 
         }
         // * Sprite definition, x, y, palette, priority, flipH, animation, visible
-        obj_character[nchar] = (Entity) { nsprite, 0, 0, npal, false, false, ANIM_IDLE, false };
+        obj_character[nchar] = (Entity) { nsprite, 0, 0, y_size, npal, false, false, ANIM_IDLE, false };
     } else {
         nsprite = obj_character[nchar].sd;
         npal = obj_character[nchar].palette;
@@ -72,7 +69,7 @@ void init_face(u8 nface)
         default:
             return; // Salir si la cara no es válida
         }
-        obj_face[nface] = (Entity) { nsprite, 0, 160, npal, false, false, ANIM_IDLE, false };
+        obj_face[nface] = (Entity) { nsprite, 0, 160, 64, npal, false, false, ANIM_IDLE, false };
     } else {
         nsprite = obj_face[nface].sd;
     }
@@ -166,14 +163,14 @@ void update_sprites_depth(void)
     // Update character depth
     for (i = 0; i < MAX_CHR; i++) {
         if (spr_chr[i] != NULL) {
-            SPR_setDepth(spr_chr[i], obj_character[i].y);
+            SPR_setDepth(spr_chr[i], -obj_character[i].y-obj_character[i].y_size); // Negative of the bottom line of the sprite
         }
     }
 
     // Update enemies depth
     for (i = 0; i < MAX_ENEMIES; i++) {
         if (spr_enemy[i] != NULL) {
-            SPR_setDepth(spr_enemy[i], obj_enemy[i].obj_character.y);
+            SPR_setDepth(spr_enemy[i], -obj_enemy[i].obj_character.y-obj_enemy[i].obj_character.y_size); // Negative of the bottom line of the sprite
         }
     }
 }
