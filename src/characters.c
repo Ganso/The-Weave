@@ -10,7 +10,7 @@ void init_character(u8 nchar)
     u8 collision_x_offset=4;
     u8 collision_y_offset=63;
     u8 collision_width=36;
-    u8 collision_height=1;
+    u8 collision_height=2;
     const SpriteDefinition *nsprite = NULL;
 
     if (obj_character[nchar].sd == NULL) {
