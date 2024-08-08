@@ -16,7 +16,8 @@ Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY]; // Enemie pattern object
 
 // Enemy classes
 #define MAX_ENEMY_CLASSES 10
-#define ENEMY_CLS_BADBOBBIN 0
+#define ENEMY_CLS_BADBOBBIN    0
+#define ENEMY_CLS_3HEADMONKEY  1
 
 typedef struct
 {

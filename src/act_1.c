@@ -91,15 +91,16 @@ void act_1_scene_5(void)
     // Initialize enemies
     init_enemy(0,ENEMY_CLS_BADBOBBIN);
     init_enemy(1,ENEMY_CLS_BADBOBBIN);
-    init_enemy(2,ENEMY_CLS_BADBOBBIN);
+    init_enemy(2,ENEMY_CLS_3HEADMONKEY);
     PAL_setPalette(PAL3, badbobbin_sprite.palette->data, DMA); // Enemy palette
     move_enemy_instant(0, 350, 80);
-    move_enemy_instant(1, 350, 80);
-    move_enemy_instant(2, -20, 80);
+    move_enemy_instant(1, -20, 80);
+    move_enemy_instant(2, 350, 80);
     move_character(CHR_linus, 200, 80);
     move_enemy(0, 250, 40);
-    move_enemy(1, 180, 60);
-    move_enemy(2, 20, 50);
+    move_enemy(1, 20, 50);
+    move_enemy(2, 140, 100);
+    look_enemy_left(2, false);
     show_interface(true);
 
     player_scroll_active=false; // Disable player scroll - Screen is fixed
