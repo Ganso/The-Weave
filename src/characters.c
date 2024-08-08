@@ -72,7 +72,7 @@ void init_face(u8 nface)
             nsprite = &xander_face_sprite;
             break;
         default:
-            return; // Salir si la cara no es válida
+            return;
         }
         obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0 };
     } else {

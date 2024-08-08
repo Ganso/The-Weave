@@ -17,6 +17,9 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
     for(;;)
     {
         SPR_setPosition(sprite, x, y);
+        entity->x = x;
+        entity->y = y;
+        update_sprites_depth();
         next_frame();
 
         if (x == newx && y == newy) break;
@@ -26,6 +29,4 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
         if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
 
-    entity->x = x;
-    entity->y = y;
 }

@@ -12,29 +12,42 @@ void init_enemy_patterns(void)
 void init_enemy_classes(void)
 {
     obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {10, {true, true}};
+    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {10, {false, false}};
 }
 
 // Initialize an enemy
 void init_enemy(u8 numenemy, u8 class)
 {
     u8 npal = PAL3;
-    u8 x_size = 48;
-    u8 y_size = 96;
-    u8 collision_x_offset=4;
-    u8 collision_y_offset=95;
-    u8 collision_width=32;
-    u8 collision_height=1;
+    u8 x_size, y_size;
+    u8 collision_x_offset,collision_y_offset,collision_width,collision_height;
     const SpriteDefinition *nsprite = NULL;
+ 
     obj_enemy[numenemy].class=obj_enemy_class[class];
     obj_enemy[numenemy].hitpoints=obj_enemy_class[class].max_hitpoints;
 
     switch (class)
     {
     case ENEMY_CLS_BADBOBBIN:
+        x_size = 48;
+        y_size = 96;
+        collision_x_offset=4;
+        collision_y_offset=95;
+        collision_width=32;
+        collision_height=2;
         nsprite = &badbobbin_sprite;
         break;
+    case ENEMY_CLS_3HEADMONKEY:
+        nsprite = &three_head_monkey_sprite;
+        x_size = 64;
+        y_size = 56;
+        collision_x_offset = 20;
+        collision_y_offset = 55;
+        collision_width = 20;
+        collision_height = 2;
+        break;
     default:
-        return; 
+        return;
     }
     // * Sprite definition, x, y, palette, priority, flipH, animation, visible
     obj_enemy[numenemy].obj_character = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height };

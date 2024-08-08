@@ -34,7 +34,7 @@ Entity obj_face[MAX_FACE];
 Sprite *spr_face[MAX_FACE];
 
 // Collisions
-#define MAX_COLLISIONS 30 // If we collide more than X times, move the character anyway
+#define MAX_COLLISIONS 30 // If we collide more than X times, move the character anyway (CHANGE IT!)
 u8 num_colls;
 
 void init_character(u8 nchar); // Initialize a character
