@@ -20,6 +20,7 @@ void next_frame(void)
 
     // Pattern related actions 
     check_note();
+    check_pattern_effect();
 
     // Combat related actions
     if (is_combat_active==true) check_enemy_pattern();
@@ -31,8 +32,8 @@ void next_frame(void)
     update_sprites_depth();
     SPR_update();
 
-    // Do some random stuff
-    u16 rnd=random();
+    // Create a random seed depending of the number of frames
+    random_seed++;
 
     // Wait for next frame
     SYS_doVBlankProcess();

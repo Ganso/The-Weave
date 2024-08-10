@@ -45,6 +45,7 @@ void check_pattern(void)
 {
     u8 npattern,nnote; // Loop indexes
     u8 matches,matched_pattern;
+    u8 i;
 
     matched_pattern=254;
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
@@ -60,11 +61,10 @@ void check_pattern(void)
 
     // Pattern effects
     if (matched_pattern!=254) { // We have a match!
-        anim_character(active_character,ANIM_MAGIC); // Magic animation
-        show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
-        SPR_update();
         if (matched_pattern==PTRN_ELECTIC) { // THUNDER !!!
-            u8 i;
+            anim_character(active_character,ANIM_MAGIC); // Magic animation
+            show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
+            SPR_update();
             play_pattern_sound(PTRN_ELECTIC);
             for (i=0;i<100;i++) {
                 VDP_setHilightShadow(true);
@@ -72,22 +72,16 @@ void check_pattern(void)
                 VDP_setHilightShadow(false);
                 SYS_doVBlankProcess();
             }
+            show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
+            anim_character(active_character,ANIM_IDLE); // Stop magic animation
+            SPR_update();
         }
         if (matched_pattern==PTRN_HIDE) { // HIDE!!
-            u8 i;
             play_pattern_sound(PTRN_HIDE);
-            for (i=0;i<100;i++) {
-                show_character(active_character, false);
-                SYS_doVBlankProcess();
-                show_character(active_character, true);
-                SYS_doVBlankProcess();
-            }
+            pattern_effect_in_progress=PTRN_HIDE;
+            pattern_effect_time=1;
         }
-        show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
-        anim_character(active_character,ANIM_IDLE); // Stop magic animation
-        SPR_update();
     }
-
     num_played_notes=0;
     time_since_last_note=0;
     next_frame();
@@ -117,4 +111,30 @@ void init_patterns(void)
     obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,5,3,6}, NULL};
     obj_pattern[PTRN_OPEN]=(Pattern) {true, {2,3,3,2}, NULL};
 
+}
+
+// Check if a pattern has a current effect
+void check_pattern_effect(void)
+{
+    u16 max_effect_time;
+    max_effect_time=400;
+
+    switch (pattern_effect_in_progress)
+    {
+    case PTRN_HIDE:
+        if (pattern_effect_time!=max_effect_time) {
+            if (pattern_effect_time%2==0) show_character(active_character,true);
+            else show_character(active_character,false);
+            pattern_effect_time++;
+        }
+        else {
+            show_character(active_character,true);
+            pattern_effect_in_progress=PTRN_EN_NONE;
+            pattern_effect_time=0;
+        }
+        break;
+    
+    default:
+        break;
+    }
 }

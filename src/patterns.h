@@ -16,6 +16,8 @@
 u8 note_playing; // The note the player is playing
 u16 note_playing_time; // How long has the note been played (in ticks)
 u16 time_since_last_note; // How long are we waiting for the pattern to finish
+u16 pattern_effect_in_progress; // Is a pattern effect currently in progress?
+u16 pattern_effect_time; // How long is the effect been active?
 
 // Patterns
 #define MAX_PATTERNS 3
@@ -44,5 +46,6 @@ void check_note(void); // Check if a note is being played
 void check_pattern(void); // Check the finished pattern
 void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
 void init_patterns(void); // initialize patters
+void check_pattern_effect(void); // Check if a pattern has a current effect
 
 #endif

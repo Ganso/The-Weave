@@ -48,6 +48,6 @@ void look_left(u8, bool); // Make a character look to the left (or right)
 void move_character(u8,s16,s16); // Move a character to a new position
 void move_character_instant(u8,s16,s16); // Move a character to a new position (instantly)
 void update_sprites_depth(void); // Update characters and enemies depth
-u8 detect_char_collision(u8 nchar, u16 x, u8 y); // Detect character collisions (return collided enemy or MAX_ENEMIES if there are no collisions). Just check bottom line of the sprite.
+u8 detect_char_collision(u8 nchar, u16 x, u8 y); // Detect character collisions (return collided enemy or ENEMY_NONE if there are no collisions). Just check bottom line of the sprite.
 
 #endif

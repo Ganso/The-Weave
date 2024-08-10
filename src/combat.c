@@ -19,10 +19,11 @@ void start_combat(bool start)
                     }
                 }
             }
-        enemy_attacking=MAX_ENEMIES;
+        enemy_attacking=ENEMY_NONE;
         enemy_attack_pattern_notes=0;
         enemy_attack_time=0;
         attack_effect_in_progress=0;
+        setRandomSeed(random_seed); // Initialize RNG
         }
 
     }
@@ -39,7 +40,7 @@ void check_enemy_pattern(void)
     u8 numenemy,npattern;
     u16 rnd;
 
-    if (attack_effect_in_progress==0 && enemy_attacking==MAX_ENEMIES) { // No one is attacking and no attack effect in progress
+    if (attack_effect_in_progress==false && enemy_attacking==ENEMY_NONE) { // No one is attacking and no attack effect in progress
         for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) {
             if (obj_enemy[numenemy].obj_character.active==true) {
                 for (npattern=0;npattern<MAX_PATTERN_ENEMY;npattern++) {
@@ -49,7 +50,7 @@ void check_enemy_pattern(void)
                         }
                         else {
                             rnd = random();
-                            if (rnd % 13) obj_enemy[numenemy].last_pattern_time[npattern]++; // Inc a random number of times
+                            if (rnd%2==0) obj_enemy[numenemy].last_pattern_time[npattern]++; // Inc a random number of times
                         }
                     }
                 }
@@ -57,7 +58,7 @@ void check_enemy_pattern(void)
         }
     }
 
-    if (attack_effect_in_progress==0 && enemy_attacking!=MAX_ENEMIES) { // Attack in progress
+    if (attack_effect_in_progress==false && enemy_attacking!=ENEMY_NONE) { // Attack in progress
         if (enemy_attack_time!=MAX_ATTACK_NOTE_PLAYING_TIME) {
             enemy_attack_time++;
         }
@@ -69,18 +70,19 @@ void check_enemy_pattern(void)
                 show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true); // Play next note
             }
             else { // Notes finished
-                attack_effect_in_progress=1; // Start pattern effect
+                attack_effect_in_progress=true; // Start pattern effect
+                attack_effect_time=0;
             }
         }
     }
 
-    if (attack_effect_in_progress!=0) do_enemy_pattern_effect(); // Attack effect in progress
+    if (attack_effect_in_progress==true) do_enemy_pattern_effect(); // Attack effect in progress
 }
 
 // Enemy lauches a pattern
 void enemy_launch_pattern(u8 numenemy, u8 npattern)
 {
-    if (enemy_attacking==MAX_ENEMIES) { // No other enemy is attacking
+    if (enemy_attacking==ENEMY_NONE) { // No other enemy is attacking
         enemy_attack_pattern_notes=0;
         enemy_attack_time=0;
         enemy_attack_pattern=npattern;
@@ -142,17 +144,35 @@ void show_enemy_note(u8 nnote, bool visible)
 
 // An ennemy pattern is in progress. Make something happern.
 void do_enemy_pattern_effect(void) {
-    KDebug_AlertNumber(attack_effect_in_progress);
-    if (attack_effect_in_progress==1) { // Effect starting
+    u16 max_effect_time;
+    max_effect_time=400;
+
+    if (attack_effect_time==0) { // Effect starting
         anim_enemy(enemy_attacking,ANIM_MAGIC);
+        if (enemy_attack_pattern==PTRN_EN_ELECTIC) play_pattern_sound(PTRN_ELECTIC); // Thunder sound
     }
-    if (attack_effect_in_progress<200) {
-        attack_effect_in_progress++;
+    if (attack_effect_time<max_effect_time) {
+        if (enemy_attack_pattern==PTRN_EN_ELECTIC) { // Thunder effect
+            if (attack_effect_time%2==0) VDP_setHilightShadow(true);
+            else VDP_setHilightShadow(false);
+        }
+        if (enemy_attack_pattern==PTRN_EN_BITE && pattern_effect_in_progress==PTRN_HIDE) { // Player is hidden. Bite does not have effect
+            attack_effect_time=max_effect_time-1;
+        }
+        attack_effect_time++;
     }
-    if (attack_effect_in_progress==200) {
-        anim_enemy(enemy_attacking,ANIM_IDLE);
-        obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern]=0;
-        attack_effect_in_progress=0;
-        enemy_attacking=MAX_ENEMIES;
+    if (attack_effect_time==max_effect_time) {
+        if (num_played_notes!=0) { // Player is playing a pattern. Give him time.
+            attack_effect_time--;
+        }
+        else { // Finish attack
+            KDebug_Alert("ATTACK FINISHED");
+            anim_enemy(enemy_attacking,ANIM_IDLE);
+            obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern]=0;
+            attack_effect_time=0;
+            attack_effect_in_progress=false;
+            if (enemy_attack_pattern==PTRN_EN_ELECTIC) VDP_setHilightShadow(false);
+            enemy_attacking=ENEMY_NONE;
+        }
     }    
 }

@@ -4,11 +4,12 @@
 #define MAX_ATTACK_NOTE_PLAYING_TIME  60  // Attack note playing time (1 second)
 
 bool is_combat_active; // Are we in a combat?
-u8 enemy_attacking; // Which enemy is attacking?
-u8 enemy_attack_pattern; // Which pattern is the enemy using?
+u16 enemy_attacking; // Which enemy is attacking?
+u16 enemy_attack_pattern; // Which pattern is the enemy using?
 u8 enemy_attack_pattern_notes; // How many notes has the enemy lauched yet?
 u16 enemy_attack_time; // How long is the enemy attacking?
 bool attack_effect_in_progress; // An enemy pattern attack effect is in progress
+u16 attack_effect_time; // How long has been the enemy pattern effect working?
 
 void start_combat(bool start); // Start (or end) a combat
 void check_enemy_pattern(void); // Check if an enemy is going to launch a pattern

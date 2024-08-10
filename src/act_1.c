@@ -80,7 +80,7 @@ void act_1_scene_5(void)
     interface_active=true;
     show_interface(true);
 
-    while (offset_BGA<50) {
+    while (offset_BGA<80) {
         joy_check();
         next_frame();
     }
@@ -96,10 +96,10 @@ void act_1_scene_5(void)
     move_enemy_instant(0, 350, 80);
     move_enemy_instant(1, -20, 80);
     move_enemy_instant(2, 350, 80);
-    move_character_instant(CHR_linus, 200, 80); // CHANGE !
-    move_enemy_instant(0, 250, 40); // CHANGE !
-    move_enemy_instant(1, 20, 50); // CHANGE !
-    move_enemy_instant(2, 140, 100); // CHANGE !
+    move_character(CHR_linus, 200, 80);
+    move_enemy(0, 250, 40);
+    move_enemy(1, 20, 50);
+    move_enemy(2, 140, 100);
     show_enemy(0,true);
     show_enemy(1,true);
     show_enemy(2,true);

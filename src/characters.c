@@ -225,7 +225,7 @@ u8 detect_char_collision(u8 nchar, u16 x, u8 y)
                         KDebug_AlertNumber(num_colls);
                     } else {
                         num_colls=0;
-                        return MAX_ENEMIES;
+                        return ENEMY_NONE;
                     }
                 }
             }
@@ -233,5 +233,5 @@ u8 detect_char_collision(u8 nchar, u16 x, u8 y)
     }
     
     // No collision detected
-    return MAX_ENEMIES;
+    return ENEMY_NONE;
 }

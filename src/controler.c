@@ -13,7 +13,7 @@ void joy_check(void)
         {
             if (value & BUTTON_LEFT )
                 {
-                    if (detect_char_collision(active_character,obj_character[active_character].x-1,obj_character[active_character].y)!=MAX_ENEMIES) return; // Collision !
+                    if (detect_char_collision(active_character,obj_character[active_character].x-1,obj_character[active_character].y)!=ENEMY_NONE) return; // Collision !
                     if (obj_character[active_character].x>x_limit_min) {
                         obj_character[active_character].x--;
                         obj_character[active_character].flipH=true;
@@ -32,7 +32,7 @@ void joy_check(void)
 
             if (value & BUTTON_RIGHT)
                 {
-                    if (detect_char_collision(active_character,obj_character[active_character].x+1,obj_character[active_character].y)!=MAX_ENEMIES) return; // Collision !
+                    if (detect_char_collision(active_character,obj_character[active_character].x+1,obj_character[active_character].y)!=ENEMY_NONE) return; // Collision !
                     if (obj_character[active_character].x<x_limit_max) {
                         obj_character[active_character].x++;
                         obj_character[active_character].flipH=false;
@@ -51,7 +51,7 @@ void joy_check(void)
 
             if (value & BUTTON_UP)
                 {
-                    if (detect_char_collision(active_character,obj_character[active_character].x,obj_character[active_character].y-1)!=MAX_ENEMIES) return; // Collision !
+                    if (detect_char_collision(active_character,obj_character[active_character].x,obj_character[active_character].y-1)!=ENEMY_NONE) return; // Collision !
                     if (obj_character[active_character].y>y_limit_min) {
                         obj_character[active_character].y--;
                         moved=true;
@@ -60,7 +60,7 @@ void joy_check(void)
 
             if (value & BUTTON_DOWN)
                 {
-                    if (detect_char_collision(active_character,obj_character[active_character].x,obj_character[active_character].y+1)!=MAX_ENEMIES) return; // Collision !
+                    if (detect_char_collision(active_character,obj_character[active_character].x,obj_character[active_character].y+1)!=ENEMY_NONE) return; // Collision !
                     if (obj_character[active_character].y<y_limit_max) {
                         obj_character[active_character].y++;
                         moved=true;
