@@ -59,9 +59,10 @@ void initialize(void)
     time_since_last_note=0;
     init_patterns();
 
-    // Enemys
+    // Enemys and combat
     init_enemy_classes();
     init_enemy_patterns();
+    is_combat_active=false;
 
     // Mark all entities as inactive
     for (i=0;i<MAX_CHR;i++) obj_character[i].active=false;

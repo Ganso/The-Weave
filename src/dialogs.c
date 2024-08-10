@@ -139,12 +139,20 @@ void split_text(char *text, char *line1, char *line2, char *line3)
 void print_line(char *text, u16 x, u16 y)
 {
     int i = 0;
-    char temp[2] = {0, 0};  // Temporal para almacenar un solo carácter
+    u16 joy_state;
+    char temp[2] = {0, 0};  // Temporary one character storage
 
     while (text[i] != '\0') {
-        temp[0] = text[i];  // Copiamos el carácter actual a temp
+        temp[0] = text[i];
         VDP_drawTextBG(WINDOW, temp, x + i, y);
-        next_frame();
+        joy_state=JOY_readJoypad (JOY_ALL);
+        if ((joy_state & BUTTON_A)==0) next_frame(); // Is button A is being pressed, skip frame update
         i++;
+    }
+    joy_state=JOY_readJoypad (JOY_ALL);
+    while ((joy_state & BUTTON_A)!=0)
+    {
+        joy_state=JOY_readJoypad (JOY_ALL);
+        next_frame(); // Is button A is being pressed, wait until release
     }
 }

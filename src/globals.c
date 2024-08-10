@@ -21,12 +21,18 @@ void next_frame(void)
     // Pattern related actions 
     check_note();
 
+    // Combat related actions
+    if (is_combat_active==true) check_enemy_pattern();
+
     // Screen related actions
     update_bg();
 
     // Sprites related actions
     update_sprites_depth();
     SPR_update();
+
+    // Do some random stuff
+    u16 rnd=random();
 
     // Wait for next frame
     SYS_doVBlankProcess();

@@ -4,20 +4,21 @@
 // Initialize enemy pattern
 void init_enemy_patterns(void)
 {
-    obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}};
-    obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {2, {2,3,NULL,NULL}};
+    obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 400};
+    obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {2, {2,3,NULL,NULL}, 300};
 }
 
 // initialize enemy classes
 void init_enemy_classes(void)
 {
-    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {10, {true, true}};
-    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {10, {false, false}};
+    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {10, {true, false}};
+    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {10, {false, true}};
 }
 
 // Initialize an enemy
 void init_enemy(u8 numenemy, u8 class)
 {
+    u8 i;
     u8 npal = PAL3;
     u8 x_size, y_size;
     u8 collision_x_offset,collision_y_offset,collision_width,collision_height;
@@ -58,6 +59,8 @@ void init_enemy(u8 numenemy, u8 class)
     if (spr_enemy[numenemy] != NULL) {
         SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
     }
+
+    for (i=0;i<MAX_PATTERN_ENEMY;i++) obj_enemy[numenemy].last_pattern_time[i]=0;
 }
 
 // Release an enemy from memory (Just the sprite, keep the Enemy struct)

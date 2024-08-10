@@ -11,6 +11,7 @@ typedef struct
 {
     u8 numnotes;
     u8 notes[4];
+    u16 recharge_time;
 } Pattern_Enemy;
 Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY]; // Enemie pattern object
 
@@ -34,6 +35,7 @@ typedef struct
     Enemy_Class class;
     Entity obj_character;
     u16 hitpoints;
+    u16 last_pattern_time[MAX_PATTERN_ENEMY];
 } Enemy;
 Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
 Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
@@ -48,5 +50,6 @@ void anim_enemy(u8 nenemy, u8 newanimation); // Change an enemy's animation
 void look_enemy_left(u8 nenemy, bool direction_right); // Make an enemy look to the left (or right)
 void move_enemy(u8 nenemy, s16 newx, s16 newy); // Move an enemy to a new position
 void move_enemy_instant(u8 nenemy, s16 x, s16 y); // Move an enemy to a new position (instantly)
+void check_enemy_pattern(void); // Check if an enemy is going to launch a pattern
 
 #endif

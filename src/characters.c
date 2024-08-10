@@ -32,6 +32,7 @@ void init_character(u8 nchar)
     } else {
         nsprite = obj_character[nchar].sd;
         npal = obj_character[nchar].palette;
+        obj_character[nchar].active=true;
     }
 
     spr_chr[nchar] = SPR_addSpriteSafe(nsprite, obj_character[nchar].x, obj_character[nchar].y, 
@@ -77,6 +78,7 @@ void init_face(u8 nface)
         obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0 };
     } else {
         nsprite = obj_face[nface].sd;
+        obj_face[nface].active=true;
     }
 
     spr_face[nface] = SPR_addSpriteSafe(nsprite, obj_face[nface].x, obj_face[nface].y, 

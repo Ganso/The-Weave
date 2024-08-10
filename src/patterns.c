@@ -68,9 +68,9 @@ void check_pattern(void)
             play_pattern_sound(PTRN_ELECTIC);
             for (i=0;i<100;i++) {
                 VDP_setHilightShadow(true);
-                next_frame();
+                SYS_doVBlankProcess();
                 VDP_setHilightShadow(false);
-                next_frame();
+                SYS_doVBlankProcess();
             }
         }
         if (matched_pattern==PTRN_HIDE) { // HIDE!!
@@ -78,9 +78,9 @@ void check_pattern(void)
             play_pattern_sound(PTRN_HIDE);
             for (i=0;i<100;i++) {
                 show_character(active_character, false);
-                next_frame();
+                SYS_doVBlankProcess();
                 show_character(active_character, true);
-                next_frame();
+                SYS_doVBlankProcess();
             }
         }
         show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
