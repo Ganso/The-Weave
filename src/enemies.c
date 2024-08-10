@@ -4,8 +4,8 @@
 // Initialize enemy pattern
 void init_enemy_patterns(void)
 {
-    obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 400};
-    obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {2, {2,3,NULL,NULL}, 300};
+    obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 200};
+    obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {2, {2,3,NULL,NULL}, 200};
 }
 
 // initialize enemy classes
@@ -16,9 +16,9 @@ void init_enemy_classes(void)
 }
 
 // Initialize an enemy
-void init_enemy(u8 numenemy, u8 class)
+void init_enemy(u16 numenemy, u16 class)
 {
-    u8 i;
+    u16 i;
     u8 npal = PAL3;
     u8 x_size, y_size;
     u8 collision_x_offset,collision_y_offset,collision_width,collision_height;
@@ -64,7 +64,7 @@ void init_enemy(u8 numenemy, u8 class)
 }
 
 // Release an enemy from memory (Just the sprite, keep the Enemy struct)
-void release_enemy(u8 nenemy)
+void release_enemy(u16 nenemy)
 {
     obj_enemy[nenemy].obj_character.active=false;
     if (spr_enemy[nenemy] != NULL)
@@ -75,7 +75,7 @@ void release_enemy(u8 nenemy)
 }
 
 // Update an enemy based on every parameter
-void update_enemy(u8 nenemy)
+void update_enemy(u16 nenemy)
 {
     SPR_setPosition(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.x, obj_enemy[nenemy].obj_character.y);
     SPR_setPriority(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.priority);
@@ -86,7 +86,7 @@ void update_enemy(u8 nenemy)
 }
 
 // Show or hide an enemy
-void show_enemy(u8 nenemy, bool show)
+void show_enemy(u16 nenemy, bool show)
 {
     obj_enemy[nenemy].obj_character.visible = show;
     SPR_setVisibility(spr_enemy[nenemy], show ? VISIBLE : HIDDEN);
@@ -94,14 +94,14 @@ void show_enemy(u8 nenemy, bool show)
 }
 
 // Change an enemy's animation
-void anim_enemy(u8 nenemy, u8 newanimation)
+void anim_enemy(u16 nenemy, u8 newanimation)
 {
     obj_enemy[nenemy].obj_character.animation = newanimation;
     SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
 }
 
 // Make an enemy look to the left (or right)
-void look_enemy_left(u8 nenemy, bool direction_right)
+void look_enemy_left(u16 nenemy, bool direction_right)
 {
     obj_enemy[nenemy].obj_character.flipH = direction_right;
     SPR_setHFlip(spr_enemy[nenemy], direction_right);
@@ -109,7 +109,7 @@ void look_enemy_left(u8 nenemy, bool direction_right)
 }
 
 // Move an enemy to a new position
-void move_enemy(u8 nenemy, s16 newx, s16 newy)
+void move_enemy(u16 nenemy, s16 newx, s16 newy)
 {
     show_enemy(nenemy, true);
     anim_enemy(nenemy, ANIM_WALK);
@@ -128,7 +128,7 @@ void move_enemy(u8 nenemy, s16 newx, s16 newy)
 }
 
 // Move an enemy to a new position (instantly)
-void move_enemy_instant(u8 nenemy, s16 x, s16 y)
+void move_enemy_instant(u16 nenemy, s16 x, s16 y)
 {
     SPR_setPosition(spr_enemy[nenemy], x, y);
     obj_enemy[nenemy].obj_character.x = x;

@@ -123,14 +123,15 @@ void pause_screen(void) {
             while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
             {
                 value = JOY_readJoypad(JOY_ALL);
-                next_frame();
+                SYS_doVBlankProcess();
             }
         }
-        next_frame();
+        SPR_update();
+        SYS_doVBlankProcess();
     }
     while ( value & BUTTON_START ) { // Now wait until released
         value = JOY_readJoypad(JOY_ALL);
-        next_frame();
+        SYS_doVBlankProcess();
     }
 
     if (num_active_patterns!=0) show_pattern_list(false, 0);

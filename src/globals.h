@@ -19,6 +19,7 @@
 #include "../res/res_sound.h"
 
 u16 tile_ind; // Tiles index
+u16 random_seed; // Random number generator seed
 
 // Game libraries
 #include "entity.h"
