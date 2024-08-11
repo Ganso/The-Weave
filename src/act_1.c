@@ -88,17 +88,17 @@ void act_1_scene_5(void)
     show_interface(false);
 
     // Initialize enemies
-    init_enemy(0,ENEMY_CLS_BADBOBBIN);
-    init_enemy(1,ENEMY_CLS_BADBOBBIN);
-    init_enemy(2,ENEMY_CLS_3HEADMONKEY);
     PAL_setPalette(PAL3, three_head_monkey_sprite.palette->data, DMA); // Enemy palette
+    init_enemy(0,ENEMY_CLS_BADBOBBIN);
+    init_enemy(1,ENEMY_CLS_3HEADMONKEY);
+    init_enemy(2,ENEMY_CLS_3HEADMONKEY);
     move_enemy_instant(0, 350, 80);
     move_enemy_instant(1, -20, 80);
     move_enemy_instant(2, 350, 80);
     move_character(CHR_linus, 200, 80);
     move_enemy(0, 250, 40);
-    move_enemy(1, 20, 50);
-    move_enemy(2, 140, 100);
+    move_enemy(1, 20, 90);
+    move_enemy(2, 250, 100);
     show_enemy(0,true);
     show_enemy(1,true);
     show_enemy(2,true);

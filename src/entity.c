@@ -13,13 +13,14 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
     s16 sy = dy > 0 ? 1 : -1;
     s16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
     s16 e2;
+    bool old_movement_active=movement_active;
 
+    movement_active=false; // Player can't move while an entity is moving
     for(;;)
     {
         SPR_setPosition(sprite, x, y);
         entity->x = x;
         entity->y = y;
-        update_sprites_depth();
         next_frame();
 
         if (x == newx && y == newy) break;
@@ -28,5 +29,6 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
         if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }
         if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
+    movement_active=old_movement_active;
 
 }

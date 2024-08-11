@@ -7,6 +7,7 @@ void start_combat(bool start)
     u8 numenemy,npattern;
 
     if (start==true) { // Combat start
+        setRandomSeed(random_seed); // Initialize RNG
         is_combat_active=true;
         player_scroll_active=false; // Disable player scroll - Screen is fixed
         // Enemies
@@ -15,7 +16,7 @@ void start_combat(bool start)
                 obj_enemy[numenemy].hitpoints=obj_enemy[numenemy].class.max_hitpoints; // Initialize hitpoints
                 for (npattern=0;npattern<MAX_PATTERN_ENEMY;npattern++) {
                     if (obj_enemy[numenemy].class.has_pattern[npattern]==true) {
-                        obj_enemy[numenemy].last_pattern_time[npattern]=0; // Initialize pattern time
+                        obj_enemy[numenemy].last_pattern_time[npattern]=random() % (obj_Pattern_Enemy[npattern].recharge_time/2); // Initialize pattern time
                     }
                 }
             }
@@ -23,7 +24,6 @@ void start_combat(bool start)
         enemy_attack_pattern_notes=0;
         enemy_attack_time=0;
         attack_effect_in_progress=0;
-        setRandomSeed(random_seed); // Initialize RNG
         }
 
     }
@@ -38,7 +38,6 @@ void start_combat(bool start)
 void check_enemy_pattern(void)
 {
     u8 numenemy,npattern;
-    u16 rnd;
 
     if (attack_effect_in_progress==false && enemy_attacking==ENEMY_NONE) { // No one is attacking and no attack effect in progress
         for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) {
@@ -46,11 +45,14 @@ void check_enemy_pattern(void)
                 for (npattern=0;npattern<MAX_PATTERN_ENEMY;npattern++) {
                     if (obj_enemy[numenemy].class.has_pattern[npattern]==true) {
                         if (obj_enemy[numenemy].last_pattern_time[npattern]==obj_Pattern_Enemy[npattern].recharge_time) {
-                            enemy_launch_pattern(numenemy,npattern);
+                            if (npattern==PTRN_EN_BITE && pattern_effect_in_progress==PTRN_HIDE) {
+                                // You can't bite a hidden character
+                                obj_enemy[numenemy].last_pattern_time[npattern]-=50;
+                            }
+                            else enemy_launch_pattern(numenemy,npattern);
                         }
                         else {
-                            rnd = random();
-                            if (rnd%2==0) obj_enemy[numenemy].last_pattern_time[npattern]++; // Inc a random number of times
+                            if ((random()%2)==0) obj_enemy[numenemy].last_pattern_time[npattern]++; // Inc a random number of times
                         }
                     }
                 }
@@ -162,7 +164,7 @@ void show_enemy_note(u8 nnote, bool visible)
 // An ennemy pattern is in progress. Make something happern.
 void do_enemy_pattern_effect(void) {
     u16 max_effect_time;
-    max_effect_time=400;
+    max_effect_time=100;
 
     if (attack_effect_time==0) { // Effect starting
         anim_enemy(enemy_attacking,ANIM_MAGIC);
@@ -183,7 +185,6 @@ void do_enemy_pattern_effect(void) {
             attack_effect_time--;
         }
         else { // Finish attack
-            KDebug_Alert("ATTACK FINISHED");
             anim_enemy(enemy_attacking,ANIM_IDLE);
             obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern]=0;
             attack_effect_time=0;
