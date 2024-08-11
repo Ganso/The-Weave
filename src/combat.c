@@ -98,48 +98,65 @@ void enemy_launch_pattern_note()
     show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true);
 }
 
-// Show or hide notes
 void show_enemy_note(u8 nnote, bool visible)
 {
-    Sprite *rodsprite;
+    Sprite **rodsprite;
+    SpriteDefinition *rodspritedef;
     u8 *notesong;
+    u16 rod_x;
 
     switch (nnote) 
     {
     case NOTE_MI:
-        rodsprite=spr_int_enemy_rod_1;
-        notesong=(u8*)snd_note_mi;
+        rodsprite = &spr_int_enemy_rod_1;
+        rodspritedef = (SpriteDefinition*) &int_rod_1_sprite;
+        notesong = (u8*)snd_note_mi;
+        rod_x = 24;
         break;
     case NOTE_FA:
-        rodsprite=spr_int_enemy_rod_2;
-        notesong=(u8*)snd_note_fa;
+        rodsprite = &spr_int_enemy_rod_2;
+        rodspritedef = (SpriteDefinition*) &int_rod_2_sprite;
+        notesong = (u8*)snd_note_fa;
+        rod_x = 24 + 32;
         break;
     case NOTE_SOL:
-        rodsprite=spr_int_enemy_rod_3;
-        notesong=(u8*)snd_note_sol;
+        rodsprite = &spr_int_enemy_rod_3;
+        rodspritedef = (SpriteDefinition*) &int_rod_3_sprite;
+        notesong = (u8*)snd_note_sol;
+        rod_x = 24 + 64;
         break;
     case NOTE_LA:
-        rodsprite=spr_int_enemy_rod_4;
-        notesong=(u8*)snd_note_la;
+        rodsprite = &spr_int_enemy_rod_4;
+        rodspritedef = (SpriteDefinition*) &int_rod_4_sprite;
+        notesong = (u8*)snd_note_la;
+        rod_x = 24 + 96;
         break;
     case NOTE_SI:
-        rodsprite=spr_int_enemy_rod_5;
-        notesong=(u8*)snd_note_si;
+        rodsprite = &spr_int_enemy_rod_5;
+        rodspritedef = (SpriteDefinition*) &int_rod_5_sprite;
+        notesong = (u8*)snd_note_si;
+        rod_x = 24 + 128;
         break;
     default:
-        rodsprite=spr_int_enemy_rod_6;
-        notesong=(u8*)snd_note_do;
+        rodsprite = &spr_int_enemy_rod_6;
+        rodspritedef = (SpriteDefinition*) &int_rod_6_sprite;
+        notesong = (u8*)snd_note_do;
+        rod_x = 24 + 160;
         break;
     }
 
     if (visible == true) {
-        SPR_setVisibility(rodsprite, VISIBLE);
+        *rodsprite = SPR_addSpriteSafe(rodspritedef, rod_x, 184, TILE_ATTR(PAL2, false, false, false));
         XGM_setLoopNumber(0);
         XGM_startPlay(notesong);
     }
     else {
-        SPR_setVisibility(rodsprite, HIDDEN);
+        if (*rodsprite != NULL) {
+            SPR_releaseSprite(*rodsprite);
+            *rodsprite = NULL;
+        }
     }
+    SPR_update();
 }
 
 // An ennemy pattern is in progress. Make something happern.
