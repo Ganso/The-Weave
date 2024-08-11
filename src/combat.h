@@ -1,7 +1,7 @@
 #ifndef _COMBAT_H_
 #define _COMBAT_H_
 
-#define MAX_ATTACK_NOTE_PLAYING_TIME  60  // Attack note playing time (1 second)
+#define MAX_ATTACK_NOTE_PLAYING_TIME  30  // Attack note playing time (.5 seconds)
 
 bool is_combat_active; // Are we in a combat?
 u16 enemy_attacking; // Which enemy is attacking?

@@ -6,7 +6,6 @@ void show_interface(bool visible)
 {
     if (interface_active==true) {
         if (visible == true) {
-            KDebug_Alert("SHOW INTERFACE");
             VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 23, false, true);
             tile_ind+=int_rod_image.tileset->numTile;
             VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
@@ -55,7 +54,6 @@ void show_interface(bool visible)
             // SPR_setVisibility(spr_int_enemy_rod_6,HIDDEN);
         } 
         else {
-            KDebug_Alert("HIDE INTERFACE");
             tile_ind+=int_rod_image.tileset->numTile;
             tile_ind-=int_pentagram_image.tileset->numTile;
             VDP_clearPlane(WINDOW, true);
@@ -70,8 +68,6 @@ void pause_screen(void) {
     u16 value; // Joypad value
     u8 selected_pattern,npattern,num_active_patterns=0;
     bool next_pattern_found;
-
-    KDebug_Alert("PAUSE");
 
     VDP_setHilightShadow(true); // Dim screen
     show_interface(false); // Hide interface
@@ -286,7 +282,6 @@ void show_note(u8 nnote, bool visible)
 // Hide icons in the rod
 void hide_rod_icons(void)
 {
-    KDebug_Alert("Hiding rod icons");
     if (spr_int_rod_1!=NULL) SPR_releaseSprite(spr_int_rod_1);
     if (spr_int_rod_2!=NULL) SPR_releaseSprite(spr_int_rod_2);
     if (spr_int_rod_3!=NULL) SPR_releaseSprite(spr_int_rod_3);
@@ -299,7 +294,6 @@ void hide_rod_icons(void)
 // Hide icons in the pentagram
 void hide_pentagram_icons(void)
 {
-    KDebug_Alert("Hiding pentagram icons");
     if (spr_int_pentagram_1!=NULL) SPR_releaseSprite(spr_int_pentagram_1);
     if (spr_int_pentagram_2!=NULL) SPR_releaseSprite(spr_int_pentagram_2);
     if (spr_int_pentagram_3!=NULL) SPR_releaseSprite(spr_int_pentagram_3);

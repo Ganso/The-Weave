@@ -25,7 +25,10 @@ void next_frame(void)
     check_pattern_effect();
 
     // Combat related actions
-    if (is_combat_active==true) check_enemy_pattern();
+    if (is_combat_active==true) {
+        check_enemy_pattern();
+        approach_enemies();
+    }
 
     // Screen related actions
     update_bg();

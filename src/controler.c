@@ -115,10 +115,8 @@ void joy_check(void)
 
     if (value & BUTTON_START )
     {
-        KDebug_Alert("Start pressed");
         while ( value & BUTTON_START ) { // First, wait until released
             value = JOY_readJoypad(JOY_ALL);
-            KDebug_Alert("Waiting for release");
             SYS_doVBlankProcess();
         }
         pause_screen();

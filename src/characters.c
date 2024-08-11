@@ -123,8 +123,10 @@ void show_character(u8 nchar, bool show)
 // Change a character's animation
 void anim_character(u8 nchar, u8 newanimation)
 {
-    obj_character[nchar].animation=newanimation;
-    SPR_setAnim(spr_chr[nchar],obj_character[nchar].animation);
+    if (obj_character[nchar].animation!=newanimation) {
+        obj_character[nchar].animation=newanimation;
+        SPR_setAnim(spr_chr[nchar],obj_character[nchar].animation);
+    }
 }
 
 // Make a character look to the left (or right)
@@ -160,7 +162,7 @@ void move_character_instant(u8 nchar,s16 x,s16 y)
     SPR_setPosition(spr_chr[nchar], x, y);
     obj_character[nchar].x = x;
     obj_character[nchar].y = y;
-    update_bg();
+    next_frame();
 }
 
 // Update characters and enemies depth
@@ -183,9 +185,10 @@ void update_sprites_depth(void)
     }
 }
 
-u8 detect_char_collision(u8 nchar, u16 x, u8 y)
+// Detect collisons between a character in every enemy, given some new coordinates
+u16 detect_char_collision(u16 nchar, u16 x, u8 y)
 {
-    u8 nenemy;
+    u16 nenemy;
 
     if (obj_character[nchar].active == true) {
         // Compute character collision box
@@ -221,9 +224,7 @@ u8 detect_char_collision(u8 nchar, u16 x, u8 y)
                     char_col_y2 > enemy_col_y1) {
                     if (num_colls<MAX_COLLISIONS) { // CHANGE THIS!!! HACK TO AVOID PLAYER BEING TRAPPED
                         num_colls++;
-                        return nenemy;
-                        KDebug_AlertNumber(num_colls);
-                    } else {
+                        return nenemy;                    } else {
                         num_colls=0;
                         return ENEMY_NONE;
                     }
