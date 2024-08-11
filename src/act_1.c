@@ -81,7 +81,6 @@ void act_1_scene_5(void)
     show_interface(true);
 
     while (offset_BGA<80) {
-        joy_check();
         next_frame();
     }
 

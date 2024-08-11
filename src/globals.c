@@ -17,6 +17,8 @@ void wait_seconds(int sec)
 // Wait for next frame and do each-frame actions
 void next_frame(void)
 {
+    // Check controller
+    if (movement_active==true) joy_check();
 
     // Pattern related actions 
     check_note();
