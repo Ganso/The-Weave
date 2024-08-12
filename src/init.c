@@ -58,6 +58,7 @@ void initialize(void)
     num_played_notes=0;
     time_since_last_note=0;
     pattern_effect_in_progress=PTRN_NONE;
+    pattern_effect_reversed=false;
     pattern_effect_time=0;
     init_patterns();
 

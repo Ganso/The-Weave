@@ -89,26 +89,30 @@ void act_1_scene_5(void)
 
     // Initialize enemies
     PAL_setPalette(PAL3, three_head_monkey_sprite.palette->data, DMA); // Enemy palette
+
     init_enemy(0,ENEMY_CLS_BADBOBBIN);
-    init_enemy(1,ENEMY_CLS_3HEADMONKEY);
-    init_enemy(2,ENEMY_CLS_3HEADMONKEY);
     move_enemy_instant(0, 350, 80);
-    move_enemy_instant(1, -20, 80);
-    move_enemy_instant(2, 350, 80);
     move_character(CHR_linus, 200, 80);
     move_enemy(0, 250, 40);
-    move_enemy(1, 20, 90);
-    move_enemy(2, 250, 100);
-    show_enemy(0,true);
-    show_enemy(1,true);
-    show_enemy(2,true);
-    show_interface(true);
 
+    show_interface(true);
     start_combat(true);
 
-    while (1) {
-        joy_check();
+    while (obj_enemy[0].hitpoints>0) {
         next_frame();
     }
+
+    release_enemy(0);
    
+    init_enemy(0,ENEMY_CLS_3HEADMONKEY);
+    init_enemy(1,ENEMY_CLS_3HEADMONKEY);
+    move_enemy_instant(0, -20, 80);
+    move_enemy_instant(1, 350, 80);
+    move_enemy(0, 20, 90);
+    move_enemy(1, 250, 100);
+
+    while (obj_enemy[0].hitpoints>0 && obj_enemy[1].hitpoints>0) {
+        next_frame();
+    }
+
 }

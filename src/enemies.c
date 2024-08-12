@@ -11,8 +11,8 @@ void init_enemy_patterns(void)
 // initialize enemy classes
 void init_enemy_classes(void)
 {
-    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {10, {true, false}, false, NULL};
-    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {10, {false, true}, true, 2};
+    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {1, {true, false}, false, NULL};
+    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 2};
 }
 
 // Initialize an enemy

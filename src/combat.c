@@ -168,14 +168,17 @@ void do_enemy_pattern_effect(void) {
 
     if (attack_effect_time==0) { // Effect starting
         anim_enemy(enemy_attacking,ANIM_MAGIC);
-        if (enemy_attack_pattern==PTRN_EN_ELECTIC) play_pattern_sound(PTRN_ELECTIC); // Thunder sound
+        if (enemy_attack_pattern==PTRN_EN_ELECTIC) play_pattern_sound(PTRN_ELECTRIC); // Thunder sound
     }
     if (attack_effect_time<max_effect_time) {
         if (enemy_attack_pattern==PTRN_EN_ELECTIC) { // Thunder effect
-            if (attack_effect_time%2==0) VDP_setHilightShadow(true);
+            if (random_seed%2==0) VDP_setHilightShadow(true);
             else VDP_setHilightShadow(false);
         }
         if (enemy_attack_pattern==PTRN_EN_BITE && pattern_effect_in_progress==PTRN_HIDE) { // Player is hidden. Bite does not have effect
+            attack_effect_time=max_effect_time-1;
+        }
+        if (enemy_attack_pattern==PTRN_EN_ELECTIC && pattern_effect_in_progress==PTRN_ELECTRIC && pattern_effect_reversed==true) { // Eletric pattern counter attack
             attack_effect_time=max_effect_time-1;
         }
         attack_effect_time++;
@@ -189,8 +192,31 @@ void do_enemy_pattern_effect(void) {
             obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern]=0;
             attack_effect_time=0;
             attack_effect_in_progress=false;
-            if (enemy_attack_pattern==PTRN_EN_ELECTIC) VDP_setHilightShadow(false);
+            if (enemy_attack_pattern==PTRN_EN_ELECTIC){ // Electric pattern effect
+                VDP_setHilightShadow(false);
+                if (pattern_effect_reversed==true && pattern_effect_in_progress==PTRN_ELECTRIC) { // Counter attack
+                    hit_enemy(enemy_attacking);
+                    pattern_effect_in_progress=PTRN_NONE;
+                    pattern_effect_reversed=false;
+                }
+                else hit_caracter(active_character);
+            } 
             enemy_attacking=ENEMY_NONE;
         }
     }    
+}
+
+// Hit an enemy
+void hit_enemy(u16 nenemy)
+{
+    obj_enemy[nenemy].hitpoints--;
+    KDebug_Alert("Enemy hit. Hitpoints:");
+    KDebug_AlertNumber(obj_enemy[nenemy].hitpoints);
+}
+
+// Hit a character
+void hit_caracter(u16 nchar)
+{
+    XGM2_playPCM(snd_player_hurt,sizeof(snd_player_hurt),SOUND_PCM_CH_AUTO);
+    KDebug_Alert("Player hit.");
 }

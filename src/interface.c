@@ -310,7 +310,7 @@ void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
     const SpriteDefinition *nsprite = NULL;
 
     if (show==TRUE) {
-        if (npattern==PTRN_ELECTIC) nsprite = &int_pattern_thunder;
+        if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
         if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
         obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
