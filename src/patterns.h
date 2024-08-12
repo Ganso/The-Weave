@@ -17,14 +17,15 @@ u8 note_playing; // The note the player is playing
 u16 note_playing_time; // How long has the note been played (in ticks)
 u16 time_since_last_note; // How long are we waiting for the pattern to finish
 u16 pattern_effect_in_progress; // Is a pattern effect currently in progress?
+bool pattern_effect_reversed; // Is the effect of a reverse pattern?
 u16 pattern_effect_time; // How long is the effect been active?
 
 // Patterns
 #define MAX_PATTERNS 3
 #define PTRN_NONE         254
-#define PTRN_ELECTIC      0   // Electricity spell
-#define PTRN_HIDE         1   // Hide spell
-#define PTRN_OPEN         2   // Open spell
+#define PTRN_ELECTRIC      0   // Electricity spell
+#define PTRN_HIDE          1   // Hide spell
+#define PTRN_OPEN          2   // Open spell
 
 u8 played_notes[4]; // Notes played in the current pattern
 u8 num_played_notes; // Number of notes of the current pattern

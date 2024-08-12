@@ -17,5 +17,7 @@ void enemy_launch_pattern(u8 numenemy, u8 npattern); // Enemy lauches a pattern
 void enemy_launch_pattern_note(); // Enemy launches a pattern note
 void show_enemy_note(u8 nnote, bool visible); // Show or hide notes
 void do_enemy_pattern_effect(void); // An ennemy pattern is in progress. Make something happern.
+void hit_enemy(u16 nenemy); // Hit an enemy
+void hit_caracter(u16 nchar); // Hit a character
 
 #endif

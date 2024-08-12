@@ -44,7 +44,8 @@ void check_note(void)
 void check_pattern(void)
 {
     u8 npattern,nnote; // Loop indexes
-    u8 matches,matched_pattern;
+    u8 matches,reverse_matches,matched_pattern;
+    bool is_reverse_match;
     u8 i;
 
     matched_pattern=254;
@@ -54,18 +55,29 @@ void check_pattern(void)
             if (played_notes[nnote]==obj_pattern[npattern].notes[nnote]) {
                 matches++;
             }
+            if (played_notes[nnote]==obj_pattern[npattern].notes[3-nnote]) {
+                reverse_matches++;
+            }
         }
-        if (matches==4 && obj_pattern[npattern].active==true) matched_pattern=npattern; // We have a match!
+        if (matches==4 && obj_pattern[npattern].active==true) {
+            matched_pattern=npattern; // We have a match!
+            is_reverse_match=false;
+        }
+        else if (reverse_matches==4 && obj_pattern[npattern].active==true) {
+            matched_pattern=npattern; // We have a reverse match!
+            is_reverse_match=true;
+        }
     }
     hide_rod_icons(); // Hide the rod pattern icons
 
     // Pattern effects
     if (matched_pattern!=254) { // We have a match!
-        if (matched_pattern==PTRN_ELECTIC) { // THUNDER !!!
+        pattern_effect_reversed=false;
+        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==false) { // THUNDER !!!
             anim_character(active_character,ANIM_MAGIC); // Magic animation
             show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
             SPR_update();
-            play_pattern_sound(PTRN_ELECTIC);
+            play_pattern_sound(PTRN_ELECTRIC);
             for (i=0;i<100;i++) {
                 VDP_setHilightShadow(true);
                 SYS_doVBlankProcess();
@@ -76,10 +88,16 @@ void check_pattern(void)
             anim_character(active_character,ANIM_IDLE); // Stop magic animation
             SPR_update();
         }
-        if (matched_pattern==PTRN_HIDE) { // HIDE!!
+        if (matched_pattern==PTRN_HIDE && is_reverse_match==false) { // HIDE!!
             play_pattern_sound(PTRN_HIDE);
             pattern_effect_in_progress=PTRN_HIDE;
             pattern_effect_time=1;
+        }
+        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true) { // Reverse THUNDER !!!
+            if (is_combat_active==true && enemy_attacking!=ENEMY_NONE && attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
+                pattern_effect_in_progress=PTRN_ELECTRIC;
+                pattern_effect_reversed=true;
+            }
         }
     }
     num_played_notes=0;
@@ -107,7 +125,7 @@ void play_pattern_sound(u16 npattern)
 // initialize patters
 void init_patterns(void)
 {
-    obj_pattern[PTRN_ELECTIC]=(Pattern) {true, {1,2,3,4}, NULL};
+    obj_pattern[PTRN_ELECTRIC]=(Pattern) {true, {1,2,3,4}, NULL};
     obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,5,3,6}, NULL};
     obj_pattern[PTRN_OPEN]=(Pattern) {true, {2,3,3,2}, NULL};
 
