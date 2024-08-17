@@ -98,20 +98,19 @@ void act_1_scene_5(void)
     show_interface(true);
     start_combat(true);
 
-    while (obj_enemy[0].hitpoints>0) {
+    while (is_combat_active==true) {
         next_frame();
     }
 
-    release_enemy(0);
-   
     init_enemy(0,ENEMY_CLS_3HEADMONKEY);
-    init_enemy(1,ENEMY_CLS_3HEADMONKEY);
+    init_enemy(1,ENEMY_CLS_BADBOBBIN);
     move_enemy_instant(0, -20, 80);
     move_enemy_instant(1, 350, 80);
     move_enemy(0, 20, 90);
     move_enemy(1, 250, 100);
+    start_combat(true);
 
-    while (obj_enemy[0].hitpoints>0 && obj_enemy[1].hitpoints>0) {
+    while (is_combat_active==true) {
         next_frame();
     }
 
