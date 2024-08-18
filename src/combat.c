@@ -277,7 +277,16 @@ void finish_enemy_pattern_effect(void) {
     enemy_attacking = ENEMY_NONE;
 }
 
-// Pattern-specific functions
+
+
+
+//// Pattern-specific functions
+// Check -> Can the enemy launch it?
+// Launch -> Do launch actions
+// Do -> Do in-spell actions
+// Finish -> Do finish actions
+
+// Electric pattern
 
 void check_electric_pattern(u8 numenemy, u8 npattern) {
     if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
@@ -286,20 +295,6 @@ void check_electric_pattern(u8 numenemy, u8 npattern) {
         if ((random() % 2) == 0) obj_enemy[numenemy].last_pattern_time[npattern]++;
     }
 }
-
-void check_bite_pattern(u8 numenemy, u8 npattern) {
-    if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
-        if (pattern_effect_in_progress == PTRN_HIDE) { // Don't launch that spell is player is hidden
-            obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
-        } else {
-            enemy_launch_pattern(numenemy, npattern);
-        }
-    } else {
-        if ((random() % 2) == 0) obj_enemy[numenemy].last_pattern_time[npattern]++;
-    }
-}
-
-// Electric pattern
 
 void launch_electric_pattern(void) {
     play_pattern_sound(PTRN_ELECTRIC); // Thunder sound
@@ -327,6 +322,18 @@ void finish_electric_pattern_effect(void) {
 }
 
 // Bite pattern
+
+void check_bite_pattern(u8 numenemy, u8 npattern) {
+    if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
+        if (pattern_effect_in_progress == PTRN_HIDE) { // Don't launch that spell is player is hidden
+            obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
+        } else {
+            enemy_launch_pattern(numenemy, npattern);
+        }
+    } else {
+        if ((random() % 2) == 0) obj_enemy[numenemy].last_pattern_time[npattern]++;
+    }
+}
 
 void launch_bite_pattern(void) {
     anim_enemy(enemy_attacking, ANIM_MAGIC);

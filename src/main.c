@@ -4,5 +4,5 @@
 
 int main(bool hard)
 {
-    act_1_scene_5();
+    act_1_scene_1();
 }

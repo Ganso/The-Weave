@@ -4,7 +4,7 @@
 void act_1_scene_1(void)
 {
     // Initialize level
-    new_level(historians_bg_tile, historians_bg_map, historians_front_tile, historians_front_map, historians_pal, BG_SCRL_AUTO_LEFT, 3);
+    new_level(historians_bg_tile, historians_bg_map, historians_front_tile, historians_front_map, historians_pal, BG_SCRL_AUTO_LEFT, 2);
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
@@ -12,8 +12,8 @@ void act_1_scene_1(void)
     init_character(CHR_xander);
     
     // Starting positions
-    move_character_instant(CHR_clio,20,110);
-    move_character_instant(CHR_linus,360,90);
+    move_character_instant(CHR_clio,20,174);
+    move_character_instant(CHR_linus,360,154);
     look_left(CHR_clio,false);
     look_left(CHR_linus,true);
     show_character(CHR_clio, true);
@@ -22,17 +22,17 @@ void act_1_scene_1(void)
     // Dialog
     talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG2, 0, 0);
     talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG2, 1, 0);
-    move_character(CHR_linus, 200, 110);
+    move_character(CHR_linus, 200, 174);
     talk_dialog(FACE_clio, SIDE_left, ACT1_DIALOG1, 0, 0);
     talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 1,  0);
     talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 2, 0);
     talk_dialog(FACE_clio, SIDE_left, ACT1_DIALOG1, 3, 0);
-    move_character(CHR_clio, 100, 90);
+    move_character(CHR_clio, 100, 154);
     wait_seconds(1);
     look_left(CHR_clio, true);
-    move_character_instant(CHR_xander,-30,110);
+    move_character_instant(CHR_xander,-30,174);
     show_character(CHR_xander, true);
-    move_character(CHR_xander, 40, 110);
+    move_character(CHR_xander, 40, 174);
     talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 4, 0);
     talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 5, 0);
     talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 6, 0);
@@ -70,8 +70,8 @@ void act_1_scene_5(void)
 
     // Dialog
     talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG3, 0, 0);
-    move_character_instant(CHR_linus, -20, 90);
-    move_character(CHR_linus, 30, 90);
+    move_character_instant(CHR_linus, -20, 154);
+    move_character(CHR_linus, 30, 154);
     talk_dialog(FACE_linus, SIDE_left, ACT1_DIALOG3, 1, 0);
 
     // Show the interface and allow character to move
@@ -91,9 +91,9 @@ void act_1_scene_5(void)
     PAL_setPalette(PAL3, three_head_monkey_sprite.palette->data, DMA); // Enemy palette
 
     init_enemy(0,ENEMY_CLS_BADBOBBIN);
-    move_enemy_instant(0, 350, 80);
-    move_character(CHR_linus, 200, 80);
-    move_enemy(0, 250, 40);
+    move_enemy_instant(0, 350, 176);
+    move_character(CHR_linus, 200, 144);
+    move_enemy(0, 250, 136);
 
     show_interface(true);
     start_combat(true);
@@ -104,10 +104,10 @@ void act_1_scene_5(void)
 
     init_enemy(0,ENEMY_CLS_3HEADMONKEY);
     init_enemy(1,ENEMY_CLS_BADBOBBIN);
-    move_enemy_instant(0, -20, 80);
-    move_enemy_instant(1, 350, 80);
-    move_enemy(0, 20, 90);
-    move_enemy(1, 250, 100);
+    move_enemy_instant(0, -20, 176);
+    move_enemy_instant(1, 350, 136);
+    move_enemy(0, 20, 186);
+    move_enemy(1, 250, 156);
     start_combat(true);
 
     while (is_combat_active==true) {
