@@ -109,7 +109,6 @@ void update_character(u8 nchar)
     SPR_setVisibility(spr_chr[nchar],obj_character[nchar].visible?VISIBLE:HIDDEN);
     SPR_setHFlip(spr_chr[nchar],obj_character[nchar].flipH);
     SPR_setAnim(spr_chr[nchar],obj_character[nchar].animation);
-    SPR_update();
 }
 
 // Show or hide a character
@@ -159,6 +158,8 @@ void move_character(u8 nchar, s16 newx, s16 newy)
 // Move a character to a new position (instantly)
 void move_character_instant(u8 nchar,s16 x,s16 y)
 {
+    y-=obj_character[nchar].y_size; // Now all calculations are relative to the bottom line, not the upper one
+
     SPR_setPosition(spr_chr[nchar], x, y);
     obj_character[nchar].x = x;
     obj_character[nchar].y = y;

@@ -132,6 +132,8 @@ void move_enemy(u16 nenemy, s16 newx, s16 newy)
 // Move an enemy to a new position (instantly)
 void move_enemy_instant(u16 nenemy, s16 x, s16 y)
 {
+    y-=obj_enemy[nenemy].obj_character.y_size; // Now all calculations are relative to the bottom line, not the upper one
+
     SPR_setPosition(spr_enemy[nenemy], x, y);
     obj_enemy[nenemy].obj_character.x = x;
     obj_enemy[nenemy].obj_character.y = y;

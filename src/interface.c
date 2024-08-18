@@ -265,8 +265,8 @@ void show_note(u8 nnote, bool visible)
     }
 
     if (visible == true) {
-        *rodsprite = SPR_addSpriteSafe (rodspritedef, rod_x, 212, TILE_ATTR(PAL2, false, false, false));
-        *pentsprite = SPR_addSpriteSafe (pentsritedef, pent_x, 180, TILE_ATTR(PAL2, false, false, false));
+        if (*rodsprite==NULL) *rodsprite = SPR_addSpriteSafe (rodspritedef, rod_x, 212, TILE_ATTR(PAL2, false, false, false));
+        if (*pentsprite==NULL) *pentsprite = SPR_addSpriteSafe (pentsritedef, pent_x, 180, TILE_ATTR(PAL2, false, false, false));
         XGM_setLoopNumber(0);
         XGM_startPlay(notesong);
     }
@@ -288,6 +288,12 @@ void hide_rod_icons(void)
     if (spr_int_rod_4!=NULL) SPR_releaseSprite(spr_int_rod_4);
     if (spr_int_rod_5!=NULL) SPR_releaseSprite(spr_int_rod_5);
     if (spr_int_rod_6!=NULL) SPR_releaseSprite(spr_int_rod_6);
+    spr_int_rod_1=NULL;
+    spr_int_rod_2=NULL;
+    spr_int_rod_3=NULL;
+    spr_int_rod_4=NULL;
+    spr_int_rod_5=NULL;
+    spr_int_rod_6=NULL;
     SPR_update();
 }
 

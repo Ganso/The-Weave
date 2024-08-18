@@ -5,6 +5,8 @@
 // Move an entity
 void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
 {
+    newy-=entity->y_size; // Now all calculations are relative to the bottom line, not the upper one
+    
     s16 x = entity->x;
     s16 y = entity->y;
     s16 dx = newx - x;
