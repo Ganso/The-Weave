@@ -4,5 +4,6 @@
 
 int main(bool hard)
 {
-    act_1_scene_5();
+    geesebumps_logo();
+    //act_1_scene_5();
 }
