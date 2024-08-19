@@ -42,6 +42,7 @@ typedef struct
 } Enemy;
 Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
 Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
+Sprite *spr_enemy_face[MAX_ENEMIES]; // Enemy faces sprites
 
 void init_enemy_patterns(void); // initialize enemy patterns
 void init_enemy_classes(void); // initialize enemy classes

@@ -10,48 +10,8 @@ void show_interface(bool visible)
             tile_ind+=int_rod_image.tileset->numTile;
             VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
             tile_ind+=int_pentagram_image.tileset->numTile;
-            // spr_int_rod_1 = SPR_addSpriteSafe (&int_rod_1_sprite, 24, 212, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_rod_2 = SPR_addSpriteSafe (&int_rod_2_sprite, 24+32, 212, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_rod_3 = SPR_addSpriteSafe (&int_rod_3_sprite, 24+64, 212, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_rod_4 = SPR_addSpriteSafe (&int_rod_4_sprite, 24+96, 212, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_rod_5 = SPR_addSpriteSafe (&int_rod_5_sprite, 24+128, 212, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_rod_6 = SPR_addSpriteSafe (&int_rod_6_sprite, 24+160, 212, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_enemy_rod_1 = SPR_addSpriteSafe (&int_rod_1_sprite, 24, 184, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_enemy_rod_2 = SPR_addSpriteSafe (&int_rod_2_sprite, 24+32, 184, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_enemy_rod_3 = SPR_addSpriteSafe (&int_rod_3_sprite, 24+64, 184, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_enemy_rod_4 = SPR_addSpriteSafe (&int_rod_4_sprite, 24+96, 184, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_enemy_rod_5 = SPR_addSpriteSafe (&int_rod_5_sprite, 24+128, 184, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_enemy_rod_6 = SPR_addSpriteSafe (&int_rod_6_sprite, 24+160, 184, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_pentagram_1 = SPR_addSpriteSafe (&int_pentagram_1_sprite, 219, 180, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_pentagram_2 = SPR_addSpriteSafe (&int_pentagram_2_sprite, 219+16, 180, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_pentagram_3 = SPR_addSpriteSafe (&int_pentagram_3_sprite, 219+32, 180, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_pentagram_4 = SPR_addSpriteSafe (&int_pentagram_4_sprite, 219+48, 180, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_pentagram_5 = SPR_addSpriteSafe (&int_pentagram_5_sprite, 219+64, 180, TILE_ATTR(PAL2, false, false, false));
-            // spr_int_pentagram_6 = SPR_addSpriteSafe (&int_pentagram_6_sprite, 219+80, 180, TILE_ATTR(PAL2, false, false, false));
-            // SPR_setDepth(spr_int_pentagram_1, SPR_MIN_DEPTH);
-            // SPR_setDepth(spr_int_pentagram_2, SPR_MIN_DEPTH);
-            // SPR_setDepth(spr_int_pentagram_3, SPR_MIN_DEPTH);
-            // SPR_setDepth(spr_int_pentagram_4, SPR_MIN_DEPTH);
-            // SPR_setDepth(spr_int_pentagram_5, SPR_MIN_DEPTH);
-            // SPR_setDepth(spr_int_pentagram_6, SPR_MIN_DEPTH);
-            // SPR_setVisibility(spr_int_pentagram_1, HIDDEN);
-            // SPR_setVisibility(spr_int_pentagram_2, HIDDEN);
-            // SPR_setVisibility(spr_int_pentagram_3, HIDDEN);
-            // SPR_setVisibility(spr_int_pentagram_4, HIDDEN);
-            // SPR_setVisibility(spr_int_pentagram_5, HIDDEN);
-            // SPR_setVisibility(spr_int_pentagram_6, HIDDEN);
-            // SPR_setVisibility(spr_int_rod_1,HIDDEN);
-            // SPR_setVisibility(spr_int_rod_2,HIDDEN);
-            // SPR_setVisibility(spr_int_rod_3,HIDDEN);
-            // SPR_setVisibility(spr_int_rod_4,HIDDEN);
-            // SPR_setVisibility(spr_int_rod_5,HIDDEN);
-            // SPR_setVisibility(spr_int_rod_6,HIDDEN);
-            // SPR_setVisibility(spr_int_enemy_rod_1,HIDDEN);
-            // SPR_setVisibility(spr_int_enemy_rod_2,HIDDEN);
-            // SPR_setVisibility(spr_int_enemy_rod_3,HIDDEN);
-            // SPR_setVisibility(spr_int_enemy_rod_4,HIDDEN);
-            // SPR_setVisibility(spr_int_enemy_rod_5,HIDDEN);
-            // SPR_setVisibility(spr_int_enemy_rod_6,HIDDEN);
+            spr_int_life_counter = SPR_addSprite (&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
+            SPR_setVisibility(spr_int_life_counter, HIDDEN);
         } 
         else {
             tile_ind+=int_rod_image.tileset->numTile;
@@ -59,6 +19,7 @@ void show_interface(bool visible)
             VDP_clearPlane(WINDOW, true);
             hide_rod_icons();
             hide_pentagram_icons();
+            SPR_releaseSprite(spr_int_life_counter);
         }
     }
 }
@@ -71,6 +32,10 @@ void pause_screen(void) {
 
     VDP_setHilightShadow(true); // Dim screen
     show_interface(false); // Hide interface
+
+    if (is_combat_active==true) {
+        for (u16 numenemy=0;numenemy<MAX_ENEMIES;numenemy++) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
+    }
     
     selected_pattern=254;
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
@@ -127,6 +92,11 @@ void pause_screen(void) {
     if (num_active_patterns!=0) show_pattern_list(false, 0);
     VDP_setHilightShadow(false); // Relit screen
     show_interface(true); // Show interface again
+
+    if (is_combat_active==true) {
+        if (enemy_attacking!=ENEMY_NONE) SPR_setVisibility(spr_enemy_face[enemy_attacking], TRUE);
+    }
+
 }
 
 // Show or hide pattern list
