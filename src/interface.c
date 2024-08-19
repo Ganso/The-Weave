@@ -14,7 +14,7 @@ void show_interface(bool visible)
             SPR_setVisibility(spr_int_life_counter, HIDDEN);
         } 
         else {
-            tile_ind+=int_rod_image.tileset->numTile;
+            tile_ind-=int_rod_image.tileset->numTile;
             tile_ind-=int_pentagram_image.tileset->numTile;
             VDP_clearPlane(WINDOW, true);
             hide_rod_icons();

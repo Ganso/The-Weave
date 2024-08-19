@@ -7,19 +7,42 @@ void geesebumps_logo(void)
 
     initialize();
 
-    VDP_setBackgroundColor(15);
+    VDP_setBackgroundColor(13);
 
-    PAL_setPalette(PAL0, geesebumps_logo_bg.palette->data, DMA);
-    PAL_setPalette(PAL1, geesebumps_logo_text.palette->data, DMA);
-    PAL_setPalette(PAL2, geesebumps_logo_line1.palette->data, DMA);
-    PAL_setPalette(PAL3, geesebumps_logo_line2.palette->data, DMA);
+    PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
+    PAL_setPalette(PAL1, geesebumps_pal_white.data, DMA);
+    PAL_setPalette(PAL2, geesebumps_pal_white.data, DMA);
+    PAL_setPalette(PAL3, geesebumps_pal_white.data, DMA);
 
     VDP_drawImageEx(BG_A, &geesebumps_logo_bg, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind), 0, 0, false, true);
     tile_ind+=geesebumps_logo_bg.tileset->numTile;
 
-    logo_text = SPR_addSpriteSafe(&geesebumps_logo_text, 0, 0, TILE_ATTR(PAL1, false, false, false));
-    logo_lines1 = SPR_addSpriteSafe(&geesebumps_logo_line1, 0, 0, TILE_ATTR(PAL2, false, false, false));
-    logo_lines2 = SPR_addSpriteSafe(&geesebumps_logo_line2, 0, 0, TILE_ATTR(PAL3, false, false, false));
-    
+    logo_text = SPR_addSpriteSafe(&geesebumps_logo_text, 60, 163, TILE_ATTR(PAL1, false, false, false));
+    logo_lines1 = SPR_addSpriteSafe(&geesebumps_logo_line1, 81-180, 55, TILE_ATTR(PAL2, false, false, false));
+    logo_lines2 = SPR_addSpriteSafe(&geesebumps_logo_line2, 81-180, 84, TILE_ATTR(PAL3, false, false, false));
+    SPR_setVisibility(logo_text, HIDDEN);
     SPR_update();
+
+    PAL_fade(0, 15, geesebumps_pal_black.data, geesebumps_logo_bg.palette->data, 120, false);
+    SPR_setVisibility(logo_text, VISIBLE);
+    SPR_update();
+    PAL_fade(16, 31, geesebumps_pal_white.data, geesebumps_logo_text.palette->data, 120, false);
+
+    PAL_initFade(32, 63, geesebumps_pal_white2.data, geesebumps_pal_lines.data, 180);
+
+    for (u16 difx=180; difx>0; difx--) {
+        SPR_setPosition(logo_lines1, 81-difx, 55);
+        SPR_setPosition(logo_lines2, 81-difx, 84);
+        SPR_update();
+        PAL_doFadeStep();
+        SYS_doVBlankProcess();
+    }
+
+    waitMs(2000);
+
+    PAL_fadeOutAll(120, false);
+
+    VDP_releaseAllSprites();
+    VDP_clearPlane(BG_A, true);
+    tile_ind-=geesebumps_logo_bg.tileset->numTile;   
 }
