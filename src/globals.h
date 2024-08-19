@@ -17,6 +17,7 @@
 #include "../res/res_enemies.h"
 #include "../res/res_interface.h"
 #include "../res/res_sound.h"
+#include "../res/res_geesebumps.h"
 
 u16 tile_ind; // Tiles index
 u16 random_seed; // Random number generator seed
@@ -35,6 +36,7 @@ u16 random_seed; // Random number generator seed
 #include "enemies.h"
 #include "combat.h"
 #include "background.h"
+#include "intro.h"
 
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
