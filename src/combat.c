@@ -64,37 +64,37 @@ void show_enemy_note(u8 nnote, bool visible)
     {
     case NOTE_MI:
         rodsprite = &spr_int_enemy_rod_1;
-        rodspritedef = (SpriteDefinition*) &int_rod_1_sprite;
+        rodspritedef = (SpriteDefinition*) &int_enemy_rod_1_sprite;
         notesong = (u8*)snd_note_mi;
         rod_x = 24;
         break;
     case NOTE_FA:
         rodsprite = &spr_int_enemy_rod_2;
-        rodspritedef = (SpriteDefinition*) &int_rod_2_sprite;
+        rodspritedef = (SpriteDefinition*) &int_enemy_rod_2_sprite;
         notesong = (u8*)snd_note_fa;
         rod_x = 24 + 32;
         break;
     case NOTE_SOL:
         rodsprite = &spr_int_enemy_rod_3;
-        rodspritedef = (SpriteDefinition*) &int_rod_3_sprite;
+        rodspritedef = (SpriteDefinition*) &int_enemy_rod_3_sprite;
         notesong = (u8*)snd_note_sol;
         rod_x = 24 + 64;
         break;
     case NOTE_LA:
         rodsprite = &spr_int_enemy_rod_4;
-        rodspritedef = (SpriteDefinition*) &int_rod_4_sprite;
+        rodspritedef = (SpriteDefinition*) &int_enemy_rod_4_sprite;
         notesong = (u8*)snd_note_la;
         rod_x = 24 + 96;
         break;
     case NOTE_SI:
         rodsprite = &spr_int_enemy_rod_5;
-        rodspritedef = (SpriteDefinition*) &int_rod_5_sprite;
+        rodspritedef = (SpriteDefinition*) &int_enemy_rod_5_sprite;
         notesong = (u8*)snd_note_si;
         rod_x = 24 + 128;
         break;
     default:
         rodsprite = &spr_int_enemy_rod_6;
-        rodspritedef = (SpriteDefinition*) &int_rod_6_sprite;
+        rodspritedef = (SpriteDefinition*) &int_enemy_rod_6_sprite;
         notesong = (u8*)snd_note_do;
         rod_x = 24 + 160;
         break;
@@ -120,10 +120,8 @@ void hit_enemy(u16 nenemy)
     u16 n, alive_enemies=0;
 
     obj_enemy[nenemy].hitpoints--;
-    KDebug_Alert("Enemy hit. Hitpoints:");
-    KDebug_AlertNumber(obj_enemy[nenemy].hitpoints);
     if (obj_enemy[nenemy].hitpoints==0) { // Enemy has no more hitpoints left
-        KDebug_Alert("ENEMY DEAD");
+        SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter
         release_enemy(nenemy); // Kill him
         for (n=0;n<MAX_ENEMIES;n++) {
             if (obj_enemy[n].obj_character.active==true) {
@@ -131,9 +129,12 @@ void hit_enemy(u16 nenemy)
             }
         }
         if (alive_enemies==0) { // Everyone's dead
-            KDebug_Alert("* Everyone's dead. Ending combat.");
             start_combat(false);
         }
+    }
+    else {
+        SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints-1); // Update life counter
+        SPR_update();
     }
 }
 
@@ -173,6 +174,12 @@ void check_enemy_pattern(void)
 
     // Handle ongoing attack
     if (attack_effect_in_progress == false && enemy_attacking != ENEMY_NONE) {
+        // Show attacking enemy face (and no one else) and life counter
+        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
+        SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE);
+        SPR_setVisibility(spr_int_life_counter, VISIBLE);
+        SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints-1);
+        // Do the attack
         handle_ongoing_attack();
     }
 

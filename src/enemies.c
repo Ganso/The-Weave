@@ -11,7 +11,7 @@ void init_enemy_patterns(void)
 // initialize enemy classes
 void init_enemy_classes(void)
 {
-    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {1, {true, false}, false, NULL};
+    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, NULL};
     obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 2};
 }
 
@@ -23,6 +23,7 @@ void init_enemy(u16 numenemy, u16 class)
     u8 x_size, y_size;
     u8 collision_x_offset,collision_y_offset,collision_width,collision_height;
     const SpriteDefinition *nsprite = NULL;
+    const SpriteDefinition *nsprite_face = NULL;
  
     obj_enemy[numenemy].class=obj_enemy_class[class];
     obj_enemy[numenemy].hitpoints=obj_enemy_class[class].max_hitpoints;
@@ -37,15 +38,17 @@ void init_enemy(u16 numenemy, u16 class)
         collision_width=32;
         collision_height=2;
         nsprite = &badbobbin_sprite;
+        nsprite_face = &badbobbin_sprite_face;
         break;
     case ENEMY_CLS_3HEADMONKEY:
-        nsprite = &three_head_monkey_sprite;
         x_size = 64;
         y_size = 56;
         collision_x_offset = 20;
         collision_y_offset = 55;
         collision_width = 20;
         collision_height = 2;
+        nsprite = &three_head_monkey_sprite;
+        nsprite_face = &three_head_monkey_sprite_face;
         break;
     default:
         return;
@@ -56,10 +59,11 @@ void init_enemy(u16 numenemy, u16 class)
     spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
                                        TILE_ATTR(npal, obj_enemy[numenemy].obj_character.priority, false, obj_enemy[numenemy].obj_character.flipH));
     
-    if (spr_enemy[numenemy] != NULL) {
-        SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
-    }
+    spr_enemy_face[numenemy] = SPR_addSpriteSafe(nsprite_face, 198, 178, TILE_ATTR(npal, false, false, false));
 
+    SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
+    SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
+    
     for (i=0;i<MAX_PATTERN_ENEMY;i++) obj_enemy[numenemy].last_pattern_time[i]=0;
 }
 
@@ -71,6 +75,11 @@ void release_enemy(u16 nenemy)
     {
         SPR_releaseSprite(spr_enemy[nenemy]);
         spr_enemy[nenemy] = NULL;
+    }
+    if (spr_enemy_face[nenemy] != NULL)
+    {
+        SPR_releaseSprite(spr_enemy_face[nenemy]);
+        spr_enemy_face[nenemy] = NULL;
     }
 }
 

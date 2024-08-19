@@ -104,9 +104,9 @@ void act_1_scene_5(void)
 
     init_enemy(0,ENEMY_CLS_3HEADMONKEY);
     init_enemy(1,ENEMY_CLS_BADBOBBIN);
-    move_enemy_instant(0, -20, 176);
-    move_enemy_instant(1, 350, 136);
-    move_enemy(0, 20, 186);
+    move_enemy_instant(0, -20, 156);
+    move_enemy_instant(1, 350, 156);
+    move_enemy(0, 20, 156);
     move_enemy(1, 250, 156);
     start_combat(true);
 

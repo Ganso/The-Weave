@@ -89,6 +89,7 @@ void check_pattern(void)
             SPR_update();
         }
         if (matched_pattern==PTRN_HIDE && is_reverse_match==false) { // HIDE!!
+            show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
             play_pattern_sound(PTRN_HIDE);
             pattern_effect_in_progress=PTRN_HIDE;
             pattern_effect_time=1;
@@ -146,6 +147,7 @@ void check_pattern_effect(void)
             pattern_effect_time++;
         }
         else {
+            show_pattern_icon(PTRN_HIDE, 96, false, false); // Show appropiate icon
             show_character(active_character,true);
             pattern_effect_in_progress=PTRN_EN_NONE;
             pattern_effect_time=0;

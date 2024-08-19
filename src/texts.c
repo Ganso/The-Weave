@@ -40,7 +40,7 @@ const char **dialog[] =
     (const char *[])
     {
         "Algun tiempo despues", "Some time later", // 0 - Act 1, Seq 5, start
-        "Se acercan enemigos", "Enemies are approaching",
+        "Contraataca a los magos|Escondete de los monos", "Counterattack wizards|Hide from monkeys",
         NULL
     }
 };
