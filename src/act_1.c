@@ -3,6 +3,9 @@
 
 void act_1_scene_1(void)
 {
+    u16 ndialog;
+    const DialogItem *current_dialog;
+
     // Initialize level
     new_level(historians_bg_tile, historians_bg_map, historians_front_tile, historians_front_map, historians_pal, BG_SCRL_AUTO_LEFT, 2);
 
@@ -18,48 +21,50 @@ void act_1_scene_1(void)
     look_left(CHR_linus,true);
     show_character(CHR_clio, true);
     show_character(CHR_linus, true);
+    
+    // Dialog - Introduction
+    ndialog=0;
+    while ((current_dialog = &dialogs[ACT1_DIALOG2][ndialog])->text[game_language] != NULL) {
+        talk_dialog(current_dialog);
+        ndialog++;
+    }
 
-    // Dialog
-    talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG2, 0, 0);
-    talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG2, 1, 0);
-    move_character(CHR_linus, 200, 174);
-    talk_dialog(FACE_clio, SIDE_left, ACT1_DIALOG1, 0, 0);
-    talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 1,  0);
-    talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 2, 0);
-    talk_dialog(FACE_clio, SIDE_left, ACT1_DIALOG1, 3, 0);
-    move_character(CHR_clio, 100, 154);
-    wait_seconds(1);
-    look_left(CHR_clio, true);
-    move_character_instant(CHR_xander,-30,174);
-    show_character(CHR_xander, true);
-    move_character(CHR_xander, 40, 174);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 4, 0);
-    talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 5, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 6, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 7, 0);
-    talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 8, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 9, 0);
-    talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 10, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 11, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 12, 0);
-    talk_dialog(FACE_clio, SIDE_right, ACT1_DIALOG1, 13, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 14, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 15, 0);
-    talk_dialog(FACE_xander, SIDE_left, ACT1_DIALOG1, 16, 0);
-    talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 17, 100);
-    talk_dialog(FACE_linus, SIDE_right, ACT1_DIALOG1, 18, 0);
-    look_left(CHR_clio, false);
-    talk_dialog(FACE_clio, SIDE_left, ACT1_DIALOG1, 19, 0);
+    // Main dialog
+    ndialog = 0;
+    while ((current_dialog = &dialogs[ACT1_DIALOG1][ndialog])->text[game_language] != NULL) {
+        switch(ndialog) {
+            case 1:
+                // After Clio's first line
+                move_character(CHR_linus, 200, 174);
+                break;
+            case 4:
+                // Xander's entrance
+                move_character(CHR_clio, 100, 154);
+                wait_seconds(1);
+                look_left(CHR_clio, true);
+                move_character_instant(CHR_xander,-30,174);
+                show_character(CHR_xander, true);
+                move_character(CHR_xander, 40, 174);
+                break;
+            case 18:
+                // Before Clio's last line
+                look_left(CHR_clio, false);
+                break;
+        }
+        talk_dialog(current_dialog);
+        ndialog++;
+    }
 
     wait_seconds(2);
 
     act_1_scene_5();
 }
 
-
-
 void act_1_scene_5(void)
 {
+    u16 ndialog;
+    const DialogItem *current_dialog;
+
     // Initialize level
     new_level(weavers_bg_tile, weavers_bg_map, weavers_front_tile, weavers_front_map, weavers_pal, BG_SCRL_USER_RIGHT, 3);
     set_limits(20,70,270,108);
@@ -69,10 +74,19 @@ void act_1_scene_5(void)
     active_character=CHR_linus;
 
     // Dialog
-    talk_dialog(FACE_none, SIDE_none, ACT1_DIALOG3, 0, 0);
-    move_character_instant(CHR_linus, -20, 154);
-    move_character(CHR_linus, 30, 154);
-    talk_dialog(FACE_linus, SIDE_left, ACT1_DIALOG3, 1, 0);
+    ndialog=0;
+    while ((current_dialog = &dialogs[ACT1_DIALOG3][ndialog])->text[game_language] != NULL) {
+        switch(ndialog) {
+            case 1:
+                // Before Linus' line
+                move_character_instant(CHR_linus, -20, 154);
+                move_character(CHR_linus, 30, 154);
+                break;
+        }
+
+        talk_dialog(current_dialog);
+        ndialog++;
+    }
 
     // Show the interface and allow character to move
     player_scroll_active=true;
@@ -113,5 +127,4 @@ void act_1_scene_5(void)
     while (is_combat_active==true) {
         next_frame();
     }
-
 }
