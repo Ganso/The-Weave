@@ -14,7 +14,14 @@ u8 game_language;
 #define ACT1_DIALOG2 1
 #define ACT1_DIALOG3 2
 
+typedef struct {
+    u8 face;
+    bool side;
+    u16 max_ticks;
+    const char *text[NUM_LANGUAGES];
+} DialogItem;
+
 // Game texts
-extern const char **dialog[];
+extern const DialogItem *dialogs[];
 
 #endif

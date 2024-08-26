@@ -17,9 +17,6 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     // Divide the text in up to three lines
     split_text(text, text_line1, text_line2, text_line3);
 
-    // Define maximum ticks to wait for button
-    if (max_ticks==0) max_ticks=MAX_TALK_TIME; // If maximum time is 0, set it to the default value
-
     // Center the text in each line
     textposx_line1=8 + ((33 - strlen(text_line1)) >> 1);
     textposx_line2=8 + ((33 - strlen(text_line2)) >> 1);
@@ -98,16 +95,10 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     next_frame();
 }
 
-// Make a character talk a dialog line
-void talk_dialog(u8 nface, bool isinleft, u16 act_dialog, u16 nmessage, u16 max_ticks)
+// Talk a dialog line
+void talk_dialog(const DialogItem *dialog)
 {
-    talk(nface, isinleft, (char *)getDialog(act_dialog, nmessage, game_language), max_ticks);
-}
-
-// Get a text in a given language
-const char* getDialog(int actDialog, int message, int language)
-{
-    return dialog[actDialog][message * 2 + language];
+    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_ticks); 
 }
 
 // Split a text in up to three lines
