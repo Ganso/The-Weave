@@ -11,10 +11,10 @@ void update_bg(void)
 }
 
 // Set background limits
-void set_limits(u16 x1, u16 y1, u16 x2, u16 y2)
+void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max)
 {
-    x_limit_min=x1;
-    y_limit_min=y1;
-    x_limit_max=x2;
-    y_limit_max=y2;
+    x_limit_min=x_min;
+    y_limit_min=y_min;
+    x_limit_max=x_max;
+    y_limit_max=y_max;
 }

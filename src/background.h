@@ -24,6 +24,6 @@ u16 y_limit_max; // Maximum y position
 
 
 void update_bg(void); // Update background
-void set_limits(u16 x1, u16 y1, u16 x2, u16 y2); // Set background limits
+void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max); // Set background limits
 
 #endif
