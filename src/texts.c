@@ -5,6 +5,16 @@
 #define SIDE_RIGHT false
 
 const DialogItem act1_dialog1[] = {
+    {FACE_none, SIDE_LEFT, MAX_TALK_TIME, 
+        {"Gremio de los historiadores|A^o 8121", 
+         "Historians guild|Year 8121"}},
+    {FACE_none, SIDE_LEFT, MAX_TALK_TIME, 
+        {"Lunes|Primera hora de la ma^ana", 
+         "Monday|Early morning"}},
+    {0, false, MAX_TALK_TIME, {NULL, NULL}} // Terminator
+};
+
+const DialogItem act1_dialog2[] = {
     {FACE_clio, SIDE_LEFT, MAX_TALK_TIME, 
         {"Es tarde, Linus|Y uno no debe llegar tarde|a su cumplea^os", 
          "It's late, Linus|And you shouldn't be late|at your birthday"}},
@@ -65,16 +75,6 @@ const DialogItem act1_dialog1[] = {
     {FACE_clio, SIDE_LEFT, MAX_TALK_TIME, 
         {"Si Xander lo quiere,|asi sera|Pero no iras solo", 
          "If Xander wants it that way,|so it will be|But you'll not go alone"}},
-    {0, false, MAX_TALK_TIME, {NULL, NULL}} // Terminator
-};
-
-const DialogItem act1_dialog2[] = {
-    {FACE_none, SIDE_LEFT, MAX_TALK_TIME, 
-        {"Gremio de los historiadores|A^o 8121", 
-         "Historians guild|Year 8121"}},
-    {FACE_none, SIDE_LEFT, MAX_TALK_TIME, 
-        {"Lunes|Primera hora de la ma^ana", 
-         "Monday|Early morning"}},
     {0, false, MAX_TALK_TIME, {NULL, NULL}} // Terminator
 };
 

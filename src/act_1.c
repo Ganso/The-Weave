@@ -24,14 +24,14 @@ void act_1_scene_1(void)
     
     // Dialog - Introduction
     ndialog=0;
-    while ((current_dialog = &dialogs[ACT1_DIALOG2][ndialog])->text[game_language] != NULL) {
+    while ((current_dialog = &dialogs[ACT1_DIALOG1][ndialog])->text[game_language] != NULL) {
         talk_dialog(current_dialog);
         ndialog++;
     }
 
     // Main dialog
     ndialog = 0;
-    while ((current_dialog = &dialogs[ACT1_DIALOG1][ndialog])->text[game_language] != NULL) {
+    while ((current_dialog = &dialogs[ACT1_DIALOG2][ndialog])->text[game_language] != NULL) {
         switch(ndialog) {
             case 1:
                 // After Clio's first line
