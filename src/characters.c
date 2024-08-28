@@ -2,7 +2,7 @@
 #include "globals.h"
 
 // Initialize a character
-void init_character(u8 nchar)
+void init_character(u16 nchar)
 {
     u8 npal = PAL1;
     u8 x_size = 48;
@@ -44,7 +44,7 @@ void init_character(u8 nchar)
 }
 
 // Release a character from memory (Just the sprite, keep the Entity)
-void release_character(u8 nchar)
+void release_character(u16 nchar)
 {
     obj_character[nchar].active = false;
     if (spr_chr[nchar] != NULL)
@@ -55,7 +55,7 @@ void release_character(u8 nchar)
 }
 
 // Initialize a face
-void init_face(u8 nface)
+void init_face(u16 nface)
 {
     u8 npal = PAL1;
     const SpriteDefinition *nsprite = NULL;
@@ -91,7 +91,7 @@ void init_face(u8 nface)
 }
 
 // Release a face from memory (Just the sprite, keep the Entity)
-void release_face(u8 nface)
+void release_face(u16 nface)
 {
     obj_face[nface].active = false;
     if (spr_face[nface] != NULL)
@@ -102,7 +102,7 @@ void release_face(u8 nface)
 }
 
 // Update a character based on every parameter
-void update_character(u8 nchar)
+void update_character(u16 nchar)
 {
     SPR_setPosition(spr_chr[nchar],obj_character[nchar].x,obj_character[nchar].y);
     SPR_setPriority(spr_chr[nchar],obj_character[nchar].priority);
@@ -112,7 +112,7 @@ void update_character(u8 nchar)
 }
 
 // Show or hide a character
-void show_character(u8 nchar, bool show)
+void show_character(u16 nchar, bool show)
 {
     obj_character[nchar].visible=show;
     SPR_setVisibility(spr_chr[nchar],show?VISIBLE:HIDDEN);
@@ -120,7 +120,7 @@ void show_character(u8 nchar, bool show)
 }
 
 // Change a character's animation
-void anim_character(u8 nchar, u8 newanimation)
+void anim_character(u16 nchar, u8 newanimation)
 {
     if (obj_character[nchar].animation!=newanimation) {
         obj_character[nchar].animation=newanimation;
@@ -129,7 +129,7 @@ void anim_character(u8 nchar, u8 newanimation)
 }
 
 // Make a character look to the left (or right)
-void look_left(u8 nchar, bool direction_right)
+void look_left(u16 nchar, bool direction_right)
 {
     obj_character[nchar].flipH=direction_right;
     SPR_setHFlip (spr_chr[nchar], direction_right);
@@ -137,7 +137,7 @@ void look_left(u8 nchar, bool direction_right)
 }
 
 // Move a character to a new position
-void move_character(u8 nchar, s16 newx, s16 newy)
+void move_character(u16 nchar, s16 newx, s16 newy)
 {
     show_character(nchar, true);
     anim_character(nchar, ANIM_WALK);
@@ -156,7 +156,7 @@ void move_character(u8 nchar, s16 newx, s16 newy)
 }
 
 // Move a character to a new position (instantly)
-void move_character_instant(u8 nchar,s16 x,s16 y)
+void move_character_instant(u16 nchar,s16 x,s16 y)
 {
     y-=obj_character[nchar].y_size; // Now all calculations are relative to the bottom line, not the upper one
 
@@ -169,7 +169,7 @@ void move_character_instant(u8 nchar,s16 x,s16 y)
 // Update characters and enemies depth
 void update_sprites_depth(void)
 {
-    u8 i;
+    u16 i;
 
     // Update character depth
     for (i = 0; i < MAX_CHR; i++) {
