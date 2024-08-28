@@ -23,20 +23,22 @@ u16 tile_ind; // Tiles index
 u16 random_seed; // Random number generator seed
 
 // Game libraries
-#include "entity.h"
-#include "texts.h"
-#include "init.h"
-#include "act_1.h"
-#include "dialogs.h"
-#include "texts.h"
-#include "characters.h"
-#include "controller.h"
-#include "interface.h"
-#include "patterns.h"
-#include "enemies.h"
-#include "combat.h"
-#include "background.h"
-#include "intro.h"
+#include "entity.h" // Every object in the game that has a sprite you can show, move...
+#include "characters.h" // Characters that can talk, or you can control
+#include "enemies.h" // Enemies you fight
+#include "items.h" // Items in the scenery
+#include "texts.h" // Text strings (English / Spanish)
+#include "dialogs.h" // Dialog and text related functions
+#include "controller.h" // Controller related functions
+#include "interface.h" // Game interface
+#include "patterns.h" // Paterns the player can play and use
+#include "combat.h" // Combat related functions (including patterns enemy can use)
+#include "background.h" // Background and scenery related objects and functions
+
+// Main game libraries
+#include "init.h" // Initialization functions
+#include "intro.h" // Game intro
+#include "act_1.h" // Act 1
 
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
