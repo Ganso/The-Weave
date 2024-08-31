@@ -24,7 +24,7 @@ void joy_check(void)
                             offset_BGA--;
                             offset_BGB=offset_BGA>>scroll_speed;
                             MAP_scrollTo(background_BGA, offset_BGA, 0);
-                            MAP_scrollTo(background_BGB, offset_BGB, 0);
+                            if (background_BGB!=NULL) MAP_scrollTo(background_BGB, offset_BGB, 0);
                             moved=true;
                         }
                     }
@@ -43,7 +43,7 @@ void joy_check(void)
                             offset_BGA++;
                             offset_BGB=offset_BGA>>scroll_speed;
                             MAP_scrollTo(background_BGA, offset_BGA, 0);
-                            MAP_scrollTo(background_BGB, offset_BGB, 0);
+                            if (background_BGB!=NULL) MAP_scrollTo(background_BGB, offset_BGB, 0);
                             moved=true;
                         }
                     }

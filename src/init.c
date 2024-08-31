@@ -29,7 +29,7 @@ void initialize(void)
     tile_ind = TILE_USER_INDEX;
 
     // Default language
-    game_language=LANG_ENGLISH;
+    game_language=LANG_SPANISH;
 
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);
@@ -74,17 +74,23 @@ void initialize(void)
 }
 
 // initialize level and load background
-void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDefinition map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed)
+void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed)
 {
     initialize();
     
-    VDP_loadTileSet(&tile_bg, tile_ind, DMA);
-    background_BGB = MAP_create(&map_bg, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
-    tile_ind += tile_bg.numTile;
+    // Tile_bg and Map_bg are the background layer. They can be NULL
+    if ((tile_bg!=NULL) && (map_bg!=NULL)) {
+        VDP_loadTileSet(tile_bg, tile_ind, DMA);
+        background_BGB = MAP_create(map_bg, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+        tile_ind += tile_bg->numTile;
+    }
+    else background_BGB=NULL;
 
-    VDP_loadTileSet(&tile_front, tile_ind, DMA);
-    background_BGA = MAP_create(&map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
-    tile_ind += tile_front.numTile;
+
+    // Tile_front and Map_front are the foreground layer. Thay can't be NULL.
+    VDP_loadTileSet(tile_front, tile_ind, DMA);
+    background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    tile_ind += tile_front->numTile;
 
     background_scroll_mode=new_scroll_mode;
     scroll_speed=new_scroll_speed;
@@ -92,7 +98,7 @@ void new_level(TileSet tile_bg, MapDefinition map_bg, TileSet tile_front, MapDef
     PAL_setPalette(PAL0, new_pal.data, DMA);
 
     MAP_scrollTo(background_BGA, 0, 0);
-    MAP_scrollTo(background_BGB, 0, 0);
+    if (background_BGB!=NULL) MAP_scrollTo(background_BGB, 0, 0);
 
     interface_active=false; // No interface by default
     player_scroll_active=false; // You can scroll the screen by default

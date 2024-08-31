@@ -11,9 +11,9 @@ u32 offset_BGB;
 u8 background_scroll_mode; // Scroll modes (BG_SCRL_*)
 u8 scroll_speed; // Scroll speed (each mode uses it in a way)
 bool player_scroll_active; // Can you scroll ?
-#define BG_SCRL_AUTO_RIGHT   0  // auto mode (updated every frame)
-#define BG_SCRL_AUTO_LEFT    1  // no use
-#define BG_SCRL_USER_RIGHT   10 // user mode (updated on character walk)
+#define BG_SCRL_AUTO_RIGHT   00  // auto mode (updated every frame)
+#define BG_SCRL_AUTO_LEFT    01  // no use
+#define BG_SCRL_USER_RIGHT   10 // user mode (updated on character walk) - scroll to the right
 #define BG_SCRL_USER_LEFT    11 // no use
 
 // Screen limits
