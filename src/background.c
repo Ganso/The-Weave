@@ -5,8 +5,10 @@
 void update_bg(void)
 {
     if (background_scroll_mode==BG_SCRL_AUTO_LEFT) {
-        MAP_scrollTo(background_BGB, offset_BGB>>scroll_speed, 0);
-        offset_BGB++;
+        if (background_BGB!=NULL) {
+            MAP_scrollTo(background_BGB, offset_BGB>>scroll_speed, 0);
+            offset_BGB++;
+        }
     }
 }
 

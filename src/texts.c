@@ -64,7 +64,7 @@ const DialogItem act1_dialog2[] = {
         {"Y la edad de su padre cuando|llego aqui", 
          "And his father's age when|he came to us"}},
     {FACE_xander, SIDE_LEFT, MAX_TALK_TIME, 
-        {"Un ano antes de que|le acogieramos|como uno de los nuestros", 
+        {"Un a^o antes de que|le acogieramos|como uno de los nuestros", 
          "A year before we|took him as one of ours"}},
     {FACE_linus, SIDE_RIGHT, MAX_TALK_TIME, 
         {"Pero...", 
