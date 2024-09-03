@@ -4,8 +4,8 @@
 void act_1_scene_1(void)
 {
     // Initialize level
-    new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, BG_SCRL_USER_RIGHT, 0);
-    set_limits(0,70,574,108);
+    new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, BG_SCRL_USER_LEFT, 0);
+    set_limits(0,131,574,175);
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
@@ -87,7 +87,7 @@ void act_1_scene_5(void)
 
     // Initialize level
     new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, BG_SCRL_USER_RIGHT, 3);
-    set_limits(20,70,270,108);
+    set_limits(20,134,270,172);
 
     // Initialize characters
     init_character(CHR_linus);
