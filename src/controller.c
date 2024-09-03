@@ -71,6 +71,7 @@ void handle_character_movement(s16 dx, s16 dy)
     // Calculate the new position
     s16 new_x = obj_character[active_character].x + dx;
     s16 new_y = obj_character[active_character].y + dy;
+    u8 player_y_size = obj_character[active_character].y_size;
 
     // Check for collision at the new position
     if (detect_char_collision(active_character, new_x, new_y) != ENEMY_NONE) {
@@ -87,7 +88,7 @@ void handle_character_movement(s16 dx, s16 dy)
     }
 
     // Handle vertical movement
-    if (dy != 0 && new_y >= y_limit_min && new_y <= y_limit_max) {
+    if (dy != 0 && new_y+player_y_size >= y_limit_min && new_y+player_y_size <= y_limit_max) {
         obj_character[active_character].y = new_y;
     }
 }
