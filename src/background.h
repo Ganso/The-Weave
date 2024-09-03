@@ -25,5 +25,6 @@ u16 y_limit_max; // Maximum y position
 
 void update_bg(void); // Update background
 void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max); // Set background limits
+void scroll_background(s16 dx); // Scroll the background if the character is at the screen edge
 
 #endif
