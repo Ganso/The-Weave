@@ -59,15 +59,12 @@ void handle_movement(u16 joy_value)
     update_character_animation(moved);
 }
 
-/**
- * Move the character if there's no collision and it's within the screen limits.
- * This function also handles background scrolling if the character is at the screen edge.
- * 
- * @param dx Horizontal movement (-1 for left, 1 for right, 0 for no horizontal movement)
- * @param dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
- */
+// Move the character if there's no collision and it's within the screen limits. This function also handles background scrolling if the character is at the screen edge.
 void handle_character_movement(s16 dx, s16 dy)
 {
+    // dx Horizontal movement (-1 for left, 1 for right, 0 for no horizontal movement)
+    // dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
+
     // Calculate the new position
     s16 new_x = obj_character[active_character].x + dx;
     s16 new_y = obj_character[active_character].y + dy;
@@ -79,16 +76,19 @@ void handle_character_movement(s16 dx, s16 dy)
     }
 
     // Handle horizontal movement
-    if (dx != 0 && new_x >= x_limit_min && new_x <= x_limit_max) {
-        obj_character[active_character].x = new_x;
-        obj_character[active_character].flipH = (dx < 0); // Flip character sprite if moving left
-    } else if (dx != 0) {
-        // Character is at screen edge, scroll background instead
-        scroll_background(dx);
+    if (dx != 0) {
+        if ( (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) && (new_x < x_limit_min || new_x > x_limit_max) ) { // Player is trying to move outside screen boundaries, and scroll mode is user dependant
+            scroll_background(dx); // Try to scroll
+        }
+        else if (new_x >= x_limit_min && new_x <= x_limit_max) { // In any other circunstance, if new x is between x_limit_min and x_limit_max, update x in object
+            obj_character[active_character].x = new_x;
+            obj_character[active_character].flipH = (dx < 0); // Flip character sprite if moving left
+        }
+        // If new_x is outside boundaries and not in scrolling mode, do nothing
     }
 
     // Handle vertical movement
-    if (dy != 0 && new_y+player_y_size >= y_limit_min && new_y+player_y_size <= y_limit_max) {
+    if (dy != 0 && new_y + player_y_size >= y_limit_min && new_y + player_y_size <= y_limit_max) {
         obj_character[active_character].y = new_y;
     }
 }

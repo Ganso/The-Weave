@@ -74,7 +74,7 @@ void initialize(void)
 }
 
 // initialize level and load background
-void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u8 new_scroll_mode, u8 new_scroll_speed)
+void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u16 new_background_width, u8 new_scroll_mode, u8 new_scroll_speed)
 {
     initialize();
     
@@ -86,23 +86,27 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     }
     else background_BGB=NULL;
 
-
     // Tile_front and Map_front are the foreground layer. Thay can't be NULL.
     VDP_loadTileSet(tile_front, tile_ind, DMA);
     background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += tile_front->numTile;
 
-    background_scroll_mode=new_scroll_mode;
-    scroll_speed=new_scroll_speed;
-
     PAL_setPalette(PAL0, new_pal.data, DMA);
 
-    MAP_scrollTo(background_BGA, 0, 0);
-    if (background_BGB!=NULL) MAP_scrollTo(background_BGB, 0, 0);
+    background_scroll_mode=new_scroll_mode;
+    scroll_speed=new_scroll_speed;
+    background_width=new_background_width;
+
+    offset_BGA=0;
+    offset_BGB=0;
+
+    if (background_scroll_mode==BG_SCRL_USER_LEFT) { // We should start at the rightmost edge of the screen
+        offset_BGA=background_width-SCREEN_WIDTH;
+    }
 
     interface_active=false; // No interface by default
     player_scroll_active=false; // You can scroll the screen by default
     movement_active=false; // You can't move by default
 
-    update_bg();
+    update_bg(false);
 }

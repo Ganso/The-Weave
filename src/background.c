@@ -2,12 +2,23 @@
 #include "globals.h"
 
 // Update_background
-void update_bg(void)
+void update_bg(bool player_moved)
 {
-    if (background_scroll_mode==BG_SCRL_AUTO_LEFT) {
-        if (background_BGB!=NULL) {
-            MAP_scrollTo(background_BGB, offset_BGB>>scroll_speed, 0);
-            offset_BGB++;
+    // Front background layer
+    if (player_moved) MAP_scrollTo(background_BGA, offset_BGA, 0); // Scroll background A
+
+    // Back background layer
+    if (background_BGB!=NULL) {
+        if (background_scroll_mode==BG_SCRL_USER_LEFT || background_scroll_mode==BG_SCRL_USER_RIGHT) {
+            if (player_moved) {
+                offset_BGB = offset_BGA >> scroll_speed; // Scroll by user movement
+                MAP_scrollTo(background_BGB, offset_BGB, 0); // Scroll background B
+            }
+        }
+        else { // Auto scroll
+            if (background_scroll_mode==BG_SCRL_AUTO_LEFT) offset_BGB++;
+            else offset_BGB--;
+            MAP_scrollTo(background_BGB, offset_BGB >> scroll_speed, 0); // Scroll background B
         }
     }
 }
@@ -21,22 +32,14 @@ void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max)
     y_limit_max=y_max;
 }
 
-/**
- * Scroll the background if the character is at the screen edge.
- * This function is called when the character can't move but the background can scroll.
- * 
- * @param dx The direction to scroll (-1 for left, 1 for right)
- */
+// Scroll the background if the character is at the screen edge. This function is called when the character can't move but the background can scroll.
 void scroll_background(s16 dx)
 {
-    if (background_scroll_mode == BG_SCRL_USER_RIGHT && player_scroll_active) {
-        // Only scroll if moving right, or moving left and not at the left edge
-        if ((dx < 0 && offset_BGA > 0) || dx > 0) {
-            offset_BGA += dx;
-            offset_BGB = offset_BGA >> scroll_speed; // Parallax scrolling for background B
-            MAP_scrollTo(background_BGA, offset_BGA, 0);
-            if (background_BGB != NULL) {
-                MAP_scrollTo(background_BGB, offset_BGB, 0);
+    if (player_scroll_active) { // Can player scroll?
+        if (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) { // Scrolling mode is user dependant ?
+            if (offset_BGA+dx>0 && offset_BGA+dx<background_width-SCREEN_WIDTH) { // New scroll offset is inside background width boundries?
+                offset_BGA+=dx; // Change offste
+                update_bg(true);
             }
         }
     }
