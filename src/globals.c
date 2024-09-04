@@ -31,7 +31,7 @@ void next_frame(void)
     }
 
     // Screen related actions
-    update_bg();
+    update_bg(true); // First time we print the background, assume the player moved so it's fully painted
 
     // Sprites related actions
     update_sprites_depth();

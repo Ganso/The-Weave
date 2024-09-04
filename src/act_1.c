@@ -4,13 +4,13 @@
 void act_1_scene_1(void)
 {
     // Initialize level
-    new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, BG_SCRL_USER_LEFT, 0);
-    set_limits(0,131,574,175);
+    new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 576, BG_SCRL_USER_LEFT, 0);
+    set_limits(0,131,305,175);
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
-    move_character_instant(CHR_linus, -20, 154);
-    move_character(CHR_linus, 30, 154);
+    move_character_instant(CHR_linus, 340, 154);
+    move_character(CHR_linus, 275, 154);
 
     // You can move
     player_scroll_active=true;
@@ -27,7 +27,7 @@ void act_1_scene_2(void)
     const DialogItem *current_dialog;
 
     // Initialize level
-    new_level(&historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, historians_pal, BG_SCRL_AUTO_LEFT, 2);
+    new_level(&historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, historians_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 2);
     
     // Initialize characters and dialog faces
     init_character(CHR_linus);
@@ -86,8 +86,8 @@ void act_1_scene_5(void)
     const DialogItem *current_dialog;
 
     // Initialize level
-    new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, BG_SCRL_USER_RIGHT, 3);
-    set_limits(20,134,270,172);
+    new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, 1000, BG_SCRL_USER_RIGHT, 3);
+    set_limits(0,134,270,172);
 
     // Initialize characters
     init_character(CHR_linus);

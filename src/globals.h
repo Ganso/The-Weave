@@ -40,6 +40,11 @@ u16 random_seed; // Random number generator seed
 #include "intro.h" // Game intro
 #include "act_1.h" // Act 1
 
+// Global definitions
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 224
+#define SCREEN_FPS 60
+
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
 void next_frame(void); // Wait for next frame and do each-frame actions
