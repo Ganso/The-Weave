@@ -15,12 +15,13 @@
 #include "../res/res_characters.h"
 #include "../res/res_faces.h"
 #include "../res/res_enemies.h"
+#include "../res/res_items.h"
 #include "../res/res_interface.h"
 #include "../res/res_sound.h"
 #include "../res/res_geesebumps.h"
 
 u16 tile_ind; // Tiles index
-u16 random_seed; // Random number generator seed
+u16 frame_counter; // Number of frames counter (random number generator, and frameskip counter in some functions)
 
 // Game libraries
 #include "entity.h" // Every object in the game that has a sprite you can show, move...

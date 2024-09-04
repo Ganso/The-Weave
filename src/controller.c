@@ -71,7 +71,7 @@ void handle_character_movement(s16 dx, s16 dy)
     u8 player_y_size = obj_character[active_character].y_size;
 
     // Check for collision at the new position
-    if (detect_char_collision(active_character, new_x, new_y) != ENEMY_NONE) {
+    if ((detect_char_enemy_collision(active_character, new_x, new_y) != ENEMY_NONE) || (detect_char_item_collision(active_character, new_x, new_y) != ITEM_NONE)) {
         return; // Collision detected, don't move
     }
 

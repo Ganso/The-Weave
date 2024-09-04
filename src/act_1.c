@@ -5,10 +5,16 @@ void act_1_scene_1(void)
 {
     // Initialize level
     new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 576, BG_SCRL_USER_LEFT, 0);
-    set_limits(0,131,305,175);
+    set_limits(0,131,305,170);
+
+    // Initialize items
+    init_item(0, &item_bookpedestal_sprite, PAL0, 400, 90, 0, 0, 8, 58);
+    init_item(1, &item_bookpedestal_sprite, PAL0, 200, 90, 0, 0, 8, 58);
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
+
+    // Put character in screen
     move_character_instant(CHR_linus, 340, 154);
     move_character(CHR_linus, 275, 154);
 
