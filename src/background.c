@@ -37,10 +37,22 @@ void scroll_background(s16 dx)
 {
     if (player_scroll_active) { // Can player scroll?
         if (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) { // Scrolling mode is user dependant ?
-            if (offset_BGA+dx>0 && offset_BGA+dx<background_width-SCREEN_WIDTH) { // New scroll offset is inside background width boundries?
+            if (offset_BGA+dx>0 && (offset_BGA+dx)<(background_width-SCREEN_WIDTH)) { // New scroll offset is inside background width boundries?
                 offset_BGA+=dx; // Change offste
                 update_bg(true);
             }
         }
     }
+}
+
+// Get screen X coordinate from background X coordinate
+u16 get_x_in_screen(u16 x_in_background, u8 width)
+{
+    s16 x_in_screen = x_in_background - offset_BGA;
+    
+    if (x_in_screen < -width || x_in_screen >= SCREEN_WIDTH) {
+        return X_OUT_OF_BOUNDS;
+    }
+    
+    return (u16)x_in_screen;
 }

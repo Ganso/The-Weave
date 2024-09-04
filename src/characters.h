@@ -48,7 +48,6 @@ void anim_character(u16 nchar, u8 newanimation); // Change a character's animati
 void look_left(u16 nchar, bool left); // Make a character look to the left (or right)
 void move_character(u16 nchar, s16 x, s16 y); // Move a character to a new position
 void move_character_instant(u16 nchar, s16 x, s16 y); // Move a character to a new position (instantly)
-void update_sprites_depth(void); // Update characters and enemies depth
-u16 detect_char_collision(u16 nchar, u16 x, u8 y); // Detect collisons between a character in every enemy, given some new coordinates
+void update_sprites_depth(void); // Update characters, items and enemies depth
 
 #endif

@@ -37,8 +37,11 @@ void next_frame(void)
     update_sprites_depth();
     SPR_update();
 
-    // Create a random seed depending of the number of frames
-    random_seed++;
+    // Items related actions
+     check_items_visibility();
+
+    // Create an RNG seed depending of the number of frames
+    frame_counter++;
 
     // Wait for next frame
     SYS_doVBlankProcess();

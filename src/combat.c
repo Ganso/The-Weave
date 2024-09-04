@@ -7,7 +7,7 @@ void start_combat(bool start)
     u8 numenemy,npattern;
 
     if (start==true) { // Combat start
-        setRandomSeed(random_seed); // Initialize RNG
+        setRandomSeed(frame_counter); // Initialize RNG
         is_combat_active=true;
         player_scroll_active=false; // Disable player scroll - Screen is fixed
         // Enemies
@@ -142,7 +142,6 @@ void hit_enemy(u16 nenemy)
 void hit_caracter(u16 nchar)
 {
     XGM2_playPCM(snd_player_hurt,sizeof(snd_player_hurt),SOUND_PCM_CH_AUTO);
-    KDebug_Alert("Player hit.");
 }
 
 // Check if an enemy is going to launch a pattern
@@ -309,7 +308,7 @@ void launch_electric_pattern(void) {
 }
 
 void do_electric_pattern_effect(void) {
-    if (random_seed % 2 == 0) VDP_setHilightShadow(true); // Thunder effect
+    if (frame_counter % 2 == 0) VDP_setHilightShadow(true); // Thunder effect
     else VDP_setHilightShadow(false);
 
     if (pattern_effect_in_progress == PTRN_ELECTRIC && pattern_effect_reversed == true) { // If player lauches a reversed thunder spell
