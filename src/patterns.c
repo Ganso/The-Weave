@@ -103,7 +103,7 @@ void check_pattern(void)
     }
     num_played_notes=0;
     time_since_last_note=0;
-    next_frame();
+    next_frame(false);
 }
 
 // Play the sound of a pattern spell

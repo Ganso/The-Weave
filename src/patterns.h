@@ -13,6 +13,8 @@
 #define MAX_NOTE_PLAYING_TIME  30  // Note playing time (30 ticks, 0.5 seconds)
 #define MAX_PATTERN_WAIT_TIME 120   // Time to wait for a next note before cancelling the pattern (120 ticks, 2 seconds)
 
+bool patterns_enabled; // Can the character play a pattern right now?
+
 u8 note_playing; // The note the player is playing
 u16 note_playing_time; // How long has the note been played (in ticks)
 u16 time_since_last_note; // How long are we waiting for the pattern to finish

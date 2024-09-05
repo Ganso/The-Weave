@@ -150,7 +150,7 @@ void move_enemy_instant(u16 nenemy, s16 x, s16 y)
     SPR_setPosition(spr_enemy[nenemy], x, y);
     obj_enemy[nenemy].obj_character.x = x;
     obj_enemy[nenemy].obj_character.y = y;
-    next_frame();
+    next_frame(false);
 }
 
 // Detect collisons between a character in every enemy, given some new coordinates

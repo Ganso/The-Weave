@@ -60,14 +60,14 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     print_line(text_line3, textposx_line3, 25);
     SPR_setVisibility (spr_int_button_A, VISIBLE);
     SPR_setPosition (spr_int_button_A, buttonposx, 208);
-    next_frame();
+    next_frame(false);
 
     // Wait for time or button A
     num_ticks=0;
     joy_state=JOY_readJoypad (JOY_ALL);
     while (num_ticks<max_ticks && ((joy_state & BUTTON_A)==0))
     {
-        next_frame();
+        next_frame(false);
         joy_state=JOY_readJoypad (JOY_ALL);
         num_ticks++;
     }
@@ -77,7 +77,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     while (joy_state & BUTTON_A)
     {
         joy_state=JOY_readJoypad (JOY_ALL);
-        next_frame();
+        next_frame(false);
     }
 
     // Hide everything
@@ -92,7 +92,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
     // Release the face from memory
     if (nface!=FACE_none) release_face(nface);
 
-    next_frame();
+    next_frame(false);
 }
 
 // Talk a dialog line
@@ -137,13 +137,13 @@ void print_line(char *text, u16 x, u16 y)
         temp[0] = text[i];
         VDP_drawTextBG(WINDOW, temp, x + i, y);
         joy_state=JOY_readJoypad (JOY_ALL);
-        if ((joy_state & BUTTON_A)==0) next_frame(); // Is button A is being pressed, skip frame update
+        if ((joy_state & BUTTON_A)==0) next_frame(false); // Is button A is being pressed, skip frame update
         i++;
     }
     joy_state=JOY_readJoypad (JOY_ALL);
     while ((joy_state & BUTTON_A)!=0)
     {
         joy_state=JOY_readJoypad (JOY_ALL);
-        next_frame(); // Is button A is being pressed, wait until release
+        next_frame(false); // Is button A is being pressed, wait until release
     }
 }

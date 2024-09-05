@@ -116,14 +116,25 @@ void update_character_animation(bool moved)
  */
 void handle_action_buttons(u16 joy_value)
 {
-    if (joy_value & BUTTON_A) play_note(NOTE_MI);
-    if (joy_value & BUTTON_B) play_note(NOTE_FA);
-    if (joy_value & BUTTON_C) play_note(NOTE_SOL);
-    if (joy_value & BUTTON_X) play_note(NOTE_LA);
-    if (joy_value & BUTTON_Y) play_note(NOTE_SI);
-    if (joy_value & BUTTON_Z) play_note(NOTE_DO);
+    if (movement_active) {
+        if (joy_value & BUTTON_A) { // Detect if the player is interacting with an item
+            u16 nitem=detect_nearby_item();
+            if (nitem!=ITEM_NONE) {
+                pending_item_interaction=nitem;
+                return;
+            }
+        }
+    }
 
-    update_action_animation();
+    if (patterns_enabled) { // Detect if player is trying to play a note
+        if (joy_value & BUTTON_A) play_note(NOTE_MI);
+        if (joy_value & BUTTON_B) play_note(NOTE_FA);
+        if (joy_value & BUTTON_C) play_note(NOTE_SOL);
+        if (joy_value & BUTTON_X) play_note(NOTE_LA);
+        if (joy_value & BUTTON_Y) play_note(NOTE_SI);
+        if (joy_value & BUTTON_Z) play_note(NOTE_DO);
+        update_action_animation();
+    }
 }
 
 /**

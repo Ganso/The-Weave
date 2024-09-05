@@ -46,7 +46,7 @@ void geesebumps_logo(void)
     }
 
     // Pause and fade out
-    waitMs(2000);
+    waitMs(4000);
     PAL_fadeOutAll(120, false);
 
     // Release everything

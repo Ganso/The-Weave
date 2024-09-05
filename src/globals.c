@@ -5,29 +5,31 @@
 void wait_seconds(int sec)
 {
     u16 num_ticks=0;
-    u16 max_ticks=sec*60; // Ticks (at 60fps)
+    u16 max_ticks=sec*SCREEN_FPS; // Ticks
     while (num_ticks<max_ticks)
     {
-        next_frame();
+        next_frame(false);
         num_ticks++;
     }
 
 }
 
-// Wait for next frame and do each-frame actions
-void next_frame(void)
+// Wait for next frame and do each-frame actions, including interactive actions if selected
+void next_frame(bool interactive)
 {
-    // Check controller
-    if (movement_active==true) joy_check();
+    if (interactive==true) {
+        // Check controller
+        if (movement_active==true) joy_check();
 
-    // Pattern related actions 
-    check_note();
-    check_pattern_effect();
+        // Pattern related actions 
+        check_note();
+        check_pattern_effect();
 
-    // Combat related actions
-    if (is_combat_active==true) {
-        check_enemy_pattern();
-        approach_enemies();
+        // Combat related actions
+        if (is_combat_active==true) {
+            check_enemy_pattern();
+            approach_enemies();
+        }
     }
 
     // Screen related actions
@@ -38,7 +40,7 @@ void next_frame(void)
     SPR_update();
 
     // Items related actions
-     check_items_visibility();
+    check_items_visibility();
 
     // Create an RNG seed depending of the number of frames
     frame_counter++;

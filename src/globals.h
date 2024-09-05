@@ -48,6 +48,6 @@ u16 frame_counter; // Number of frames counter (random number generator, and fra
 
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
-void next_frame(void); // Wait for next frame and do each-frame actions
+void next_frame(bool interactive); // Wait for next frame and do each-frame actions, including interactive actions if selected
 
 #endif

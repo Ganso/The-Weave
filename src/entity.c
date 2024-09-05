@@ -23,7 +23,7 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
         SPR_setPosition(sprite, x, y);
         entity->x = x;
         entity->y = y;
-        next_frame();
+        next_frame(false);
 
         if (x == newx && y == newy) break;
 
