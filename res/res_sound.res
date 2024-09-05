@@ -1,3 +1,5 @@
+XGM music_intro "Sound/Music/intro.vgm"
+
 XGM snd_note_mi "Sound/Player/mi.vgm"
 XGM snd_note_fa "Sound/Player/fa.vgm"
 XGM snd_note_sol "Sound/Player/sol.vgm"
