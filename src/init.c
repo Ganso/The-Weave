@@ -22,14 +22,15 @@ void initialize(void)
     VDP_setScreenWidth320();
     VDP_setScreenHeight224();
 
-    // Load font
+    // Load font and set text palette
     VDP_loadFont(font.tileset, DMA);
+    VDP_setTextPalette(PAL2);
 
     // Initialize globals
     tile_ind = TILE_USER_INDEX;
 
     // Default language
-    game_language=LANG_SPANISH;
+    game_language=LANG_ENGLISH;
 
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);
@@ -52,7 +53,8 @@ void initialize(void)
     spr_int_button_A = SPR_addSpriteSafe (&int_button_A_sprite, 0, 0, TILE_ATTR(PAL2, false, false, false));
     SPR_setVisibility (spr_int_button_A, HIDDEN);
 
-    // Notes and patterns;
+    // Notes and patterns
+    patterns_enabled=false;
     note_playing=0;
     note_playing_time=0;
     num_played_notes=0;
@@ -67,10 +69,22 @@ void initialize(void)
     init_enemy_patterns();
     is_combat_active=false;
 
-    // Mark all entities as inactive
-    for (i=0;i<MAX_CHR;i++) obj_character[i].active=false;
-    for (i=0;i<MAX_FACE;i++) obj_face[i].active=false;
-    for (i=0;i<MAX_ENEMIES;i++) obj_enemy[i].obj_character.active=false;
+    // Items
+    pending_item_interaction=ITEM_NONE;
+
+    // Release active character, faces, enemies and items
+    for (i=0;i<MAX_CHR;i++) {
+        if (obj_character[i].active==true) release_character(i);
+    }
+    for (i=0;i<MAX_FACE;i++) {
+        if (obj_face[i].active==true) release_face(i);
+    }
+    for (i=0;i<MAX_ENEMIES;i++) {
+        if (obj_enemy[i].obj_character.active==true) release_enemy(i);
+    }
+    for (i=0;i<MAX_ITEMS;i++) {
+        if (obj_item[i].entity.active==true) release_item(i);
+    }
 }
 
 // initialize level and load background
@@ -105,7 +119,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     }
 
     interface_active=false; // No interface by default
-    player_scroll_active=false; // You can scroll the screen by default
+    player_scroll_active=false; // You can't scroll the screen by default
     movement_active=false; // You can't move by default
 
     update_bg(false);

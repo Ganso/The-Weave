@@ -101,3 +101,23 @@ u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)
 
     return ITEM_NONE; // No collision detected
 }
+
+// Detect if the active character would collide with an object in a nearby position
+u16 detect_nearby_item()
+{
+    u16 x=obj_character[active_character].x;
+    u8 y=obj_character[active_character].y;
+    u16 nitem;
+
+    nitem=detect_char_item_collision(active_character,x-1,y);
+    if (nitem!=ITEM_NONE) return(nitem);
+
+    nitem=detect_char_item_collision(active_character,x+1,y);
+    if (nitem!=ITEM_NONE) return(nitem);
+
+    nitem=detect_char_item_collision(active_character,x,y-1);
+    if (nitem!=ITEM_NONE) return(nitem);
+
+    nitem=detect_char_item_collision(active_character,x,y+1);
+    return(nitem);
+}

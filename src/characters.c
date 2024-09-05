@@ -164,7 +164,7 @@ void move_character_instant(u16 nchar,s16 x,s16 y)
     SPR_setPosition(spr_chr[nchar], x, y);
     obj_character[nchar].x = x;
     obj_character[nchar].y = y;
-    next_frame();
+    next_frame(false);
 }
 
 // Update characters, items and enemies depth
