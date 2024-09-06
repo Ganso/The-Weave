@@ -4,8 +4,30 @@
 
 int main(bool hard)
 {
-    //geesebumps_logo();
-    act_1_scene_1();
-    //act_1_scene_2();
-    //act_1_scene_5();
+    geesebumps_logo(); // Game intro
+
+    current_act=0;
+    current_scene=0;
+
+    switch (current_act)
+    {
+    case 1: // FIRST ACT
+        switch (current_scene)
+        {
+        case 1:
+            act_1_scene_1(); // ACT 1 - scene 1
+            break;
+        case 2:
+            act_1_scene_2(); // ACT 1 - scene 2
+            break;
+        case 5:
+            act_1_scene_5(); // ACT 1 - scene 5
+            break;
+        default:
+            break;
+        }
+        break;
+    default:
+        break;
+    }
 }

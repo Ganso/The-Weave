@@ -59,7 +59,7 @@ void act_1_scene_1(void)
 
     move_character(active_character,-30,obj_character[active_character].y+obj_character[active_character].y_size);
 
-    act_1_scene_2();
+    current_scene=2; // Next scene
 }
 
 void act_1_scene_2(void)
@@ -111,7 +111,7 @@ void act_1_scene_2(void)
 
     wait_seconds(2);
 
-    act_1_scene_5();
+    current_scene=5; // Next scene
 }
 
 void act_1_scene_5(void)

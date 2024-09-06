@@ -1,4 +1,4 @@
-XGM music_intro "Sound/Music/intro_60_s07.vgm"
+XGM music_intro "Sound/Music/Goosebumps_intro.vgm"
 
 XGM snd_note_mi "Sound/Player/mi.vgm"
 XGM snd_note_fa "Sound/Player/fa.vgm"
