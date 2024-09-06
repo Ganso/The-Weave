@@ -46,6 +46,10 @@ u16 frame_counter; // Number of frames counter (random number generator, and fra
 #define SCREEN_HEIGHT 224
 #define SCREEN_FPS 60
 
+// Game state globals
+u8 current_act;
+u8 current_scene;
+
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
 void next_frame(bool interactive); // Wait for next frame and do each-frame actions, including interactive actions if selected
