@@ -30,7 +30,7 @@ void initialize(void)
     tile_ind = TILE_USER_INDEX;
 
     // Default language
-    game_language=LANG_ENGLISH;
+    game_language=LANG_SPANISH;
 
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);
@@ -90,7 +90,7 @@ void initialize(void)
 // initialize level and load background
 void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u16 new_background_width, u8 new_scroll_mode, u8 new_scroll_speed)
 {
-    initialize();
+    initialize(); // Reset hardware when starting each level
     
     // Tile_bg and Map_bg are the background layer. They can be NULL
     if ((tile_bg!=NULL) && (map_bg!=NULL)) {
