@@ -37,7 +37,7 @@ void scroll_background(s16 dx)
 {
     if (player_scroll_active) { // Can player scroll?
         if (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) { // Scrolling mode is user dependant ?
-            if (offset_BGA+dx>0 && (offset_BGA+dx)<(background_width-SCREEN_WIDTH)) { // New scroll offset is inside background width boundries?
+            if (offset_BGA+dx>0 && ((s16) offset_BGA+dx)<((s16) background_width-SCREEN_WIDTH)) { // New scroll offset is inside background width boundries?
                 offset_BGA+=dx; // Change offste
                 update_bg(true);
             }

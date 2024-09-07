@@ -6,28 +6,30 @@ int main(bool hard)
 {
     geesebumps_logo(); // Game intro
 
-    current_act=0;
-    current_scene=0;
+    current_act=1;
+    current_scene=1;
 
-    switch (current_act)
-    {
-    case 1: // FIRST ACT
-        switch (current_scene)
+    while (true) { // MAIN LOOP
+        switch (current_act)
         {
-        case 1:
-            act_1_scene_1(); // ACT 1 - scene 1
-            break;
-        case 2:
-            act_1_scene_2(); // ACT 1 - scene 2
-            break;
-        case 5:
-            act_1_scene_5(); // ACT 1 - scene 5
+        case 1: // FIRST ACT
+            switch (current_scene)
+            {
+            case 1:
+                act_1_scene_1(); // ACT 1 - scene 1
+                break;
+            case 2:
+                act_1_scene_2(); // ACT 1 - scene 2
+                break;
+            case 5:
+                act_1_scene_5(); // ACT 1 - scene 5
+                break;
+            default:
+                break;
+            }
             break;
         default:
             break;
         }
-        break;
-    default:
-        break;
     }
 }
