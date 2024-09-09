@@ -88,18 +88,29 @@ void check_pattern(void)
             anim_character(active_character,ANIM_IDLE); // Stop magic animation
             SPR_update();
         }
-        if (matched_pattern==PTRN_HIDE && is_reverse_match==false) { // HIDE!!
+        else if (matched_pattern==PTRN_HIDE && is_reverse_match==false) { // HIDE!!
             show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
             play_pattern_sound(PTRN_HIDE);
             pattern_effect_in_progress=PTRN_HIDE;
             pattern_effect_time=1;
         }
-        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true) { // Reverse THUNDER !!!
+        else if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true) { // Reverse THUNDER !!!
             if (is_combat_active==true && enemy_attacking!=ENEMY_NONE && attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
                 pattern_effect_in_progress=PTRN_ELECTRIC;
                 pattern_effect_reversed=true;
             }
         }
+        else { // We have a match, but pattern is not usable right now
+            show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
+            play_pattern_sound(matched_pattern); // Play open sound
+            show_interface(false);
+            talk_dialog(&dialogs[SYSTEM_DIALOG][0]);
+            show_interface(true);
+            show_pattern_icon(matched_pattern, false, false); // Show appropiate icon
+        }
+    }
+    else {
+        play_pattern_sound(PTRN_NONE); // Failed pattern
     }
     num_played_notes=0;
     time_since_last_note=0;
@@ -115,11 +126,14 @@ void play_pattern_sound(u16 npattern)
         XGM2_playPCM(snd_pattern_hide,sizeof(snd_pattern_hide),SOUND_PCM_CH_AUTO);
         break;
     case PTRN_OPEN:
-        XGM2_playPCM(snd_pattern_hide,sizeof(snd_pattern_hide),SOUND_PCM_CH_AUTO);
+        XGM2_playPCM(snd_pattern_open,sizeof(snd_pattern_open),SOUND_PCM_CH_AUTO);
         break;
-    default: // Pattern: Electric
+    case PTRN_ELECTRIC: // Pattern: Electric
         XGM2_playPCM(snd_pattern_thunder,sizeof(snd_pattern_thunder),SOUND_PCM_CH_AUTO);
         break;
+    default: // Invalid pattern
+        XGM2_playPCM(snd_pattern_invalid,sizeof(snd_pattern_invalid),SOUND_PCM_CH_AUTO);
+        break;        
     }
 }  
 
