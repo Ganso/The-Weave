@@ -41,8 +41,6 @@ typedef struct
 
 Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
 
-Sprite *spr_pattern_list_note[4]; // The 4 notes in right of the pattern list
-
 
 void play_note(u8 nnote); // Play a note
 void check_note(void); // Check if a note is being played

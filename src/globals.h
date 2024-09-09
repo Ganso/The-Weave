@@ -41,7 +41,7 @@ u16 frame_counter; // Number of frames counter (random number generator, and fra
 #include "intro.h" // Game intro
 #include "act_1.h" // Act 1
 
-// Global definitions
+// Global definitions (NTSC)
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 224
 #define SCREEN_FPS 60
