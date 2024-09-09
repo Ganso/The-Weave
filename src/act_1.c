@@ -5,7 +5,7 @@ void act_1_scene_1(void)
 {
     // Initialize level
     new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 576, BG_SCRL_USER_LEFT, 0);
-    set_limits(0,131,305,170);
+    set_limits(0,131,275,170);
 
     // Initialize items
     init_item(0, &item_bookpedestal_sprite, PAL0, 400, 90, 0, 0, 8, 58); // Guild history book
@@ -16,7 +16,7 @@ void act_1_scene_1(void)
 
     // Put character in screen
     move_character_instant(CHR_linus, 340, 154);
-    move_character(CHR_linus, 275, 154);
+    move_character(CHR_linus, 270, 154);
 
     talk_dialog(&dialogs[ACT1_DIALOG1][0]);
     talk_dialog(&dialogs[ACT1_DIALOG1][1]);
@@ -121,7 +121,7 @@ void act_1_scene_5(void)
 
     // Initialize level
     new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, 1000, BG_SCRL_USER_RIGHT, 3);
-    set_limits(0,134,270,172);
+    set_limits(0,134,275,172);
 
     // Initialize characters
     init_character(CHR_linus);

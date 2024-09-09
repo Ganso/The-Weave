@@ -75,7 +75,7 @@ void check_pattern(void)
         pattern_effect_reversed=false;
         if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==false) { // THUNDER !!!
             anim_character(active_character,ANIM_MAGIC); // Magic animation
-            show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
+            show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
             SPR_update();
             play_pattern_sound(PTRN_ELECTRIC);
             for (i=0;i<100;i++) {
@@ -84,12 +84,12 @@ void check_pattern(void)
                 VDP_setHilightShadow(false);
                 SYS_doVBlankProcess();
             }
-            show_pattern_icon(matched_pattern, 96, false, false); // Hide the icon
+            show_pattern_icon(matched_pattern, false, false); // Hide the icon
             anim_character(active_character,ANIM_IDLE); // Stop magic animation
             SPR_update();
         }
         if (matched_pattern==PTRN_HIDE && is_reverse_match==false) { // HIDE!!
-            show_pattern_icon(matched_pattern, 96, true, true); // Show appropiate icon
+            show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
             play_pattern_sound(PTRN_HIDE);
             pattern_effect_in_progress=PTRN_HIDE;
             pattern_effect_time=1;
@@ -147,7 +147,7 @@ void check_pattern_effect(void)
             pattern_effect_time++;
         }
         else {
-            show_pattern_icon(PTRN_HIDE, 96, false, false); // Show appropiate icon
+            show_pattern_icon(PTRN_HIDE, false, false); // Show appropiate icon
             show_character(active_character,true);
             pattern_effect_in_progress=PTRN_EN_NONE;
             pattern_effect_time=0;

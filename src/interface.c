@@ -24,151 +24,6 @@ void show_interface(bool visible)
     }
 }
 
-// Pause / State screen
-void pause_screen(void) {
-    u16 value; // Joypad value
-    u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
-    bool next_pattern_found;
-
-    u16 spriteCount;
-    SpriteState* savedStates;
-
-    VDP_setHilightShadow(true); // Dim screen
-    show_interface(false); // Hide interface
-    savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
-
-    selected_pattern=254;
-    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
-        if (obj_pattern[npattern].active==true) {
-            num_active_patterns++;
-            if (selected_pattern==254) selected_pattern=npattern; // Find first active spell
-        } 
-    }
-
-    if (num_active_patterns!=0) show_pattern_list(true,selected_pattern);
-
-    value = JOY_readJoypad(JOY_ALL);
-    while ( (value & BUTTON_START) == 0 ) { // Wait until button is pressed again
-        value = JOY_readJoypad(JOY_ALL);
-        if (num_active_patterns>1) { // You can only press left or right if you have more than a activepattern
-            if (value & BUTTON_RIGHT) { // Find next active pattern
-                next_pattern_found=false;
-                old_pattern=selected_pattern;
-                selected_pattern++;
-                while (next_pattern_found==false)
-                {
-                    if (selected_pattern==MAX_PATTERNS) selected_pattern=0;
-                    if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
-                    else selected_pattern++;
-                }
-                show_pattern_list(false,old_pattern); // Show pattern list again
-                show_pattern_list(true,selected_pattern);
-            }
-            if (value & BUTTON_LEFT) { // Find last active pattern
-                next_pattern_found=false;
-                old_pattern=selected_pattern;
-                selected_pattern--;
-                while (next_pattern_found==false)
-                {
-                    if (selected_pattern==255) selected_pattern=MAX_PATTERNS-1;
-                    if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
-                    else selected_pattern--;
-                }            
-                show_pattern_list(false,old_pattern); // Show pattern list again
-                show_pattern_list(true,selected_pattern);
-            }
-            while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
-            {
-                value = JOY_readJoypad(JOY_ALL);
-                SYS_doVBlankProcess();
-            }
-        }
-        SPR_update();
-        SYS_doVBlankProcess();
-    }
-    while ( value & BUTTON_START ) { // Now wait until released
-        value = JOY_readJoypad(JOY_ALL);
-        SYS_doVBlankProcess();
-    }
-    show_pattern_list(false, selected_pattern); // Hide last selected pattern
-    hide_pentagram_icons(); // Hide pentagram icons
-    hide_rod_icons(); // Hide rod icons
-    hide_pattern_icons(); // Hidde pattern icons
-    SPR_update();
-    SPR_defragVRAM();
-    show_interface(true); // Show interface again
-    restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
-    VDP_setHilightShadow(false); // Relit screen
-
-}
-
-// Show or hide pattern list
-void show_pattern_list(bool show, u8 active_pattern)
-{
-    u16 x_initial,x;
-    u8 nnote, npattern, num_active_patterns=0;
-    bool priority;
-
-    for (npattern=0;npattern<MAX_PATTERNS;npattern++) // How many patterns you have?
-        if (obj_pattern[npattern].active==true) num_active_patterns++;
-
-    x_initial = (134 - 24 * num_active_patterns); // Initial X position
-    x = x_initial;
-
-    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
-        if (obj_pattern[npattern].active==true) {
-            if (npattern==active_pattern) priority=true; // Lit active pattern
-            else priority=false;
-            show_pattern_icon(npattern,x,show,priority); // Show or hide pattern icon
-            x+=48;
-        }
-    }
-
-    for (nnote=0;nnote<4;nnote++) {
-        show_note_in_pattern_list(active_pattern,nnote,show); // Show notes for the active pattern
-    }
-}
-
-// Show one of the notes of a pattern in the pattern list
-void show_note_in_pattern_list(u8 npattern, u8 nnote, bool show)
-{
-    SpriteDefinition *pentsprite;
-    u8 note;
-    u16 x;
-
-    note=obj_pattern[npattern].notes[nnote]; // Which note is in that position of the pattern
-
-    switch (note) 
-    {
-    case NOTE_MI:
-        pentsprite=(SpriteDefinition*) &int_pentagram_1_sprite;
-        break;
-    case NOTE_FA:
-        pentsprite=(SpriteDefinition*) &int_pentagram_2_sprite;
-        break;
-    case NOTE_SOL:
-        pentsprite=(SpriteDefinition*) &int_pentagram_3_sprite;
-        break;
-    case NOTE_LA:
-        pentsprite=(SpriteDefinition*) &int_pentagram_4_sprite;
-        break;
-    case NOTE_SI:
-        pentsprite=(SpriteDefinition*) &int_pentagram_5_sprite;
-        break;
-    default:
-        pentsprite=(SpriteDefinition*) &int_pentagram_6_sprite;
-        break;
-    }
-
-    if (show==true) {
-        x=251+nnote*16;
-        spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,false,false,false));
-    }
-    else {
-        SPR_releaseSprite(spr_pattern_list_note[nnote]);
-    }
-}
-
 // Show or hide notes
 void show_note(u8 nnote, bool visible)
 {
@@ -296,7 +151,7 @@ void hide_pattern_icons(void)
 }
 
 // Show the icon of a pattern spell
-void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
+void show_pattern_icon(u16 npattern, bool show, bool priority)
 {
     u8 npal = PAL2;
     const SpriteDefinition *nsprite = NULL;
@@ -305,7 +160,7 @@ void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
         if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
         if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
-        if (obj_pattern[npattern].sd==NULL) obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
+        if (obj_pattern[npattern].sd==NULL) obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, SCREEN_WIDTH-40, 4, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
         SPR_setAlwaysOnTop(obj_pattern[npattern].sd);
     }
     else {
@@ -358,4 +213,168 @@ void restoreSpritesVisibility(SpriteState* states, u16 count) {
     
     // Free allocated memory
     MEM_free(states);
+}
+
+// Pause / State screen
+void pause_screen(void) {
+    u16 value; // Joypad value
+    u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
+    bool next_pattern_found;
+
+    u16 spriteCount;
+    SpriteState* savedStates;
+
+    VDP_setHilightShadow(true); // Dim screen
+    show_interface(false); // Hide interface
+    //savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
+
+    selected_pattern=254;
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
+        if (obj_pattern[npattern].active==true) {
+            num_active_patterns++;
+            if (selected_pattern==254) selected_pattern=npattern; // Find first active spell
+        } 
+    }
+
+    if (num_active_patterns!=0) show_pause_pattern_list(true,selected_pattern);
+
+    value = JOY_readJoypad(JOY_ALL);
+    while ( (value & BUTTON_START) == 0 ) { // Wait until button is pressed again
+        value = JOY_readJoypad(JOY_ALL);
+        if (num_active_patterns>1) { // You can only press left or right if you have more than a activepattern
+            if (value & BUTTON_RIGHT) { // Find next active pattern
+                next_pattern_found=false;
+                old_pattern=selected_pattern;
+                selected_pattern++;
+                while (next_pattern_found==false)
+                {
+                    if (selected_pattern==MAX_PATTERNS) selected_pattern=0;
+                    if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
+                    else selected_pattern++;
+                }
+                show_pause_pattern_list(false,old_pattern); // Show pattern list again
+                show_pause_pattern_list(true,selected_pattern);
+            }
+            if (value & BUTTON_LEFT) { // Find last active pattern
+                next_pattern_found=false;
+                old_pattern=selected_pattern;
+                selected_pattern--;
+                while (next_pattern_found==false)
+                {
+                    if (selected_pattern==255) selected_pattern=MAX_PATTERNS-1;
+                    if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
+                    else selected_pattern--;
+                }            
+                show_pause_pattern_list(false,old_pattern); // Show pattern list again
+                show_pause_pattern_list(true,selected_pattern);
+            }
+            while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
+            {
+                value = JOY_readJoypad(JOY_ALL);
+                SYS_doVBlankProcess();
+            }
+        }
+        SPR_update();
+        SYS_doVBlankProcess();
+    }
+    while ( value & BUTTON_START ) { // Now wait until released
+        value = JOY_readJoypad(JOY_ALL);
+        SYS_doVBlankProcess();
+    }
+    show_pause_pattern_list(false, selected_pattern); // Hide last selected pattern
+    for (u8 nnote=0; nnote<4; nnote++) if (spr_pattern_list_note[nnote]!=NULL) SPR_releaseSprite(spr_pattern_list_note[nnote]); // Hide notes on the right is still exist
+    show_interface(true); // Show interface again
+    //restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
+    VDP_setHilightShadow(false); // Relit screen
+    SPR_update();
+    VDP_waitVSync();
+
+}
+
+// Show or hide pattern list (Pause screen)
+void show_pause_pattern_list(bool show, u8 active_pattern)
+{
+    u16 x_initial,x, nicon;
+    u8 nnote, npattern, num_active_patterns=0;
+    bool priority;
+
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) // How many patterns you have?
+        if (obj_pattern[npattern].active==true) num_active_patterns++;
+
+    x_initial = (134 - 24 * num_active_patterns); // Initial X position
+    x = x_initial;
+    nicon = 0;
+
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
+        if (obj_pattern[npattern].active==true) {
+            if (npattern==active_pattern) priority=true; // Lit active pattern
+            else priority=false;
+            show_icon_in_pause_list(npattern, nicon, x, show, priority); // Show or hide pattern icon
+            x+=48;
+            nicon++;
+        }
+    }
+
+    for (nnote=0;nnote<4;nnote++) {
+        show_note_in_pause_pattern_list(active_pattern,nnote,show); // Show notes for the active pattern
+    }
+}
+
+// Show one of the notes of a pattern in the pattern list (Pause screen)
+void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)
+{
+    SpriteDefinition *pentsprite;
+    u8 note;
+    u16 x;
+
+    note=obj_pattern[npattern].notes[nnote]; // Which note is in that position of the pattern
+
+    switch (note) 
+    {
+    case NOTE_MI:
+        pentsprite=(SpriteDefinition*) &int_pentagram_1_sprite;
+        break;
+    case NOTE_FA:
+        pentsprite=(SpriteDefinition*) &int_pentagram_2_sprite;
+        break;
+    case NOTE_SOL:
+        pentsprite=(SpriteDefinition*) &int_pentagram_3_sprite;
+        break;
+    case NOTE_LA:
+        pentsprite=(SpriteDefinition*) &int_pentagram_4_sprite;
+        break;
+    case NOTE_SI:
+        pentsprite=(SpriteDefinition*) &int_pentagram_5_sprite;
+        break;
+    default:
+        pentsprite=(SpriteDefinition*) &int_pentagram_6_sprite;
+        break;
+    }
+
+    if (show==true) {
+        x=251+nnote*16;
+        spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,false,false,false));
+    }
+    else {
+        SPR_releaseSprite(spr_pattern_list_note[nnote]);
+    }
+}
+
+// Show the icon of a pattern spell
+void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool priority)
+{
+    u8 npal = PAL2;
+    const SpriteDefinition *nsprite = NULL;
+
+    if (show==TRUE) {
+        if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
+        if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
+        if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
+
+        if (spr_pause_icon[nicon]==NULL) spr_pause_icon[nicon] = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
+    }
+    else {
+        SPR_releaseSprite(spr_pause_icon[nicon]);
+        spr_pause_icon[nicon]=NULL;
+    }
 }
