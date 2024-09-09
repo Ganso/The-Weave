@@ -2,12 +2,12 @@
 #include "globals.h"
 
 // Displays a face, in the left (or not), and a text string, during a maximum of maxtime milisecons
-void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
+void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)
 {
     u16 faceposx,buttonposx;
     u16 textposx_line1=0, textposx_line2=0, textposx_line3=0;
     u16 joy_state;
-    u16 num_ticks;
+    u16 num_ticks, max_ticks;
 
     char text_line1[40]={0},text_line2[40]={0},text_line3[40]={0};
 
@@ -64,6 +64,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
 
     // Wait for time or button A
     num_ticks=0;
+    max_ticks=max_seconds*SCREEN_FPS;
     joy_state=JOY_readJoypad (JOY_ALL);
     while (num_ticks<max_ticks && ((joy_state & BUTTON_A)==0))
     {
@@ -98,7 +99,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_ticks)
 // Talk a dialog line
 void talk_dialog(const DialogItem *dialog)
 {
-    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_ticks); 
+    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds); 
 }
 
 // Split a text in up to three lines

@@ -48,3 +48,14 @@ void next_frame(bool interactive)
     // Wait for next frame
     SYS_doVBlankProcess();
 }
+
+u16 calc_ticks(u16 milliseconds) // Translate millisecons to ticks
+{
+    if (SCREEN_FPS == 50) {
+        // 50 FPS: 1 tick ≈ 20 ms
+        return (milliseconds / 20);
+    } else if (SCREEN_FPS == 60) {
+        // 60 FPS: 1 tick ≈ 16.67 ms
+        return ((milliseconds<<2) + (milliseconds<<1)) / 100;
+    } else return ((milliseconds*1000)/SCREEN_FPS);
+}

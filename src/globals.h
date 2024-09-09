@@ -53,5 +53,6 @@ u8 current_scene;
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds
 void next_frame(bool interactive); // Wait for next frame and do each-frame actions, including interactive actions if selected
+u16 calc_ticks(u16 milliseconds); // Translate millisecons to ticks
 
 #endif

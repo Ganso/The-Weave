@@ -17,7 +17,7 @@ u8 game_language;
 typedef struct {
     u8 face;
     bool side;
-    u16 max_ticks;
+    u16 max_seconds;
     const char *text[NUM_LANGUAGES];
 } DialogItem;
 

@@ -19,7 +19,7 @@ void play_note(u8 nnote)
 void check_note(void)
 {
     if (note_playing_time!=0) { // A note is being played
-        if (note_playing_time==MAX_NOTE_PLAYING_TIME) { // Finished
+        if (note_playing_time==calc_ticks(MAX_NOTE_PLAYING_TIME)) { // Finished
             show_note(note_playing, false); // Hide the note
             note_playing=NOTE_NONE;
             time_since_last_note=1; // A pattern is possible. Start counting ticks to cancel it
@@ -32,7 +32,7 @@ void check_note(void)
     }
     else if (time_since_last_note!=0) {
         time_since_last_note++;
-        if (time_since_last_note==MAX_PATTERN_WAIT_TIME) { // Done waiting. The pattern is cancelled
+        if (time_since_last_note==calc_ticks(MAX_PATTERN_WAIT_TIME)) { // Done waiting. The pattern is cancelled
             hide_rod_icons();
             time_since_last_note=0;
             num_played_notes=0;
