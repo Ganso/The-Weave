@@ -119,6 +119,8 @@ void hit_enemy(u16 nenemy)
 {
     u16 n, alive_enemies=0;
 
+    XGM2_playPCM(snd_player_hit_enemy,sizeof(snd_player_hit_enemy),SOUND_PCM_CH_AUTO);
+
     obj_enemy[nenemy].hitpoints--;
     if (obj_enemy[nenemy].hitpoints==0) { // Enemy has no more hitpoints left
         SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter
@@ -324,6 +326,10 @@ void finish_electric_pattern_effect(void) {
         pattern_effect_reversed = false;
     } else {
         hit_caracter(active_character); // Otherwise, hit the player
+        show_interface(false);
+        talk_dialog(&dialogs[ACT1_DIALOG3][2]);
+        talk_dialog(&dialogs[ACT1_DIALOG3][3]);
+        show_interface(true);
     }
 }
 
@@ -356,5 +362,9 @@ void finish_bite_pattern_effect(void) {
         hit_enemy(enemy_attacking); // Hit the enemy
     } else {
         hit_caracter(active_character); // Otherwise, hit the player
+        show_interface(false);
+        talk_dialog(&dialogs[ACT1_DIALOG3][2]);
+        talk_dialog(&dialogs[ACT1_DIALOG3][4]);
+        show_interface(true);
     }
 }
