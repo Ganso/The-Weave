@@ -6,7 +6,11 @@
 
 // SPANISH CHARSET
 // ñ --> ^
-
+// á --> #
+// é --> $
+// í --> %
+// ó --> *
+// ú --> /
 
 const DialogItem system_dialog[] = { // System messages
     {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
@@ -16,25 +20,25 @@ const DialogItem system_dialog[] = { // System messages
 
 const DialogItem act1_dialog1[] = {
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
-        {"Creo que he dormido demasiado|Debo llegar rapido al salon", 
+        {"Creo que he dormido demasiado|Debo llegar r#pido al salon", 
          "I think I've overslept|I should go to the hall quickly"}},
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
-        {"Aunque siendo el dia que es|este pasillo me trae|demasiados recuerdos", 
+        {"Aunque siendo el d%a que es|este pasillo me trae|demasiados recuerdos", 
          "Although in a day like this|this hallway brings back|too many memories"}},
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
-        {"Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papa", 
+        {"Antes de irme quiero|repasar algunos recuerdos|Se lo debo a pap#", 
          "Before I leave I want to|revisit some memories|I owe it to dad"}},        
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
-        {"Este tomo narra la historia|de nuestro gremio|desde la Gran Separacion", 
+        {"Este tomo narra la historia|de nuestro gremio|desde la Gran Separaci*n", 
         "This volume narrates the history|of our guild|since the Great Split"}},        
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
-        {"El ultimo capitulo|termina con el fallecimiento|de mi padre", 
+        {"El ultimo cap%tulo|termina con el fallecimiento|de mi padre", 
         "The last chapter|ends with the passing|of my father"}},       
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
-        {"Madre dice que sere yo|el que deba escribir|el siguiente", 
+        {"Madre dice que ser$ yo|el que deba escribir|el siguiente", 
         "Mother says it will be me|who has to write|the next one"}},       
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
-        {"Una coleccion de|mitos y leyendas|de los distintos gremios", 
+        {"Una colecci*n de|mitos y leyendas|de los distintos gremios", 
         "A collection of|myths and legends|from the different guilds"}},        
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
         {"Gracias a mi padre|tenemos documentadas|las que cantaban los Pastores", 
@@ -114,10 +118,10 @@ const DialogItem act1_dialog2[] = {
 
 const DialogItem act1_dialog3[] = {
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
-        {"Algun tiempo despues", 
+        {"Algun tiempo despu$s", 
          "Some time later"}},
     {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME, 
-        {"Contraataca a los magos|Escondete de los monos", 
+        {"Contraataca a los magos|Esc*ndete de los monos", 
          "Counterattack wizards|Hide from monkeys"}},
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
