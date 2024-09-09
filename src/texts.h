@@ -10,9 +10,10 @@ enum Languages {
 u8 game_language;
 
 // Acts and dialogs
-#define ACT1_DIALOG1 0
-#define ACT1_DIALOG2 1
-#define ACT1_DIALOG3 2
+#define SYSTEM_DIALOG   0
+#define ACT1_DIALOG1    1
+#define ACT1_DIALOG2    2
+#define ACT1_DIALOG3    3
 
 typedef struct {
     u8 face;

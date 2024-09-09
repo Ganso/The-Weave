@@ -3,6 +3,8 @@
 
 extern const u8 snd_pattern_thunder[60672];
 extern const u8 snd_pattern_hide[32768];
+extern const u8 snd_pattern_open[11264];
+extern const u8 snd_pattern_invalid[6656];
 extern const u8 snd_player_hurt[5120];
 extern const u8 music_intro[2816];
 extern const u8 snd_note_mi[1024];

@@ -4,6 +4,16 @@
 #define SIDE_LEFT true
 #define SIDE_RIGHT false
 
+// SPANISH CHARSET
+// ñ --> ^
+
+
+const DialogItem system_dialog[] = { // System messages
+    {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No puedo usar ese patron|ahora mismo", 
+         "I can't use that pattern|right now"}},
+};
+
 const DialogItem act1_dialog1[] = {
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
         {"Creo que he dormido demasiado|Debo llegar rapido al salon", 
@@ -113,6 +123,7 @@ const DialogItem act1_dialog3[] = {
 };
 
 const DialogItem *dialogs[] = {
+    system_dialog,
     act1_dialog1,
     act1_dialog2,
     act1_dialog3,
