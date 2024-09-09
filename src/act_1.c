@@ -49,7 +49,7 @@ void act_1_scene_1(void)
         if (offset_BGA<=1 && obj_character[active_character].x<=1) { // Players try to exit screen
             if (item_interacted[0]==false || item_interacted[1]==false) { // We han't read every book
                 talk_dialog(&dialogs[ACT1_DIALOG1][2]);
-                move_character(active_character,10,obj_character[active_character].y+obj_character[active_character].y_size);
+                move_character(active_character,20,obj_character[active_character].y+obj_character[active_character].y_size); // Go backwards
             }
             else break; // We have read it --> exit
         }

@@ -7,10 +7,9 @@ int main(bool hard)
     //geesebumps_logo(); // Game intro
 
     current_act=1;
-    current_scene=2;
+    current_scene=5;
 
-    while (true) // MAIN GAME LOOP
-    {
+    while (true) { // MAIN LOOP
         switch (current_act)
         {
         case 1: // FIRST ACT

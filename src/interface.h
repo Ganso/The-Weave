@@ -1,6 +1,12 @@
 #ifndef _INTERFACE_H_
 #define _INTERFACE_H_
 
+// Define a type to store visibility state (for hidding them all in pause screen)
+typedef struct {
+    Sprite* sprite;
+    SpriteVisibility visibility;
+} SpriteState;
+
 // Interface sprites
 Sprite *spr_face_left; // Left face BG
 Sprite *spr_face_right; // Right face BG
@@ -20,6 +26,9 @@ void show_note_in_pattern_list(u8 npattern, u8 nnote, bool show); // Show or hid
 void show_note(u8 nnote, bool visible); // Show or hide notespentsprite
 void hide_rod_icons(void); // Hide icons in the rod
 void hide_pentagram_icons(void); // Hide icons in the pentagram
+void hide_pattern_icons(void); // Hide all pattern icons
 void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority); // Show or hide the icon of a pattern spell
+void restoreSpritesVisibility(SpriteState* states, u16 count); // Function to restore the visibility of sprites
+SpriteState* hideAllSprites(u16* count); // Function to hide all sprites and save their state
 
 #endif
