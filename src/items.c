@@ -41,7 +41,7 @@ void release_item(u16 nitem)
 // Hide or display an item depending if the X coordinate is visible in the screen
 void display_item_if_visible(u16 nitem)
 {
-    u16 x=get_x_in_screen(obj_item[nitem].x_in_background, obj_item[nitem].entity.x_size);
+    s16 x=get_x_in_screen(obj_item[nitem].x_in_background, obj_item[nitem].entity.x_size);
 
     if (x!=X_OUT_OF_BOUNDS) {
         obj_item[nitem].entity.x=x;
@@ -71,8 +71,8 @@ void check_items_visibility(void)
 u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)
 {
     u16 nitem;
-    u16 char_left, char_right, char_top, char_bottom;
-    u16 item_left, item_right, item_top, item_bottom;
+    s16 char_left, char_right, char_top, char_bottom;
+    s16 item_left, item_right, item_top, item_bottom;
 
     // Calculate character's bounding box
     char_left = x + obj_character[nchar].collision_x_offset;

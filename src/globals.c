@@ -35,12 +35,12 @@ void next_frame(bool interactive)
     // Screen related actions
     update_bg(true); // First time we print the background, assume the player moved so it's fully painted
 
+    // Items related actions
+    check_items_visibility();
+
     // Sprites related actions
     update_sprites_depth();
     SPR_update();
-
-    // Items related actions
-    check_items_visibility();
 
     // Create an RNG seed depending of the number of frames
     frame_counter++;

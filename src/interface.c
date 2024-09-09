@@ -27,16 +27,16 @@ void show_interface(bool visible)
 // Pause / State screen
 void pause_screen(void) {
     u16 value; // Joypad value
-    u8 selected_pattern,npattern,num_active_patterns=0;
+    u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
     bool next_pattern_found;
+
+    u16 spriteCount;
+    SpriteState* savedStates;
 
     VDP_setHilightShadow(true); // Dim screen
     show_interface(false); // Hide interface
+    savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
 
-    if (is_combat_active==true) {
-        for (u16 numenemy=0;numenemy<MAX_ENEMIES;numenemy++) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
-    }
-    
     selected_pattern=254;
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
         if (obj_pattern[npattern].active==true) {
@@ -53,6 +53,7 @@ void pause_screen(void) {
         if (num_active_patterns>1) { // You can only press left or right if you have more than a activepattern
             if (value & BUTTON_RIGHT) { // Find next active pattern
                 next_pattern_found=false;
+                old_pattern=selected_pattern;
                 selected_pattern++;
                 while (next_pattern_found==false)
                 {
@@ -60,11 +61,12 @@ void pause_screen(void) {
                     if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
                     else selected_pattern++;
                 }
-                show_pattern_list(false,selected_pattern); // Show pattern list again
+                show_pattern_list(false,old_pattern); // Show pattern list again
                 show_pattern_list(true,selected_pattern);
             }
             if (value & BUTTON_LEFT) { // Find last active pattern
                 next_pattern_found=false;
+                old_pattern=selected_pattern;
                 selected_pattern--;
                 while (next_pattern_found==false)
                 {
@@ -72,7 +74,7 @@ void pause_screen(void) {
                     if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
                     else selected_pattern--;
                 }            
-                show_pattern_list(false,selected_pattern); // Show pattern list again
+                show_pattern_list(false,old_pattern); // Show pattern list again
                 show_pattern_list(true,selected_pattern);
             }
             while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
@@ -88,14 +90,15 @@ void pause_screen(void) {
         value = JOY_readJoypad(JOY_ALL);
         SYS_doVBlankProcess();
     }
-
-    if (num_active_patterns!=0) show_pattern_list(false, 0);
-    VDP_setHilightShadow(false); // Relit screen
+    show_pattern_list(false, selected_pattern); // Hide last selected pattern
+    hide_pentagram_icons(); // Hide pentagram icons
+    hide_rod_icons(); // Hide rod icons
+    hide_pattern_icons(); // Hidde pattern icons
+    SPR_update();
+    SPR_defragVRAM();
     show_interface(true); // Show interface again
-
-    if (is_combat_active==true) {
-        if (enemy_attacking!=ENEMY_NONE) SPR_setVisibility(spr_enemy_face[enemy_attacking], TRUE);
-    }
+    restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
+    VDP_setHilightShadow(false); // Relit screen
 
 }
 
@@ -279,6 +282,19 @@ void hide_pentagram_icons(void)
     SPR_update();
 }
 
+// Hide all pattern icons
+void hide_pattern_icons(void)
+{
+    u16 npattern;
+
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
+        if (obj_pattern[npattern].sd!=NULL) {
+            SPR_releaseSprite(obj_pattern[npattern].sd);
+            obj_pattern[npattern].sd=NULL;
+        }
+    }
+}
+
 // Show the icon of a pattern spell
 void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
 {
@@ -289,11 +305,57 @@ void show_pattern_icon(u16 npattern, u16 x, bool show, bool priority)
         if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
         if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
-        obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
+        if (obj_pattern[npattern].sd==NULL) obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
         SPR_setAlwaysOnTop(obj_pattern[npattern].sd);
     }
     else {
         SPR_releaseSprite(obj_pattern[npattern].sd);
         obj_pattern[npattern].sd=NULL;
     }
+}
+
+// Function to hide all sprites and save their state
+SpriteState* hideAllSprites(u16* count) {
+    Sprite* currentSprite = firstSprite;
+    u16 spriteCount = 0;
+    
+    // First, count how many sprites there are
+    while (currentSprite != NULL) {
+        spriteCount++;
+        currentSprite = currentSprite->next;
+    }
+    
+    // Allocate memory for the state array
+    SpriteState* states = MEM_alloc(spriteCount * sizeof(SpriteState));
+    
+    // Return to the first sprite
+    currentSprite = firstSprite;
+    u16 index = 0;
+    
+    // Traverse again, saving the state and hiding
+    while (currentSprite != NULL) {
+        states[index].sprite = currentSprite;
+        states[index].visibility = SPR_getVisibility(currentSprite);
+        
+        // Hide the sprite
+        SPR_setVisibility(currentSprite, HIDDEN);
+        
+        currentSprite = currentSprite->next;
+        index++;
+    }
+    
+    *count = spriteCount;
+    return states;
+}
+
+// Function to restore the visibility of sprites
+void restoreSpritesVisibility(SpriteState* states, u16 count) {
+    for (u16 i = 0; i < count; i++) {
+        if (states[i].sprite != NULL) {
+            SPR_setVisibility(states[i].sprite, states[i].visibility);
+        }
+    }
+    
+    // Free allocated memory
+    MEM_free(states);
 }
