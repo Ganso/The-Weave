@@ -116,9 +116,6 @@ void act_1_scene_2(void)
 
 void act_1_scene_5(void)
 {
-    u16 ndialog;
-    const DialogItem *current_dialog;
-
     // Initialize level
     new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, 1000, BG_SCRL_USER_RIGHT, 3);
     set_limits(0,134,275,172);
@@ -128,19 +125,10 @@ void act_1_scene_5(void)
     active_character=CHR_linus;
 
     // Dialog
-    ndialog=0;
-    while ((current_dialog = &dialogs[ACT1_DIALOG3][ndialog])->text[game_language] != NULL) {
-        switch(ndialog) {
-            case 1:
-                // Before Linus' line
-                move_character_instant(CHR_linus, -20, 154);
-                move_character(CHR_linus, 30, 154);
-                break;
-        }
-
-        talk_dialog(current_dialog);
-        ndialog++;
-    }
+    move_character_instant(CHR_linus, -20, 154);
+    move_character(CHR_linus, 30, 154);
+    talk_dialog(&dialogs[ACT1_DIALOG3][0]);
+    talk_dialog(&dialogs[ACT1_DIALOG3][1]);
 
     // Show the interface and allow character to move and play patterns
     player_scroll_active=true;

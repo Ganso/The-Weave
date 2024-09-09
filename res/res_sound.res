@@ -13,3 +13,4 @@ WAV snd_pattern_open "Sound/Patterns/pattern_open.wav" XGM2
 WAV snd_pattern_invalid "Sound/Patterns/pattern_invalid.wav" XGM2 
 
 WAV snd_player_hurt "Sound/Player/player_hurt.wav" XGM2
+WAV snd_player_hit_enemy "Sound/Player/player_hit_enemy.wav" XGM2
