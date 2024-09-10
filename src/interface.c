@@ -95,8 +95,7 @@ void show_note(u8 nnote, bool visible)
     if (visible == true) {
         if (*rodsprite==NULL) *rodsprite = SPR_addSpriteSafe (rodspritedef, rod_x, 212, TILE_ATTR(PAL2, false, false, false));
         if (*pentsprite==NULL) *pentsprite = SPR_addSpriteSafe (pentsritedef, pent_x, 180, TILE_ATTR(PAL2, false, false, false));
-        XGM_setLoopNumber(0);
-        XGM_startPlay(notesong);
+        XGM2_play(notesong);
     }
     else {
         if (*pentsprite!=NULL) {

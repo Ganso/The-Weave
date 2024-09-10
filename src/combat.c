@@ -102,8 +102,7 @@ void show_enemy_note(u8 nnote, bool visible)
 
     if (visible == true) {
         *rodsprite = SPR_addSpriteSafe(rodspritedef, rod_x, 184, TILE_ATTR(PAL2, false, false, false));
-        XGM_setLoopNumber(0);
-        XGM_startPlay(notesong);
+        XGM2_play(notesong);
     }
     else {
         if (*rodsprite != NULL) {
