@@ -15,8 +15,7 @@ void geesebumps_logo(void)
     PAL_setPalette(PAL3, geesebumps_pal_white.data, DMA);
 
     // Background music
-    XGM_setLoopNumber(0);
-    XGM_startPlay(music_intro);
+    XGM2_play(music_intro);
     
     // Fist part of the logo (Goose)
     VDP_drawImageEx(BG_A, &geesebumps_logo_bg, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind), 0, 0, false, true);
