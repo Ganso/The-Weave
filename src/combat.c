@@ -193,7 +193,7 @@ void check_enemy_pattern(void)
 // Handle ongoing attack
 void handle_ongoing_attack(void)
 {
-    if (enemy_attack_time != MAX_ATTACK_NOTE_PLAYING_TIME) {
+    if (enemy_attack_time != calc_ticks(MAX_ATTACK_NOTE_PLAYING_TIME)) {
         enemy_attack_time++;
     } else {
         // Note finished
@@ -230,10 +230,10 @@ void do_enemy_pattern_effect(void) {
     // Determine max effect time based on pattern
     switch (enemy_attack_pattern) {
         case PTRN_EN_ELECTIC:
-            max_effect_time = MAX_EFFECT_TIME_ELECTRIC;
+            max_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC);
             break;
         case PTRN_EN_BITE:
-            max_effect_time = MAX_EFFECT_TIME_BITE;
+            max_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE);
             break;
         default:
             max_effect_time = 100; // Default value
@@ -314,7 +314,7 @@ void do_electric_pattern_effect(void) {
     else VDP_setHilightShadow(false);
 
     if (pattern_effect_in_progress == PTRN_ELECTRIC && pattern_effect_reversed == true) { // If player lauches a reversed thunder spell
-        attack_effect_time = MAX_EFFECT_TIME_ELECTRIC - 1; // Force effect to end on next frame
+        attack_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC) - 1; // Force effect to end on next frame
     }
 }
 
@@ -353,7 +353,7 @@ void launch_bite_pattern(void) {
 
 void do_bite_pattern_effect(void) {
     if (pattern_effect_in_progress == PTRN_HIDE) { // If player lauches a hide thunder spell
-        attack_effect_time = MAX_EFFECT_TIME_BITE - 1; // Force effect to end on next frame
+        attack_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE) - 1; // Force effect to end on next frame
     }
 }
 

@@ -47,11 +47,11 @@
  * 4. Update this header with the new pattern information.
  */
 
-#define MAX_ATTACK_NOTE_PLAYING_TIME  30  // Attack note playing time (.5 seconds)
+#define MAX_ATTACK_NOTE_PLAYING_TIME  500  // Attack note playing time in milliseconds
 
-// Pattern-specific max effect times
-#define MAX_EFFECT_TIME_ELECTRIC 100
-#define MAX_EFFECT_TIME_BITE 80
+// Pattern-specific max effect times (in milliseconds)
+#define MAX_EFFECT_TIME_ELECTRIC 1600
+#define MAX_EFFECT_TIME_BITE     1400
 
 bool is_combat_active; // Are we in a combat?
 u16 enemy_attacking; // Which enemy is attacking?
