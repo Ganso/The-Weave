@@ -10,8 +10,8 @@
 #define NOTE_SI   5
 #define NOTE_DO   6
 
-#define MAX_NOTE_PLAYING_TIME  500  // Note playing time in milliseconds (0.5 seconds)
-#define MAX_PATTERN_WAIT_TIME 2000   // Time to wait for a next note before cancelling the pattern in milliseconds (2 seconds)
+#define MAX_NOTE_PLAYING_TIME  500  // Note playing time in milliseconds
+#define MAX_PATTERN_WAIT_TIME 2000   // Time to wait for a next note before cancelling the pattern in milliseconds
 
 bool patterns_enabled; // Can the character play a pattern right now?
 

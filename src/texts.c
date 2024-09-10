@@ -15,7 +15,8 @@
 const DialogItem system_dialog[] = { // System messages
     {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"No puedo usar ese patron|ahora mismo", 
-         "I can't use that pattern|right now"}},
+         "I can't use that pattern|right now"}},    
+    {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 
 const DialogItem act1_dialog1[] = {
@@ -136,8 +137,8 @@ const DialogItem act1_dialog3[] = {
 };
 
 const DialogItem *dialogs[] = {
-    system_dialog,
-    act1_dialog1,
-    act1_dialog2,
-    act1_dialog3,
+    system_dialog,  // 0
+    act1_dialog1,   // 1
+    act1_dialog2,   // 2
+    act1_dialog3,   // 3
 };
