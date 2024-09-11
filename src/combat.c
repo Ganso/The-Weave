@@ -4,7 +4,7 @@
 // Start (or end) a combat
 void start_combat(bool start)
 {
-    u8 numenemy,npattern;
+    u8 numenemy,npattern,nnote;
 
     if (start==true) { // Combat start
         setRandomSeed(frame_counter); // Initialize RNG
@@ -24,6 +24,7 @@ void start_combat(bool start)
         enemy_attack_pattern_notes=0;
         enemy_attack_time=0;
         attack_effect_in_progress=0;
+        for (nnote=0;nnote<6;nnote++) enemy_note_active[nnote]=false;
         }
 
     }
@@ -50,10 +51,11 @@ void enemy_launch_pattern(u8 numenemy, u8 npattern)
 // Enemy launches a pattern note
 void enemy_launch_pattern_note()
 {
-    show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true);
+    show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true, true);
 }
 
-void show_enemy_note(u8 nnote, bool visible)
+// Show and play (or not) an enemy note
+void show_enemy_note(u8 nnote, bool visible, bool play)
 {
     Sprite **rodsprite;
     SpriteDefinition *rodspritedef;
@@ -101,14 +103,17 @@ void show_enemy_note(u8 nnote, bool visible)
     }
 
     if (visible == true) {
-        *rodsprite = SPR_addSpriteSafe(rodspritedef, rod_x, 184, TILE_ATTR(PAL2, false, false, false));
-        XGM2_play(notesong);
+        if (*rodsprite == NULL) *rodsprite = SPR_addSpriteSafe(rodspritedef, rod_x, 184, TILE_ATTR(PAL2, false, false, false));
+        else SPR_setVisibility(*rodsprite, VISIBLE);
+        enemy_note_active[nnote-1]=true;
+        if (play==true) XGM2_play(notesong);
     }
     else {
         if (*rodsprite != NULL) {
             SPR_releaseSprite(*rodsprite);
             *rodsprite = NULL;
         }
+        enemy_note_active[nnote-1]=false;
     }
     SPR_update();
 }
@@ -174,18 +179,44 @@ void check_enemy_pattern(void)
 
     // Handle ongoing attack
     if (attack_effect_in_progress == false && enemy_attacking != ENEMY_NONE) {
-        // Show attacking enemy face (and no one else) and life counter
-        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
-        SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE);
-        SPR_setVisibility(spr_int_life_counter, VISIBLE);
-        SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints-1);
-        // Do the attack
+        show_or_hide_enemy_combat_interface(true);
         handle_ongoing_attack();
     }
 
     // Handle attack effect
     if (attack_effect_in_progress == true) {
         do_enemy_pattern_effect();
+    }
+}
+
+// Show enemy face and hitpoints in the interface
+void show_or_hide_enemy_combat_interface(bool show)
+{
+    u16 numenemy,nnote;
+
+    if (show==true && interface_active==true && is_combat_active==true && enemy_attacking != ENEMY_NONE) {
+        // Show attacking enemy face (and no one else) and life counter
+        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) if (spr_enemy_face[numenemy]!=NULL) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
+        if (spr_enemy_face[enemy_attacking]!=NULL)  SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE);
+        if (spr_int_life_counter!=NULL) {
+            SPR_setVisibility(spr_int_life_counter, VISIBLE);
+            SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints-1);
+        }
+        for (nnote=0;nnote<6;nnote++) {
+            if (enemy_note_active[nnote]) show_enemy_note(nnote, true, false);
+            else show_enemy_note(nnote, false, false);
+        }
+    }
+    else {
+        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) if (spr_enemy_face[numenemy]!=NULL) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
+        if (spr_int_life_counter!=NULL) SPR_setVisibility(spr_int_life_counter, HIDDEN);
+        if (spr_int_enemy_rod_1!=NULL) SPR_setVisibility(spr_int_enemy_rod_1, HIDDEN);
+        if (spr_int_enemy_rod_2!=NULL) SPR_setVisibility(spr_int_enemy_rod_2, HIDDEN);
+        if (spr_int_enemy_rod_3!=NULL) SPR_setVisibility(spr_int_enemy_rod_3, HIDDEN);
+        if (spr_int_enemy_rod_4!=NULL) SPR_setVisibility(spr_int_enemy_rod_4, HIDDEN);
+        if (spr_int_enemy_rod_5!=NULL) SPR_setVisibility(spr_int_enemy_rod_5, HIDDEN);
+        if (spr_int_enemy_rod_6!=NULL) SPR_setVisibility(spr_int_enemy_rod_6, HIDDEN);
+        for (nnote=0;nnote<6;nnote++) show_enemy_note(nnote, false, false);
     }
 }
 
@@ -196,13 +227,13 @@ void handle_ongoing_attack(void)
         enemy_attack_time++;
     } else {
         // Note finished
-        show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], false);
+        show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], false, false);
         
         if (enemy_attack_pattern_notes != obj_Pattern_Enemy[enemy_attack_pattern].numnotes - 1) {
             // Play next note
             enemy_attack_pattern_notes++;
             enemy_attack_time = 0;
-            show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true);
+            show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true, true);
         } else {
             // Notes finished, start pattern effect
             attack_effect_in_progress = true;
@@ -219,6 +250,7 @@ void handle_ongoing_attack(void)
                 // Add more cases for other pattern types
             }
         }
+        show_or_hide_enemy_combat_interface(true);
     }
 }
 

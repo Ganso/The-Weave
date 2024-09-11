@@ -10,7 +10,7 @@ void show_interface(bool visible)
             tile_ind+=int_rod_image.tileset->numTile;
             VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
             tile_ind+=int_pentagram_image.tileset->numTile;
-            spr_int_life_counter = SPR_addSprite (&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
+            if (spr_int_life_counter==NULL) spr_int_life_counter = SPR_addSprite (&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
             SPR_setVisibility(spr_int_life_counter, HIDDEN);
         } 
         else {
@@ -19,7 +19,8 @@ void show_interface(bool visible)
             VDP_clearPlane(WINDOW, true);
             hide_rod_icons();
             hide_pentagram_icons();
-            SPR_releaseSprite(spr_int_life_counter);
+            if (spr_int_life_counter!=NULL) SPR_releaseSprite(spr_int_life_counter);
+            spr_int_life_counter=NULL;
         }
     }
 }
@@ -220,11 +221,12 @@ void pause_screen(void) {
     u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
     bool next_pattern_found;
 
-    u16 spriteCount;
-    SpriteState* savedStates;
+    //u16 spriteCount;
+    //SpriteState* savedStates;
 
     VDP_setHilightShadow(true); // Dim screen
     show_interface(false); // Hide interface
+    show_or_hide_enemy_combat_interface(false); // Hide combat interface
     //savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
 
     selected_pattern=254;
@@ -283,6 +285,7 @@ void pause_screen(void) {
     show_pause_pattern_list(false, selected_pattern); // Hide last selected pattern
     for (u8 nnote=0; nnote<4; nnote++) if (spr_pattern_list_note[nnote]!=NULL) SPR_releaseSprite(spr_pattern_list_note[nnote]); // Hide notes on the right is still exist
     show_interface(true); // Show interface again
+    show_or_hide_enemy_combat_interface(false); // Show combat interface again
     //restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
     VDP_setHilightShadow(false); // Relit screen
     SPR_update();
