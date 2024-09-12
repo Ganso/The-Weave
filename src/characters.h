@@ -1,12 +1,6 @@
 #ifndef _CHARACTERS_H_
 #define _CHARACTERS_H_
 
-// Animations
-#define ANIM_IDLE       0
-#define ANIM_WALK       1
-#define ANIM_ACTION     2
-#define ANIM_MAGIC      3
-
 // Characters
 #define MAX_CHR       4
 #define CHR_linus     0

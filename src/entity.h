@@ -1,6 +1,12 @@
 #ifndef _ENTITY_H_
 #define _ENTITY_H_
 
+// Animations
+#define ANIM_IDLE       0
+#define ANIM_WALK       1
+#define ANIM_ACTION     2
+#define ANIM_MAGIC      3
+
 // Game entity definition
 typedef struct
 {
