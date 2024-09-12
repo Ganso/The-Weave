@@ -135,14 +135,14 @@ void act_1_scene_5(void)
     movement_active=true;
     interface_active=true;
     patterns_enabled=true;
-    show_interface(true);
+    show_or_hide_interface(true);
 
     while (offset_BGA<80) {
         next_frame(true);
     }
 
     // COMBAT SCENE
-    show_interface(false);
+    show_or_hide_interface(false);
 
     // Initialize enemies
     PAL_setPalette(PAL3, three_head_monkey_sprite.palette->data, DMA); // Enemy palette
@@ -152,7 +152,7 @@ void act_1_scene_5(void)
     move_character(CHR_linus, 200, 144);
     move_enemy(0, 250, 136);
 
-    show_interface(true);
+    show_or_hide_interface(true);
     start_combat(true);
 
     while (is_combat_active==true) {
@@ -167,7 +167,7 @@ void act_1_scene_5(void)
     move_enemy(1, 250, 156);
     start_combat(true);
 
-    while (is_combat_active==true) {
+    while (true) {
         next_frame(true);
     }
 }

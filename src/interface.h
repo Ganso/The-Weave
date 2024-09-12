@@ -24,7 +24,7 @@ Sprite *spr_pattern_list_note[4]; // The 4 notes in right of the pattern list
 // Others
 bool interface_active; // Do we have to show the interface?
 
-void show_interface(bool visible); // Show or hide the bottom interface
+void show_or_hide_interface(bool visible); // Show or hide the bottom interface
 void show_note(u8 nnote, bool visible); // Show or hide notes
 void hide_rod_icons(void); // Hide icons in the rod
 void hide_pentagram_icons(void); // Hide icons in the pentagram

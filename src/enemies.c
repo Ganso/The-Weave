@@ -4,18 +4,18 @@
 // Initialize enemy pattern
 void init_enemy_patterns(void)
 {
-    obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 200};
-    obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {3, {2,3,2,NULL}, 200};
+    obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 200}; // Electric pattern: 4 steps, 200ms interval
+    obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {3, {2,3,2,NULL}, 200}; // Bite pattern: 3 steps, 200ms interval
 }
 
-// initialize enemy classes
+// Initialize enemy classes with their specific attributes
 void init_enemy_classes(void)
 {
-    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, NULL};
-    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 2};
+    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, NULL}; // 2 HP, can use electric pattern, doesn't follow
+    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 2}; // 3 HP, can use bite pattern, follows at speed 2
 }
 
-// Initialize an enemy
+// Initialize an enemy with specific attributes based on its class
 void init_enemy(u16 numenemy, u16 class)
 {
     u16 i;
@@ -28,6 +28,7 @@ void init_enemy(u16 numenemy, u16 class)
     obj_enemy[numenemy].class=obj_enemy_class[class];
     obj_enemy[numenemy].hitpoints=obj_enemy_class[class].max_hitpoints;
 
+    // Set specific attributes based on enemy class
     switch (class)
     {
     case ENEMY_CLS_BADBOBBIN:
@@ -48,30 +49,34 @@ void init_enemy(u16 numenemy, u16 class)
         return;
     }
     
-    // Get witdh and height from the sprite definition
+    // Get width and height from the sprite definition
     x_size = nsprite->w; 
     y_size = nsprite->h;
-    // Default collision box (if not defined previously)
+    // Set default collision box if not defined previously
     if (collision_width==0) collision_width=x_size/2; // Half width size
     if (collision_x_offset==0) collision_x_offset=x_size/4; // Centered in X
-    if (collision_height==0) collision_height=2; // Two lines heght
+    if (collision_height==0) collision_height=2; // Two lines height
     if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
-    // * Sprite definition, x, y, palette, priority, flipH, animation, visible
+    // Initialize enemy character with sprite, position, and collision attributes
     obj_enemy[numenemy].obj_character = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height };
 
+    // Add enemy sprite if not already present
     if (spr_enemy[numenemy]==NULL) spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
                                        TILE_ATTR(npal, obj_enemy[numenemy].obj_character.priority, false, obj_enemy[numenemy].obj_character.flipH));
     
+    // Add enemy face sprite if not already present
     if (spr_enemy_face[numenemy]==NULL) spr_enemy_face[numenemy] = SPR_addSpriteSafe(nsprite_face, 198, 178, TILE_ATTR(npal, false, false, false));
 
+    // Initially hide enemy sprites
     SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
     SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
     
+    // Reset last pattern times
     for (i=0;i<MAX_PATTERN_ENEMY;i++) obj_enemy[numenemy].last_pattern_time[i]=0;
 }
 
-// Release an enemy from memory (Just the sprite, keep the Enemy struct)
+// Release an enemy's sprites from memory (keeping the Enemy struct intact)
 void release_enemy(u16 nenemy)
 {
     obj_enemy[nenemy].obj_character.active=false;
@@ -87,10 +92,9 @@ void release_enemy(u16 nenemy)
     }
 }
 
-// Update an enemy based on every parameter
+// Update an enemy's sprite based on its current attributes
 void update_enemy(u16 nenemy)
 {
-    kprintf("Updating enemy %i",nenemy);
     SPR_setPosition(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.x, obj_enemy[nenemy].obj_character.y);
     SPR_setPriority(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.priority);
     SPR_setVisibility(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.visible ? VISIBLE : HIDDEN);
@@ -99,7 +103,7 @@ void update_enemy(u16 nenemy)
     SPR_update();
 }
 
-// Show or hide an enemy
+// Show or hide an enemy's sprite
 void show_enemy(u16 nenemy, bool show)
 {
     obj_enemy[nenemy].obj_character.visible = show;
@@ -107,17 +111,16 @@ void show_enemy(u16 nenemy, bool show)
     SPR_update();
 }
 
-// Change an enemy's animation
+// Change an enemy's animation if it's different from the current one
 void anim_enemy(u16 nenemy, u8 newanimation)
 {
-    kprintf("* Animation. Enemy %i, anim %i",nenemy,newanimation);
     if (obj_enemy[nenemy].obj_character.animation != newanimation) {
         obj_enemy[nenemy].obj_character.animation = newanimation;
         SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
     }
 }
 
-// Make an enemy look to the left (or right)
+// Make an enemy face left or right
 void look_enemy_left(u16 nenemy, bool direction_right)
 {
     obj_enemy[nenemy].obj_character.flipH = direction_right;
@@ -125,18 +128,18 @@ void look_enemy_left(u16 nenemy, bool direction_right)
     SPR_update();
 }
 
-// Move an enemy to a new position
+// Move an enemy to a new position with animation
 void move_enemy(u16 nenemy, s16 newx, s16 newy)
 {
     show_enemy(nenemy, true);
     anim_enemy(nenemy, ANIM_WALK);
 
-    // Look in the appropriate direction
+    // Determine direction to face based on movement
     s16 dx = newx - obj_enemy[nenemy].obj_character.x;
     if (dx < 0) {
-        look_enemy_left(nenemy, true);
+        look_enemy_left(nenemy, true); // Face left
     } else if (dx > 0) {
-        look_enemy_left(nenemy, false);
+        look_enemy_left(nenemy, false); // Face right
     }
 
     move_entity(&obj_enemy[nenemy].obj_character, spr_enemy[nenemy], newx, newy);
@@ -144,10 +147,10 @@ void move_enemy(u16 nenemy, s16 newx, s16 newy)
     anim_enemy(nenemy, ANIM_IDLE);
 }
 
-// Move an enemy to a new position (instantly)
+// Move an enemy to a new position instantly without animation
 void move_enemy_instant(u16 nenemy, s16 x, s16 y)
 {
-    y-=obj_enemy[nenemy].obj_character.y_size; // Now all calculations are relative to the bottom line, not the upper one
+    y-=obj_enemy[nenemy].obj_character.y_size; // Adjust y position relative to the bottom line
 
     SPR_setPosition(spr_enemy[nenemy], x, y);
     obj_enemy[nenemy].obj_character.x = x;
@@ -155,7 +158,7 @@ void move_enemy_instant(u16 nenemy, s16 x, s16 y)
     next_frame(false);
 }
 
-// Detect collisons between a character in every enemy, given some new coordinates
+// Detect collisions between a character and all enemies at given coordinates
 u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)
 {
     u16 nenemy;
@@ -173,6 +176,7 @@ u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)
         u8 char_col_y1 = y + obj_character[nchar].collision_y_offset;
         u8 char_col_y2 = char_col_y1 + obj_character[nchar].collision_height;
 
+        // Check collision with each active enemy
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
             if (obj_enemy[nenemy].obj_character.active == true) {
                 // Compute enemy collision box
@@ -187,14 +191,15 @@ u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)
                 u8 enemy_col_y1 = obj_enemy[nenemy].obj_character.y + obj_enemy[nenemy].obj_character.collision_y_offset;
                 u8 enemy_col_y2 = enemy_col_y1 + obj_enemy[nenemy].obj_character.collision_height;
 
-                // Check collision
+                // Check if collision boxes overlap
                 if (char_col_x1 < enemy_col_x2 &&
                     char_col_x2 > enemy_col_x1 &&
                     char_col_y1 < enemy_col_y2 &&
                     char_col_y2 > enemy_col_y1) {
-                    if (num_colls<MAX_COLLISIONS) { // CHANGE THIS!!! HACK TO AVOID PLAYER BEING TRAPPED
+                    if (num_colls<MAX_COLLISIONS) { // Prevent player from being trapped by limiting consecutive collisions
                         num_colls++;
-                        return nenemy;                    } else {
+                        return nenemy;
+                    } else {
                         num_colls=0;
                         return ENEMY_NONE;
                     }
@@ -207,7 +212,7 @@ u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)
     return ENEMY_NONE;
 }
 
-// Detect collisions between an enemy and every character, given some new coordinates
+// Detect collisions between an enemy and all characters at given coordinates
 u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)
 {
     u16 nchar;
@@ -225,7 +230,7 @@ u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)
         u8 enemy_col_y1 = y + obj_enemy[nenemy].obj_character.collision_y_offset;
         u8 enemy_col_y2 = enemy_col_y1 + obj_enemy[nenemy].obj_character.collision_height;
 
-        // Check collision with characters
+        // Check collision with each active character
         for (nchar = 0; nchar < MAX_CHR; nchar++) {
             if (obj_character[nchar].active == true) {
                 // Compute character collision box
@@ -240,7 +245,7 @@ u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)
                 u8 char_col_y1 = obj_character[nchar].y + obj_character[nchar].collision_y_offset;
                 u8 char_col_y2 = char_col_y1 + obj_character[nchar].collision_height;
 
-                // Check collision
+                // Check if collision boxes overlap
                 if (enemy_col_x1 < char_col_x2 &&
                     enemy_col_x2 > char_col_x1 &&
                     enemy_col_y1 < char_col_y2 &&
@@ -255,7 +260,7 @@ u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)
     return CHR_NONE;
 }
 
-// Approach enemies to active character
+// Move enemies towards the active character during combat
 void approach_enemies(void)
 {
     u16 nenemy;
@@ -264,24 +269,24 @@ void approach_enemies(void)
     u16 collision_result;
     bool has_moved;
 
-    if (is_combat_active == true && pattern_effect_in_progress != PTRN_HIDE) { // We are in combat. Player is not hidden
+    if (is_combat_active == true && pattern_effect_in_progress != PTRN_HIDE) { // Only move enemies during combat when the player is not hidden
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
             has_moved=false;
-            if (obj_enemy[nenemy].class.follows_character == true) { // Enemy can follow characters
-                if (frame_counter%obj_enemy[nenemy].class.follow_speed==0) {
-                    // Calculate direction to move towards active character
+            if (obj_enemy[nenemy].class.follows_character == true) { // Check if this enemy type follows characters
+                if (frame_counter%obj_enemy[nenemy].class.follow_speed==0) { // Move at enemy's specific speed
+                    // Calculate direction towards active character
                     dx = obj_character[active_character].x - obj_enemy[nenemy].obj_character.x;
                     dy = (obj_character[active_character].y + obj_character[active_character].y_size) - 
                         (obj_enemy[nenemy].obj_character.y + obj_enemy[nenemy].obj_character.y_size);
 
-                    // Determine new position (approach by 1 pixel)
+                    // Move by 1 pixel in the calculated direction
                     newx = obj_enemy[nenemy].obj_character.x + (dx != 0 ? (dx > 0 ? 1 : -1) : 0);
                     newy = obj_enemy[nenemy].obj_character.y + (dy != 0 ? (dy > 0 ? 1 : -1) : 0);
 
                     // Check for collision at new position
                     collision_result = detect_enemy_char_collision(nenemy, newx, newy);
 
-                    // If there's no collision, move the enemy
+                    // Move the enemy if there's no collision and it's not currently attacking
                     if (collision_result == CHR_NONE && enemy_attacking==ENEMY_NONE) {
                         obj_enemy[nenemy].obj_character.x = newx;
                         obj_enemy[nenemy].obj_character.y = newy;
@@ -290,7 +295,7 @@ void approach_enemies(void)
                         update_enemy(nenemy);
                         has_moved=true;
                     }
-                if (has_moved==false && enemy_attacking!=nenemy) anim_enemy(nenemy,ANIM_IDLE);
+                if (has_moved==false && enemy_attacking!=nenemy) anim_enemy(nenemy,ANIM_IDLE); // Set to idle if not moved and not attacking
                 }
             }
         }
