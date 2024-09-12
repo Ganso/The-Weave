@@ -25,6 +25,8 @@ void start_combat(bool start)
         enemy_attack_time=0;
         attack_effect_in_progress=0;
         for (nnote=0;nnote<6;nnote++) enemy_note_active[nnote]=false;
+        if (spr_int_life_counter==NULL) spr_int_life_counter = SPR_addSprite (&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
+        SPR_setVisibility(spr_int_life_counter, HIDDEN);
         }
 
     }
@@ -32,6 +34,8 @@ void start_combat(bool start)
     else { // Combat end
         is_combat_active=false;
         player_scroll_active=true;
+        if (spr_int_life_counter!=NULL) SPR_releaseSprite(spr_int_life_counter);
+        spr_int_life_counter=NULL;
     }
 }
 
@@ -45,6 +49,7 @@ void enemy_launch_pattern(u8 numenemy, u8 npattern)
         enemy_attacking=numenemy;
         anim_enemy(numenemy,ANIM_ACTION);
         enemy_launch_pattern_note();
+        show_or_hide_enemy_combat_interface(true);
     }
 }
 
@@ -179,7 +184,6 @@ void check_enemy_pattern(void)
 
     // Handle ongoing attack
     if (attack_effect_in_progress == false && enemy_attacking != ENEMY_NONE) {
-        show_or_hide_enemy_combat_interface(true);
         handle_ongoing_attack();
     }
 
@@ -194,14 +198,16 @@ void show_or_hide_enemy_combat_interface(bool show)
 {
     u16 numenemy,nnote;
 
+    kprintf("Show or hide combat interface: %i", show);
+
     if (show==true && interface_active==true && is_combat_active==true && enemy_attacking != ENEMY_NONE) {
         // Show attacking enemy face (and no one else) and life counter
-        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) if (spr_enemy_face[numenemy]!=NULL) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
-        if (spr_enemy_face[enemy_attacking]!=NULL)  SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE);
+        if (spr_enemy_face[enemy_attacking]!=NULL)  SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE); // Show attacking enemy face
+        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) if (numenemy!=enemy_attacking) if (spr_enemy_face[numenemy]!=NULL) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN); // Hide others
         if (spr_int_life_counter!=NULL) {
             SPR_setVisibility(spr_int_life_counter, VISIBLE);
             SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints-1);
-        }
+        } 
         for (nnote=0;nnote<6;nnote++) {
             if (enemy_note_active[nnote]) show_enemy_note(nnote, true, false);
             else show_enemy_note(nnote, false, false);
@@ -216,7 +222,7 @@ void show_or_hide_enemy_combat_interface(bool show)
         if (spr_int_enemy_rod_4!=NULL) SPR_setVisibility(spr_int_enemy_rod_4, HIDDEN);
         if (spr_int_enemy_rod_5!=NULL) SPR_setVisibility(spr_int_enemy_rod_5, HIDDEN);
         if (spr_int_enemy_rod_6!=NULL) SPR_setVisibility(spr_int_enemy_rod_6, HIDDEN);
-        for (nnote=0;nnote<6;nnote++) show_enemy_note(nnote, false, false);
+        // for (nnote=0;nnote<6;nnote++) show_enemy_note(nnote, false, false);
     }
 }
 
@@ -314,6 +320,7 @@ void finish_enemy_pattern_effect(void) {
     }
 
     enemy_attacking = ENEMY_NONE;
+    show_or_hide_enemy_combat_interface(false);
 }
 
 

@@ -60,10 +60,10 @@ void init_enemy(u16 numenemy, u16 class)
     // * Sprite definition, x, y, palette, priority, flipH, animation, visible
     obj_enemy[numenemy].obj_character = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height };
 
-    spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
+    if (spr_enemy[numenemy]==NULL) spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
                                        TILE_ATTR(npal, obj_enemy[numenemy].obj_character.priority, false, obj_enemy[numenemy].obj_character.flipH));
     
-    spr_enemy_face[numenemy] = SPR_addSpriteSafe(nsprite_face, 198, 178, TILE_ATTR(npal, false, false, false));
+    if (spr_enemy_face[numenemy]==NULL) spr_enemy_face[numenemy] = SPR_addSpriteSafe(nsprite_face, 198, 178, TILE_ATTR(npal, false, false, false));
 
     SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
     SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
@@ -90,6 +90,7 @@ void release_enemy(u16 nenemy)
 // Update an enemy based on every parameter
 void update_enemy(u16 nenemy)
 {
+    kprintf("Updating enemy %i",nenemy);
     SPR_setPosition(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.x, obj_enemy[nenemy].obj_character.y);
     SPR_setPriority(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.priority);
     SPR_setVisibility(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.visible ? VISIBLE : HIDDEN);
@@ -109,6 +110,7 @@ void show_enemy(u16 nenemy, bool show)
 // Change an enemy's animation
 void anim_enemy(u16 nenemy, u8 newanimation)
 {
+    kprintf("* Animation. Enemy %i, anim %i",nenemy,newanimation);
     if (obj_enemy[nenemy].obj_character.animation != newanimation) {
         obj_enemy[nenemy].obj_character.animation = newanimation;
         SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
