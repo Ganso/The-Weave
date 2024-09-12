@@ -103,9 +103,9 @@ void check_pattern(void)
         else { // We have a match, but pattern is not usable right now
             show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
             play_pattern_sound(matched_pattern); // Play pattern sound
-            show_interface(false);
+            show_or_hide_interface(false);
             talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // "I can't do it now"
-            show_interface(true);
+            show_or_hide_interface(true);
             show_pattern_icon(matched_pattern, false, false); // Show appropiate icon
         }
     }

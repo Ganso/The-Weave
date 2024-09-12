@@ -1,17 +1,19 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Show or hide the bottom interface
-void show_interface(bool visible)
+// Show or hide the bottom interface of the game
+void show_or_hide_interface(bool visible)
 {
     if (interface_active==true) {
         if (visible == true) {
+            // Draw the rod and pentagram images in the window plane
             VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 23, false, true);
             tile_ind+=int_rod_image.tileset->numTile;
             VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
             tile_ind+=int_pentagram_image.tileset->numTile;
         } 
         else {
+            // Clear the window plane and hide rod and pentagram icons
             tile_ind-=int_rod_image.tileset->numTile;
             tile_ind-=int_pentagram_image.tileset->numTile;
             VDP_clearPlane(WINDOW, true);
@@ -21,7 +23,7 @@ void show_interface(bool visible)
     }
 }
 
-// Show or hide notes
+// Show or hide a specific note in the interface
 void show_note(u8 nnote, bool visible)
 {
     Sprite **pentsprite;
@@ -31,6 +33,7 @@ void show_note(u8 nnote, bool visible)
     u8 *notesong;
     u16 pent_x,rod_x;
 
+    // Determine the appropriate sprites, sounds, and positions for the given note
     switch (nnote) 
     {
     case NOTE_MI:
@@ -78,7 +81,7 @@ void show_note(u8 nnote, bool visible)
         pent_x=219+64;
         rod_x=24+128;
         break;
-    default:
+    default: // NOTE_DO
         pentsprite=&spr_int_pentagram_6;
         rodsprite=&spr_int_rod_6;
         pentsritedef=(SpriteDefinition*) &int_pentagram_6_sprite;
@@ -90,11 +93,13 @@ void show_note(u8 nnote, bool visible)
     }
 
     if (visible == true) {
+        // Add rod and pentagram sprites if they don't exist
         if (*rodsprite==NULL) *rodsprite = SPR_addSpriteSafe (rodspritedef, rod_x, 212, TILE_ATTR(PAL2, false, false, false));
         if (*pentsprite==NULL) *pentsprite = SPR_addSpriteSafe (pentsritedef, pent_x, 180, TILE_ATTR(PAL2, false, false, false));
-        XGM2_play(notesong);
+        XGM2_play(notesong); // Play the note sound
     }
     else {
+        // Release the pentagram sprite if it exists
         if (*pentsprite!=NULL) {
             SPR_releaseSprite(*pentsprite);
             *pentsprite=NULL;
@@ -103,9 +108,10 @@ void show_note(u8 nnote, bool visible)
     SPR_update();
 }
 
-// Hide icons in the rod
+// Hide all rod icons in the interface
 void hide_rod_icons(void)
 {
+    // Release all rod sprites and set pointers to NULL
     if (spr_int_rod_1!=NULL) SPR_releaseSprite(spr_int_rod_1);
     if (spr_int_rod_2!=NULL) SPR_releaseSprite(spr_int_rod_2);
     if (spr_int_rod_3!=NULL) SPR_releaseSprite(spr_int_rod_3);
@@ -121,9 +127,10 @@ void hide_rod_icons(void)
     SPR_update();
 }
 
-// Hide icons in the pentagram
+// Hide all pentagram icons in the interface
 void hide_pentagram_icons(void)
 {
+    // Release all pentagram sprites
     if (spr_int_pentagram_1!=NULL) SPR_releaseSprite(spr_int_pentagram_1);
     if (spr_int_pentagram_2!=NULL) SPR_releaseSprite(spr_int_pentagram_2);
     if (spr_int_pentagram_3!=NULL) SPR_releaseSprite(spr_int_pentagram_3);
@@ -133,7 +140,7 @@ void hide_pentagram_icons(void)
     SPR_update();
 }
 
-// Hide all pattern icons
+// Hide all pattern icons in the interface
 void hide_pattern_icons(void)
 {
     u16 npattern;
@@ -146,20 +153,24 @@ void hide_pattern_icons(void)
     }
 }
 
-// Show the icon of a pattern spell
+// Show or hide a specific pattern icon in the interface
 void show_pattern_icon(u16 npattern, bool show, bool priority)
 {
     u8 npal = PAL2;
     const SpriteDefinition *nsprite = NULL;
 
     if (show==TRUE) {
+        // Select the appropriate sprite based on the pattern
         if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
         if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
-        if (obj_pattern[npattern].sd==NULL) obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, SCREEN_WIDTH-40, 4, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
+        
+        // Add the sprite if it doesn't exist
+        if (obj_pattern[npattern].sd==NULL) obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, SCREEN_WIDTH-40, 4, TILE_ATTR(npal, priority, false, false));
         SPR_setAlwaysOnTop(obj_pattern[npattern].sd);
     }
     else {
+        // Release the sprite if it exists
         SPR_releaseSprite(obj_pattern[npattern].sd);
         obj_pattern[npattern].sd=NULL;
     }
@@ -211,7 +222,7 @@ void restoreSpritesVisibility(SpriteState* states, u16 count) {
     MEM_free(states);
 }
 
-// Pause / State screen
+// Display the pause/state screen
 void pause_screen(void) {
     u16 value; // Joypad value
     u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
@@ -221,24 +232,25 @@ void pause_screen(void) {
     //SpriteState* savedStates;
 
     VDP_setHilightShadow(true); // Dim screen
-    show_interface(false); // Hide interface
-    //show_or_hide_enemy_combat_interface(false); // Hide combat interface
+    show_or_hide_interface(false); // Hide interface
+    show_or_hide_enemy_combat_interface(false); // Hide combat interface
     //savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
 
+    // Find the first active pattern
     selected_pattern=254;
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
         if (obj_pattern[npattern].active==true) {
             num_active_patterns++;
-            if (selected_pattern==254) selected_pattern=npattern; // Find first active spell
+            if (selected_pattern==254) selected_pattern=npattern;
         } 
     }
 
     if (num_active_patterns!=0) show_pause_pattern_list(true,selected_pattern);
 
     value = JOY_readJoypad(JOY_ALL);
-    while ( (value & BUTTON_START) == 0 ) { // Wait until button is pressed again
+    while ( (value & BUTTON_START) == 0 ) { // Wait until START button is pressed again
         value = JOY_readJoypad(JOY_ALL);
-        if (num_active_patterns>1) { // You can only press left or right if you have more than a activepattern
+        if (num_active_patterns>1) { // Only allow pattern switching if there's more than one active pattern
             if (value & BUTTON_RIGHT) { // Find next active pattern
                 next_pattern_found=false;
                 old_pattern=selected_pattern;
@@ -249,10 +261,10 @@ void pause_screen(void) {
                     if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
                     else selected_pattern++;
                 }
-                show_pause_pattern_list(false,old_pattern); // Show pattern list again
-                show_pause_pattern_list(true,selected_pattern);
+                show_pause_pattern_list(false,old_pattern); // Hide previous pattern
+                show_pause_pattern_list(true,selected_pattern); // Show new pattern
             }
-            if (value & BUTTON_LEFT) { // Find last active pattern
+            if (value & BUTTON_LEFT) { // Find previous active pattern
                 next_pattern_found=false;
                 old_pattern=selected_pattern;
                 selected_pattern--;
@@ -262,8 +274,8 @@ void pause_screen(void) {
                     if (obj_pattern[selected_pattern].active==true) next_pattern_found=true;
                     else selected_pattern--;
                 }            
-                show_pause_pattern_list(false,old_pattern); // Show pattern list again
-                show_pause_pattern_list(true,selected_pattern);
+                show_pause_pattern_list(false,old_pattern); // Hide previous pattern
+                show_pause_pattern_list(true,selected_pattern); // Show new pattern
             }
             while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
             {
@@ -274,39 +286,37 @@ void pause_screen(void) {
         SPR_update();
         SYS_doVBlankProcess();
     }
-    while ( value & BUTTON_START ) { // Now wait until released
+    while ( value & BUTTON_START ) { // Now wait until START is released
         value = JOY_readJoypad(JOY_ALL);
         SYS_doVBlankProcess();
     }
     show_pause_pattern_list(false, selected_pattern); // Hide last selected pattern
-    for (u8 nnote=0; nnote<4; nnote++) if (spr_pattern_list_note[nnote]!=NULL) SPR_releaseSprite(spr_pattern_list_note[nnote]); // Hide notes on the right is still exist
-    show_interface(true); // Show interface again
+    for (u8 nnote=0; nnote<4; nnote++) if (spr_pattern_list_note[nnote]!=NULL) SPR_releaseSprite(spr_pattern_list_note[nnote]); // Hide notes on the right if they still exist
+    show_or_hide_interface(true); // Show interface again
     show_or_hide_enemy_combat_interface(true); // Show combat interface again
     //restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
     VDP_setHilightShadow(false); // Relit screen
     SPR_update();
     VDP_waitVSync();
-
 }
 
-// Show or hide pattern list (Pause screen)
+// Show or hide the pattern list in the pause screen
 void show_pause_pattern_list(bool show, u8 active_pattern)
 {
     u16 x_initial,x, nicon;
     u8 nnote, npattern, num_active_patterns=0;
     bool priority;
 
-    for (npattern=0;npattern<MAX_PATTERNS;npattern++) // How many patterns you have?
+    for (npattern=0;npattern<MAX_PATTERNS;npattern++) // Count active patterns
         if (obj_pattern[npattern].active==true) num_active_patterns++;
 
-    x_initial = (134 - 24 * num_active_patterns); // Initial X position
+    x_initial = (134 - 24 * num_active_patterns); // Calculate initial X position
     x = x_initial;
     nicon = 0;
 
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
         if (obj_pattern[npattern].active==true) {
-            if (npattern==active_pattern) priority=true; // Lit active pattern
-            else priority=false;
+            priority = (npattern==active_pattern); // Highlight active pattern
             show_icon_in_pause_list(npattern, nicon, x, show, priority); // Show or hide pattern icon
             x+=48;
             nicon++;
@@ -325,8 +335,9 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)
     u8 note;
     u16 x;
 
-    note=obj_pattern[npattern].notes[nnote]; // Which note is in that position of the pattern
+    note=obj_pattern[npattern].notes[nnote]; // Get the note at this position in the pattern
 
+    // Select the appropriate pentagram sprite based on the note
     switch (note) 
     {
     case NOTE_MI:
@@ -358,18 +369,19 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)
     }
 }
 
-// Show the icon of a pattern spell
+// Show or hide the icon of a pattern spell in the pause list
 void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool priority)
 {
     u8 npal = PAL2;
     const SpriteDefinition *nsprite = NULL;
 
     if (show==TRUE) {
+        // Select the appropriate sprite based on the pattern
         if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
         if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
 
-        if (spr_pause_icon[nicon]==NULL) spr_pause_icon[nicon] = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false)); // Priority TRUE
+        if (spr_pause_icon[nicon]==NULL) spr_pause_icon[nicon] = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false));
     }
     else {
         SPR_releaseSprite(spr_pause_icon[nicon]);
