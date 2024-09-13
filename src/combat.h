@@ -47,7 +47,7 @@
  * 4. Update this header with the new pattern information.
  */
 
-#define MAX_ATTACK_NOTE_PLAYING_TIME  500  // Attack note playing time in milliseconds
+#define MAX_ATTACK_NOTE_PLAYING_TIME  500  // Attack note playing time (in milliseconds)
 
 // Pattern-specific max effect times (in milliseconds)
 #define MAX_EFFECT_TIME_ELECTRIC 1600
@@ -58,8 +58,8 @@ u16 enemy_attacking; // Which enemy is attacking?
 u16 enemy_attack_pattern; // Which pattern is the enemy using?
 u8 enemy_attack_pattern_notes; // How many notes has the enemy lauched yet?
 u16 enemy_attack_time; // How long is the enemy attacking?
-bool attack_effect_in_progress; // An enemy pattern attack effect is in progress
-u16 attack_effect_time; // How long has been the enemy pattern effect working?
+bool enemy_attack_effect_in_progress; // An enemy pattern attack effect is in progress
+u16 enemy_attack_effect_time; // How long has been the enemy pattern effect working?
 bool enemy_note_active[6]; // Is the note # MI-DO active?
 
 void start_combat(bool start); // Start (or end) a combat

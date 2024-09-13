@@ -51,6 +51,7 @@ void check_pattern(void)
     matched_pattern=254;
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
         matches=0;
+        reverse_matches=0;
         for (nnote=0;nnote<4;nnote++) {
             if (played_notes[nnote]==obj_pattern[npattern].notes[nnote]) {
                 matches++;
@@ -73,7 +74,7 @@ void check_pattern(void)
     // Pattern effects
     if (matched_pattern!=254) { // We have a match!
         pattern_effect_reversed=false;
-        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==false) { // THUNDER !!!
+        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==false && pattern_effect_in_progress==PTRN_NONE) { // THUNDER !!!
             anim_character(active_character,ANIM_MAGIC); // Magic animation
             show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
             SPR_update();
@@ -94,8 +95,8 @@ void check_pattern(void)
             pattern_effect_in_progress=PTRN_HIDE;
             pattern_effect_time=1;
         }
-        else if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true) { // Reverse THUNDER !!!
-            if (is_combat_active==true && enemy_attacking!=ENEMY_NONE && attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
+        else if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true && pattern_effect_in_progress==PTRN_NONE) { // Reverse THUNDER !!!
+            if (is_combat_active==true && enemy_attacking!=ENEMY_NONE && enemy_attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
                 pattern_effect_in_progress=PTRN_ELECTRIC;
                 pattern_effect_reversed=true;
             }
@@ -163,7 +164,7 @@ void check_pattern_effect(void)
         else {
             show_pattern_icon(PTRN_HIDE, false, false); // Show appropiate icon
             show_character(active_character,true);
-            pattern_effect_in_progress=PTRN_EN_NONE;
+            pattern_effect_in_progress=PTRN_NONE;
             pattern_effect_time=0;
         }
         break;
