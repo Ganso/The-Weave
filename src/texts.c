@@ -131,6 +131,9 @@ const DialogItem act1_dialog3[] = {
      {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
          {"Debo probar a esconderme",
          "I should try hiding"}},
+    {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
+        {"Gracias por probar la demo técnica|Sígueme por X para estar al día|@GeeseBumpsGames", 
+         "Thtanks for testing our tech demo|Follow me in X for updates|@GeeseBumpsGames"}},
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 

@@ -27,7 +27,7 @@ void start_combat(bool start)
         enemy_attacking=ENEMY_NONE;
         enemy_attack_pattern_notes=0;
         enemy_attack_time=0;
-        attack_effect_in_progress=0;
+        enemy_attack_effect_in_progress=0;
         for (nnote=0;nnote<6;nnote++) enemy_note_active[nnote]=false;
 
         // Initialize life counter sprite for enemy HP display
@@ -190,7 +190,7 @@ void check_enemy_pattern(void)
     u8 numenemy, npattern;
 
     // Only check for new patterns if no attack is currently in progress
-    if (attack_effect_in_progress == false && enemy_attacking == ENEMY_NONE) {
+    if (enemy_attack_effect_in_progress == false && enemy_attacking == ENEMY_NONE) {
         for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
             if (obj_enemy[numenemy].obj_character.active == true) {
                 for (npattern = 0; npattern < MAX_PATTERN_ENEMY; npattern++) {
@@ -212,12 +212,12 @@ void check_enemy_pattern(void)
     }
 
     // Handle ongoing attack if one is in progress
-    if (attack_effect_in_progress == false && enemy_attacking != ENEMY_NONE) {
+    if (enemy_attack_effect_in_progress == false && enemy_attacking != ENEMY_NONE) {
         handle_ongoing_attack();
     }
 
     // Apply attack effect if it's in progress
-    if (attack_effect_in_progress == true) {
+    if (enemy_attack_effect_in_progress == true) {
         do_enemy_pattern_effect();
     }
 }
@@ -274,8 +274,8 @@ void handle_ongoing_attack(void)
             show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true, true);
         } else {
             // All notes played, initiate pattern effect
-            attack_effect_in_progress = true;
-            attack_effect_time = 0;
+            enemy_attack_effect_in_progress = true;
+            enemy_attack_effect_time = 0;
             
             // Launch pattern-specific effect
             switch (enemy_attack_pattern) {
@@ -308,7 +308,7 @@ void do_enemy_pattern_effect(void) {
             max_effect_time = 100; // Default duration
     }
 
-    if (attack_effect_time < max_effect_time) {
+    if (enemy_attack_effect_time < max_effect_time) {
         // Apply pattern-specific effect
         switch (enemy_attack_pattern) {
             case PTRN_EN_ELECTIC:
@@ -319,13 +319,13 @@ void do_enemy_pattern_effect(void) {
                 break;
             // Add more cases for other pattern types as needed
         }
-        attack_effect_time++;
+        enemy_attack_effect_time++;
     }
 
-    if (attack_effect_time == max_effect_time) {
+    if (enemy_attack_effect_time == max_effect_time) {
         if (num_played_notes != 0) {
             // Player is mid-pattern, give them time to finish
-            attack_effect_time--;
+            enemy_attack_effect_time--;
         } else {
             // Conclude the attack
             finish_enemy_pattern_effect();
@@ -337,8 +337,8 @@ void do_enemy_pattern_effect(void) {
 void finish_enemy_pattern_effect(void) {
     anim_enemy(enemy_attacking, ANIM_IDLE);
     obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern] = 0;
-    attack_effect_time = 0;
-    attack_effect_in_progress = false;
+    enemy_attack_effect_time = 0;
+    enemy_attack_effect_in_progress = false;
 
     // Apply pattern-specific conclusion effects
     switch (enemy_attack_pattern) {
@@ -382,7 +382,7 @@ void do_electric_pattern_effect(void) {
 
     // If player launches a reversed thunder spell, end the effect early
     if (pattern_effect_in_progress == PTRN_ELECTRIC && pattern_effect_reversed == true) {
-        attack_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC) - 1;
+        enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC) - 1;
     }
 }
 
@@ -424,14 +424,16 @@ void launch_bite_pattern(void) {
 void do_bite_pattern_effect(void) {
     // If player is hidden, end the effect early
     if (pattern_effect_in_progress == PTRN_HIDE) {
-        attack_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE) - 1;
+        enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE) - 1;
     }
 }
 
 void finish_bite_pattern_effect(void) {
     if (pattern_effect_in_progress == PTRN_HIDE) {
+        show_character(active_character,true);
         hit_enemy(enemy_attacking); // Player successfully avoided, damage the enemy
     } else {
+        show_character(active_character,true);
         hit_caracter(active_character); // Player failed to avoid, take damage
         show_or_hide_interface(false);
         show_or_hide_enemy_combat_interface(false);
@@ -439,5 +441,6 @@ void finish_bite_pattern_effect(void) {
         talk_dialog(&dialogs[ACT1_DIALOG3][4]);
         show_or_hide_interface(true);
         show_or_hide_enemy_combat_interface(true);
+        show_character(active_character,true);
     }
 }

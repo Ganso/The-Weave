@@ -122,7 +122,7 @@ void act_1_scene_2(void)
 void act_1_scene_5(void)
 {
     // Initialize level
-    new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, 1000, BG_SCRL_USER_RIGHT, 3);
+    new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, 1000, BG_SCRL_USER_RIGHT, 2);
     set_limits(0,134,275,172);
 
     // Initialize characters
@@ -142,7 +142,7 @@ void act_1_scene_5(void)
     patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (offset_BGA<80) {
+    while (offset_BGA<200) {
         next_frame(true);
     }
 
@@ -172,6 +172,14 @@ void act_1_scene_5(void)
     move_enemy(1, 250, 156);
     start_combat(true);
 
+    while (is_combat_active==true) {
+        next_frame(true);
+    }
+
+    show_or_hide_interface(false);
+    talk_dialog(&dialogs[ACT1_DIALOG3][5]);
+    show_or_hide_interface(false);
+    
     while (true) {
         next_frame(true);
     }
