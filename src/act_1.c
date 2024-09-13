@@ -14,10 +14,15 @@ void act_1_scene_1(void)
     // Initialize characters and dialog faces
     init_character(CHR_linus);
 
+    // Tech demo warning message
+    talk_dialog(&dialogs[SYSTEM_DIALOG][1]);
+    talk_dialog(&dialogs[SYSTEM_DIALOG][2]);
+
     // Put character in screen
     move_character_instant(CHR_linus, 340, 154);
     move_character(CHR_linus, 270, 154);
 
+    // Dialog
     talk_dialog(&dialogs[ACT1_DIALOG1][0]);
     talk_dialog(&dialogs[ACT1_DIALOG1][1]);
 

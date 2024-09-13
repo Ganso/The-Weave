@@ -127,24 +127,39 @@ void split_text(char *text, char *line1, char *line2, char *line3)
     }
 }
 
-// Print a line of text, character by character
 void print_line(char *text, u16 x, u16 y)
 {
     int i = 0;
     u16 joy_state;
     char temp[2] = {0, 0};  // Temporary one character storage
+    char *encoded_text = NULL;
 
+    // Code Spanish text
+    if (game_language == LANG_SPANISH) {
+        encoded_text = encode_spanish_text(text);
+        if (encoded_text != NULL) {
+            text = encoded_text;
+        }
+    }
+
+    // Print the text, character by character
     while (text[i] != '\0') {
         temp[0] = text[i];
         VDP_drawTextBG(WINDOW, temp, x + i, y);
-        joy_state=JOY_readJoypad (JOY_ALL);
-        if ((joy_state & BUTTON_A)==0) next_frame(false); // Is button A is being pressed, skip frame update
+        joy_state = JOY_readJoypad(JOY_ALL);
+        if ((joy_state & BUTTON_A) == 0) next_frame(false); // If button A is being pressed, skip frame update
         i++;
     }
-    joy_state=JOY_readJoypad (JOY_ALL);
-    while ((joy_state & BUTTON_A)!=0)
+
+    joy_state = JOY_readJoypad(JOY_ALL);
+    while ((joy_state & BUTTON_A) != 0)
     {
-        joy_state=JOY_readJoypad (JOY_ALL);
-        next_frame(false); // Is button A is being pressed, wait until release
+        joy_state = JOY_readJoypad(JOY_ALL);
+        next_frame(false); // If button A is being pressed, wait until release
+    }
+
+    // Free the encoded text if it was allocated
+    if (encoded_text != NULL) {
+        free(encoded_text);
     }
 }

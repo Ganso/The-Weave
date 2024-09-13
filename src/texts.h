@@ -25,4 +25,7 @@ typedef struct {
 // Game texts
 extern const DialogItem *dialogs[];
 
+// Functions
+char* encode_spanish_text(const char* input); // Code Spanish text in the game font charset
+
 #endif
