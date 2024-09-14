@@ -14,5 +14,11 @@ extern const u8 snd_note_sol[1024];
 extern const u8 snd_note_la[1024];
 extern const u8 snd_note_si[1024];
 extern const u8 snd_note_do[1024];
+extern const u8 snd_enemy_note_mi[1024];
+extern const u8 snd_enemy_note_fa[1024];
+extern const u8 snd_enemy_note_sol[1024];
+extern const u8 snd_enemy_note_la[1024];
+extern const u8 snd_enemy_note_si[1024];
+extern const u8 snd_enemy_note_do[1024];
 
 #endif // _RES_RES_SOUND_H_

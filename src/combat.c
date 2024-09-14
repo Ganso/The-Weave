@@ -76,37 +76,37 @@ void show_enemy_note(u8 nnote, bool visible, bool play)
     case NOTE_MI:
         rodsprite = &spr_int_enemy_rod_1;
         rodspritedef = &int_enemy_rod_1_sprite;
-        notesong = snd_note_mi;
+        notesong = snd_enemy_note_mi;
         rod_x = 24;
         break;
     case NOTE_FA:
         rodsprite = &spr_int_enemy_rod_2;
         rodspritedef = &int_enemy_rod_2_sprite;
-        notesong = snd_note_fa;
+        notesong = snd_enemy_note_fa;
         rod_x = 24 + 32;
         break;
     case NOTE_SOL:
         rodsprite = &spr_int_enemy_rod_3;
         rodspritedef = &int_enemy_rod_3_sprite;
-        notesong = snd_note_sol;
+        notesong = snd_enemy_note_sol;
         rod_x = 24 + 64;
         break;
     case NOTE_LA:
         rodsprite = &spr_int_enemy_rod_4;
         rodspritedef = &int_enemy_rod_4_sprite;
-        notesong = snd_note_la;
+        notesong = snd_enemy_note_la;
         rod_x = 24 + 96;
         break;
     case NOTE_SI:
         rodsprite = &spr_int_enemy_rod_5;
         rodspritedef = &int_enemy_rod_5_sprite;
-        notesong = snd_note_si;
+        notesong = snd_enemy_note_si;
         rod_x = 24 + 128;
         break;
     default: // NOTE_DO
         rodsprite = &spr_int_enemy_rod_6;
         rodspritedef = &int_enemy_rod_6_sprite;
-        notesong = snd_note_do;
+        notesong = snd_enemy_note_do;
         rod_x = 24 + 160;
         break;
     }
@@ -361,21 +361,26 @@ void finish_enemy_pattern_effect(void) {
 // Do -> Apply ongoing pattern effects
 // Finish -> Conclude the pattern and apply final effects
 
-// Electric pattern
-
+// Electric pattern: CHECK
 void check_electric_pattern(u8 numenemy, u8 npattern) {
     if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
-        enemy_launch_pattern(numenemy, npattern);
+        if (pattern_effect_in_progress == PTRN_HIDE) {
+            obj_enemy[numenemy].last_pattern_time[npattern] -= 50; // Delay attack if player is hidden
+        } else {
+            enemy_launch_pattern(numenemy, npattern);
+        }
     } else {
         if ((random() % 2) == 0) obj_enemy[numenemy].last_pattern_time[npattern]++; // 50% chance to progress cooldown
     }
 }
 
+// Electric pattern: LAUNCH
 void launch_electric_pattern(void) {
     play_pattern_sound(PTRN_ELECTRIC); // Play thunder sound
     anim_enemy(enemy_attacking, ANIM_MAGIC);
 }
 
+// Electric pattern: DO
 void do_electric_pattern_effect(void) {
     if (frame_counter % 2 == 0) VDP_setHilightShadow(true); // Create flickering thunder effect
     else VDP_setHilightShadow(false);
@@ -386,6 +391,7 @@ void do_electric_pattern_effect(void) {
     }
 }
 
+// Electric pattern: FINISH
 void finish_electric_pattern_effect(void) {
     VDP_setHilightShadow(false);
     if (pattern_effect_reversed == true && pattern_effect_in_progress == PTRN_ELECTRIC) {
@@ -403,8 +409,7 @@ void finish_electric_pattern_effect(void) {
     }
 }
 
-// Bite pattern
-
+// Bite pattern: CHECK
 void check_bite_pattern(u8 numenemy, u8 npattern) {
     if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
         if (pattern_effect_in_progress == PTRN_HIDE) {
@@ -417,10 +422,12 @@ void check_bite_pattern(u8 numenemy, u8 npattern) {
     }
 }
 
+// Bite pattern: LAUNCH
 void launch_bite_pattern(void) {
     anim_enemy(enemy_attacking, ANIM_MAGIC);
 }
 
+// Bite pattern: DO
 void do_bite_pattern_effect(void) {
     // If player is hidden, end the effect early
     if (pattern_effect_in_progress == PTRN_HIDE) {
@@ -428,10 +435,10 @@ void do_bite_pattern_effect(void) {
     }
 }
 
+// Bite pattern: FINISH
 void finish_bite_pattern_effect(void) {
     if (pattern_effect_in_progress == PTRN_HIDE) {
-        show_character(active_character,true);
-        hit_enemy(enemy_attacking); // Player successfully avoided, damage the enemy
+        // Do nothing
     } else {
         show_character(active_character,true);
         hit_caracter(active_character); // Player failed to avoid, take damage

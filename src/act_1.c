@@ -134,6 +134,7 @@ void act_1_scene_5(void)
     move_character(CHR_linus, 30, 154);
     talk_dialog(&dialogs[ACT1_DIALOG3][0]);
     talk_dialog(&dialogs[ACT1_DIALOG3][1]);
+    talk_dialog(&dialogs[ACT1_DIALOG3][11]);
 
     // Show the interface and allow character to move and play patterns
     player_scroll_active=true;
@@ -142,7 +143,7 @@ void act_1_scene_5(void)
     patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (offset_BGA<200) {
+    while (offset_BGA<280) {
         next_frame(true);
     }
 
@@ -152,35 +153,35 @@ void act_1_scene_5(void)
     // Initialize enemies
     PAL_setPalette(PAL3, three_head_monkey_sprite.palette->data, DMA); // Enemy palette
 
-    init_enemy(0,ENEMY_CLS_BADBOBBIN);
-    move_enemy_instant(0, 350, 176);
+    init_enemy(0,ENEMY_CLS_3HEADMONKEY);
+    move_enemy_instant(0, -20, 156);
     move_character(CHR_linus, 200, 144);
-    move_enemy(0, 250, 136);
-
+    move_enemy(0, 20, 156);
     show_or_hide_interface(true);
     start_combat(true);
-
     while (is_combat_active==true) {
         next_frame(true);
     }
 
-    init_enemy(0,ENEMY_CLS_3HEADMONKEY);
+    init_enemy(0,ENEMY_CLS_BADBOBBIN);
     init_enemy(1,ENEMY_CLS_BADBOBBIN);
-    move_enemy_instant(0, -20, 156);
-    move_enemy_instant(1, 350, 156);
-    move_enemy(0, 20, 156);
-    move_enemy(1, 250, 156);
+    move_enemy_instant(0, 350, 176);
+    move_enemy_instant(1, -20, 156);
+    move_enemy(0, 250, 136);
+    move_enemy(1, 20, 156);
     start_combat(true);
-
     while (is_combat_active==true) {
         next_frame(true);
     }
 
     show_or_hide_interface(false);
+    talk_dialog(&dialogs[ACT1_DIALOG3][10]);
     talk_dialog(&dialogs[ACT1_DIALOG3][5]);
-    show_or_hide_interface(false);
-    
+    talk_dialog(&dialogs[ACT1_DIALOG3][7]);
+    talk_dialog(&dialogs[ACT1_DIALOG3][8]);
+    PAL_fadeOutAll(120,false);
+
     while (true) {
-        next_frame(true);
+        // THE END
     }
 }
