@@ -36,6 +36,7 @@ Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object
 typedef struct
 {
     Enemy_Class class;
+    u16 class_id;
     Entity obj_character;
     u16 hitpoints;
     u16 last_pattern_time[MAX_PATTERN_ENEMY];

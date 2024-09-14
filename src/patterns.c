@@ -74,20 +74,50 @@ void check_pattern(void)
     // Pattern effects
     if (matched_pattern!=254) { // We have a match!
         pattern_effect_reversed=false;
-        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==false && pattern_effect_in_progress==PTRN_NONE) { // THUNDER !!!
-            anim_character(active_character,ANIM_MAGIC); // Magic animation
-            show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
-            SPR_update();
-            play_pattern_sound(PTRN_ELECTRIC);
-            for (i=0;i<100;i++) {
-                VDP_setHilightShadow(true);
-                SYS_doVBlankProcess();
-                VDP_setHilightShadow(false);
-                SYS_doVBlankProcess();
+        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==false) { // THUNDER !!!
+            if (is_combat_active==true && enemy_attacking!=ENEMY_NONE && enemy_attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
+                // We are being attacked by thunder right now. We should have used the reverse pattern
+                show_or_hide_interface(false);
+                show_or_hide_enemy_combat_interface(false);
+                talk_dialog(&dialogs[ACT1_DIALOG3][6]); // Give player a hint
+                show_or_hide_enemy_combat_interface(true);
+                show_or_hide_interface(true);
             }
-            show_pattern_icon(matched_pattern, false, false); // Hide the icon
-            anim_character(active_character,ANIM_IDLE); // Stop magic animation
-            SPR_update();
+            else if (pattern_effect_in_progress==PTRN_HIDE) { // Player is hidden
+                show_or_hide_interface(false);
+                show_or_hide_enemy_combat_interface(false);
+                talk_dialog(&dialogs[ACT1_DIALOG3][9]);
+                show_or_hide_enemy_combat_interface(true);
+                show_or_hide_interface(true);
+            }
+            else {
+                anim_character(active_character,ANIM_MAGIC); // Magic animation
+                show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
+                SPR_update();
+                play_pattern_sound(PTRN_ELECTRIC);
+                for (i=0;i<100;i++) {
+                    VDP_setHilightShadow(true);
+                    SYS_doVBlankProcess();
+                    VDP_setHilightShadow(false);
+                    SYS_doVBlankProcess();
+                }
+                show_pattern_icon(matched_pattern, false, false); // Hide the icon
+                SPR_update();
+                if (is_combat_active==true) { // Combat
+                    for (u16 nenemy=0;nenemy<MAX_ENEMIES;nenemy++) { // Find enemies
+                        if (obj_enemy[nenemy].obj_character.active==true) { // Find active enemies
+                            if (obj_enemy[nenemy].class_id==ENEMY_CLS_3HEADMONKEY && obj_enemy[nenemy].hitpoints>0) { // Find monkeys that are still alive
+                                hit_enemy(nenemy); // Hit them!
+                                if (enemy_attack_pattern==PTRN_EN_BITE) { // We are being bitten
+                                    enemy_attack_pattern=PTRN_EN_NONE;
+                                    finish_enemy_pattern_effect(); // Finish enemy attack
+                                }
+                            }
+                        }
+                    }
+                anim_character(active_character,ANIM_IDLE); // Stop magic animation
+                }
+            }                
         }
         else if (matched_pattern==PTRN_HIDE && is_reverse_match==false) { // HIDE!!
             show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
@@ -95,15 +125,14 @@ void check_pattern(void)
             pattern_effect_in_progress=PTRN_HIDE;
             pattern_effect_time=1;
         }
-        else if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true && pattern_effect_in_progress==PTRN_NONE) { // Reverse THUNDER !!!
-            if (is_combat_active==true && enemy_attacking!=ENEMY_NONE && enemy_attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
+        else if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true && pattern_effect_in_progress==PTRN_NONE && // REVERSE THUNDER!
+            is_combat_active==true && enemy_attacking!=ENEMY_NONE && enemy_attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
                 pattern_effect_in_progress=PTRN_ELECTRIC;
                 pattern_effect_reversed=true;
-            }
         }
         else { // We have a match, but pattern is not usable right now
             show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
-            play_pattern_sound(matched_pattern); // Play pattern sound
+            play_pattern_sound(PTRN_NONE); // Play fail sound
             show_or_hide_interface(false);
             talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // "I can't do it now"
             show_or_hide_interface(true);

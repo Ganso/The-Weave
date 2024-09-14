@@ -31,6 +31,7 @@ void show_note(u8 nnote, bool visible)
     SpriteDefinition *pentsritedef;
     SpriteDefinition *rodspritedef;
     u8 *notesong;
+    // u8 *notewav;
     u16 pent_x,rod_x;
 
     // Determine the appropriate sprites, sounds, and positions for the given note
@@ -42,6 +43,7 @@ void show_note(u8 nnote, bool visible)
         pentsritedef=(SpriteDefinition*) &int_pentagram_1_sprite;
         rodspritedef=(SpriteDefinition*) &int_rod_1_sprite;
         notesong=(u8*)snd_note_mi;
+        // notewav=(u8*)snd_note_mi_wav;
         pent_x=219;
         rod_x=24;
         break;
@@ -51,6 +53,7 @@ void show_note(u8 nnote, bool visible)
         pentsritedef=(SpriteDefinition*) &int_pentagram_2_sprite;
         rodspritedef=(SpriteDefinition*) &int_rod_2_sprite;
         notesong=(u8*)snd_note_fa;
+        // notewav=(u8*)snd_note_fa_wav;
         pent_x=219+16;
         rod_x=24+32;
         break;
@@ -60,6 +63,7 @@ void show_note(u8 nnote, bool visible)
         pentsritedef=(SpriteDefinition*) &int_pentagram_3_sprite;
         rodspritedef=(SpriteDefinition*) &int_rod_3_sprite;
         notesong=(u8*)snd_note_sol;
+        // notewav=(u8*)snd_note_sol_wav;
         pent_x=219+32;
         rod_x=24+64;
         break;
@@ -69,6 +73,7 @@ void show_note(u8 nnote, bool visible)
         pentsritedef=(SpriteDefinition*) &int_pentagram_4_sprite;
         rodspritedef=(SpriteDefinition*) &int_rod_4_sprite;
         notesong=(u8*)snd_note_la;
+        // notewav=(u8*)snd_note_la_wav;
         pent_x=219+48;
         rod_x=24+96;
         break;
@@ -78,6 +83,7 @@ void show_note(u8 nnote, bool visible)
         pentsritedef=(SpriteDefinition*) &int_pentagram_5_sprite;
         rodspritedef=(SpriteDefinition*) &int_rod_5_sprite;
         notesong=(u8*)snd_note_si;
+        // notewav=(u8*)snd_note_si_wav;
         pent_x=219+64;
         rod_x=24+128;
         break;
@@ -87,6 +93,7 @@ void show_note(u8 nnote, bool visible)
         pentsritedef=(SpriteDefinition*) &int_pentagram_6_sprite;
         rodspritedef=(SpriteDefinition*) &int_rod_6_sprite;
         notesong=(u8*)snd_note_do;
+        // notewav=(u8*)snd_note_do_wav;
         pent_x=219+80;
         rod_x=24+160;
         break;
@@ -97,6 +104,7 @@ void show_note(u8 nnote, bool visible)
         if (*rodsprite==NULL) *rodsprite = SPR_addSpriteSafe (rodspritedef, rod_x, 212, TILE_ATTR(PAL2, false, false, false));
         if (*pentsprite==NULL) *pentsprite = SPR_addSpriteSafe (pentsritedef, pent_x, 180, TILE_ATTR(PAL2, false, false, false));
         XGM2_play(notesong); // Play the note sound
+        // XGM2_playPCM(notewav,sizeof(snd_note_do_wav),SOUND_PCM_CH_AUTO);
     }
     else {
         // Release the pentagram sprite if it exists
