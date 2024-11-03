@@ -1,5 +1,5 @@
-#ifndef _PATTERNS_H_
-#define _PATTERNS_H_
+#ifndef _CHR_PATTERNS_H_
+#define _CHR_PATTERNS_H_
 
 // Notes
 #define NOTE_NONE 0
