@@ -12,11 +12,12 @@ void joy_check(void)
 
     // Only process movement and action buttons if movement is allowed
     if (movement_active) {
-        // Handle movement only if no note is currently playing
-        if (note_playing == NOTE_NONE) {
+        // Handle movement only if character is in IDLE or WALKING state
+        if (obj_character[active_character].state == STATE_IDLE || 
+            obj_character[active_character].state == STATE_WALKING) {
             handle_movement(joy_value);
         }
-        // Always check action buttons, even if a note is playing
+        // Always check action buttons, even during pattern effects
         handle_action_buttons(joy_value);
     }
 
@@ -55,8 +56,13 @@ void handle_movement(u16 joy_value)
         moved = true;
     }
 
-    // Update the character's animation based on whether it moved or not
-    update_character_animation(moved);
+    // Update the character's state and animation based on movement
+    if (moved) {
+        obj_character[active_character].state = STATE_WALKING;
+    } else if (obj_character[active_character].state == STATE_WALKING) {
+        obj_character[active_character].state = STATE_IDLE;
+    }
+    update_character_animation();
 }
 
 // Move the character if there's no collision and it's within the screen limits. This function also handles background scrolling if the character is at the screen edge.
@@ -75,14 +81,21 @@ void handle_character_movement(s16 dx, s16 dy)
         return; // Collision detected, don't move
     }
 
+    bool position_updated = false;
+
     // Handle horizontal movement
     if (dx != 0) {
-        if ( (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) && (new_x < x_limit_min || new_x > x_limit_max) ) { // Player is trying to move outside screen boundaries, and scroll mode is user dependant
+        if ((background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) && 
+            (new_x < x_limit_min || new_x > x_limit_max)) {
+            // Player is trying to move outside screen boundaries, and scroll mode is user dependent
             scroll_background(dx); // Try to scroll
+            position_updated = true;
         }
-        else if (new_x >= x_limit_min && new_x <= x_limit_max) { // In any other circunstance, if new x is between x_limit_min and x_limit_max, update x in object
+        else if (new_x >= x_limit_min && new_x <= x_limit_max) {
+            // In any other circumstance, if new x is between x_limit_min and x_limit_max, update x in object
             obj_character[active_character].x = new_x;
             obj_character[active_character].flipH = (dx < 0); // Flip character sprite if moving left
+            position_updated = true;
         }
         // If new_x is outside boundaries and not in scrolling mode, do nothing
     }
@@ -90,21 +103,50 @@ void handle_character_movement(s16 dx, s16 dy)
     // Handle vertical movement
     if (dy != 0 && new_y + player_y_size >= y_limit_min && new_y + player_y_size <= y_limit_max) {
         obj_character[active_character].y = new_y;
+        position_updated = true;
+    }
+
+    // Update character sprite position if any movement occurred
+    if (position_updated) {
+        update_character(active_character);
     }
 }
 
 /**
- * Update the character's animation based on whether it moved or not.
- * 
- * @param moved Whether the character moved in this frame
+ * Update the character's animation based on its current state.
  */
-void update_character_animation(bool moved)
+void update_character_animation(void)
 {
-    if (moved) {
-        obj_character[active_character].animation = ANIM_WALK;
-        update_character(active_character);
-    } else if (obj_character[active_character].animation == ANIM_WALK) {
-        anim_character(active_character, ANIM_IDLE); // Stop walking animation if character stopped moving
+    switch (obj_character[active_character].state) {
+        case STATE_WALKING:
+            if (obj_character[active_character].animation != ANIM_WALK) {
+                obj_character[active_character].animation = ANIM_WALK;
+                update_character(active_character);
+            }
+            break;
+        case STATE_IDLE:
+            if (obj_character[active_character].animation == ANIM_WALK) {
+                anim_character(active_character, ANIM_IDLE);
+            }
+            break;
+        case STATE_PLAYING_NOTE:
+            if (obj_character[active_character].animation != ANIM_ACTION) {
+                anim_character(active_character, ANIM_ACTION);
+            }
+            break;
+        case STATE_PATTERN_EFFECT:
+            if (obj_character[active_character].animation != ANIM_MAGIC) {
+                anim_character(active_character, ANIM_MAGIC);
+            }
+            break;
+        case STATE_PATTERN_EFFECT_FINISH:
+            if (obj_character[active_character].animation != ANIM_IDLE) {
+                anim_character(active_character, ANIM_IDLE);
+            }
+            obj_character[active_character].state = STATE_IDLE;
+            break;
+        default:
+            break;
     }
 }
 
@@ -116,6 +158,12 @@ void update_character_animation(bool moved)
  */
 void handle_action_buttons(u16 joy_value)
 {
+    // Only allow item interaction and note playing in IDLE or WALKING states
+    if (obj_character[active_character].state != STATE_IDLE && 
+        obj_character[active_character].state != STATE_WALKING) {
+        return;
+    }
+
     if (movement_active) {
         if (joy_value & BUTTON_A) { // Detect if the player is interacting with an item
             u16 nitem=detect_nearby_item();
@@ -133,19 +181,6 @@ void handle_action_buttons(u16 joy_value)
         if (joy_value & BUTTON_X) play_note(NOTE_LA);
         if (joy_value & BUTTON_Y) play_note(NOTE_SI);
         if (joy_value & BUTTON_Z) play_note(NOTE_DO);
-        update_action_animation();
-    }
-}
-
-/**
- * Update the character's animation when playing a musical note.
- */
-void update_action_animation(void)
-{
-    if (note_playing != NOTE_NONE && obj_character[active_character].animation != ANIM_ACTION) {
-        anim_character(active_character, ANIM_ACTION); // Start action animation when playing a note
-    } else if (note_playing == NOTE_NONE && obj_character[active_character].animation == ANIM_ACTION) {
-        anim_character(active_character, ANIM_IDLE); // Return to idle animation when note stops
     }
 }
 

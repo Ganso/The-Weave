@@ -22,8 +22,7 @@ void next_frame(bool interactive)
         if (movement_active==true) joy_check();
 
         // Pattern related actions 
-        check_note();
-        check_pattern_effect();
+        check_pattern_state();
 
         // Combat related actions
         if (is_combat_active==true) {

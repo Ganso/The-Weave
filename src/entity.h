@@ -7,6 +7,17 @@
 #define ANIM_ACTION     2
 #define ANIM_MAGIC      3
 
+// Entities states
+typedef enum {
+    STATE_IDLE,
+    STATE_WALKING,
+    STATE_PLAYING_NOTE,
+    STATE_PATTERN_FINISHED,
+    STATE_PATTERN_CHECK,
+    STATE_PATTERN_EFFECT,
+    STATE_PATTERN_EFFECT_FINISH
+} GameState;
+
 // Game entity definition
 typedef struct
 {
@@ -25,6 +36,7 @@ typedef struct
     u8                       collision_y_offset;
     u8                       collision_width;
     u8                       collision_height;
+    GameState                state;
 } Entity;
 
 void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Move an entity
