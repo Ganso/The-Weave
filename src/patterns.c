@@ -4,147 +4,216 @@
 // Play a note
 void play_note(u8 nnote)
 {
-    if (note_playing==NOTE_NONE) {
-        if (note_playing_time==0) { // Note starting
+    if (note_playing == NOTE_NONE) {
+        if (note_playing_time == 0) { // Note starting
             show_note(nnote, true);
-            note_playing=nnote;
+            note_playing = nnote;
             note_playing_time++;
-            played_notes[num_played_notes]=nnote;
+            played_notes[num_played_notes] = nnote;
             num_played_notes++;
+            
+            // Change character state to playing note
+            obj_character[active_character].state = STATE_PLAYING_NOTE;
         }
     }
 }
 
-// Check if a note is being played
-void check_note(void)
+// Main state machine for pattern system
+void check_pattern_state(void)
 {
-    if (note_playing_time!=0) { // A note is being played
-        if (note_playing_time==calc_ticks(MAX_NOTE_PLAYING_TIME)) { // Finished
-            show_note(note_playing, false); // Hide the note
-            note_playing=NOTE_NONE;
-            time_since_last_note=1; // A pattern is possible. Start counting ticks to cancel it
-            note_playing_time=0;
-            if (num_played_notes==4) {
-                check_pattern(); // Pattern finished
-            }
-        }
-        else note_playing_time++; // Keep playing
-    }
-    else if (time_since_last_note!=0) {
-        time_since_last_note++;
-        if (time_since_last_note==calc_ticks(MAX_PATTERN_WAIT_TIME)) { // Done waiting. The pattern is cancelled
-            hide_rod_icons();
-            time_since_last_note=0;
-            num_played_notes=0;
-        }
-    }
-}
-
-// Check the finished pattern
-void check_pattern(void)
-{
-    u8 npattern,nnote; // Loop indexes
-    u8 matches,reverse_matches,matched_pattern;
+    u8 npattern, nnote; // Loop indexes
+    u8 matches, reverse_matches, matched_pattern;
     bool is_reverse_match;
     u8 i;
+    u16 max_effect_time = 400;
 
-    matched_pattern=254;
-    for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
-        matches=0;
-        reverse_matches=0;
-        for (nnote=0;nnote<4;nnote++) {
-            if (played_notes[nnote]==obj_pattern[npattern].notes[nnote]) {
-                matches++;
-            }
-            if (played_notes[nnote]==obj_pattern[npattern].notes[3-nnote]) {
-                reverse_matches++;
-            }
-        }
-        if (matches==4 && obj_pattern[npattern].active==true) {
-            matched_pattern=npattern; // We have a match!
-            is_reverse_match=false;
-        }
-        else if (reverse_matches==4 && obj_pattern[npattern].active==true) {
-            matched_pattern=npattern; // We have a reverse match!
-            is_reverse_match=true;
-        }
-    }
-    hide_rod_icons(); // Hide the rod pattern icons
-
-    // Pattern effects
-    if (matched_pattern!=254) { // We have a match!
-        pattern_effect_reversed=false;
-        if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==false) { // THUNDER !!!
-            if (is_combat_active==true && enemy_attacking!=ENEMY_NONE && enemy_attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
-                // We are being attacked by thunder right now. We should have used the reverse pattern
-                show_or_hide_interface(false);
-                show_or_hide_enemy_combat_interface(false);
-                talk_dialog(&dialogs[ACT1_DIALOG3][6]); // Give player a hint
-                show_or_hide_enemy_combat_interface(true);
-                show_or_hide_interface(true);
-            }
-            else if (pattern_effect_in_progress==PTRN_HIDE) { // Player is hidden
-                show_or_hide_interface(false);
-                show_or_hide_enemy_combat_interface(false);
-                talk_dialog(&dialogs[ACT1_DIALOG3][9]);
-                show_or_hide_enemy_combat_interface(true);
-                show_or_hide_interface(true);
-            }
-            else {
-                anim_character(active_character,ANIM_MAGIC); // Magic animation
-                show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
-                SPR_update();
-                play_pattern_sound(PTRN_ELECTRIC);
-                for (i=0;i<100;i++) {
-                    VDP_setHilightShadow(true);
-                    SYS_doVBlankProcess();
-                    VDP_setHilightShadow(false);
-                    SYS_doVBlankProcess();
+    // Main state machine
+    switch (obj_character[active_character].state)
+    {
+        case STATE_PLAYING_NOTE:
+            // Handle note playing state
+            if (note_playing_time != 0) {
+                if (note_playing_time == calc_ticks(MAX_NOTE_PLAYING_TIME)) {
+                    // Note finished playing
+                    show_note(note_playing, false);
+                    note_playing = NOTE_NONE;
+                    time_since_last_note = 1;
+                    note_playing_time = 0;
+                    
+                    if (num_played_notes == 4) {
+                        // All notes collected, move to pattern finished
+                        obj_character[active_character].state = STATE_PATTERN_FINISHED;
+                        // Directly move to pattern check
+                        obj_character[active_character].state = STATE_PATTERN_CHECK;
+                    } else {
+                        // Still collecting notes, return to idle
+                        obj_character[active_character].state = STATE_IDLE;
+                    }
                 }
-                show_pattern_icon(matched_pattern, false, false); // Hide the icon
-                SPR_update();
-                if (is_combat_active==true) { // Combat
-                    for (u16 nenemy=0;nenemy<MAX_ENEMIES;nenemy++) { // Find enemies
-                        if (obj_enemy[nenemy].obj_character.active==true) { // Find active enemies
-                            if (obj_enemy[nenemy].class_id==ENEMY_CLS_3HEADMONKEY && obj_enemy[nenemy].hitpoints>0) { // Find monkeys that are still alive
-                                hit_enemy(nenemy); // Hit them!
-                                if (enemy_attack_pattern==PTRN_EN_BITE) { // We are being bitten
-                                    enemy_attack_pattern=PTRN_EN_NONE;
-                                    finish_enemy_pattern_effect(); // Finish enemy attack
+                else note_playing_time++;
+            }
+            break;
+
+        case STATE_IDLE:
+            // Check for pattern timeout
+            if (time_since_last_note != 0) {
+                time_since_last_note++;
+                if (time_since_last_note == calc_ticks(MAX_PATTERN_WAIT_TIME)) {
+                    hide_rod_icons();
+                    time_since_last_note = 0;
+                    num_played_notes = 0;
+                }
+            }
+            break;
+
+        case STATE_PATTERN_CHECK:
+            // Check for pattern match
+            matched_pattern = 254;
+            for (npattern = 0; npattern < MAX_PATTERNS; npattern++) {
+                matches = 0;
+                reverse_matches = 0;
+                for (nnote = 0; nnote < 4; nnote++) {
+                    if (played_notes[nnote] == obj_pattern[npattern].notes[nnote]) {
+                        matches++;
+                    }
+                    if (played_notes[nnote] == obj_pattern[npattern].notes[3-nnote]) {
+                        reverse_matches++;
+                    }
+                }
+                if (matches == 4 && obj_pattern[npattern].active == true) {
+                    matched_pattern = npattern;
+                    is_reverse_match = false;
+                }
+                else if (reverse_matches == 4 && obj_pattern[npattern].active == true) {
+                    matched_pattern = npattern;
+                    is_reverse_match = true;
+                }
+            }
+            hide_rod_icons();
+
+            if (matched_pattern != 254) {
+                pattern_effect_reversed = false;
+                if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match) {
+                    if (is_combat_active && enemy_attacking != ENEMY_NONE && 
+                        enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
+                        // Wrong pattern during thunder attack
+                        show_or_hide_interface(false);
+                        show_or_hide_enemy_combat_interface(false);
+                        talk_dialog(&dialogs[ACT1_DIALOG3][6]);
+                        show_or_hide_enemy_combat_interface(true);
+                        show_or_hide_interface(true);
+                        obj_character[active_character].state = STATE_IDLE;
+                    }
+                    else if (pattern_effect_in_progress == PTRN_HIDE) {
+                        // Can't use thunder while hidden
+                        show_or_hide_interface(false);
+                        show_or_hide_enemy_combat_interface(false);
+                        talk_dialog(&dialogs[ACT1_DIALOG3][9]);
+                        show_or_hide_enemy_combat_interface(true);
+                        show_or_hide_interface(true);
+                        obj_character[active_character].state = STATE_IDLE;
+                    }
+                    else {
+                        // Thunder effect
+                        obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                        anim_character(active_character, ANIM_MAGIC);
+                        show_pattern_icon(matched_pattern, true, true);
+                        SPR_update();
+                        play_pattern_sound(PTRN_ELECTRIC);
+                        for (i = 0; i < 100; i++) {
+                            VDP_setHilightShadow(true);
+                            SYS_doVBlankProcess();
+                            VDP_setHilightShadow(false);
+                            SYS_doVBlankProcess();
+                        }
+                        show_pattern_icon(matched_pattern, false, false);
+                        SPR_update();
+                        
+                        if (is_combat_active) {
+                            for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
+                                if (obj_enemy[nenemy].obj_character.active && 
+                                    obj_enemy[nenemy].class_id == ENEMY_CLS_3HEADMONKEY && 
+                                    obj_enemy[nenemy].hitpoints > 0) {
+                                    hit_enemy(nenemy);
+                                    if (enemy_attack_pattern == PTRN_EN_BITE) {
+                                        enemy_attack_pattern = PTRN_EN_NONE;
+                                        finish_enemy_pattern_effect();
+                                    }
                                 }
                             }
                         }
+                        anim_character(active_character, ANIM_IDLE);
+                        obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
                     }
-                anim_character(active_character,ANIM_IDLE); // Stop magic animation
                 }
-            }                
-        }
-        else if (matched_pattern==PTRN_HIDE && is_reverse_match==false) { // HIDE!!
-            show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
-            play_pattern_sound(PTRN_HIDE);
-            pattern_effect_in_progress=PTRN_HIDE;
-            pattern_effect_time=1;
-        }
-        else if (matched_pattern==PTRN_ELECTRIC && is_reverse_match==true && pattern_effect_in_progress==PTRN_NONE && // REVERSE THUNDER!
-            is_combat_active==true && enemy_attacking!=ENEMY_NONE && enemy_attack_effect_in_progress==true && enemy_attack_pattern==PTRN_EN_ELECTIC) {
-                pattern_effect_in_progress=PTRN_ELECTRIC;
-                pattern_effect_reversed=true;
-        }
-        else { // We have a match, but pattern is not usable right now
-            show_pattern_icon(matched_pattern, true, true); // Show appropiate icon
-            play_pattern_sound(PTRN_NONE); // Play fail sound
-            show_or_hide_interface(false);
-            talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // "I can't do it now"
-            show_or_hide_interface(true);
-            show_pattern_icon(matched_pattern, false, false); // Show appropiate icon
-        }
+                else if (matched_pattern == PTRN_HIDE && !is_reverse_match) {
+                    // Hide effect
+                    obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                    show_pattern_icon(matched_pattern, true, true);
+                    play_pattern_sound(PTRN_HIDE);
+                    pattern_effect_in_progress = PTRN_HIDE;
+                    pattern_effect_time = 1;
+                }
+                else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match && 
+                         pattern_effect_in_progress == PTRN_NONE && 
+                         is_combat_active && enemy_attacking != ENEMY_NONE && 
+                         enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
+                    // Reverse thunder during enemy thunder attack
+                    obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                    pattern_effect_in_progress = PTRN_ELECTRIC;
+                    pattern_effect_reversed = true;
+                }
+                else {
+                    // Pattern matched but not usable now
+                    show_pattern_icon(matched_pattern, true, true);
+                    play_pattern_sound(PTRN_NONE);
+                    show_or_hide_interface(false);
+                    talk_dialog(&dialogs[SYSTEM_DIALOG][0]);
+                    show_or_hide_interface(true);
+                    show_pattern_icon(matched_pattern, false, false);
+                    obj_character[active_character].state = STATE_IDLE;
+                }
+            }
+            else {
+                // No pattern match
+                play_pattern_sound(PTRN_NONE);
+                obj_character[active_character].state = STATE_IDLE;
+            }
+            
+            num_played_notes = 0;
+            time_since_last_note = 0;
+            next_frame(false);
+            break;
+
+        case STATE_PATTERN_EFFECT:
+            // Handle ongoing pattern effects
+            if (pattern_effect_in_progress == PTRN_HIDE) {
+                if (pattern_effect_time != max_effect_time) {
+                    if (pattern_effect_time % 2 == 0) {
+                        show_character(active_character, true);
+                    } else {
+                        show_character(active_character, false);
+                    }
+                    pattern_effect_time++;
+                }
+                else {
+                    show_pattern_icon(PTRN_HIDE, false, false);
+                    show_character(active_character, true);
+                    pattern_effect_in_progress = PTRN_NONE;
+                    pattern_effect_time = 0;
+                    obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
+                }
+            }
+            break;
+
+        case STATE_PATTERN_EFFECT_FINISH:
+            // Reset to idle after effect finishes
+            obj_character[active_character].state = STATE_IDLE;
+            break;
+
+        default:
+            break;
     }
-    else {
-        play_pattern_sound(PTRN_NONE); // Failed pattern
-    }
-    num_played_notes=0;
-    time_since_last_note=0;
-    next_frame(false);
 }
 
 // Play the sound of a pattern spell
@@ -153,16 +222,16 @@ void play_pattern_sound(u16 npattern)
     switch (npattern)
     {
     case PTRN_HIDE:
-        XGM2_playPCM(snd_pattern_hide,sizeof(snd_pattern_hide),SOUND_PCM_CH_AUTO);
+        XGM2_playPCM(snd_pattern_hide, sizeof(snd_pattern_hide), SOUND_PCM_CH_AUTO);
         break;
     case PTRN_OPEN:
-        XGM2_playPCM(snd_pattern_open,sizeof(snd_pattern_open),SOUND_PCM_CH_AUTO);
+        XGM2_playPCM(snd_pattern_open, sizeof(snd_pattern_open), SOUND_PCM_CH_AUTO);
         break;
     case PTRN_ELECTRIC: // Pattern: Electric
-        XGM2_playPCM(snd_pattern_thunder,sizeof(snd_pattern_thunder),SOUND_PCM_CH_AUTO);
+        XGM2_playPCM(snd_pattern_thunder, sizeof(snd_pattern_thunder), SOUND_PCM_CH_AUTO);
         break;
     default: // Invalid pattern
-        XGM2_playPCM(snd_pattern_invalid,sizeof(snd_pattern_invalid),SOUND_PCM_CH_AUTO);
+        XGM2_playPCM(snd_pattern_invalid, sizeof(snd_pattern_invalid), SOUND_PCM_CH_AUTO);
         break;        
     }
 }  
@@ -170,35 +239,7 @@ void play_pattern_sound(u16 npattern)
 // initialize patters
 void init_patterns(void)
 {
-    obj_pattern[PTRN_ELECTRIC]=(Pattern) {true, {1,2,3,4}, NULL};
-    obj_pattern[PTRN_HIDE]=(Pattern) {true, {2,5,3,6}, NULL};
-    obj_pattern[PTRN_OPEN]=(Pattern) {true, {2,3,3,2}, NULL};
-
-}
-
-// Check if a pattern has a current effect
-void check_pattern_effect(void)
-{
-    u16 max_effect_time;
-    max_effect_time=400;
-
-    switch (pattern_effect_in_progress)
-    {
-    case PTRN_HIDE:
-        if (pattern_effect_time!=max_effect_time) {
-            if (pattern_effect_time%2==0) show_character(active_character,true);
-            else show_character(active_character,false);
-            pattern_effect_time++;
-        }
-        else {
-            show_pattern_icon(PTRN_HIDE, false, false); // Show appropiate icon
-            show_character(active_character,true);
-            pattern_effect_in_progress=PTRN_NONE;
-            pattern_effect_time=0;
-        }
-        break;
-    
-    default:
-        break;
-    }
+    obj_pattern[PTRN_ELECTRIC] = (Pattern) {true, {1,2,3,4}, NULL};
+    obj_pattern[PTRN_HIDE] = (Pattern) {true, {2,5,3,6}, NULL};
+    obj_pattern[PTRN_OPEN] = (Pattern) {true, {2,3,3,2}, NULL};
 }

@@ -41,12 +41,9 @@ typedef struct
 
 Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
 
-
 void play_note(u8 nnote); // Play a note
-void check_note(void); // Check if a note is being played
-void check_pattern(void); // Check the finished pattern
+void check_pattern_state(void); // Main state machine for pattern system
 void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
 void init_patterns(void); // initialize patters
-void check_pattern_effect(void); // Check if a pattern has a current effect
 
 #endif
