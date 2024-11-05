@@ -12,9 +12,11 @@ void joy_check(void)
 
     // Only process movement and action buttons if movement is allowed
     if (movement_active) {
-        // Handle movement only if character is in IDLE or WALKING state
+        // Handle movement if character is in IDLE, WALKING, or during HIDE effect
         if (obj_character[active_character].state == STATE_IDLE || 
-            obj_character[active_character].state == STATE_WALKING) {
+            obj_character[active_character].state == STATE_WALKING ||
+            (obj_character[active_character].state == STATE_PATTERN_EFFECT && 
+             pattern_effect_in_progress == PTRN_HIDE)) {
             handle_movement(joy_value);
         }
         // Always check action buttons, even during pattern effects
@@ -58,7 +60,11 @@ void handle_movement(u16 joy_value)
 
     // Update the character's state and animation based on movement
     if (moved) {
-        obj_character[active_character].state = STATE_WALKING;
+        // Don't change state if we're in PATTERN_EFFECT with HIDE
+        if (!(obj_character[active_character].state == STATE_PATTERN_EFFECT && 
+              pattern_effect_in_progress == PTRN_HIDE)) {
+            obj_character[active_character].state = STATE_WALKING;
+        }
     } else if (obj_character[active_character].state == STATE_WALKING) {
         obj_character[active_character].state = STATE_IDLE;
     }
@@ -117,6 +123,12 @@ void handle_character_movement(s16 dx, s16 dy)
  */
 void update_character_animation(void)
 {
+    // Don't change animation if we're in PATTERN_EFFECT with HIDE
+    if (obj_character[active_character].state == STATE_PATTERN_EFFECT && 
+        pattern_effect_in_progress == PTRN_HIDE) {
+        return;
+    }
+
     switch (obj_character[active_character].state) {
         case STATE_WALKING:
             if (obj_character[active_character].animation != ANIM_WALK) {
@@ -125,7 +137,7 @@ void update_character_animation(void)
             }
             break;
         case STATE_IDLE:
-            if (obj_character[active_character].animation == ANIM_WALK) {
+            if (obj_character[active_character].animation != ANIM_IDLE) {
                 anim_character(active_character, ANIM_IDLE);
             }
             break;

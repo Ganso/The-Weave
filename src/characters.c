@@ -29,7 +29,7 @@ void init_character(u16 nchar)
         }
         x_size=nsprite->w; // Get width and height from the Sprite Definition
         y_size=nsprite->h;
-        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height };
+        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE };
     } else {
         nsprite = obj_character[nchar].sd;
         npal = obj_character[nchar].palette;
@@ -76,7 +76,7 @@ void init_face(u16 nface)
         default:
             return;
         }
-        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0 };
+        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE };
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
@@ -126,6 +126,7 @@ void anim_character(u16 nchar, u8 newanimation)
     if (obj_character[nchar].animation!=newanimation) {
         obj_character[nchar].animation=newanimation;
         SPR_setAnim(spr_chr[nchar],obj_character[nchar].animation);
+        SPR_update();
     }
 }
 

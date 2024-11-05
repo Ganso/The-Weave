@@ -14,12 +14,15 @@ void play_note(u8 nnote)
             
             // Change character state to playing note
             obj_character[active_character].state = STATE_PLAYING_NOTE;
+
+            // Play animaton
+            update_character_animation();
         }
     }
 }
 
 // Main state machine for pattern system
-void check_pattern_state(void)
+void check_character_state(void)
 {
     u8 npattern, nnote; // Loop indexes
     u8 matches, reverse_matches, matched_pattern;
@@ -49,6 +52,7 @@ void check_pattern_state(void)
                         // Still collecting notes, return to idle
                         obj_character[active_character].state = STATE_IDLE;
                     }
+                    update_character_animation();
                 }
                 else note_playing_time++;
             }
@@ -151,6 +155,7 @@ void check_pattern_state(void)
                     obj_character[active_character].state = STATE_PATTERN_EFFECT;
                     show_pattern_icon(matched_pattern, true, true);
                     play_pattern_sound(PTRN_HIDE);
+                    movement_active = true; // Permitir movimiento durante ocultación
                     pattern_effect_in_progress = PTRN_HIDE;
                     pattern_effect_time = 1;
                 }
@@ -188,6 +193,7 @@ void check_pattern_state(void)
         case STATE_PATTERN_EFFECT:
             // Handle ongoing pattern effects
             if (pattern_effect_in_progress == PTRN_HIDE) {
+                movement_active = true; // Mantener el movimiento activo durante el efecto
                 if (pattern_effect_time != max_effect_time) {
                     if (pattern_effect_time % 2 == 0) {
                         show_character(active_character, true);
