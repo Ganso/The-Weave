@@ -17,7 +17,7 @@ u16 enemy_attack_effect_time; // How long has been the enemy pattern effect work
 bool enemy_note_active[6]; // Is the note # MI-DO active?
 
 // Main state machine function
-void check_enemy_pattern_state(void); // Main state machine for enemy pattern system
+void check_enemy_state(void); // Main state machine for enemy pattern system
 
 // Helper functions
 void show_enemy_note(u8 nnote, bool visible, bool play); // Show and play (or not) an enemy note

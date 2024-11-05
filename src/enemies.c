@@ -60,7 +60,7 @@ void init_enemy(u16 numenemy, u16 class)
     if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
     // Initialize enemy character with sprite, position, and collision attributes
-    obj_enemy[numenemy].obj_character = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height };
+    obj_enemy[numenemy].obj_character = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE };
 
     // Add enemy sprite if not already present
     if (spr_enemy[numenemy]==NULL) spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 

@@ -22,11 +22,11 @@ void next_frame(bool interactive)
         if (movement_active==true) joy_check();
 
         // Pattern related actions 
-        check_pattern_state();
+        check_character_state();
 
         // Combat related actions
         if (is_combat_active==true) {
-            check_enemy_pattern_state();
+            check_enemy_state();
             approach_enemies();
         }
     }

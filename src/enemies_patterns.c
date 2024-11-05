@@ -2,126 +2,126 @@
 #include "globals.h"
 
 // Main state machine for enemy pattern system
-void check_enemy_pattern_state(void)
+void check_enemy_state(void)
 {
     u8 numenemy, npattern;
     u16 max_effect_time;
 
-    // Main state machine
-    switch (obj_enemy[enemy_attacking].obj_character.state)
-    {
-        case STATE_IDLE:
-            // Check for new patterns if no attack is in progress
-            if (!enemy_attack_effect_in_progress && enemy_attacking == ENEMY_NONE) {
-                for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
-                    if (obj_enemy[numenemy].obj_character.active) {
-                        for (npattern = 0; npattern < MAX_PATTERN_ENEMY; npattern++) {
-                            if (obj_enemy[numenemy].class.has_pattern[npattern]) {
-                                // Check if pattern is ready (cooldown)
-                                if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
-                                    // Don't attack if player is hidden
-                                    if (pattern_effect_in_progress == PTRN_HIDE) {
-                                        obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
-                                    } else {
-                                        // Initialize attack
-                                        enemy_attack_pattern_notes = 0;
-                                        enemy_attack_time = 0;
-                                        enemy_attack_pattern = npattern;
-                                        enemy_attacking = numenemy;
-                                        anim_enemy(numenemy, ANIM_ACTION);
-                                        obj_enemy[numenemy].obj_character.state = STATE_PLAYING_NOTE;
-                                        show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[0], true, true);
-                                        show_or_hide_enemy_combat_interface(true);
-                                    }
-                                } else {
-                                    // 50% chance to progress cooldown
-                                    if ((random() % 2) == 0) {
-                                        obj_enemy[numenemy].last_pattern_time[npattern]++;
-                                    }
-                                }
+    // First check STATE_IDLE for all enemies, as this is where new attacks can be initiated
+    if (!enemy_attack_effect_in_progress && enemy_attacking == ENEMY_NONE) {
+        for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
+            if (obj_enemy[numenemy].obj_character.active) {
+                for (npattern = 0; npattern < MAX_PATTERN_ENEMY; npattern++) {
+                    if (obj_enemy[numenemy].class.has_pattern[npattern]) {
+                        // Check if pattern is ready (cooldown)
+                        if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
+                            // Don't attack if player is hidden
+                            if (pattern_effect_in_progress == PTRN_HIDE) {
+                                obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
+                            } else {
+                                // Initialize attack
+                                enemy_attack_pattern_notes = 0;
+                                enemy_attack_time = 0;
+                                enemy_attack_pattern = npattern;
+                                enemy_attacking = numenemy;
+                                anim_enemy(numenemy, ANIM_ACTION);
+                                obj_enemy[numenemy].obj_character.state = STATE_PLAYING_NOTE;
+                                show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[0], true, true);
+                                show_or_hide_enemy_combat_interface(true);
+                            }
+                        } else {
+                            // 50% chance to progress cooldown
+                            if ((random() % 2) == 0) {
+                                obj_enemy[numenemy].last_pattern_time[npattern]++;
                             }
                         }
                     }
                 }
             }
-            break;
+        }
+    }
 
-        case STATE_PLAYING_NOTE:
-            if (enemy_attack_time != calc_ticks(MAX_ATTACK_NOTE_PLAYING_TIME)) {
-                enemy_attack_time++;
-            } else {
-                // Current note finished
-                show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], false, false);
-                
-                if (enemy_attack_pattern_notes != obj_Pattern_Enemy[enemy_attack_pattern].numnotes - 1) {
-                    // Play next note
-                    enemy_attack_pattern_notes++;
-                    enemy_attack_time = 0;
-                    show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true, true);
+    // Then handle other states for the currently attacking enemy
+    if (enemy_attacking != ENEMY_NONE) {
+        switch (obj_enemy[enemy_attacking].obj_character.state)
+        {
+            case STATE_PLAYING_NOTE:
+                if (enemy_attack_time != calc_ticks(MAX_ATTACK_NOTE_PLAYING_TIME)) {
+                    enemy_attack_time++;
                 } else {
-                    // Pattern complete, move to effect
-                    obj_enemy[enemy_attacking].obj_character.state = STATE_PATTERN_EFFECT;
-                    enemy_attack_effect_in_progress = true;
-                    enemy_attack_effect_time = 0;
+                    // Current note finished
+                    show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], false, false);
                     
-                    // Launch pattern-specific effect
-                    switch (enemy_attack_pattern) {
-                        case PTRN_EN_ELECTIC:
-                            launch_electric_pattern();
-                            break;
-                        case PTRN_EN_BITE:
-                            launch_bite_pattern();
-                            break;
+                    if (enemy_attack_pattern_notes != obj_Pattern_Enemy[enemy_attack_pattern].numnotes - 1) {
+                        // Play next note
+                        enemy_attack_pattern_notes++;
+                        enemy_attack_time = 0;
+                        show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[enemy_attack_pattern_notes], true, true);
+                    } else {
+                        // Pattern complete, move to effect
+                        obj_enemy[enemy_attacking].obj_character.state = STATE_PATTERN_EFFECT;
+                        enemy_attack_effect_in_progress = true;
+                        enemy_attack_effect_time = 0;
+                        
+                        // Launch pattern-specific effect
+                        switch (enemy_attack_pattern) {
+                            case PTRN_EN_ELECTIC:
+                                launch_electric_pattern();
+                                break;
+                            case PTRN_EN_BITE:
+                                launch_bite_pattern();
+                                break;
+                        }
                     }
+                    show_or_hide_enemy_combat_interface(true);
                 }
-                show_or_hide_enemy_combat_interface(true);
-            }
-            break;
+                break;
 
-        case STATE_PATTERN_EFFECT:
-            // Determine max effect duration
-            switch (enemy_attack_pattern) {
-                case PTRN_EN_ELECTIC:
-                    max_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC);
-                    break;
-                case PTRN_EN_BITE:
-                    max_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE);
-                    break;
-                default:
-                    max_effect_time = 100;
-            }
-
-            if (enemy_attack_effect_time < max_effect_time) {
-                // Apply pattern-specific effect
+            case STATE_PATTERN_EFFECT:
+                // Determine max effect duration
                 switch (enemy_attack_pattern) {
                     case PTRN_EN_ELECTIC:
-                        do_electric_pattern_effect();
+                        max_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC);
                         break;
                     case PTRN_EN_BITE:
-                        do_bite_pattern_effect();
+                        max_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE);
                         break;
+                    default:
+                        max_effect_time = 100;
                 }
-                enemy_attack_effect_time++;
-            }
 
-            if (enemy_attack_effect_time == max_effect_time) {
-                if (num_played_notes != 0) {
-                    // Player is mid-pattern, give them time to finish
-                    enemy_attack_effect_time--;
-                } else {
-                    // Move to effect finish state
-                    obj_enemy[enemy_attacking].obj_character.state = STATE_PATTERN_EFFECT_FINISH;
+                if (enemy_attack_effect_time < max_effect_time) {
+                    // Apply pattern-specific effect
+                    switch (enemy_attack_pattern) {
+                        case PTRN_EN_ELECTIC:
+                            do_electric_pattern_effect();
+                            break;
+                        case PTRN_EN_BITE:
+                            do_bite_pattern_effect();
+                            break;
+                    }
+                    enemy_attack_effect_time++;
                 }
-            }
-            break;
 
-        case STATE_PATTERN_EFFECT_FINISH:
-            finish_enemy_pattern_effect();
-            obj_enemy[enemy_attacking].obj_character.state = STATE_IDLE;
-            break;
+                if (enemy_attack_effect_time == max_effect_time) {
+                    if (num_played_notes != 0) {
+                        // Player is mid-pattern, give them time to finish
+                        enemy_attack_effect_time--;
+                    } else {
+                        // Move to effect finish state
+                        obj_enemy[enemy_attacking].obj_character.state = STATE_PATTERN_EFFECT_FINISH;
+                    }
+                }
+                break;
 
-        default:
-            break;
+            case STATE_PATTERN_EFFECT_FINISH:
+                finish_enemy_pattern_effect();
+                obj_enemy[enemy_attacking].obj_character.state = STATE_IDLE;
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
@@ -232,20 +232,30 @@ void do_electric_pattern_effect(void) {
     if (frame_counter % 2 == 0) VDP_setHilightShadow(true); // Create flickering thunder effect
     else VDP_setHilightShadow(false);
 
-    // If player launches a reversed thunder spell, end the effect early
+    // If player launches a reversed thunder spell, immediately cancel enemy spell and counter
     if (pattern_effect_in_progress == PTRN_ELECTRIC && pattern_effect_reversed == true) {
-        enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC) - 1;
+        VDP_setHilightShadow(false);
+        hit_enemy(enemy_attacking); // Damage the enemy
+        
+        // Reset enemy state
+        enemy_attack_effect_in_progress = false;
+        obj_enemy[enemy_attacking].obj_character.state = STATE_IDLE;
+        enemy_attacking = ENEMY_NONE;
+        
+        // Reset player state
+        pattern_effect_in_progress = PTRN_NONE;
+        pattern_effect_reversed = false;
+        obj_character[active_character].state = STATE_IDLE;
+        
+        show_or_hide_enemy_combat_interface(false);
     }
 }
 
 // Electric pattern: FINISH
 void finish_electric_pattern_effect(void) {
     VDP_setHilightShadow(false);
-    if (pattern_effect_reversed == true && pattern_effect_in_progress == PTRN_ELECTRIC) {
-        hit_enemy(enemy_attacking); // Player successfully countered, damage the enemy
-        pattern_effect_in_progress = PTRN_NONE;
-        pattern_effect_reversed = false;
-    } else {
+    // Only damage player if they haven't already countered the spell
+    if (enemy_attacking != ENEMY_NONE) {
         hit_caracter(active_character); // Player failed to counter, take damage
         show_or_hide_interface(false);
         show_or_hide_enemy_combat_interface(false);
