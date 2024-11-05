@@ -20,7 +20,7 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
     obj_item[nitem].x_in_background=x_in_background;
 
     // We set X to 0, as we are gonna calc it later
-    obj_item[nitem].entity = (Entity) { true, spritedef, 0, y, x_size, y_size, npal, false, false, ANIM_IDLE, true, collision_x_offset, collision_y_offset, collision_width, collision_height };
+    obj_item[nitem].entity = (Entity) { true, spritedef, 0, y, x_size, y_size, npal, false, false, ANIM_IDLE, true, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE };
     spr_item[nitem] = SPR_addSpriteSafe(spritedef, 0, y, TILE_ATTR(npal, false, false, false));
 
     // Define real X in the sprite, and show it or hide it depending if it's visible in the background

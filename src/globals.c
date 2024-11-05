@@ -26,7 +26,7 @@ void next_frame(bool interactive)
 
         // Combat related actions
         if (is_combat_active==true) {
-            check_enemy_pattern();
+            check_enemy_pattern_state();
             approach_enemies();
         }
     }
