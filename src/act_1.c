@@ -143,7 +143,7 @@ void act_1_scene_5(void)
     patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (offset_BGA<280) {
+    while (offset_BGA<180) {
         next_frame(true);
     }
 

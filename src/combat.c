@@ -1,128 +1,235 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Start or end a combat sequence
+/**
+ * Combat System
+ * 
+ * This module handles the core combat mechanics including:
+ * - Combat initialization and cleanup
+ * - Damage calculation and application
+ * - Combat UI management (life counters, enemy faces, note indicators)
+ * - State tracking for active combats
+ * 
+ * Combat flows through several phases:
+ * 1. Initialization - Reset enemy HP, randomize pattern timings
+ * 2. Active Combat - Enemies attack with patterns, player can counter/dodge
+ * 3. Resolution - Process hits, update UI, check for combat end
+ */
+
+/******************************************************************************
+ *                            Combat Management                                 *
+ ******************************************************************************/
+
+/**
+ * Initialize or cleanup a combat sequence
+ * 
+ * When starting combat:
+ * - Initializes RNG for unpredictable combat events
+ * - Resets enemy health and randomizes initial pattern timings
+ * - Sets up combat UI elements
+ * - Disables player scrolling during combat
+ * 
+ * When ending combat:
+ * - Cleans up UI elements
+ * - Re-enables player movement
+ * 
+ * @param start: true to start combat, false to end it
+ */
 void start_combat(bool start)
 {
-    u8 numenemy,npattern,nnote;
+    u8 numenemy, npattern, nnote;
 
-    if (start==true) { // Combat start
-        setRandomSeed(frame_counter); // Initialize RNG for unpredictable combat events
-        is_combat_active=true;
-        player_scroll_active=false; // Disable player scroll - Screen is fixed during combat
+    if (start) {
+        // Combat initialization
+        setRandomSeed(frame_counter);
+        is_combat_active = true;
+        player_scroll_active = false;
 
-        // Initialize enemies for combat
-        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) {
-            if (obj_enemy[numenemy].obj_character.active==true) {
-                obj_enemy[numenemy].hitpoints=obj_enemy[numenemy].class.max_hitpoints; // Reset enemy HP to max
-                for (npattern=0;npattern<MAX_PATTERN_ENEMY;npattern++) {
-                    if (obj_enemy[numenemy].class.has_pattern[npattern]==true) {
-                        // Randomize initial pattern cooldown to prevent all enemies attacking at once
-                        obj_enemy[numenemy].last_pattern_time[npattern]=random() % (obj_Pattern_Enemy[npattern].recharge_time/2);
+        // Reset enemies to combat-ready state
+        for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
+            if (obj_enemy[numenemy].obj_character.active) {
+                // Reset enemy HP to max
+                obj_enemy[numenemy].hitpoints = obj_enemy[numenemy].class.max_hitpoints;
+
+                // Randomize pattern cooldowns to prevent synchronized attacks
+                for (npattern = 0; npattern < MAX_PATTERN_ENEMY; npattern++) {
+                    if (obj_enemy[numenemy].class.has_pattern[npattern]) {
+                        u16 max_initial_cooldown = obj_Pattern_Enemy[npattern].recharge_time / 2;
+                        obj_enemy[numenemy].last_pattern_time[npattern] = random() % max_initial_cooldown;
                     }
                 }
             }
         }
-        // Reset combat state variables
-        enemy_attacking=ENEMY_NONE;
-        enemy_attack_pattern_notes=0;
-        enemy_attack_time=0;
-        enemy_attack_effect_in_progress=0;
-        for (nnote=0;nnote<6;nnote++) enemy_note_active[nnote]=false;
 
-        // Initialize life counter sprite for enemy HP display
-        if (spr_int_life_counter==NULL) spr_int_life_counter = SPR_addSprite (&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
+        // Initialize combat state
+        enemy_attacking = ENEMY_NONE;
+        enemy_attack_pattern_notes = 0;
+        enemy_attack_time = 0;
+        enemy_attack_effect_in_progress = false;
+        for (nnote = 0; nnote < 6; nnote++) {
+            enemy_note_active[nnote] = false;
+        }
+
+        // Setup combat UI
+        spr_int_life_counter = SPR_addSprite(&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
         SPR_setVisibility(spr_int_life_counter, HIDDEN);
     }
-    else { // Combat end
-        is_combat_active=false;
-        player_scroll_active=true; // Re-enable player movement
-        if (spr_int_life_counter!=NULL) SPR_releaseSprite(spr_int_life_counter);
-        spr_int_life_counter=NULL;
+    else {
+        // Combat cleanup
+        is_combat_active = false;
+        player_scroll_active = true;
+        
+        // Cleanup life counter sprite
+        if (spr_int_life_counter != NULL) {
+            SPR_releaseSprite(spr_int_life_counter);
+            spr_int_life_counter = NULL;
+        }
     }
 }
 
-// Handle damage to an enemy
+/******************************************************************************
+ *                            Damage Processing                                 *
+ ******************************************************************************/
+
+/**
+ * Process damage dealt to an enemy
+ * 
+ * - Reduces enemy HP by 1
+ * - Handles enemy defeat if HP reaches 0
+ * - Updates combat UI to show damage
+ * - Checks for combat end if all enemies defeated
+ * 
+ * @param nenemy: Index of the enemy taking damage
+ */
 void hit_enemy(u16 nenemy)
 {
-    u16 n, alive_enemies=0;
+    u16 remaining_enemies = 0;
 
-    XGM2_playPCM(snd_player_hit_enemy,sizeof(snd_player_hit_enemy),SOUND_PCM_CH_AUTO);
+    // Play hit sound effect
+    XGM2_playPCM(snd_player_hit_enemy, sizeof(snd_player_hit_enemy), SOUND_PCM_CH_AUTO);
 
+    // Apply damage and check for defeat
     obj_enemy[nenemy].hitpoints--;
-    if (obj_enemy[nenemy].hitpoints==0) { // Enemy defeated
-        SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter
-        release_enemy(nenemy); // Remove enemy from the game
-        for (n=0;n<MAX_ENEMIES;n++) {
-            if (obj_enemy[n].obj_character.active==true) {
-                alive_enemies++; // Count remaining enemies
+    if (obj_enemy[nenemy].hitpoints == 0) {
+        // Enemy defeated
+        SPR_setVisibility(spr_int_life_counter, HIDDEN);
+        release_enemy(nenemy);
+
+        // Check if all enemies defeated
+        for (u16 i = 0; i < MAX_ENEMIES; i++) {
+            if (obj_enemy[i].obj_character.active) {
+                remaining_enemies++;
             }
         }
-        if (alive_enemies==0) { // All enemies defeated, end combat
-            start_combat(false);
+        
+        if (remaining_enemies == 0) {
+            start_combat(false);  // End combat when all enemies defeated
         }
     }
     else {
-        // Flash enemy life counter to indicate damage
-        for (u8 nframes=0;nframes<SCREEN_FPS>>3;nframes++) {
-            SPR_setVisibility(spr_int_life_counter,VISIBLE);
-            SPR_update();
-            SYS_doVBlankProcess();
-            SPR_setVisibility(spr_int_life_counter,HIDDEN);
-            SPR_update();
-            SYS_doVBlankProcess();
-        }
-        SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints-1); // Update life counter display
-        for (u8 nframes=0;nframes<SCREEN_FPS>>1;nframes++) { // Continue flashing for half a second
-            SPR_setVisibility(spr_int_life_counter,VISIBLE);
-            SPR_update();
-            SYS_doVBlankProcess();
-            SPR_setVisibility(spr_int_life_counter,HIDDEN);
-            SPR_update();
-            SYS_doVBlankProcess();
+        // Enemy survived - Update UI
+        if (spr_int_life_counter != NULL) {
+            // Show damage animation
+            if (nenemy != enemy_attacking && spr_enemy_face[nenemy] != NULL) {
+                SPR_setVisibility(spr_enemy_face[nenemy], VISIBLE);
+            }
+
+            // Flash life counter to indicate damage
+            SPR_setVisibility(spr_int_life_counter, VISIBLE);
+            for (u8 frame = 0; frame < SCREEN_FPS; frame++) {
+                // Alternate between current and previous HP for flash effect
+                SPR_setAnim(spr_int_life_counter, obj_enemy[nenemy].hitpoints);
+                SPR_update();
+                SYS_doVBlankProcess();
+                SPR_setAnim(spr_int_life_counter, obj_enemy[nenemy].hitpoints - 1);
+                SPR_update();
+                SYS_doVBlankProcess();
+            }
+
+            // Reset UI visibility
+            if (nenemy != enemy_attacking && spr_enemy_face[nenemy] != NULL) {
+                SPR_setVisibility(spr_enemy_face[nenemy], HIDDEN);
+                SPR_setVisibility(spr_int_life_counter, HIDDEN);
+            }
         }
     }
 }
 
-// Handle damage to a player character
+/**
+ * Process damage dealt to a player character
+ * 
+ * Currently only plays hurt sound effect.
+ * TODO: Implement actual damage system for player characters
+ * 
+ * @param nchar: Index of the character taking damage
+ */
 void hit_caracter(u16 nchar)
 {
-    XGM2_playPCM(snd_player_hurt,sizeof(snd_player_hurt),SOUND_PCM_CH_AUTO);
-    // Additional logic for character damage can be added here
+    XGM2_playPCM(snd_player_hurt, sizeof(snd_player_hurt), SOUND_PCM_CH_AUTO);
 }
 
-// Display or hide enemy combat interface elements
+/******************************************************************************
+ *                            Combat UI Management                             *
+ ******************************************************************************/
+
+/**
+ * Update visibility of enemy combat interface elements
+ * 
+ * When showing interface (show=true):
+ * - Shows attacking enemy's face
+ * - Hides other enemy faces
+ * - Updates life counter for attacking enemy
+ * - Shows active note indicators
+ * 
+ * When hiding interface (show=false):
+ * - Hides all enemy faces
+ * - Hides life counter
+ * - Hides all note indicators
+ * 
+ * @param show: true to show interface, false to hide it
+ */
 void show_or_hide_enemy_combat_interface(bool show)
 {
-    u16 numenemy,nnote;
+    if (show && interface_active && is_combat_active && enemy_attacking != ENEMY_NONE) {
+        // Show attacking enemy's interface
+        if (spr_enemy_face[enemy_attacking] != NULL) {
+            SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE);
+        }
 
-    if (show==true && interface_active==true && is_combat_active==true && enemy_attacking != ENEMY_NONE) {
-        // Show attacking enemy face and life counter, hide others
-        if (spr_enemy_face[enemy_attacking]!=NULL)  SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE);
-        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) {
-            if (numenemy!=enemy_attacking && spr_enemy_face[numenemy]!=NULL) {
-                SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
+        // Hide other enemy faces
+        for (u16 i = 0; i < MAX_ENEMIES; i++) {
+            if (i != enemy_attacking && spr_enemy_face[i] != NULL) {
+                SPR_setVisibility(spr_enemy_face[i], HIDDEN);
             }
         }
-        if (spr_int_life_counter!=NULL) {
+
+        // Update life counter
+        if (spr_int_life_counter != NULL) {
             SPR_setVisibility(spr_int_life_counter, VISIBLE);
-            SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints-1);
-        } 
-        // Show active enemy notes
-        for (nnote=0;nnote<6;nnote++) {
-            if (enemy_note_active[nnote]) show_enemy_note(nnote+1, true, false);
-            else show_enemy_note(nnote+1, false, false);
+            SPR_setAnim(spr_int_life_counter, obj_enemy[enemy_attacking].hitpoints - 1);
+        }
+
+        // Update note indicators
+        for (u8 note = 0; note < 6; note++) {
+            show_enemy_note(note + 1, enemy_note_active[note], false);
         }
     }
     else {
-        // Hide all enemy faces, life counter, and notes
-        for (numenemy=0;numenemy<MAX_ENEMIES;numenemy++) {
-            if (spr_enemy_face[numenemy]!=NULL) SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
+        // Hide all interface elements
+        for (u16 i = 0; i < MAX_ENEMIES; i++) {
+            if (spr_enemy_face[i] != NULL) {
+                SPR_setVisibility(spr_enemy_face[i], HIDDEN);
+            }
         }
-        if (spr_int_life_counter!=NULL) SPR_setVisibility(spr_int_life_counter, HIDDEN);
-        for (nnote=0;nnote<6;nnote++) {
-            show_enemy_note(nnote+1, false, false);
+
+        if (spr_int_life_counter != NULL) {
+            SPR_setVisibility(spr_int_life_counter, HIDDEN);
+        }
+
+        for (u8 note = 0; note < 6; note++) {
+            show_enemy_note(note + 1, false, false);
         }
     }
+
     SPR_update();
 }
