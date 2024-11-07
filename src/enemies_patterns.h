@@ -2,6 +2,7 @@
 #define _ENM_PATTERNS_H_
 
 #define MAX_ATTACK_NOTE_PLAYING_TIME  500  // Attack note playing time (in milliseconds)
+#define MAX_TIME_AFTER_ATTACK        1000  // Time to stay in STATE_ATTACK_FINISHED (in milliseconds)
 
 // Pattern-specific max effect times (in milliseconds)
 #define MAX_EFFECT_TIME_ELECTRIC 1600
