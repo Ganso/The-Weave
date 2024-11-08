@@ -5,7 +5,6 @@
 
 #define MAX_ITEMS 10
 #define ITEM_NONE 254
-#define MAX_INTERACTIVE_DISTANCE 20
 
 typedef struct {
     Entity entity;
@@ -22,8 +21,6 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
 void release_item(u16 index); // Release an item
 void display_item_if_visible(u16 nitem); // Hide or display an item depending if the X coordinate is visible in the screen
 void check_items_visibility(void); // Check visibility of every item in screen
-u16 detect_char_item_collision(u16 nchar, u16 x, u8 y); // Detect collisions between a character and every item, given some new coordinates
 u16 detect_nearby_item(); // Detect if the active character would collide with an object in a nearby position
-u16 item_distance(u16 nitem, u16 x, u8 y); // Calculate distance between coordinates and an item's collision box center
 
 #endif

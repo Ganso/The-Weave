@@ -28,10 +28,6 @@ bool movement_active; // Can you move ?
 Entity obj_face[MAX_FACE];
 Sprite *spr_face[MAX_FACE];
 
-// Collisions
-#define MAX_COLLISIONS 30 // If we collide with an enemy more than X times, move the character anyway (CHANGE IT!)
-u8 num_colls;             // Number of collisions
-
 void init_character(u16 nchar); // Initialize a character
 void release_character(u16 nchar); // Release a character from memory
 void init_face(u16 nface); // Initialize a face
@@ -43,7 +39,6 @@ void look_left(u16 nchar, bool left); // Make a character look to the left (or r
 void move_character(u16 nchar, s16 x, s16 y); // Move a character to a new position
 void move_character_instant(u16 nchar, s16 x, s16 y); // Move a character to a new position (instantly)
 void update_sprites_depth(void); // Update characters, items and enemies depth
-u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2); // Calculate distance between two characters at given coordinates
 void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
 
 #endif

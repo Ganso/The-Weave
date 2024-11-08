@@ -29,7 +29,7 @@ void init_character(u16 nchar)
         }
         x_size=nsprite->w; // Get width and height from the Sprite Definition
         y_size=nsprite->h;
-        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE };
+        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0 };
     } else {
         nsprite = obj_character[nchar].sd;
         npal = obj_character[nchar].palette;
@@ -76,7 +76,7 @@ void init_face(u16 nface)
         default:
             return;
         }
-        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE };
+        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0 };
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
@@ -195,25 +195,6 @@ void update_sprites_depth(void)
     }
 }
 
-// Calculate distance between two characters at given coordinates
-u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)
-{
-    // Calculate center of char1 collision box
-    s16 char1_center_x = x1 + obj_character[char1].collision_x_offset + (obj_character[char1].collision_width >> 1);
-    s16 char1_center_y = y1 + obj_character[char1].collision_y_offset + (obj_character[char1].collision_height >> 1);
-
-    // Calculate center of char2 collision box
-    s16 char2_center_x = obj_character[char2].x + obj_character[char2].collision_x_offset + (obj_character[char2].collision_width >> 1);
-    s16 char2_center_y = obj_character[char2].y + obj_character[char2].collision_y_offset + (obj_character[char2].collision_height >> 1);
-
-    // Calculate distance between centers
-    s16 dx = char1_center_x - char2_center_x;
-    s16 dy = char1_center_y - char2_center_y;
-    
-    // Return approximate distance (using Manhattan distance for simplicity and speed)
-    return abs(dx) + abs(dy);
-}
-
 // Move characters with STATE_FOLLOWING towards the active character
 void approach_characters(void)
 {
@@ -265,3 +246,4 @@ void approach_characters(void)
     // Update sprite depths after movement
     update_sprites_depth();
 }
+
