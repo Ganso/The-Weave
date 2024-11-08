@@ -42,7 +42,7 @@ void play_note(u8 nnote)
  * - STATE_PATTERN_EFFECT: Executing pattern effects
  * - STATE_PATTERN_EFFECT_FINISH: Cleanup after effects
  */
-void check_character_state(void)
+void check_active_character_state(void)
 {
     u8 npattern, nnote;
     u8 matches, reverse_matches, matched_pattern;

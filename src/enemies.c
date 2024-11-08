@@ -12,7 +12,7 @@ void init_enemy_patterns(void)
 void init_enemy_classes(void)
 {
     obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, NULL}; // 2 HP, can use electric pattern, doesn't follow
-    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 2}; // 3 HP, can use bite pattern, follows at speed 2
+    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 3}; // 3 HP, can use bite pattern, follows at speed 3
 }
 
 // Initialize an enemy with specific attributes based on its class

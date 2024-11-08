@@ -102,22 +102,64 @@ u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)
     return ITEM_NONE; // No collision detected
 }
 
-// Detect if the active character would collide with an object in a nearby position
+// Calculate distance between coordinates and nearest point on item's collision box
+u16 item_distance(u16 nitem, u16 x, u8 y)
+{
+    // Calculate item's collision box boundaries
+    s16 item_left = obj_item[nitem].entity.x + obj_item[nitem].entity.collision_x_offset;
+    s16 item_right = item_left + obj_item[nitem].entity.collision_width;
+    s16 item_top = obj_item[nitem].entity.y + obj_item[nitem].entity.collision_y_offset;
+    s16 item_bottom = item_top + obj_item[nitem].entity.collision_height;
+    
+    // Find closest x point on box
+    s16 closest_x;
+    if (x < item_left) closest_x = item_left;
+    else if (x > item_right) closest_x = item_right;
+    else closest_x = x;
+
+    // Find closest y point on box
+    s16 closest_y;
+    if (y < item_top) closest_y = item_top;
+    else if (y > item_bottom) closest_y = item_bottom;
+    else closest_y = y;
+
+    // If point is inside box, return 0
+    if (x >= item_left && x <= item_right && y >= item_top && y <= item_bottom) {
+        return 0;
+    }
+
+    // Calculate Manhattan distance to closest point
+    return abs(x - closest_x) + abs(y - closest_y);
+}
+
+// Detect if the active character is near an interactable item
 u16 detect_nearby_item()
 {
-    u16 x=obj_character[active_character].x;
-    u8 y=obj_character[active_character].y;
     u16 nitem;
+    u16 min_distance = 0xFFFF; // Maximum possible distance
+    u16 closest_item = ITEM_NONE;
+    u16 distance;
+    
+    // Get active character's position
+    u16 char_x = obj_character[active_character].x + 
+                 obj_character[active_character].collision_x_offset + 
+                 (obj_character[active_character].collision_width / 2);
+    u8 char_y = obj_character[active_character].y + 
+                obj_character[active_character].collision_y_offset + 
+                (obj_character[active_character].collision_height / 2);
 
-    nitem=detect_char_item_collision(active_character,x-1,y);
-    if (nitem!=ITEM_NONE) return(nitem);
+    // Check all active and visible items
+    for (nitem = 0; nitem < MAX_ITEMS; nitem++) {
+        if (obj_item[nitem].entity.active && obj_item[nitem].entity.visible) {
+            distance = item_distance(nitem, char_x, char_y);
+            KDebug_AlertNumber(distance);
+            // If this item is closer than previous closest and within interaction distance
+            if (distance < min_distance && distance <= MAX_INTERACTIVE_DISTANCE) {
+                min_distance = distance;
+                closest_item = nitem;
+            }
+        }
+    }
 
-    nitem=detect_char_item_collision(active_character,x+1,y);
-    if (nitem!=ITEM_NONE) return(nitem);
-
-    nitem=detect_char_item_collision(active_character,x,y-1);
-    if (nitem!=ITEM_NONE) return(nitem);
-
-    nitem=detect_char_item_collision(active_character,x,y+1);
-    return(nitem);
+    return closest_item;
 }
