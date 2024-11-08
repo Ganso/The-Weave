@@ -11,7 +11,7 @@ void init_enemy_patterns(void)
 // Initialize enemy classes with their specific attributes
 void init_enemy_classes(void)
 {
-    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, NULL}; // 2 HP, can use electric pattern, doesn't follow
+    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, 0}; // 2 HP, can use electric pattern, don't follow
     obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 3}; // 3 HP, can use bite pattern, follows at speed 3
 }
 
@@ -60,7 +60,12 @@ void init_enemy(u16 numenemy, u16 class)
     if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
     // Initialize enemy character with sprite, position, and collision attributes
-    obj_enemy[numenemy].obj_character = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE };
+    obj_enemy[numenemy].obj_character = (Entity) { 
+        true, nsprite, 0, 0, x_size, y_size, npal, false, false, 
+        ANIM_IDLE, false, collision_x_offset, collision_y_offset, 
+        collision_width, collision_height, STATE_IDLE, 
+        obj_enemy_class[class].follows_character, obj_enemy_class[class].follow_speed
+    };
 
     // Add enemy sprite if not already present
     if (spr_enemy[numenemy]==NULL) spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
@@ -159,108 +164,6 @@ void move_enemy_instant(u16 nenemy, s16 x, s16 y)
     next_frame(false);
 }
 
-// Detect collisions between a character and all enemies at given coordinates
-u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)
-{
-    u16 nenemy;
-
-    if (obj_character[nchar].active == true) {
-        // Compute character collision box
-        u16 char_col_x1, char_col_x2;
-        if (obj_character[nchar].flipH) {
-            char_col_x1 = x + obj_character[nchar].x_size - obj_character[nchar].collision_x_offset - obj_character[nchar].collision_width;
-            char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
-        } else {
-            char_col_x1 = x + obj_character[nchar].collision_x_offset;
-            char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
-        }
-        u8 char_col_y1 = y + obj_character[nchar].collision_y_offset;
-        u8 char_col_y2 = char_col_y1 + obj_character[nchar].collision_height;
-
-        // Check collision with each active enemy
-        for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            if (obj_enemy[nenemy].obj_character.active == true) {
-                // Compute enemy collision box
-                u16 enemy_col_x1, enemy_col_x2;
-                if (obj_enemy[nenemy].obj_character.flipH) {
-                    enemy_col_x1 = obj_enemy[nenemy].obj_character.x + obj_enemy[nenemy].obj_character.x_size - obj_enemy[nenemy].obj_character.collision_x_offset - obj_enemy[nenemy].obj_character.collision_width;
-                    enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
-                } else {
-                    enemy_col_x1 = obj_enemy[nenemy].obj_character.x + obj_enemy[nenemy].obj_character.collision_x_offset;
-                    enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
-                }
-                u8 enemy_col_y1 = obj_enemy[nenemy].obj_character.y + obj_enemy[nenemy].obj_character.collision_y_offset;
-                u8 enemy_col_y2 = enemy_col_y1 + obj_enemy[nenemy].obj_character.collision_height;
-
-                // Check if collision boxes overlap
-                if (char_col_x1 < enemy_col_x2 &&
-                    char_col_x2 > enemy_col_x1 &&
-                    char_col_y1 < enemy_col_y2 &&
-                    char_col_y2 > enemy_col_y1) {
-                    if (num_colls<MAX_COLLISIONS) { // Prevent player from being trapped by limiting consecutive collisions
-                        num_colls++;
-                        return nenemy;
-                    } else {
-                        num_colls=0;
-                        return ENEMY_NONE;
-                    }
-                }
-            }
-        }
-    }
-    
-    // No collision detected
-    return ENEMY_NONE;
-}
-
-// Detect collisions between an enemy and all characters at given coordinates
-u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)
-{
-    u16 nchar;
-
-    if (obj_enemy[nenemy].obj_character.active == true) {
-        // Compute enemy collision box
-        u16 enemy_col_x1, enemy_col_x2;
-        if (obj_enemy[nenemy].obj_character.flipH) {
-            enemy_col_x1 = x + obj_enemy[nenemy].obj_character.x_size - obj_enemy[nenemy].obj_character.collision_x_offset - obj_enemy[nenemy].obj_character.collision_width;
-            enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
-        } else {
-            enemy_col_x1 = x + obj_enemy[nenemy].obj_character.collision_x_offset;
-            enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
-        }
-        u8 enemy_col_y1 = y + obj_enemy[nenemy].obj_character.collision_y_offset;
-        u8 enemy_col_y2 = enemy_col_y1 + obj_enemy[nenemy].obj_character.collision_height;
-
-        // Check collision with each active character
-        for (nchar = 0; nchar < MAX_CHR; nchar++) {
-            if (obj_character[nchar].active == true) {
-                // Compute character collision box
-                u16 char_col_x1, char_col_x2;
-                if (obj_character[nchar].flipH) {
-                    char_col_x1 = obj_character[nchar].x + obj_character[nchar].x_size - obj_character[nchar].collision_x_offset - obj_character[nchar].collision_width;
-                    char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
-                } else {
-                    char_col_x1 = obj_character[nchar].x + obj_character[nchar].collision_x_offset;
-                    char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
-                }
-                u8 char_col_y1 = obj_character[nchar].y + obj_character[nchar].collision_y_offset;
-                u8 char_col_y2 = char_col_y1 + obj_character[nchar].collision_height;
-
-                // Check if collision boxes overlap
-                if (enemy_col_x1 < char_col_x2 &&
-                    enemy_col_x2 > char_col_x1 &&
-                    enemy_col_y1 < char_col_y2 &&
-                    enemy_col_y2 > char_col_y1) {
-                    return nchar;
-                }
-            }
-        }
-    }
-    
-    // No collision detected
-    return CHR_NONE;
-}
-
 // Move enemies towards the active character during combat
 void approach_enemies(void)
 {
@@ -273,8 +176,8 @@ void approach_enemies(void)
     if (is_combat_active == true && pattern_effect_in_progress != PTRN_HIDE) { // Only move enemies during combat when the player is not hidden
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
             has_moved=false;
-            if (obj_enemy[nenemy].class.follows_character == true) { // Check if this enemy type follows characters
-                if (frame_counter%obj_enemy[nenemy].class.follow_speed==0) { // Move at enemy's specific speed
+            if (obj_enemy[nenemy].obj_character.follows_character == true) { // Check if this enemy type follows characters
+                if (frame_counter%obj_enemy[nenemy].obj_character.follow_speed==0) { // Move at enemy's specific speed
                     // Calculate direction towards active character
                     dx = obj_character[active_character].x - obj_enemy[nenemy].obj_character.x;
                     dy = (obj_character[active_character].y + obj_character[active_character].y_size) - 

@@ -36,6 +36,7 @@ u16 frame_counter; // Number of frames counter (random number generator, and fra
 #include "interface.h" // Game interface
 #include "combat.h" // Combat related functions (including patterns enemy can use)
 #include "background.h" // Background and scenery related objects and functions
+#include "collisions.h" // Distance and collisions related functions
 
 // Main game libraries
 #include "init.h" // Initialization functions
