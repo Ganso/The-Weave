@@ -42,7 +42,7 @@ typedef struct
 Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
 
 void play_note(u8 nnote); // Play a note
-void check_character_state(void); // Main state machine for pattern system
+void check_active_character_state(void); // Main state machine for pattern system
 void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
 void init_patterns(void); // initialize patters
 

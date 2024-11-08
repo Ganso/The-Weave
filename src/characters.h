@@ -2,7 +2,7 @@
 #define _CHARACTERS_H_
 
 // Characters
-#define MAX_CHR       4
+#define MAX_CHR       3
 #define CHR_linus     0
 #define CHR_clio      1
 #define CHR_xander    2
@@ -43,5 +43,7 @@ void look_left(u16 nchar, bool left); // Make a character look to the left (or r
 void move_character(u16 nchar, s16 x, s16 y); // Move a character to a new position
 void move_character_instant(u16 nchar, s16 x, s16 y); // Move a character to a new position (instantly)
 void update_sprites_depth(void); // Update characters, items and enemies depth
+u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2); // Calculate distance between two characters at given coordinates
+void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
 
 #endif

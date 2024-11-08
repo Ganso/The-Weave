@@ -127,10 +127,16 @@ void act_1_scene_5(void)
 
     // Initialize characters
     init_character(CHR_linus);
+    init_character(CHR_clio);
     active_character=CHR_linus;
+    move_character_instant(CHR_linus, -30, 154);
+    move_character_instant(CHR_clio, -30, 154);
+
+    // Make CLIO follow LINUX
+    obj_character[CHR_clio].state=STATE_FOLLOWING;
+    show_character(CHR_clio, true);
 
     // Dialog
-    move_character_instant(CHR_linus, -20, 154);
     move_character(CHR_linus, 30, 154);
     talk_dialog(&dialogs[ACT1_DIALOG3][0]);
     talk_dialog(&dialogs[ACT1_DIALOG3][1]);

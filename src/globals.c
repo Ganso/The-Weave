@@ -21,8 +21,11 @@ void next_frame(bool interactive)
         // Check controller
         if (movement_active==true) joy_check();
 
-        // Pattern related actions 
-        check_character_state();
+        // Active haracter state related actions 
+        check_active_character_state();
+
+        // Approach other characters
+        approach_characters();
 
         // Combat related actions
         if (is_combat_active==true) {
