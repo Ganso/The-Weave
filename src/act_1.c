@@ -143,7 +143,7 @@ void act_1_scene_5(void)
     player_scroll_active=true;
     movement_active=true;
     interface_active=true;
-    patterns_enabled=true;
+    player_patterns_enabled=true;
     show_or_hide_interface(true);
 
     while (offset_BGA<180) {

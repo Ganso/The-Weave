@@ -16,7 +16,7 @@ void joy_check(void)
         if (obj_character[active_character].state == STATE_IDLE || 
             obj_character[active_character].state == STATE_WALKING ||
             (obj_character[active_character].state == STATE_PATTERN_EFFECT && 
-             pattern_effect_in_progress == PTRN_HIDE)) {
+             player_pattern_effect_in_progress == PTRN_HIDE)) {
             handle_movement(joy_value);
         }
         // Always check action buttons, even during pattern effects
@@ -62,7 +62,7 @@ void handle_movement(u16 joy_value)
     if (moved) {
         // Don't change state if we're in PATTERN_EFFECT with HIDE
         if (!(obj_character[active_character].state == STATE_PATTERN_EFFECT && 
-              pattern_effect_in_progress == PTRN_HIDE)) {
+              player_pattern_effect_in_progress == PTRN_HIDE)) {
             obj_character[active_character].state = STATE_WALKING;
         }
     } else if (obj_character[active_character].state == STATE_WALKING) {
@@ -127,7 +127,7 @@ void update_character_animation(void)
 {
     // Don't change animation if we're in PATTERN_EFFECT with HIDE
     if (obj_character[active_character].state == STATE_PATTERN_EFFECT && 
-        pattern_effect_in_progress == PTRN_HIDE) {
+        player_pattern_effect_in_progress == PTRN_HIDE) {
         return;
     }
 
@@ -188,7 +188,7 @@ void handle_action_buttons(u16 joy_value)
         }
     }
 
-    if (patterns_enabled) { // Detect if player is trying to play a note
+    if (player_patterns_enabled) { // Detect if player is trying to play a note
         if (joy_value & BUTTON_A) play_note(NOTE_MI);
         if (joy_value & BUTTON_B) play_note(NOTE_FA);
         if (joy_value & BUTTON_C) play_note(NOTE_SOL);
