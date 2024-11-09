@@ -40,6 +40,15 @@ void scroll_background(s16 dx)
             if (offset_BGA+dx>0 && ((s16) offset_BGA+dx)<((s16) background_width-SCREEN_WIDTH)) { // New scroll offset is inside background width boundries?
                 offset_BGA+=dx; // Change offste
                 update_bg(true);
+                // Move following characters to the left
+                for (u16 nchar=0; nchar<MAX_CHR; nchar ++) {
+                    if (obj_character[nchar].follows_character==true) {
+                        if (obj_character[nchar].x>-20) {
+                            obj_character[nchar].x-=dx;
+                            update_character(nchar);
+                        }
+                    }
+                }
             }
         }
     }
