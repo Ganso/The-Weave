@@ -173,7 +173,7 @@ void approach_enemies(void)
     u16 collision_result;
     bool has_moved;
 
-    if (is_combat_active == true && pattern_effect_in_progress != PTRN_HIDE) { // Only move enemies during combat when the player is not hidden
+    if (is_combat_active == true && player_pattern_effect_in_progress != PTRN_HIDE) { // Only move enemies during combat when the player is not hidden
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
             has_moved=false;
             if (obj_enemy[nenemy].obj_character.follows_character == true) { // Check if this enemy type follows characters

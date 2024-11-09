@@ -35,7 +35,7 @@ void check_enemy_state(void)
                     if (obj_enemy[numenemy].class.has_pattern[npattern]) {
                         // Check if pattern cooldown is complete
                         if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
-                            if (pattern_effect_in_progress == PTRN_HIDE) {
+                            if (player_pattern_effect_in_progress == PTRN_HIDE) {
                                 // Reduce cooldown if player is hidden
                                 obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
                             } else {
@@ -279,7 +279,7 @@ void do_electric_enemy_pattern_effect(void) {
     else VDP_setHilightShadow(false);
 
     // Check for player counter-spell
-    if (pattern_effect_in_progress == PTRN_ELECTRIC && pattern_effect_reversed == true) {
+    if (player_pattern_effect_in_progress == PTRN_ELECTRIC && player_pattern_effect_reversed == true) {
         VDP_setHilightShadow(false);
         hit_enemy(enemy_attacking);
         
@@ -288,8 +288,8 @@ void do_electric_enemy_pattern_effect(void) {
         obj_enemy[enemy_attacking].obj_character.state = STATE_IDLE;
         enemy_attacking = ENEMY_NONE;
         
-        pattern_effect_in_progress = PTRN_NONE;
-        pattern_effect_reversed = false;
+        player_pattern_effect_in_progress = PTRN_NONE;
+        player_pattern_effect_reversed = false;
         obj_character[active_character].state = STATE_IDLE;
         
         show_or_hide_enemy_combat_interface(false);
@@ -326,7 +326,7 @@ void launch_bite_enemy_pattern(void) {
  * Checks for player hide state
  */
 void do_bite_enemy_pattern_effect(void) {
-    if (pattern_effect_in_progress == PTRN_HIDE) {
+    if (player_pattern_effect_in_progress == PTRN_HIDE) {
         enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE) - 1;
     }
 }
@@ -336,7 +336,7 @@ void do_bite_enemy_pattern_effect(void) {
  * Applies damage if player is not hidden
  */
 void finish_bite_enemy_pattern_effect(void) {
-    if (pattern_effect_in_progress == PTRN_HIDE) {
+    if (player_pattern_effect_in_progress == PTRN_HIDE) {
         // Player successfully avoided attack
         return;
     }

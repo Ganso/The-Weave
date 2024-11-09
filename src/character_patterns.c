@@ -61,7 +61,7 @@ void check_active_character_state(void)
             hide_rod_icons();
 
             if (matched_pattern != PTRN_NONE) {
-                pattern_effect_reversed = false;
+                player_pattern_effect_reversed = false;
                 
                 // Handle thunder pattern
                 if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match) {
@@ -81,12 +81,12 @@ void check_active_character_state(void)
                 }
                 // Handle thunder counter (reverse thunder during enemy thunder)
                 else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match && 
-                         pattern_effect_in_progress == PTRN_NONE && 
+                         player_pattern_effect_in_progress == PTRN_NONE && 
                          is_combat_active && enemy_attacking != ENEMY_NONE && 
                          enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
                     obj_character[active_character].state = STATE_PATTERN_EFFECT;
-                    pattern_effect_in_progress = PTRN_ELECTRIC;
-                    pattern_effect_reversed = true;
+                    player_pattern_effect_in_progress = PTRN_ELECTRIC;
+                    player_pattern_effect_reversed = true;
                 }
                 else {
                     // Pattern matched but not usable in current context
@@ -110,19 +110,19 @@ void check_active_character_state(void)
             break;
 
         case STATE_PATTERN_EFFECT:
-            if (pattern_effect_in_progress == PTRN_HIDE) {
+            if (player_pattern_effect_in_progress == PTRN_HIDE) {
                 do_hide_pattern_effect();
             }
-            else if (pattern_effect_in_progress == PTRN_ELECTRIC) {
+            else if (player_pattern_effect_in_progress == PTRN_ELECTRIC) {
                 do_electric_pattern_effect();
             }
             break;
 
         case STATE_PATTERN_EFFECT_FINISH:
-            if (pattern_effect_in_progress == PTRN_HIDE) {
+            if (player_pattern_effect_in_progress == PTRN_HIDE) {
                 finish_hide_pattern_effect();
             }
-            else if (pattern_effect_in_progress == PTRN_ELECTRIC) {
+            else if (player_pattern_effect_in_progress == PTRN_ELECTRIC) {
                 finish_electric_pattern_effect();
             }
             obj_character[active_character].state = STATE_IDLE;
@@ -211,7 +211,7 @@ bool can_use_electric_pattern(void)
         show_or_hide_interface(true);
         return false;
     }
-    else if (pattern_effect_in_progress == PTRN_HIDE) {
+    else if (player_pattern_effect_in_progress == PTRN_HIDE) {
         // Can't use thunder while hidden
         show_or_hide_interface(false);
         show_or_hide_enemy_combat_interface(false);
@@ -277,7 +277,7 @@ void launch_electric_pattern(void)
     show_pattern_icon(PTRN_ELECTRIC, true, true);
     SPR_update();
     play_pattern_sound(PTRN_ELECTRIC);
-    pattern_effect_in_progress = PTRN_ELECTRIC;
+    player_pattern_effect_in_progress = PTRN_ELECTRIC;
 }
 
 void do_electric_pattern_effect(void)
@@ -312,8 +312,8 @@ void do_electric_pattern_effect(void)
 
 void finish_electric_pattern_effect(void)
 {
-    pattern_effect_in_progress = PTRN_NONE;
-    pattern_effect_time = 0;
+    player_pattern_effect_in_progress = PTRN_NONE;
+    player_pattern_effect_time = 0;
 }
 
 /**
@@ -326,8 +326,8 @@ void launch_hide_pattern(void)
     show_pattern_icon(PTRN_HIDE, true, true);
     play_pattern_sound(PTRN_HIDE);
     movement_active = true;  // Allow movement while hidden
-    pattern_effect_in_progress = PTRN_HIDE;
-    pattern_effect_time = 1;
+    player_pattern_effect_in_progress = PTRN_HIDE;
+    player_pattern_effect_time = 1;
 }
 
 void do_hide_pattern_effect(void)
@@ -335,28 +335,28 @@ void do_hide_pattern_effect(void)
     u16 max_effect_time = 400;
     movement_active = true;  // Keep movement enabled during effect
     
-    if (pattern_effect_time != max_effect_time) {
+    if (player_pattern_effect_time != max_effect_time) {
         // Create flickering effect
-        if (pattern_effect_time % 2 == 0) {
+        if (player_pattern_effect_time % 2 == 0) {
             show_character(active_character, true);
         } else {
             show_character(active_character, false);
         }
-        pattern_effect_time++;
+        player_pattern_effect_time++;
     }
     else {
         // Effect complete
         show_pattern_icon(PTRN_HIDE, false, false);
         show_character(active_character, true);
-        pattern_effect_in_progress = PTRN_NONE;
-        pattern_effect_time = 0;
+        player_pattern_effect_in_progress = PTRN_NONE;
+        player_pattern_effect_time = 0;
         obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
     }
 }
 
 void finish_hide_pattern_effect(void)
 {
-    pattern_effect_in_progress = PTRN_NONE;
-    pattern_effect_time = 0;
+    player_pattern_effect_in_progress = PTRN_NONE;
+    player_pattern_effect_time = 0;
     movement_active = false;
 }
