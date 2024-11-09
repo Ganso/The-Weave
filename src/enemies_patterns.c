@@ -87,10 +87,10 @@ void check_enemy_state(void)
                         // Initialize pattern-specific effect
                         switch (enemy_attack_pattern) {
                             case PTRN_EN_ELECTIC:
-                                launch_electric_pattern();
+                                launch_electric_enemy_pattern();
                                 break;
                             case PTRN_EN_BITE:
-                                launch_bite_pattern();
+                                launch_bite_enemy_pattern();
                                 break;
                         }
                     }
@@ -115,10 +115,10 @@ void check_enemy_state(void)
                 if (enemy_attack_effect_time < max_effect_time) {
                     switch (enemy_attack_pattern) {
                         case PTRN_EN_ELECTIC:
-                            do_electric_pattern_effect();
+                            do_electric_enemy_pattern_effect();
                             break;
                         case PTRN_EN_BITE:
-                            do_bite_pattern_effect();
+                            do_bite_enemy_pattern_effect();
                             break;
                     }
                     enemy_attack_effect_time++;
@@ -249,10 +249,10 @@ void finish_enemy_pattern_effect(void) {
     // Apply final pattern effects
     switch (enemy_attack_pattern) {
         case PTRN_EN_ELECTIC:
-            finish_electric_pattern_effect();
+            finish_electric_enemy_pattern_effect();
             break;
         case PTRN_EN_BITE:
-            finish_bite_pattern_effect();
+            finish_bite_enemy_pattern_effect();
             break;
     }
 }
@@ -264,7 +264,7 @@ void finish_enemy_pattern_effect(void) {
 /**
  * Initialize electric pattern attack
  */
-void launch_electric_pattern(void) {
+void launch_electric_enemy_pattern(void) {
     play_pattern_sound(PTRN_ELECTRIC);
     anim_enemy(enemy_attacking, ANIM_MAGIC);
 }
@@ -273,7 +273,7 @@ void launch_electric_pattern(void) {
  * Process ongoing electric pattern effect
  * Handles visual effects and counter-spell interaction
  */
-void do_electric_pattern_effect(void) {
+void do_electric_enemy_pattern_effect(void) {
     // Create lightning flash effect
     if (frame_counter % 2 == 0) VDP_setHilightShadow(true);
     else VDP_setHilightShadow(false);
@@ -300,7 +300,7 @@ void do_electric_pattern_effect(void) {
  * Complete electric pattern effect
  * Applies damage if player failed to counter
  */
-void finish_electric_pattern_effect(void) {
+void finish_electric_enemy_pattern_effect(void) {
     VDP_setHilightShadow(false);
     if (enemy_attacking != ENEMY_NONE) {
         // Player failed to counter
@@ -317,7 +317,7 @@ void finish_electric_pattern_effect(void) {
 /**
  * Initialize bite pattern attack
  */
-void launch_bite_pattern(void) {
+void launch_bite_enemy_pattern(void) {
     anim_enemy(enemy_attacking, ANIM_MAGIC);
 }
 
@@ -325,7 +325,7 @@ void launch_bite_pattern(void) {
  * Process ongoing bite pattern effect
  * Checks for player hide state
  */
-void do_bite_pattern_effect(void) {
+void do_bite_enemy_pattern_effect(void) {
     if (pattern_effect_in_progress == PTRN_HIDE) {
         enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE) - 1;
     }
@@ -335,7 +335,7 @@ void do_bite_pattern_effect(void) {
  * Complete bite pattern effect
  * Applies damage if player is not hidden
  */
-void finish_bite_pattern_effect(void) {
+void finish_bite_enemy_pattern_effect(void) {
     if (pattern_effect_in_progress == PTRN_HIDE) {
         // Player successfully avoided attack
         return;
