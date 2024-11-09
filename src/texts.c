@@ -120,7 +120,7 @@ const DialogItem act1_dialog3[] = {
         {"Algún tiempo después", 
          "Some time later"}},
     {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME, 
-        {"Se aproximan enemigos|Tenemos que estar atentos|Quedate cerca, madre",
+        {"Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre",
          "Enemies are approaching|We have to stay alert|Stay close, mother"}},
      {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
          {"Eso ha dolido",

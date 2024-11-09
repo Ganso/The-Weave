@@ -41,9 +41,29 @@ typedef struct
 
 Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
 
+// Core pattern system functions
 void play_note(u8 nnote); // Play a note
 void check_active_character_state(void); // Main state machine for pattern system
 void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
-void init_patterns(void); // initialize patters
+void init_patterns(void); // initialize patterns
+
+// Pattern validation functions
+bool validate_pattern_sequence(u8 *notes, u8 pattern_id, bool *is_reverse); // Check if notes match a pattern
+bool can_use_electric_pattern(void); // Check if thunder pattern can be used
+bool can_use_hide_pattern(void); // Check if hide pattern can be used
+
+// Pattern-specific effect functions
+void launch_electric_pattern(void); // Initialize thunder pattern effect
+void do_electric_pattern_effect(void); // Process ongoing thunder pattern effect
+void finish_electric_pattern_effect(void); // Complete thunder pattern effect
+
+void launch_hide_pattern(void); // Initialize hide pattern effect
+void do_hide_pattern_effect(void); // Process ongoing hide pattern effect
+void finish_hide_pattern_effect(void); // Complete hide pattern effect
+
+// Pattern state management
+void reset_pattern_state(void); // Reset pattern input state
+void handle_pattern_timeout(void); // Handle pattern input timeout
+void update_pattern_state(void); // Update pattern state after note completion
 
 #endif

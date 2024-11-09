@@ -25,12 +25,12 @@ void show_enemy_note(u8 nnote, bool visible, bool play); // Show and play (or no
 void finish_enemy_pattern_effect(void); // Finish the enemy pattern effect
 
 // Pattern-specific effect functions
-void launch_electric_pattern(void);
-void do_electric_pattern_effect(void);
-void finish_electric_pattern_effect(void);
+void launch_electric_enemy_pattern(void);
+void do_electric_enemy_pattern_effect(void);
+void finish_electric_enemy_pattern_effect(void);
 
-void launch_bite_pattern(void);
-void do_bite_pattern_effect(void);
-void finish_bite_pattern_effect(void);
+void launch_bite_enemy_pattern(void);
+void do_bite_enemy_pattern_effect(void);
+void finish_bite_enemy_pattern_effect(void);
 
 #endif
