@@ -195,6 +195,15 @@ void update_sprites_depth(void)
     }
 }
 
+// Follow (or unfollow active character)
+void follow_active_character(u16 nchar, bool follow, u8 follow_speed)
+{
+    obj_character[nchar].follows_character=follow;
+    obj_character[nchar].follow_speed=follow_speed;
+    obj_character[nchar].state=STATE_FOLLOWING;
+    show_character(nchar, true);
+}
+
 // Move characters with STATE_FOLLOWING towards the active character
 void approach_characters(void)
 {
@@ -212,28 +221,31 @@ void approach_characters(void)
 
         has_moved = false;
         // Check if character is active and in following state
-        if (obj_character[nchar].active && obj_character[nchar].state == STATE_FOLLOWING) {
-            // Calculate direction towards active character
-            dx = obj_character[active_character].x - obj_character[nchar].x;
-            dy = (obj_character[active_character].y + obj_character[active_character].y_size) - 
-                (obj_character[nchar].y + obj_character[nchar].y_size);
+        if (obj_character[nchar].active && obj_character[nchar].follows_character == true) {
+            // Delay movement by follow_speed
+            if (frame_counter%obj_character[nchar].follow_speed==0) {
+                // Calculate direction towards active character
+                dx = obj_character[active_character].x - obj_character[nchar].x;
+                dy = (obj_character[active_character].y + obj_character[active_character].y_size) - 
+                    (obj_character[nchar].y + obj_character[nchar].y_size);
 
-            // Move by 1 pixel in the calculated direction
-            newx = obj_character[nchar].x + (dx != 0 ? (dx > 0 ? 1 : -1) : 0);
-            newy = obj_character[nchar].y + (dy != 0 ? (dy > 0 ? 1 : -1) : 0);
+                // Move by 1 pixel in the calculated direction
+                newx = obj_character[nchar].x + (dx != 0 ? (dx > 0 ? 1 : -1) : 0);
+                newy = obj_character[nchar].y + (dy != 0 ? (dy > 0 ? 1 : -1) : 0);
 
-            // Check distance to active character at new position
-            distance = char_distance(nchar, newx, newy, active_character);
+                // Check distance to active character at new position
+                distance = char_distance(nchar, newx, newy, active_character);
 
-            // Start moving when distance >80, keep moving until distance >30
-            if ((obj_character[nchar].animation==ANIM_IDLE && distance>80) || (obj_character[nchar].animation==ANIM_WALK && distance>30)) {
-                // Update character position and animation
-                obj_character[nchar].x = newx;
-                obj_character[nchar].y = newy;
-                obj_character[nchar].animation = ANIM_WALK;
-                obj_character[nchar].flipH = (dx < 0);
-                update_character(nchar);
-                has_moved = true;
+                // Start moving when distance >40, keep moving until distance >20
+                if ((obj_character[nchar].animation==ANIM_IDLE && distance>40) || (obj_character[nchar].animation==ANIM_WALK && distance>20)) {
+                    // Update character position and animation
+                    obj_character[nchar].x = newx;
+                    obj_character[nchar].y = newy;
+                    obj_character[nchar].animation = ANIM_WALK;
+                    obj_character[nchar].flipH = (dx < 0);
+                    update_character(nchar);
+                    has_moved = true;
+                }
             }
         }
 

@@ -131,10 +131,7 @@ void act_1_scene_5(void)
     active_character=CHR_linus;
     move_character_instant(CHR_linus, -30, 154);
     move_character_instant(CHR_clio, -30, 154);
-
-    // Make CLIO follow LINUX
-    obj_character[CHR_clio].state=STATE_FOLLOWING;
-    show_character(CHR_clio, true);
+    follow_active_character(CHR_clio, true, 2);
 
     // Dialog
     move_character(CHR_linus, 30, 154);

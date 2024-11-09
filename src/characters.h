@@ -39,6 +39,7 @@ void look_left(u16 nchar, bool left); // Make a character look to the left (or r
 void move_character(u16 nchar, s16 x, s16 y); // Move a character to a new position
 void move_character_instant(u16 nchar, s16 x, s16 y); // Move a character to a new position (instantly)
 void update_sprites_depth(void); // Update characters, items and enemies depth
+void follow_active_character(u16 nchar, bool follow, u8 follow_speed); // Follow (or unfollow active character)
 void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
 
 #endif
