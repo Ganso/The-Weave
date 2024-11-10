@@ -236,13 +236,13 @@ void pause_screen(void) {
     u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
     bool next_pattern_found;
 
-    //u16 spriteCount;
-    //SpriteState* savedStates;
+    u16 spriteCount;
+    SpriteState* savedStates;
 
     VDP_setHilightShadow(true); // Dim screen
     show_or_hide_interface(false); // Hide interface
-    show_or_hide_enemy_combat_interface(false); // Hide combat interface
-    //savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
+    //show_or_hide_enemy_combat_interface(false); // Hide combat interface
+    savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
 
     // Find the first active pattern
     selected_pattern=254;
@@ -301,8 +301,8 @@ void pause_screen(void) {
     show_pause_pattern_list(false, selected_pattern); // Hide last selected pattern
     for (u8 nnote=0; nnote<4; nnote++) if (spr_pattern_list_note[nnote]!=NULL) SPR_releaseSprite(spr_pattern_list_note[nnote]); // Hide notes on the right if they still exist
     show_or_hide_interface(true); // Show interface again
-    show_or_hide_enemy_combat_interface(true); // Show combat interface again
-    //restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
+    //show_or_hide_enemy_combat_interface(true); // Show combat interface again
+    restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
     VDP_setHilightShadow(false); // Relit screen
     SPR_update();
     VDP_waitVSync();
