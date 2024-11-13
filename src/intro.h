@@ -1,6 +1,6 @@
 #ifndef _INTRO_H_
 #define _INTRO_H_
 
-void geesebumps_logo(void);
+void theweave_intro(void);
 
 #endif

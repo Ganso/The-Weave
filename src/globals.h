@@ -19,6 +19,7 @@
 #include "../res/res_interface.h"
 #include "../res/res_sound.h"
 #include "../res/res_geesebumps.h"
+#include "../res/res_intro.h"
 
 u16 tile_ind; // Tiles index
 u16 frame_counter; // Number of frames counter (random number generator, and frameskip counter in some functions)
@@ -41,6 +42,7 @@ u16 frame_counter; // Number of frames counter (random number generator, and fra
 // Main game libraries
 #include "init.h" // Initialization functions
 #include "intro.h" // Game intro
+#include "geesebumps.h" // Geesebumps logo
 #include "act_1.h" // Act 1
 
 // Global definitions (NTSC)
