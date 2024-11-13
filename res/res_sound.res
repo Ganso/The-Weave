@@ -1,6 +1,3 @@
-# Intro Music
-XGM2 music_intro "Sound/Music/Goosebumps_intro.vgm" 
-
 # Player notes
 XGM2 snd_note_mi "Sound/Notes/01-FM_note_E4.vgm"
 XGM2 snd_note_fa "Sound/Notes/02-FM_note_F4.vgm"
