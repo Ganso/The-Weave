@@ -29,13 +29,13 @@ void geesebumps_logo(void)
     SPR_update();
 
     // Second part (Text) fade in
-    PAL_fade(0, 15, geesebumps_pal_black.data, geesebumps_logo_bg.palette->data, 120, false);
+    PAL_fade(0, 15, geesebumps_pal_black.data, geesebumps_logo_bg.palette->data, SCREEN_FPS*2, false);
     SPR_setVisibility(logo_text, VISIBLE);
     SPR_update();
-    PAL_fade(16, 31, geesebumps_pal_white.data, geesebumps_logo_text.palette->data, 120, false);
+    PAL_fade(16, 31, geesebumps_pal_white.data, geesebumps_logo_text.palette->data, SCREEN_FPS*2, false);
 
     // Third and fourth part (Color lines) fade in and scroll
-    PAL_initFade(32, 63, geesebumps_pal_white2.data, geesebumps_pal_lines.data, 180);
+    PAL_initFade(32, 63, geesebumps_pal_white2.data, geesebumps_pal_lines.data, SCREEN_FPS*3);
     for (u16 difx=180; difx>0; difx--) {
         SPR_setPosition(logo_lines1, 81-difx, 55);
         SPR_setPosition(logo_lines2, 81-difx, 84);
@@ -46,7 +46,7 @@ void geesebumps_logo(void)
 
     // Pause and fade out
     waitMs(4000);
-    PAL_fadeOutAll(120, false);
+    PAL_fadeOutAll(SCREEN_FPS*2, false);
 
     // Release everything
     VDP_releaseAllSprites();
