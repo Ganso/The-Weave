@@ -5,8 +5,7 @@ void theweave_intro(void)
 {
     Sprite *star[MAXSTARS];
     u8 nstar,x,y;
-
-    initialize();
+    bool exit_menu=false;
     
     PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
     PAL_setPalette(PAL1, geesebumps_pal_black.data, DMA);
@@ -35,8 +34,9 @@ void theweave_intro(void)
 
     // Background music
     XGM2_play(music_intro);
-
-    while (true) {
+    
+    intro_update_language();
+    while (!exit_menu) {
         for (nstar=0;nstar<MAXSTARS;nstar++) {
             if (SPR_getAnimationDone(star[nstar])) {
                 x=random()%320;
@@ -45,7 +45,54 @@ void theweave_intro(void)
                 SPR_setAnimAndFrame(star[nstar],random()%3,0);
             }
         }
+        exit_menu=intro_read_keys();
         SPR_update();
         SYS_doVBlankProcess();
     }
+}
+
+void intro_update_language(void)
+{
+    char lang_text[40];
+    
+    VDP_clearTextLineBG(WINDOW,23);
+
+    switch (game_language)
+    {
+    case LANG_ENGLISH:
+        strcpy(lang_text,"English");
+        break;
+    case LANG_SPANISH:
+        strcpy(lang_text,"Espa^ol");    
+    default:
+        break;
+    }
+    kprintf("Idioma: %d",game_language);
+
+    VDP_drawTextBG(WINDOW, lang_text, (40 - strlen(lang_text)) >> 1, 23);
+
+}
+
+bool intro_read_keys(void)
+{
+    u16 joy_state;
+
+    joy_state=JOY_readJoypad (JOY_ALL);
+
+    switch (joy_state)
+    {
+        case BUTTON_LEFT:
+        case BUTTON_RIGHT:
+            while (JOY_readJoypad(JOY_ALL)!=0) SYS_doVBlankProcess();
+            if (game_language==LANG_ENGLISH) game_language=LANG_SPANISH;
+            else game_language=LANG_ENGLISH;
+            intro_update_language();
+            break;
+        case BUTTON_A;
+        case BUTTON_START:
+            return true;    
+        default:
+            return false;
+    }
+    return false;
 }

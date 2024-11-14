@@ -5,8 +5,6 @@ void geesebumps_logo(void)
 {
     Sprite *logo_text, *logo_lines1, *logo_lines2;
 
-    initialize();
-
     VDP_setBackgroundColor(13);
 
     PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
