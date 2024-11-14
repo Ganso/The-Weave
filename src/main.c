@@ -4,11 +4,13 @@
 
 int main(bool hard)
 {
+    initialize();
+ 
     //geesebumps_logo(); // GeeseBumps Logo
     theweave_intro();  // Game intro
 
     current_act=1;
-    current_scene=5;
+    current_scene=1;
 
     while (true) { // MAIN LOOP
         switch (current_act)

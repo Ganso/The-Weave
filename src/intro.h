@@ -4,5 +4,7 @@
 #define MAXSTARS 5
 
 void theweave_intro(void);
+void intro_update_language(void);
+bool intro_read_keys(void);
 
 #endif
