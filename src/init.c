@@ -29,9 +29,6 @@ void initialize(void)
     // Initialize globals
     tile_ind = TILE_USER_INDEX;
 
-    // Default language
-    game_language=LANG_ENGLISH;
-
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);
 

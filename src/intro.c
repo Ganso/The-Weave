@@ -7,6 +7,7 @@ void theweave_intro(void)
     u8 nstar,x,y;
     bool exit_menu=false;
     
+    initialize();
     PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
     PAL_setPalette(PAL1, geesebumps_pal_black.data, DMA);
 
@@ -34,7 +35,8 @@ void theweave_intro(void)
 
     // Background music
     XGM2_play(music_intro);
-    
+
+    game_language=LANG_ENGLISH;    
     intro_update_language();
     while (!exit_menu) {
         for (nstar=0;nstar<MAXSTARS;nstar++) {
@@ -49,6 +51,8 @@ void theweave_intro(void)
         SPR_update();
         SYS_doVBlankProcess();
     }
+
+    PAL_fadeOutAll(SCREEN_FPS, false);
 }
 
 void intro_update_language(void)
@@ -88,7 +92,7 @@ bool intro_read_keys(void)
             else game_language=LANG_ENGLISH;
             intro_update_language();
             break;
-        case BUTTON_A;
+        case BUTTON_A:
         case BUTTON_START:
             return true;    
         default:
