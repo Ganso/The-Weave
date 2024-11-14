@@ -4,9 +4,7 @@
 
 int main(bool hard)
 {
-    initialize();
- 
-    //geesebumps_logo(); // GeeseBumps Logo
+    geesebumps_logo(); // GeeseBumps Logo
     theweave_intro();  // Game intro
 
     current_act=1;
