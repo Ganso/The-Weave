@@ -51,8 +51,10 @@ void theweave_intro(void)
         SPR_update();
         SYS_doVBlankProcess();
     }
-
-    PAL_fadeOutAll(SCREEN_FPS, false);
+    VDP_clearTextLineBG(WINDOW,23);
+    XGM2_fadeOutAndStop(SCREEN_FPS*3);
+    PAL_fadeOutAll(SCREEN_FPS*3, true);
+    waitMs(3000);
 }
 
 void intro_update_language(void)
