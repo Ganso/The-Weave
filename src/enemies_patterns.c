@@ -290,15 +290,22 @@ void do_electric_enemy_pattern_effect(void) {
         VDP_setHilightShadow(false);
         hit_enemy(enemy_attacking);
         
-        // Reset states after successful counter
+        // Clean up all active notes
+        cleanup_enemy_notes();
+        
+        // Reset enemy state
+        anim_enemy(enemy_attacking, ANIM_IDLE);
         enemy_attack_effect_in_progress = false;
         obj_enemy[enemy_attacking].obj_character.state = STATE_IDLE;
+        obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern] = 0;
         enemy_attacking = ENEMY_NONE;
         
+        // Reset player state
         player_pattern_effect_in_progress = PTRN_NONE;
         player_pattern_effect_reversed = false;
         obj_character[active_character].state = STATE_IDLE;
         
+        // Hide combat interface
         show_or_hide_enemy_combat_interface(false);
     }
 }
@@ -358,4 +365,18 @@ void finish_bite_enemy_pattern_effect(void) {
     show_or_hide_interface(true);
     show_or_hide_enemy_combat_interface(true);
     show_character(active_character, true);
+}
+
+/**
+ * Clean up all active enemy notes
+ * Used when resetting combat state
+ */
+void cleanup_enemy_notes(void) {
+    // Clean up all note sprites and states
+    for (u8 note = 0; note < 6; note++) {
+        if (enemy_note_active[note]) {
+            show_enemy_note(note + 1, false, false);
+            enemy_note_active[note] = false;
+        }
+    }
 }

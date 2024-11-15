@@ -48,7 +48,7 @@ void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
 void init_patterns(void); // initialize patterns
 
 // Pattern validation functions
-bool validate_pattern_sequence(u8 *notes, u8 pattern_id, bool *is_reverse); // Check if notes match a pattern
+u8 validate_pattern_sequence(u8 *notes, bool *is_reverse); // Check if notes match a pattern
 bool can_use_electric_pattern(void); // Check if thunder pattern can be used
 bool can_use_hide_pattern(void); // Check if hide pattern can be used
 

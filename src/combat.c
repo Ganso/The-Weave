@@ -9,11 +9,6 @@
  * - Damage calculation and application
  * - Combat UI management (life counters, enemy faces, note indicators)
  * - State tracking for active combats
- * 
- * Combat flows through several phases:
- * 1. Initialization - Reset enemy HP, randomize pattern timings
- * 2. Active Combat - Enemies attack with patterns, player can counter/dodge
- * 3. Resolution - Process hits, update UI, check for combat end
  */
 
 /******************************************************************************
@@ -107,6 +102,22 @@ void hit_enemy(u16 nenemy)
 
     // Play hit sound effect
     XGM2_playPCM(snd_player_hit_enemy, sizeof(snd_player_hit_enemy), SOUND_PCM_CH_AUTO);
+
+    // If enemy was attacking, clean up combat state
+    if (enemy_attacking == nenemy) {
+        // Clean up all active notes
+        cleanup_enemy_notes();
+        
+        // Reset enemy state
+        anim_enemy(nenemy, ANIM_IDLE);
+        enemy_attack_effect_in_progress = false;
+        obj_enemy[nenemy].obj_character.state = STATE_IDLE;
+        obj_enemy[nenemy].last_pattern_time[enemy_attack_pattern] = 0;
+        enemy_attacking = ENEMY_NONE;
+        
+        // Hide combat interface
+        show_or_hide_enemy_combat_interface(false);
+    }
 
     // Apply damage and check for defeat
     obj_enemy[nenemy].hitpoints--;
