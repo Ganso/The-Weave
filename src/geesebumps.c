@@ -43,8 +43,10 @@ void geesebumps_logo(void)
     }
 
     // Pause and fade out
-    waitMs(4000);
-    PAL_fadeOutAll(SCREEN_FPS*2, false);
+    waitMs(3000);
+    PAL_fadeOutAll(SCREEN_FPS*2, true);
+    XGM2_fadeOutAndStop(SCREEN_FPS*2);
+    waitMs(2000);
 
     // Release everything
     VDP_releaseAllSprites();
