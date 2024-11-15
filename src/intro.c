@@ -51,10 +51,17 @@ void theweave_intro(void)
         SPR_update();
         SYS_doVBlankProcess();
     }
+
+    // Fade out music and graphics
     VDP_clearTextLineBG(WINDOW,23);
     XGM2_fadeOutAndStop(SCREEN_FPS*3);
     PAL_fadeOutAll(SCREEN_FPS*3, true);
     waitMs(3000);
+
+    // Release everything
+    VDP_releaseAllSprites();
+    VDP_clearPlane(BG_A, true);
+    tile_ind-=intro_logo_bg.tileset->numTile;   
 }
 
 void intro_update_language(void)

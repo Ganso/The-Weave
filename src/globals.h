@@ -1,7 +1,7 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
-#define GAMEVERSION "v24.11.13"
+#define GAMEVERSION "v24.11.15"
 
 // Sega Genesis
 #include <genesis.h>

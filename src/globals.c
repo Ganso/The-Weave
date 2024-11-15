@@ -46,8 +46,6 @@ void next_frame(bool interactive)
 
     // Create an RNG seed depending of the number of frames
     frame_counter++;
-
-    //kprintf("Patrón eléctrico: %d,%d,%d,%d",obj_pattern[PTRN_ELECTRIC].notes[0],obj_pattern[PTRN_ELECTRIC].notes[1],obj_pattern[PTRN_ELECTRIC].notes[2],obj_pattern[PTRN_ELECTRIC].notes[3]);
     
     // Wait for next frame
     SYS_doVBlankProcess();

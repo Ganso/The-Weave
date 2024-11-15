@@ -75,17 +75,32 @@ void init_enemy(u16 numenemy, u16 class)
     for (i=0;i<MAX_PATTERN_ENEMY;i++) obj_enemy[numenemy].last_pattern_time[i]=0;
 }
 
-// Release an enemy's sprites from memory (keeping the Enemy struct intact)
+// Release an enemy's sprites and clean up combat state
 void release_enemy(u16 nenemy)
 {
-    obj_enemy[nenemy].obj_character.active=false;
-    if (spr_enemy[nenemy] != NULL)
-    {
+    // Clean up combat state if this enemy was attacking
+    if (enemy_attacking == nenemy) {
+        enemy_attacking = ENEMY_NONE;
+        enemy_attack_pattern_notes = 0;
+        enemy_attack_time = 0;
+        enemy_attack_effect_in_progress = false;
+        
+        // Clean up note indicators
+        for (u8 note = 0; note < 6; note++) {
+            if (enemy_note_active[note]) {
+                show_enemy_note(note + 1, false, false);
+                enemy_note_active[note] = false;
+            }
+        }
+    }
+
+    // Release enemy sprites
+    obj_enemy[nenemy].obj_character.active = false;
+    if (spr_enemy[nenemy] != NULL) {
         SPR_releaseSprite(spr_enemy[nenemy]);
         spr_enemy[nenemy] = NULL;
     }
-    if (spr_enemy_face[nenemy] != NULL)
-    {
+    if (spr_enemy_face[nenemy] != NULL) {
         SPR_releaseSprite(spr_enemy_face[nenemy]);
         spr_enemy_face[nenemy] = NULL;
     }

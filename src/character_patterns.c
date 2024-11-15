@@ -57,7 +57,7 @@ void check_active_character_state(void)
             break;
 
         case STATE_PATTERN_CHECK:
-            matched_pattern = validate_pattern_sequence(played_notes, MAX_PATTERNS, &is_reverse_match);
+            matched_pattern = validate_pattern_sequence(played_notes, &is_reverse_match);
             hide_rod_icons();
 
             if (matched_pattern != PTRN_NONE) {
@@ -169,12 +169,12 @@ void init_patterns(void)
  * Pattern Validation Functions
  */
 
-bool validate_pattern_sequence(u8 *notes, u8 max_patterns, bool *is_reverse)
+bool validate_pattern_sequence(u8 *notes, bool *is_reverse)
 {
     u8 npattern, nnote;
     u8 matches, reverse_matches;
     
-    for (npattern = 0; npattern < max_patterns; npattern++) {
+    for (npattern = 0; npattern < MAX_PATTERNS; npattern++) {
         matches = 0;
         reverse_matches = 0;
         // Check both forward and reverse pattern matches
