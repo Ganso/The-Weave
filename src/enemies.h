@@ -1,20 +1,6 @@
 #ifndef _ENEMIES_H_
 #define _ENEMIES_H_
 
-// Enemy Patterns
-#define MAX_PATTERN_ENEMY 2
-#define PTRN_EN_NONE         254
-#define PTRN_EN_ELECTIC      0   // Electricity spell
-#define PTRN_EN_BITE         1   // Bite Spell
-
-typedef struct
-{
-    u8 numnotes;
-    u8 notes[4];
-    u16 recharge_time;
-} Pattern_Enemy;
-Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY]; // Enemie pattern object
-
 // Enemy classes
 #define MAX_ENEMY_CLASSES 10
 #define ENEMY_CLS_BADBOBBIN    0
@@ -45,7 +31,6 @@ Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
 Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
 Sprite *spr_enemy_face[MAX_ENEMIES]; // Enemy faces sprites
 
-void init_enemy_patterns(void); // initialize enemy patterns
 void init_enemy_classes(void); // initialize enemy classes
 void init_enemy(u16 numenemy, u16 class); // Initialize an enemy
 void release_enemy(u16 nenemy); // Release an enemy from memory

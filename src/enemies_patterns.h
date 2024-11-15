@@ -1,12 +1,29 @@
 #ifndef _ENM_PATTERNS_H_
 #define _ENM_PATTERNS_H_
 
+
+// Enemy Patterns
+#define MAX_PATTERN_ENEMY 2
+
+#define PTRN_EN_NONE         254
+#define PTRN_EN_ELECTIC      0   // Electricity spell
+#define PTRN_EN_BITE         1   // Bite Spell
+
 #define MAX_ATTACK_NOTE_PLAYING_TIME  500  // Attack note playing time (in milliseconds)
 #define MAX_TIME_AFTER_ATTACK        1000  // Time to stay in STATE_ATTACK_FINISHED (in milliseconds)
 
 // Pattern-specific max effect times (in milliseconds)
 #define MAX_EFFECT_TIME_ELECTRIC 1600
 #define MAX_EFFECT_TIME_BITE     1400
+
+// Enemy pattern struct
+typedef struct
+{
+    u8 numnotes;
+    u8 notes[4];
+    u16 recharge_time;
+} Pattern_Enemy;
+Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY]; // Enemie pattern object
 
 // Enemy pattern state variables
 u16 enemy_attacking; // Which enemy is attacking?
@@ -16,6 +33,9 @@ u16 enemy_attack_time; // How long is the enemy attacking?
 bool enemy_attack_effect_in_progress; // An enemy pattern attack effect is in progress
 u16 enemy_attack_effect_time; // How long has been the enemy pattern effect working?
 bool enemy_note_active[6]; // Is the note # MI-DO active?
+
+// Initialization function
+void init_enemy_patterns(void); // initialize enemy patterns
 
 // Main state machine function
 void check_enemy_state(void); // Main state machine for enemy pattern system

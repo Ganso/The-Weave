@@ -99,8 +99,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)
 // Talk a dialog line
 void talk_dialog(const DialogItem *dialog)
 {
-    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds); 
-    kprintf("Idioma: %d",game_language);
+    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds);
 }
 
 // Split a text in up to three lines

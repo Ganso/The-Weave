@@ -71,7 +71,6 @@ void intro_update_language(void)
     default:
         break;
     }
-    kprintf("Idioma: %d",game_language);
 
     VDP_drawTextBG(WINDOW, lang_text, (40 - strlen(lang_text)) >> 1, 23);
 

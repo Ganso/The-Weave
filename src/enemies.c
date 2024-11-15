@@ -1,13 +1,6 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Initialize enemy pattern
-void init_enemy_patterns(void)
-{
-    obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 150}; // Electric pattern: 4 steps, 150ms interval
-    obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {3, {2,3,2,NULL}, 150}; // Bite pattern: 3 steps, 150ms interval
-}
-
 // Initialize enemy classes with their specific attributes
 void init_enemy_classes(void)
 {
