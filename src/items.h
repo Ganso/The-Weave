@@ -12,10 +12,10 @@ typedef struct {
     u16 x_in_background; // X coordinate, relative to the background
 } Item;
 
-Item obj_item[MAX_ITEMS];
-Sprite *spr_item[MAX_ITEMS];
+extern Item obj_item[MAX_ITEMS];
+extern Sprite *spr_item[MAX_ITEMS];
 
-u16 pending_item_interaction; // The user has interacted with an item
+extern u16 pending_item_interaction; // The user has interacted with an item
 
 void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u8 collision_width, u8 collision_x_offset, u8 collision_height, u8 collision_y_offset); // Initialize an item
 void release_item(u16 index); // Release an item

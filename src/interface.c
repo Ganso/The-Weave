@@ -1,6 +1,20 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+Sprite *spr_face_left;
+Sprite *spr_face_right;
+Sprite *spr_int_button_A;
+Map *map_int_rod;
+Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6;
+Sprite *spr_int_enemy_rod_1,*spr_int_enemy_rod_2,*spr_int_enemy_rod_3,*spr_int_enemy_rod_4,*spr_int_enemy_rod_5,*spr_int_enemy_rod_6;
+Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6;
+Sprite *spr_int_life_counter;
+Sprite *spr_pause_icon[5];
+Sprite *spr_pattern_list_note[4];
+bool interface_active;
+
+
 // Show or hide the bottom interface of the game
 void show_or_hide_interface(bool visible)
 {

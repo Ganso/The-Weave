@@ -23,8 +23,8 @@
 #include "../res/res_geesebumps.h"
 #include "../res/res_intro.h"
 
-u16 tile_ind; // Tiles index
-u16 frame_counter; // Number of frames counter (random number generator, and frameskip counter in some functions)
+extern u16 tile_ind; // Tiles index
+extern u16 frame_counter; // Number of frames counter (random number generator, and frameskip counter in some functions)
 
 // Game libraries
 #include "entity.h" // Every object in the game that has a sprite you can show, move...
@@ -53,8 +53,8 @@ u16 frame_counter; // Number of frames counter (random number generator, and fra
 #define SCREEN_FPS 60
 
 // Game state globals
-u8 current_act;
-u8 current_scene;
+extern u8 current_act;
+extern u8 current_scene;
 
 // Global functions
 void wait_seconds(int sec); // Wait for N seconds

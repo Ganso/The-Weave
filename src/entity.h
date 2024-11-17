@@ -7,6 +7,9 @@
 #define ANIM_ACTION     2
 #define ANIM_MAGIC      3
 
+// Global variables
+extern bool movement_active;
+
 // Entities states
 typedef enum {
     STATE_IDLE,

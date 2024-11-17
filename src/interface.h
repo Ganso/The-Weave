@@ -8,21 +8,21 @@ typedef struct {
 } SpriteState;
 
 // Interface sprites
-Sprite *spr_face_left; // Left face BG
-Sprite *spr_face_right; // Right face BG
-Sprite *spr_int_button_A; // Button with an A
-Map *map_int_rod; // Rod
-Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6; // Rod (notes)
-Sprite *spr_int_enemy_rod_1,*spr_int_enemy_rod_2,*spr_int_enemy_rod_3,*spr_int_enemy_rod_4,*spr_int_enemy_rod_5,*spr_int_enemy_rod_6; // Rod (enemy notes)
-Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6; // Pentagram (notes)
-Sprite *spr_int_life_counter; // Life counter
+extern Sprite *spr_face_left; // Left face BG
+extern Sprite *spr_face_right; // Right face BG
+extern Sprite *spr_int_button_A; // Button with an A
+extern Map *map_int_rod; // Rod
+extern Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6; // Rod (notes)
+extern Sprite *spr_int_enemy_rod_1,*spr_int_enemy_rod_2,*spr_int_enemy_rod_3,*spr_int_enemy_rod_4,*spr_int_enemy_rod_5,*spr_int_enemy_rod_6; // Rod (enemy notes)
+extern Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6; // Pentagram (notes)
+extern Sprite *spr_int_life_counter; // Life counter
 
 // Pause screen sprites
-Sprite *spr_pause_icon[5]; // Icon list
-Sprite *spr_pattern_list_note[4]; // The 4 notes in right of the pattern list
+extern Sprite *spr_pause_icon[5]; // Icon list
+extern Sprite *spr_pattern_list_note[4]; // The 4 notes in right of the pattern list
 
 // Others
-bool interface_active; // Do we have to show the interface?
+extern bool interface_active; // Do we have to show the interface?
 
 void show_or_hide_interface(bool visible); // Show or hide the bottom interface
 void show_note(u8 nnote, bool visible); // Show or hide notes

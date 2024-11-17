@@ -1,6 +1,13 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+Entity obj_character[MAX_CHR];
+Sprite *spr_chr[MAX_CHR];
+u16 active_character;
+Entity obj_face[MAX_FACE];
+Sprite *spr_face[MAX_FACE];
+
 // Initialize a character
 void init_character(u16 nchar)
 {
@@ -258,4 +265,3 @@ void approach_characters(void)
     // Update sprite depths after movement
     update_sprites_depth();
 }
-

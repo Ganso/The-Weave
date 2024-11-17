@@ -47,7 +47,7 @@
  * 4. Update this header with the new pattern information.
  */
 
-bool is_combat_active; // Are we in a combat?
+extern bool is_combat_active; // Are we in a combat?
 
 void start_combat(bool start); // Start (or end) a combat
 void hit_enemy(u16 nenemy); // Hit an enemy

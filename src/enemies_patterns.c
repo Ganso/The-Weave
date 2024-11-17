@@ -1,6 +1,17 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY];
+u16 enemy_attacking;
+u16 enemy_attack_pattern;
+u8 enemy_attack_pattern_notes;
+u16 enemy_attack_time;
+bool enemy_attack_effect_in_progress;
+u16 enemy_attack_effect_time; 
+bool enemy_note_active[6];
+
+
 // Initialize enemy pattern
 void init_enemy_patterns(void)
 {

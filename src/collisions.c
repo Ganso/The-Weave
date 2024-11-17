@@ -1,6 +1,9 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+u8 num_colls;
+
 // Calculate distance between two characters at given coordinates
 u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)
 {
