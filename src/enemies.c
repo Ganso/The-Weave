@@ -1,6 +1,13 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+Enemy obj_enemy[MAX_ENEMIES];
+Sprite *spr_enemy[MAX_ENEMIES];
+Sprite *spr_enemy_face[MAX_ENEMIES];
+Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES];
+
+
 // Initialize enemy classes with their specific attributes
 void init_enemy_classes(void)
 {

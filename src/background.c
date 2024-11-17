@@ -1,6 +1,20 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+Map *background_BGA;
+Map *background_BGB;
+u32 offset_BGA;
+u32 offset_BGB;
+u8 background_scroll_mode;
+u8 scroll_speed;
+bool player_scroll_active;
+u16 background_width;
+u16 x_limit_min;
+u16 x_limit_max;
+u16 y_limit_min;
+u16 y_limit_max;
+
 // Update_background
 void update_bg(bool player_moved)
 {

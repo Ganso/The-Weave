@@ -2,6 +2,12 @@
 #include "globals.h"
 #include "characters.h"
 
+// Global variable definitions
+Item obj_item[MAX_ITEMS];
+Sprite *spr_item[MAX_ITEMS];
+u16 pending_item_interaction;
+
+
 // Initialize an item
 void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u8 collision_width, u8 collision_x_offset, u8 collision_height, u8 collision_y_offset)
 {

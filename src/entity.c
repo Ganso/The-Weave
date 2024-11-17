@@ -1,6 +1,8 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+bool movement_active;
 
 // Move an entity
 void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
@@ -32,5 +34,4 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
         if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
     movement_active=old_movement_active;
-
 }

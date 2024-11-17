@@ -13,7 +13,7 @@ typedef struct
     bool follows_character;
     u8 follow_speed;
 } Enemy_Class;
-Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object
+extern Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object
 
 // Enemies
 #define MAX_ENEMIES 10
@@ -27,9 +27,9 @@ typedef struct
     u16 hitpoints;
     u16 last_pattern_time[MAX_PATTERN_ENEMY];
 } Enemy;
-Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
-Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
-Sprite *spr_enemy_face[MAX_ENEMIES]; // Enemy faces sprites
+extern Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
+extern Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
+extern Sprite *spr_enemy_face[MAX_ENEMIES]; // Enemy faces sprites
 
 void init_enemy_classes(void); // initialize enemy classes
 void init_enemy(u16 numenemy, u16 class); // Initialize an enemy

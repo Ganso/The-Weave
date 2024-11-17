@@ -13,14 +13,14 @@
 #define MAX_NOTE_PLAYING_TIME  500  // Note playing time in milliseconds
 #define MAX_PATTERN_WAIT_TIME 2000   // Time to wait for a next note before cancelling the pattern in milliseconds
 
-bool player_patterns_enabled; // Can the character play a pattern right now?
+extern bool player_patterns_enabled; // Can the character play a pattern right now?
 
-u8 note_playing; // The note the player is playing
-u16 note_playing_time; // How long has the note been played (in ticks)
-u16 time_since_last_note; // How long are we waiting for the pattern to finish
-u16 player_pattern_effect_in_progress; // Is a pattern effect currently in progress? Which one?
-bool player_pattern_effect_reversed; // Is the effect of a reverse pattern?
-u16 player_pattern_effect_time; // How long is the effect been active?
+extern u8 note_playing; // The note the player is playing
+extern u16 note_playing_time; // How long has the note been played (in ticks)
+extern u16 time_since_last_note; // How long are we waiting for the pattern to finish
+extern u16 player_pattern_effect_in_progress; // Is a pattern effect currently in progress? Which one?
+extern bool player_pattern_effect_reversed; // Is the effect of a reverse pattern?
+extern u16 player_pattern_effect_time; // How long is the effect been active?
 
 // Patterns
 #define MAX_PATTERNS 3
@@ -29,8 +29,8 @@ u16 player_pattern_effect_time; // How long is the effect been active?
 #define PTRN_HIDE          1   // Hide spell
 #define PTRN_OPEN          2   // Open spell
 
-u8 played_notes[4]; // Notes played in the current pattern
-u8 num_played_notes; // Number of notes of the current pattern
+extern u8 played_notes[4]; // Notes played in the current pattern
+extern u8 num_played_notes; // Number of notes of the current pattern
 
 typedef struct
 {
@@ -39,7 +39,7 @@ typedef struct
     Sprite *sd;
 } Pattern;
 
-Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
+extern Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
 
 // Core pattern system functions
 void play_note(u8 nnote); // Play a note

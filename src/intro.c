@@ -40,7 +40,7 @@ void theweave_intro(void)
     intro_update_language();
     while (!exit_menu) {
         for (nstar=0;nstar<MAXSTARS;nstar++) {
-            if (SPR_getAnimationDone(star[nstar])) {
+            if (SPR_isAnimationDone(star[nstar])) {
                 x=random()%320;
                 y=random()%224;
                 SPR_setPosition(star[nstar],x,y);

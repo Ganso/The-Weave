@@ -1,6 +1,12 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+u16 tile_ind;
+u16 frame_counter;
+u8 current_act;
+u8 current_scene;
+
 // Wait for N seconds
 void wait_seconds(int sec)
 {
@@ -11,7 +17,6 @@ void wait_seconds(int sec)
         next_frame(false);
         num_ticks++;
     }
-
 }
 
 // Wait for next frame and do each-frame actions, including interactive actions if selected

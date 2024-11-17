@@ -4,7 +4,7 @@
 #define MAX_INTERACTIVE_DISTANCE 20 // Distance in pixels with items you can interact
 
 #define MAX_COLLISIONS 30 // If we collide with an enemy more than X times, move the character anyway (CHANGE IT!)
-u8 num_colls;             // Number of collisions that already happened
+extern u8 num_colls; // Number of collisions that already happened
 
 // Distances
 u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2); // Calculate distance between two characters at given coordinates

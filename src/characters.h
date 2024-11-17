@@ -19,14 +19,14 @@
 #define SIDE_none     true
 
 // Characters
-Entity obj_character[MAX_CHR];
-Sprite *spr_chr[MAX_CHR];
-u16 active_character; // Which character is the active one
-bool movement_active; // Can you move ?
+extern Entity obj_character[MAX_CHR];
+extern Sprite *spr_chr[MAX_CHR];
+extern u16 active_character; // Which character is the active one
+extern bool movement_active; // Can you move ?
 
 // Faces
-Entity obj_face[MAX_FACE];
-Sprite *spr_face[MAX_FACE];
+extern Entity obj_face[MAX_FACE];
+extern Sprite *spr_face[MAX_FACE];
 
 void init_character(u16 nchar); // Initialize a character
 void release_character(u16 nchar); // Release a character from memory

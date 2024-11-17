@@ -4,6 +4,9 @@
 #define SIDE_LEFT true
 #define SIDE_RIGHT false
 
+// Global variable definitions
+u8 game_language;
+
 const DialogItem system_dialog[] = { // System messages
     {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"No puedo usar ese patrón|ahora mismo", 

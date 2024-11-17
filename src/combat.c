@@ -1,6 +1,9 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+bool is_combat_active;
+
 /**
  * Combat System
  * 

@@ -1,6 +1,19 @@
 #include <genesis.h>
 #include "globals.h"
 
+// Global variable definitions
+bool player_patterns_enabled; // Can the character play a pattern right now?
+u8 note_playing; // The note the player is playing
+u16 note_playing_time; // How long has the note been played (in ticks)
+u16 time_since_last_note; // How long are we waiting for the pattern to finish
+u16 player_pattern_effect_in_progress; // Is a pattern effect currently in progress? Which one?
+bool player_pattern_effect_reversed; // Is the effect of a reverse pattern?
+u16 player_pattern_effect_time; // How long is the effect been active?
+u8 played_notes[4]; // Notes played in the current pattern
+u8 num_played_notes; // Number of notes of the current pattern
+Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
+
+
 /**
  * Character Pattern System
  * 

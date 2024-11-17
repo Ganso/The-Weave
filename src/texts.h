@@ -7,7 +7,7 @@ enum Languages {
     LANG_SPANISH,
     LANG_ENGLISH
 };
-u8 game_language;
+extern u8 game_language;
 
 // Acts and dialogs
 #define SYSTEM_DIALOG   0
