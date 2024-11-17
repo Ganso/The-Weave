@@ -8,8 +8,8 @@ void theweave_intro(void)
     bool exit_menu=false;
     
     initialize();
-    PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
-    PAL_setPalette(PAL1, geesebumps_pal_black.data, DMA);
+    PAL_setPalette(PAL0, geesebumps_pal_black.data, CPU);
+    PAL_setPalette(PAL1, geesebumps_pal_black.data, CPU);
 
     // Initialize stars
     for (nstar=0;nstar<MAXSTARS;nstar++) {
@@ -59,6 +59,7 @@ void theweave_intro(void)
     waitMs(3000);
 
     // Release everything
+    SPR_reset();
     VDP_releaseAllSprites();
     VDP_clearPlane(BG_A, true);
     tile_ind-=intro_logo_bg.tileset->numTile;   

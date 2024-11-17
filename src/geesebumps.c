@@ -5,12 +5,13 @@ void geesebumps_logo(void)
 {
     Sprite *logo_text, *logo_lines1, *logo_lines2;
 
+    KDebug_Alert("HOLA MUNDO");
     initialize();
     VDP_setBackgroundColor(13);
-    PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
-    PAL_setPalette(PAL1, geesebumps_pal_white.data, DMA);
-    PAL_setPalette(PAL2, geesebumps_pal_white.data, DMA);
-    PAL_setPalette(PAL3, geesebumps_pal_white.data, DMA);
+    PAL_setPalette(PAL0, geesebumps_pal_black.data, CPU);
+    PAL_setPalette(PAL1, geesebumps_pal_white.data, CPU);
+    PAL_setPalette(PAL2, geesebumps_pal_white.data, CPU);
+    PAL_setPalette(PAL3, geesebumps_pal_white.data, CPU);
 
     // Background music
     XGM2_play(music_geesebumps);
@@ -18,6 +19,7 @@ void geesebumps_logo(void)
     // Fist part of the logo (Goose)
     VDP_drawImageEx(BG_A, &geesebumps_logo_bg, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind), 0, 0, false, true);
     tile_ind+=geesebumps_logo_bg.tileset->numTile;
+    KDebug_Alert("HOLA MUNDO");
 
     // Load every other srpite
     logo_text = SPR_addSpriteSafe(&geesebumps_logo_text, 60, 163, TILE_ATTR(PAL1, false, false, false));
@@ -25,6 +27,7 @@ void geesebumps_logo(void)
     logo_lines2 = SPR_addSpriteSafe(&geesebumps_logo_line2, 81-180, 84, TILE_ATTR(PAL3, false, false, false));
     SPR_setVisibility(logo_text, HIDDEN);
     SPR_update();
+    KDebug_Alert("HOLA MUNDO");
 
     // Second part (Text) fade in
     PAL_fade(0, 15, geesebumps_pal_black.data, geesebumps_logo_bg.palette->data, SCREEN_FPS*2, false);
@@ -50,6 +53,7 @@ void geesebumps_logo(void)
 
     // Release everything
     VDP_releaseAllSprites();
+    SPR_reset();
     VDP_clearPlane(BG_A, true);
     tile_ind-=geesebumps_logo_bg.tileset->numTile;   
 }
