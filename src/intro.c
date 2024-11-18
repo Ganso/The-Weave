@@ -54,9 +54,9 @@ void theweave_intro(void)
 
     // Fade out music and graphics
     VDP_clearTextLineBG(WINDOW,23);
-    XGM2_fadeOutAndStop(SCREEN_FPS*3);
-    PAL_fadeOutAll(SCREEN_FPS*3, true);
-    waitMs(3000);
+    XGM2_fadeOutAndStop(SCREEN_FPS*2);
+    PAL_fadeOutAll(SCREEN_FPS*2, true);
+    waitMs(2000);
 
     // Release everything
     SPR_reset();
