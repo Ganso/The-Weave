@@ -51,7 +51,7 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 // Global definitions (NTSC)
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 224
-#define SCREEN_FPS 60
+extern u8 SCREEN_FPS;
 
 // Game state globals
 extern u8 current_act;

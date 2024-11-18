@@ -6,6 +6,7 @@ u16 tile_ind;
 u16 frame_counter;
 u8 current_act;
 u8 current_scene;
+u8 SCREEN_FPS;
 
 // Wait for N seconds
 void wait_seconds(int sec)
