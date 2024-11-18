@@ -4,6 +4,9 @@
 
 int main(bool hard)
 {
+    kprintf("The Weave - %s",GAMEVERSION);
+    kprintf("https://geese-bumps.itch.io/\n\n");
+
     geesebumps_logo(); // GeeseBumps Logo
     theweave_intro();  // Game intro
 

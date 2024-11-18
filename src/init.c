@@ -26,7 +26,6 @@ void initialize(void)
     u8 vers = *(u8 *)0xA10001;
     if(vers & (1 << 6)) SCREEN_FPS=50; // PAL
     else SCREEN_FPS=60; // NTSC
-    kprintf("FPS: %d",SCREEN_FPS);
 
     // Load font and set text palette
     VDP_loadFont(font.tileset, DMA);
