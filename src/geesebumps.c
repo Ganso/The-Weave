@@ -1,11 +1,27 @@
 #include <genesis.h>
 #include "globals.h"
 
+static bool should_exit = false;
+
+static void joyEvent_Geesebumps(u16 joy, u16 changed, u16 state)
+{
+    // If button A was just pressed
+    if ((changed & BUTTON_A) && (state & BUTTON_A))
+    {
+        should_exit = true;
+    }
+}
+
 void geesebumps_logo(void)
 {
     Sprite *logo_text, *logo_lines1, *logo_lines2;
+    should_exit = false;
 
     initialize();
+    
+    // Set up the joystick handler
+    JOY_setEventHandler(&joyEvent_Geesebumps);
+
     VDP_setBackgroundColor(13);
     PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
     PAL_setPalette(PAL1, geesebumps_pal_white.data, DMA);
@@ -27,28 +43,53 @@ void geesebumps_logo(void)
     SPR_update();
 
     // Second part (Text) fade in
-    PAL_fade(0, 15, geesebumps_pal_black.data, geesebumps_logo_bg.palette->data, SCREEN_FPS*2, false);
-    SPR_setVisibility(logo_text, VISIBLE);
-    SPR_update();
-    PAL_fade(16, 31, geesebumps_pal_white.data, geesebumps_logo_text.palette->data, SCREEN_FPS*2, false);
-
-    // Third and fourth part (Color lines) fade in and scroll
-    PAL_initFade(32, 63, geesebumps_pal_white2.data, geesebumps_pal_lines.data, SCREEN_FPS*3);
-    for (u16 difx=180; difx>0; difx--) {
-        SPR_setPosition(logo_lines1, 81-difx, 55);
-        SPR_setPosition(logo_lines2, 81-difx, 84);
-        SPR_update();
-        PAL_doFadeStep();
+    if (!should_exit) {
+        // Start first fade asynchronously
+        PAL_fade(0, 15, geesebumps_pal_black.data, geesebumps_logo_bg.palette->data, SCREEN_FPS*2, true);
+                
+        // Wait for fade completion or button press
+        while (PAL_isDoingFade() && !should_exit) {
+            SYS_doVBlankProcess();
+        }
+        PAL_setPalette(PAL0, geesebumps_logo_bg.palette->data, DMA);
         SYS_doVBlankProcess();
+
+        if (!should_exit) {
+            SPR_setVisibility(logo_text, VISIBLE);
+            SPR_update();
+            
+            // Start second fade asynchronously
+            PAL_fade(16, 31, geesebumps_pal_white.data, geesebumps_logo_text.palette->data, SCREEN_FPS*2, true);
+            
+            // Wait for fade completion or button press
+            while (PAL_isDoingFade() && !should_exit) {
+                SYS_doVBlankProcess();
+            }
+            PAL_setPalette(PAL1, geesebumps_logo_text.palette->data, DMA);
+            SYS_doVBlankProcess();
+        }
     }
 
-    // Pause and fade out
-    waitMs(3000);
-    PAL_fadeOutAll(SCREEN_FPS*2, true);
+    // Third and fourth part (Color lines) fade in and scroll
+    if (!should_exit) {
+        PAL_initFade(32, 63, geesebumps_pal_white2.data, geesebumps_pal_lines.data, SCREEN_FPS*3);
+        for (u16 difx=180; difx>0 && !should_exit; difx--) {
+            SPR_setPosition(logo_lines1, 81-difx, 55);
+            SPR_setPosition(logo_lines2, 81-difx, 84);
+            SPR_update();
+            PAL_doFadeStep();
+            SYS_doVBlankProcess();
+        }
+    }
+
+    // Pause and fade out - these happen regardless of button press
+    if (!should_exit) waitMs(3000);
+    PAL_fadeOutAll(SCREEN_FPS*2, false);
     XGM2_fadeOutAndStop(SCREEN_FPS*2);
     waitMs(2000);
 
     // Release everything
+    JOY_setEventHandler(NULL);
     VDP_releaseAllSprites();
     SPR_reset();
     VDP_clearPlane(BG_A, true);

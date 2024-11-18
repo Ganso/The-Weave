@@ -1,7 +1,7 @@
 #ifndef _INTRO_H_
 #define _INTRO_H_
 
-#define MAXSTARS 5
+#define MAXSTARS 7
 
 void theweave_intro(void);
 void intro_update_language(void);

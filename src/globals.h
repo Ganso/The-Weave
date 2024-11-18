@@ -1,7 +1,8 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
-#define GAMEVERSION "v24.11.17"
+// Create version using compile date
+#define GAMEVERSION ({ static char version[20]; sprintf(version, "v%c%c%c%c%c%c%c", (__DATE__[4] == ' ' ? '0' : __DATE__[4]), __DATE__[5], __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[9], __DATE__[10]); version; })
 
 // Sega Genesis
 #include <genesis.h>
