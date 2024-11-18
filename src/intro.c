@@ -8,8 +8,8 @@ void theweave_intro(void)
     bool exit_menu=false;
     
     initialize();
-    PAL_setPalette(PAL0, geesebumps_pal_black.data, CPU);
-    PAL_setPalette(PAL1, geesebumps_pal_black.data, CPU);
+    PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
+    PAL_setPalette(PAL1, geesebumps_pal_black.data, DMA);
 
     // Initialize stars
     for (nstar=0;nstar<MAXSTARS;nstar++) {
