@@ -23,7 +23,7 @@ void initialize(void)
     VDP_setScreenHeight224();
 
     // Load font and set text palette
-    VDP_loadFont(font.tileset, CPU);
+    VDP_loadFont(font.tileset, DMA);
     VDP_setTextPalette(PAL2);
 
     // Initialize globals
@@ -34,8 +34,8 @@ void initialize(void)
 
     // Initialize palettes
     // PAL0 is the background palette. It's initialized with the background
-    PAL_setPalette(PAL1, linus_sprite.palette->data, CPU); // Characters palette
-    PAL_setPalette(PAL2, interface_pal.data, CPU); // Interface palette
+    PAL_setPalette(PAL1, linus_sprite.palette->data, DMA); // Characters palette
+    PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
     // PAL2 is the enemies palette. It's initialized with the enemies
 
     // Interface: Face backgrounds
@@ -102,7 +102,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += tile_front->numTile;
 
-    PAL_setPalette(PAL0, new_pal.data, CPU);
+    PAL_setPalette(PAL0, new_pal.data, DMA);
 
     background_scroll_mode=new_scroll_mode;
     scroll_speed=new_scroll_speed;
