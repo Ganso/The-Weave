@@ -7,11 +7,11 @@ int main(bool hard)
     kprintf("The Weave - %s",GAMEVERSION);
     kprintf("https://geese-bumps.itch.io/\n\n");
 
-    geesebumps_logo(); // GeeseBumps Logo
-    theweave_intro();  // Game intro
+    //geesebumps_logo(); // GeeseBumps Logo
+    //theweave_intro();  // Game intro
 
     current_act=1;
-    current_scene=1;
+    current_scene=2;
 
     while (true) { // MAIN LOOP
         switch (current_act)
