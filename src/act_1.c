@@ -18,25 +18,25 @@ void act_1_scene_1(void)
     // Initialize items
     init_item(0, &item_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0); // Linus sleeping
 
-    // // Flash to white, show swan, fade back
-    // wait_seconds(2);
-    // PAL_getColors(0, paltmp, 64); // backup current palete
-    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    // move_character_instant(CHR_swan,141,110);
-    // show_character(CHR_swan, true); // show swan
-    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
-    // wait_seconds(2);
+    // Flash to white, show swan, fade back
+    wait_seconds(2);
+    PAL_getColors(0, paltmp, 64); // backup current palete
+    PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    move_character_instant(CHR_swan,141,110);
+    show_character(CHR_swan, true); // show swan
+    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    wait_seconds(2);
 
-    // // Dialog
-    // talk_dialog(&dialogs[ACT1_DIALOG4][0]);
+    // Dialog
+    talk_dialog(&dialogs[ACT1_DIALOG4][0]);
 
-    // // Flash to white, hide swan, fade back
-    // wait_seconds(2);
-    // PAL_getColors(0, paltmp, 64); // backup current palete
-    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    // show_character(CHR_swan, false); // show swan
-    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
-    // wait_seconds(2);
+    // Flash to white, hide swan, fade back
+    wait_seconds(2);
+    PAL_getColors(0, paltmp, 64); // backup current palete
+    PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    show_character(CHR_swan, false); // show swan
+    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    wait_seconds(2);
     
     // Daytime
     PAL_fadeTo(0, 15, bedroom_pal.data, SCREEN_FPS, false);
@@ -50,13 +50,15 @@ void act_1_scene_1(void)
     move_character_instant(CHR_linus, 35, 170);
     show_character(CHR_linus, true);
 
-    while (true)
-    {
-        next_frame(true);
-    }
+    next_frame(true);
+    
+    wait_seconds(2);
+
+    end_level(); // Free resources
+    current_scene=2; // Next scene
 }
 
-void __OLD__act_1_scene_1(void)
+void act_1_scene_2(void)
 {
     // Initialize level
     new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 576, BG_SCRL_USER_LEFT, 0);
@@ -120,10 +122,10 @@ void __OLD__act_1_scene_1(void)
     move_character(active_character,-30,obj_character[active_character].y+obj_character[active_character].y_size);
 
     end_level(); // Free resources
-    current_scene=2; // Next scene
+    current_scene=3; // Next scene
 }
 
-void act_1_scene_2(void)
+void act_1_scene_3(void)
 {
     u16 ndialog;
     const DialogItem *current_dialog;
