@@ -23,7 +23,10 @@ int main(bool hard)
                 act_1_scene_1(); // ACT 1 - scene 1
                 break;
             case 2:
-                act_1_scene_2(); // ACT 1 - scene 2
+                act_1_scene_2(); // ACT 1 - scene 1
+                break;
+            case 3:
+                act_1_scene_3(); // ACT 1 - scene 2
                 break;
             case 5:
                 act_1_scene_5(); // ACT 1 - scene 5
