@@ -2,17 +2,19 @@
 #define _CHARACTERS_H_
 
 // Characters
-#define MAX_CHR       3
+#define MAX_CHR       4
 #define CHR_linus     0
 #define CHR_clio      1
 #define CHR_xander    2
+#define CHR_swan      3
 #define CHR_NONE      254
 
 // Faces
-#define MAX_FACE      3
+#define MAX_FACE      4
 #define FACE_linus    0
 #define FACE_clio     1
 #define FACE_xander   2
+#define FACE_swan     3
 #define FACE_none     250
 #define SIDE_left     true
 #define SIDE_right    false

@@ -31,6 +31,9 @@ void init_character(u16 nchar)
         case CHR_xander:
             nsprite = &xander_sprite;
             break;
+        case CHR_swan:
+            nsprite = &swan_sprite;
+            break;
         default:
             return; 
         }
@@ -79,6 +82,9 @@ void init_face(u16 nface)
             break;
         case CHR_xander:
             nsprite = &xander_face_sprite;
+            break;
+        case CHR_swan:
+            nsprite = &swan_face_sprite;
             break;
         default:
             return;
