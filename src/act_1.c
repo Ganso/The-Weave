@@ -3,6 +3,61 @@
 
 void act_1_scene_1(void)
 {
+    u16 paltmp[64];
+
+    // Initialize level
+    new_level(&historians_bg_tile, &historians_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, 344, BG_SCRL_AUTO_RIGHT, 2);
+
+    // Use swan palette instead of characters palette
+    PAL_setPalette(PAL1, swan_sprite.palette->data, DMA);
+
+    // Initialize characters and dialog faces
+    init_character(CHR_swan);
+    init_character(CHR_linus);
+
+    // Initialize items
+    init_item(0, &item_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0); // Linus sleeping
+
+    // // Flash to white, show swan, fade back
+    // wait_seconds(2);
+    // PAL_getColors(0, paltmp, 64); // backup current palete
+    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    // move_character_instant(CHR_swan,141,110);
+    // show_character(CHR_swan, true); // show swan
+    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    // wait_seconds(2);
+
+    // // Dialog
+    // talk_dialog(&dialogs[ACT1_DIALOG4][0]);
+
+    // // Flash to white, hide swan, fade back
+    // wait_seconds(2);
+    // PAL_getColors(0, paltmp, 64); // backup current palete
+    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    // show_character(CHR_swan, false); // show swan
+    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    // wait_seconds(2);
+    
+    // Daytime
+    PAL_fadeTo(0, 15, bedroom_pal.data, SCREEN_FPS, false);
+
+    // Dialog
+    talk_dialog(&dialogs[ACT1_DIALOG4][1]);
+
+    // Wake linus up
+    release_item(0);
+    PAL_setPalette(PAL1, linus_sprite.palette->data, DMA);
+    move_character_instant(CHR_linus, 35, 170);
+    show_character(CHR_linus, true);
+
+    while (true)
+    {
+        next_frame(true);
+    }
+}
+
+void __OLD__act_1_scene_1(void)
+{
     // Initialize level
     new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 576, BG_SCRL_USER_LEFT, 0);
     set_limits(0,131,275,170);

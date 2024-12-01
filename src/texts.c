@@ -20,7 +20,7 @@ const DialogItem system_dialog[] = { // System messages
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 
-const DialogItem act1_dialog1[] = {
+const DialogItem act1_dialog1[] = { // Historians corridor
     {FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME, 
         {"Creo que he dormido demasiado|Debo llegar rápido al salón", 
          "I think I've overslept|I should go to the hall quickly"}},
@@ -48,7 +48,7 @@ const DialogItem act1_dialog1[] = {
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 
-const DialogItem act1_dialog2[] = {
+const DialogItem act1_dialog2[] = { // Histoiran hall
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, // 0 - introduction
         {"Gremio de los historiadores|Año 8121", 
          "Historians guild|Year 8121"}},
@@ -118,7 +118,7 @@ const DialogItem act1_dialog2[] = {
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 
-const DialogItem act1_dialog3[] = {
+const DialogItem act1_dialog3[] = { // Combat zone
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
         {"Algún tiempo después", 
          "Some time later"}},
@@ -158,11 +158,22 @@ const DialogItem act1_dialog3[] = {
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 
+const DialogItem act1_dialog4[] = { // Historians corridor
+    {FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME, 
+        {"Diálogo por escribir...",
+        "Pending dialog..."}},
+    {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
+        {"La mañana siguiente...",
+        "Next morning..."}},
+    {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
+};
+
 const DialogItem *dialogs[] = {
     system_dialog,  // 0
     act1_dialog1,   // 1
     act1_dialog2,   // 2
     act1_dialog3,   // 3
+    act1_dialog4,   // 4
 };
 
  // Code Spanish text in the game font charset

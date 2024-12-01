@@ -14,6 +14,7 @@ extern u8 game_language;
 #define ACT1_DIALOG1    1
 #define ACT1_DIALOG2    2
 #define ACT1_DIALOG3    3
+#define ACT1_DIALOG4    4
 
 typedef struct {
     u8 face;
