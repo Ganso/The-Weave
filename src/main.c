@@ -11,7 +11,7 @@ int main(bool hard)
     //theweave_intro();  // Game intro
 
     current_act=1;
-    current_scene=2;
+    current_scene=1;
 
     while (true) { // MAIN LOOP
         switch (current_act)

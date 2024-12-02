@@ -194,7 +194,7 @@ void end_level() {
     y_limit_max = 0;
 
     // Reset game state
-    active_character = CHR_NONE;
+    //active_character = CHR_NONE; <-- Don't reset: The Act level code should do it if needed
     interface_active = FALSE;
 
     // Reset all sprites after releasing everything
