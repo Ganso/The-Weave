@@ -9,7 +9,7 @@ u16 pending_item_interaction;
 
 
 // Initialize an item
-void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u8 collision_width, u8 collision_x_offset, u8 collision_height, u8 collision_y_offset)
+void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u16 collision_width, u16 collision_x_offset, u16 collision_height, u16 collision_y_offset)
 {
     u8 x_size, y_size;
 
@@ -17,11 +17,11 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
     x_size=spritedef->w;
     y_size=spritedef->h;
 
-    // Collision box (if set to 0, use default values)
-    if (collision_width==0) collision_width=x_size/2; // Half width size
-    if (collision_x_offset==0) collision_x_offset=x_size/4; // Centered in X
-    if (collision_height==0) collision_height=2; // Two lines heght
-    if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
+    // Collision box (if set to COLLISION_DEFAULT, use default values)
+    if (collision_width==COLLISION_DEFAULT) collision_width=x_size/2; // Half width size
+    if (collision_x_offset==COLLISION_DEFAULT) collision_x_offset=x_size/4; // Centered in X
+    if (collision_height==COLLISION_DEFAULT) collision_height=2; // Two lines heght
+    if (collision_y_offset==COLLISION_DEFAULT) collision_y_offset=y_size-1; // At the feet
 
     obj_item[nitem].x_in_background=x_in_background;
 
@@ -93,7 +93,6 @@ u16 detect_nearby_item()
     for (nitem = 0; nitem < MAX_ITEMS; nitem++) {
         if (obj_item[nitem].entity.active && obj_item[nitem].entity.visible) {
             distance = item_distance(nitem, char_x, char_y);
-            KDebug_AlertNumber(distance);
             // If this item is closer than previous closest and within interaction distance
             if (distance < min_distance && distance <= MAX_INTERACTIVE_DISTANCE) {
                 min_distance = distance;

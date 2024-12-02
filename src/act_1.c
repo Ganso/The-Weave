@@ -6,7 +6,8 @@ void act_1_scene_1(void)
     u16 paltmp[64];
 
     // Initialize level
-    new_level(&historians_bg_tile, &historians_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, 344, BG_SCRL_AUTO_RIGHT, 2);
+    new_level(&historians_bg_tile, &historians_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, 344, BG_SCRL_AUTO_RIGHT, 3);
+    set_limits(20,145,278,176);
 
     // Use swan palette instead of characters palette
     PAL_setPalette(PAL1, swan_sprite.palette->data, DMA);
@@ -16,28 +17,28 @@ void act_1_scene_1(void)
     init_character(CHR_linus);
 
     // Initialize items
-    init_item(0, &item_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0); // Linus sleeping
+    init_item(0, &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0); // Linus sleeping
 
-    // Flash to white, show swan, fade back
-    wait_seconds(2);
-    PAL_getColors(0, paltmp, 64); // backup current palete
-    PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    move_character_instant(CHR_swan,141,110);
-    show_character(CHR_swan, true); // show swan
-    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
-    wait_seconds(2);
+    // // Flash to white, show swan, fade back
+    // wait_seconds(2);
+    // PAL_getColors(0, paltmp, 64); // backup current palete
+    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    // move_character_instant(CHR_swan,141,110);
+    // show_character(CHR_swan, true); // show swan
+    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    // wait_seconds(2);
 
-    // Dialog
-    talk_dialog(&dialogs[ACT1_DIALOG4][0]);
-    talk_dialog(&dialogs[ACT1_DIALOG4][1]);
+    // // Dialog
+    // talk_dialog(&dialogs[ACT1_DIALOG4][0]);
+    // talk_dialog(&dialogs[ACT1_DIALOG4][1]);
 
-    // Flash to white, hide swan, fade back
-    wait_seconds(2);
-    PAL_getColors(0, paltmp, 64); // backup current palete
-    PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    show_character(CHR_swan, false); // show swan
-    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
-    wait_seconds(2);
+    // // Flash to white, hide swan, fade back
+    // wait_seconds(2);
+    // PAL_getColors(0, paltmp, 64); // backup current palete
+    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    // show_character(CHR_swan, false); // show swan
+    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    // wait_seconds(2);
     
     // Daytime
     PAL_fadeTo(0, 15, bedroom_pal.data, SCREEN_FPS, false);
@@ -48,12 +49,29 @@ void act_1_scene_1(void)
     // Wake linus up
     release_item(0);
     PAL_setPalette(PAL1, linus_sprite.palette->data, DMA);
-    move_character_instant(CHR_linus, 35, 170);
+    move_character_instant(CHR_linus, 135, 175);
     show_character(CHR_linus, true);
-
-    next_frame(true);
     
-    wait_seconds(2);
+    // Create scene objects
+    init_item(0, &item_bedroom_bed, PAL0, 31, 139, 93, 0, 23, 0); // Bed
+
+    // You can move
+    player_scroll_active=true;
+    movement_active=true;
+
+    while (true)
+    {
+        switch (pending_item_interaction) // Process item interactions
+        {
+        case 0: // Bed
+            talk_dialog(&dialogs[ACT1_DIALOG4][3]);
+            pending_item_interaction=ITEM_NONE;
+            break;
+        default:
+            break;
+        }
+        next_frame(true);
+    }
 
     end_level(); // Free resources
     current_scene=2; // Next scene
@@ -66,8 +84,8 @@ void act_1_scene_2(void)
     set_limits(0,131,275,170);
 
     // Initialize items
-    init_item(0, &item_bookpedestal_sprite, PAL0, 400, 90, 0, 0, 8, 58); // Guild history book
-    init_item(1, &item_bookpedestal_sprite, PAL0, 200, 90, 0, 0, 8, 58); // Myths and legends
+    init_item(0, &item_corridor_bookpedestal_sprite, PAL0, 400, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58); // Guild history book
+    init_item(1, &item_corridor_bookpedestal_sprite, PAL0, 200, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58); // Myths and legends
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);

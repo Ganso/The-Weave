@@ -168,6 +168,9 @@ const DialogItem act1_dialog4[] = { // Historians corridor
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
         {"A la mañana siguiente...",
         "The next morning..."}},
+    {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"He dormido regular|esta noche.|Tuve pesadillas",
+        "I've not slep|well tonight.|I had nightmares"}},
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 
