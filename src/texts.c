@@ -160,11 +160,14 @@ const DialogItem act1_dialog3[] = { // Combat zone
 
 const DialogItem act1_dialog4[] = { // Historians corridor
     {FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME, 
-        {"Diálogo por escribir...",
-        "Pending dialog..."}},
+        {"Han pasado ya|cien años",
+        "A hundred years|have passed"}},
+    {FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME, 
+        {"No podremos parales|mucho más tiempo",
+        "We won't be able to|stop them for|much longer"}},
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
-        {"La mañana siguiente...",
-        "Next morning..."}},
+        {"A la mañana siguiente...",
+        "The next morning..."}},
     {0, false, DEFAULT_TALK_TIME, {NULL, NULL}} // Terminator
 };
 

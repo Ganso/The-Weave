@@ -29,6 +29,7 @@ void act_1_scene_1(void)
 
     // Dialog
     talk_dialog(&dialogs[ACT1_DIALOG4][0]);
+    talk_dialog(&dialogs[ACT1_DIALOG4][1]);
 
     // Flash to white, hide swan, fade back
     wait_seconds(2);
@@ -42,7 +43,7 @@ void act_1_scene_1(void)
     PAL_fadeTo(0, 15, bedroom_pal.data, SCREEN_FPS, false);
 
     // Dialog
-    talk_dialog(&dialogs[ACT1_DIALOG4][1]);
+    talk_dialog(&dialogs[ACT1_DIALOG4][2]);
 
     // Wake linus up
     release_item(0);
