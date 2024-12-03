@@ -196,7 +196,11 @@ void update_sprites_depth(void)
     // Update items depth
     for (i = 0; i < MAX_ITEMS; i++) {
         if (obj_item[i].entity.active==true) {
-            SPR_setDepth(spr_item[i], -obj_item[i].entity.y-obj_item[i].entity.y_size); // Negative of the bottom line of the sprite
+            if (obj_item[i].is_background) {
+                SPR_setDepth(spr_item[i], SPR_MAX_DEPTH); // Background items are always at the back
+            } else {
+                SPR_setDepth(spr_item[i], -obj_item[i].entity.y-obj_item[i].entity.y_size); // Negative of the bottom line of the sprite
+            }
         }
     }
 

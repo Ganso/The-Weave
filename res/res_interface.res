@@ -28,6 +28,8 @@ SPRITE int_enemy_rod_6_sprite "Sprites/Interface/enemy_rod_6.png" 2 1 BEST
 SPRITE int_pattern_thunder "Sprites/Interface/pattern_thunder.png" 4 4 BEST
 SPRITE int_pattern_hide "Sprites/Interface/pattern_hide.png" 4 4 BEST
 SPRITE int_pattern_open "Sprites/Interface/pattern_open.png" 4 4 BEST 
+SPRITE int_pattern_sleep "Sprites/Interface/pattern_sleep.png" 4 4 BEST 
+
 
 # Others
 SPRITE int_life_counter_sprite "Sprites/Interface/life_counter.png" 4 1 BEST 

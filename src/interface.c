@@ -186,6 +186,7 @@ void show_pattern_icon(u16 npattern, bool show, bool priority)
         if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
         if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
+        if (npattern==PTRN_SLEEP) nsprite = &int_pattern_sleep;
         
         // Add the sprite if it doesn't exist
         if (obj_pattern[npattern].sd==NULL) obj_pattern[npattern].sd = SPR_addSpriteSafe(nsprite, SCREEN_WIDTH-40, 4, TILE_ATTR(npal, priority, false, false));
@@ -253,6 +254,11 @@ void pause_screen(void) {
     u16 spriteCount;
     SpriteState* savedStates;
 
+    // Initialize pattern list note sprites to NULL
+    for (u8 i = 0; i < 4; i++) {
+        spr_pattern_list_note[i] = NULL;
+    }
+
     VDP_setHilightShadow(true); // Dim screen
     show_or_hide_interface(false); // Hide interface
     //show_or_hide_enemy_combat_interface(false); // Hide combat interface
@@ -312,8 +318,19 @@ void pause_screen(void) {
         value = JOY_readJoypad(JOY_ALL);
         SYS_doVBlankProcess();
     }
-    show_pause_pattern_list(false, selected_pattern); // Hide last selected pattern
-    for (u8 nnote=0; nnote<4; nnote++) if (spr_pattern_list_note[nnote]!=NULL) SPR_releaseSprite(spr_pattern_list_note[nnote]); // Hide notes on the right if they still exist
+
+    if (num_active_patterns != 0) {
+        show_pause_pattern_list(false, selected_pattern); // Hide last selected pattern
+    }
+
+    // Release any remaining pattern list note sprites
+    for (u8 nnote = 0; nnote < 4; nnote++) {
+        if (spr_pattern_list_note[nnote] != NULL) {
+            SPR_releaseSprite(spr_pattern_list_note[nnote]);
+            spr_pattern_list_note[nnote] = NULL;
+        }
+    }
+
     show_or_hide_interface(true); // Show interface again
     //show_or_hide_enemy_combat_interface(true); // Show combat interface again
     restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
@@ -387,7 +404,10 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)
         spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,false,false,false));
     }
     else {
-        SPR_releaseSprite(spr_pattern_list_note[nnote]);
+        if (spr_pattern_list_note[nnote] != NULL) {
+            SPR_releaseSprite(spr_pattern_list_note[nnote]);
+            spr_pattern_list_note[nnote] = NULL;
+        }
     }
 }
 
@@ -402,11 +422,14 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
         if (npattern==PTRN_ELECTRIC) nsprite = &int_pattern_thunder;
         if (npattern==PTRN_HIDE) nsprite = &int_pattern_hide;
         if (npattern==PTRN_OPEN) nsprite = &int_pattern_open;
+        if (npattern==PTRN_SLEEP) nsprite = &int_pattern_sleep;
 
         if (spr_pause_icon[nicon]==NULL) spr_pause_icon[nicon] = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false));
     }
     else {
-        SPR_releaseSprite(spr_pause_icon[nicon]);
-        spr_pause_icon[nicon]=NULL;
+        if (spr_pause_icon[nicon] != NULL) {
+            SPR_releaseSprite(spr_pause_icon[nicon]);
+            spr_pause_icon[nicon]=NULL;
+        }
     }
 }

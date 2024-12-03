@@ -13,16 +13,34 @@ u8 played_notes[4]; // Notes played in the current pattern
 u8 num_played_notes; // Number of notes of the current pattern
 Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
 
-
 /**
- * Character Pattern System
- * 
- * This module handles the musical pattern system used by characters, including:
- * - Note playing and pattern input collection
- * - Pattern matching and validation
- * - Pattern effect execution (thunder, hide, etc.)
- * - State management for the pattern system
+ * Activate a spell with animation and sound
+ * Shows the spell icon in the center bottom of the screen
+ * and plays each note of the spell sequence
  */
+void activate_spell(u16 npattern)
+{
+    Sprite *spell_icon;
+    
+    // If pattern is already active, do nothing
+    if (obj_pattern[npattern].active) {
+        return;
+    }
+
+    show_pattern_icon(PTRN_SLEEP, true, true);
+
+    // Play each note of the pattern
+    for (u8 i = 0; i < 4; i++) {
+        show_note(obj_pattern[npattern].notes[i], TRUE);
+        wait_seconds(1);
+        show_note(obj_pattern[npattern].notes[i], FALSE);
+    }
+
+    show_pattern_icon(PTRN_SLEEP, false, false);
+
+    // Activate the pattern
+    obj_pattern[npattern].active = TRUE;
+}
 
 /**
  * Process a new note being played
@@ -92,6 +110,14 @@ void check_active_character_state(void)
                         launch_hide_pattern();
                     }
                 }
+                // Handle sleep pattern
+                else if (matched_pattern == PTRN_SLEEP && !is_reverse_match) {
+                    if (!can_use_sleep_pattern()) {
+                        obj_character[active_character].state = STATE_IDLE;
+                    } else {
+                        launch_sleep_pattern();
+                    }
+                }
                 // Handle thunder counter (reverse thunder during enemy thunder)
                 else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match && 
                          player_pattern_effect_in_progress == PTRN_NONE && 
@@ -129,6 +155,9 @@ void check_active_character_state(void)
             else if (player_pattern_effect_in_progress == PTRN_ELECTRIC) {
                 do_electric_pattern_effect();
             }
+            else if (player_pattern_effect_in_progress == PTRN_SLEEP) {
+                do_sleep_pattern_effect();
+            }
             break;
 
         case STATE_PATTERN_EFFECT_FINISH:
@@ -137,6 +166,9 @@ void check_active_character_state(void)
             }
             else if (player_pattern_effect_in_progress == PTRN_ELECTRIC) {
                 finish_electric_pattern_effect();
+            }
+            else if (player_pattern_effect_in_progress == PTRN_SLEEP) {
+                finish_sleep_pattern_effect();
             }
             obj_character[active_character].state = STATE_IDLE;
             break;
@@ -173,9 +205,10 @@ void play_pattern_sound(u16 npattern)
  */
 void init_patterns(void)
 {
-    obj_pattern[PTRN_ELECTRIC] = (Pattern) {true, {1,2,3,4}, NULL};
-    obj_pattern[PTRN_HIDE] = (Pattern) {true, {2,5,3,6}, NULL};
-    obj_pattern[PTRN_OPEN] = (Pattern) {true, {2,3,3,2}, NULL};
+    obj_pattern[PTRN_ELECTRIC] = (Pattern) {false, {1,2,3,4}, NULL};
+    obj_pattern[PTRN_HIDE] = (Pattern) {false, {2,5,3,6}, NULL};
+    obj_pattern[PTRN_OPEN] = (Pattern) {false, {2,3,3,2}, NULL};
+    obj_pattern[PTRN_SLEEP] = (Pattern) {false, {2,1,6,4}, NULL};
 }
 
 /**
@@ -239,6 +272,11 @@ bool can_use_electric_pattern(void)
 bool can_use_hide_pattern(void)
 {
     return true; // Currently no restrictions on hide pattern
+}
+
+bool can_use_sleep_pattern(void)
+{
+    return true; // Currently no restrictions on sleep pattern
 }
 
 /**
@@ -372,4 +410,31 @@ void finish_hide_pattern_effect(void)
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_time = 0;
     movement_active = false;
+}
+
+/**
+ * Sleep Pattern Functions
+ */
+
+void launch_sleep_pattern(void)
+{
+    obj_character[active_character].state = STATE_PATTERN_EFFECT;
+    show_pattern_icon(PTRN_SLEEP, true, true);
+    player_pattern_effect_in_progress = PTRN_SLEEP;
+    player_pattern_effect_time = 1;
+}
+
+void do_sleep_pattern_effect(void)
+{
+    // Effect complete
+    show_pattern_icon(PTRN_SLEEP, false, false);
+    player_pattern_effect_in_progress = PTRN_NONE;
+    player_pattern_effect_time = 0;
+    obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
+}
+
+void finish_sleep_pattern_effect(void)
+{
+    player_pattern_effect_in_progress = PTRN_NONE;
+    player_pattern_effect_time = 0;
 }
