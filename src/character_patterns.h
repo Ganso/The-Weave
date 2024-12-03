@@ -23,11 +23,12 @@ extern bool player_pattern_effect_reversed; // Is the effect of a reverse patter
 extern u16 player_pattern_effect_time; // How long is the effect been active?
 
 // Patterns
-#define MAX_PATTERNS 3
+#define MAX_PATTERNS 4
 #define PTRN_NONE         254
 #define PTRN_ELECTRIC      0   // Electricity spell
 #define PTRN_HIDE          1   // Hide spell
 #define PTRN_OPEN          2   // Open spell
+#define PTRN_SLEEP         3   // Sleep spell
 
 extern u8 played_notes[4]; // Notes played in the current pattern
 extern u8 num_played_notes; // Number of notes of the current pattern
@@ -46,11 +47,13 @@ void play_note(u8 nnote); // Play a note
 void check_active_character_state(void); // Main state machine for pattern system
 void play_pattern_sound(u16 npattern); // Play the sound of a pattern spell
 void init_patterns(void); // initialize patterns
+void activate_spell(u16 npattern); // Activate a spell with animation and sound
 
 // Pattern validation functions
 u8 validate_pattern_sequence(u8 *notes, bool *is_reverse); // Check if notes match a pattern
 bool can_use_electric_pattern(void); // Check if thunder pattern can be used
 bool can_use_hide_pattern(void); // Check if hide pattern can be used
+bool can_use_sleep_pattern(void); // Check if sleep pattern can be used
 
 // Pattern-specific effect functions
 void launch_electric_pattern(void); // Initialize thunder pattern effect
@@ -60,6 +63,10 @@ void finish_electric_pattern_effect(void); // Complete thunder pattern effect
 void launch_hide_pattern(void); // Initialize hide pattern effect
 void do_hide_pattern_effect(void); // Process ongoing hide pattern effect
 void finish_hide_pattern_effect(void); // Complete hide pattern effect
+
+void launch_sleep_pattern(void); // Initialize sleep pattern effect
+void do_sleep_pattern_effect(void); // Process ongoing sleep pattern effect
+void finish_sleep_pattern_effect(void); // Complete sleep pattern effect
 
 // Pattern state management
 void reset_pattern_state(void); // Reset pattern input state

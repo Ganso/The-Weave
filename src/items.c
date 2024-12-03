@@ -9,7 +9,7 @@ u16 pending_item_interaction;
 
 
 // Initialize an item
-void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u16 collision_width, u16 collision_x_offset, u16 collision_height, u16 collision_y_offset)
+void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u16 collision_width, u16 collision_x_offset, u16 collision_height, u16 collision_y_offset, bool is_background)
 {
     u8 x_size, y_size;
 
@@ -24,6 +24,7 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
     if (collision_y_offset==COLLISION_DEFAULT) collision_y_offset=y_size-1; // At the feet
 
     obj_item[nitem].x_in_background=x_in_background;
+    obj_item[nitem].is_background=is_background;
 
     // We set X to 0, as we are gonna calc it later
     obj_item[nitem].entity = (Entity) { true, spritedef, 0, y, x_size, y_size, npal, false, false, ANIM_IDLE, true, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0 };

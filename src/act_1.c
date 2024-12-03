@@ -17,7 +17,11 @@ void act_1_scene_1(void)
     init_character(CHR_linus);
 
     // Initialize items
-    init_item(0, &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0); // Linus sleeping
+    init_item(0, &item_bedroom_bed, PAL0, 31, 139, 93, 0, 23, 0, true); // Bed
+    init_item(1, &item_bedroom_chair, PAL0, 236, 110, 26, 0, 43, 0, true); // Chair
+    init_item(2, &item_bedroom_windowsill, PAL0, 125, 121, 99, 0, 22, 0, true); // Windowsill
+    init_item(3, &item_bedroom_cabinet, PAL0, 270, 79, 51, 0, 82, 0, true); // Cabinet and sheet music
+    init_item(4, &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0, true); // Linus sleeping
 
     // // Flash to white, show swan, fade back
     // wait_seconds(2);
@@ -47,14 +51,11 @@ void act_1_scene_1(void)
     talk_dialog(&dialogs[ACT1_DIALOG4][2]);
 
     // Wake linus up
-    release_item(0);
+    release_item(4);
     PAL_setPalette(PAL1, linus_sprite.palette->data, DMA);
-    move_character_instant(CHR_linus, 135, 175);
+    move_character_instant(CHR_linus, 35, 175);
     show_character(CHR_linus, true);
     
-    // Create scene objects
-    init_item(0, &item_bedroom_bed, PAL0, 31, 139, 93, 0, 23, 0); // Bed
-
     // You can move
     player_scroll_active=true;
     movement_active=true;
@@ -66,6 +67,21 @@ void act_1_scene_1(void)
         case 0: // Bed
             talk_dialog(&dialogs[ACT1_DIALOG4][3]);
             pending_item_interaction=ITEM_NONE;
+            break;
+        case 1: // Chair
+            talk_dialog(&dialogs[ACT1_DIALOG4][5]);
+            pending_item_interaction=ITEM_NONE;
+            break;
+        case 2: // Windowsill
+            talk_dialog(&dialogs[ACT1_DIALOG4][4]);
+            pending_item_interaction=ITEM_NONE;
+            break;
+        case 3: // Cabinet
+            talk_dialog(&dialogs[ACT1_DIALOG4][6]);
+            pending_item_interaction=ITEM_NONE;
+            activate_spell(PTRN_SLEEP);
+            talk_dialog(&dialogs[ACT1_DIALOG4][7]);
+            talk_dialog(&dialogs[ACT1_DIALOG4][8]);
             break;
         default:
             break;
@@ -84,8 +100,8 @@ void act_1_scene_2(void)
     set_limits(0,131,275,170);
 
     // Initialize items
-    init_item(0, &item_corridor_bookpedestal_sprite, PAL0, 400, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58); // Guild history book
-    init_item(1, &item_corridor_bookpedestal_sprite, PAL0, 200, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58); // Myths and legends
+    init_item(0, &item_corridor_bookpedestal_sprite, PAL0, 400, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, false); // Guild history book
+    init_item(1, &item_corridor_bookpedestal_sprite, PAL0, 200, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, false); // Myths and legends
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
@@ -210,6 +226,10 @@ void act_1_scene_5(void)
     move_character_instant(CHR_linus, -30, 154);
     move_character_instant(CHR_clio, -30, 154);
     follow_active_character(CHR_clio, true, 2);
+
+    // Initialize spells
+    obj_pattern[PTRN_ELECTRIC].active=true;
+    obj_pattern[PTRN_HIDE].active=true;
 
     // Dialog
     move_character(CHR_linus, 30, 154);
