@@ -20,26 +20,22 @@ Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
  */
 void activate_spell(u16 npattern)
 {
-    Sprite *spell_icon;
-    
     // If pattern is already active, do nothing
     if (obj_pattern[npattern].active) {
         return;
     }
-
+    
+    // Show icon and play notes
     show_pattern_icon(PTRN_SLEEP, true, true);
-
-    // Play each note of the pattern
     for (u8 i = 0; i < 4; i++) {
-        show_note(obj_pattern[npattern].notes[i], TRUE);
+        show_note(obj_pattern[npattern].notes[i], true);
         wait_seconds(1);
-        show_note(obj_pattern[npattern].notes[i], FALSE);
+        show_note(obj_pattern[npattern].notes[i], false);
     }
-
     show_pattern_icon(PTRN_SLEEP, false, false);
 
     // Activate the pattern
-    obj_pattern[npattern].active = TRUE;
+    obj_pattern[npattern].active = true;
 }
 
 /**

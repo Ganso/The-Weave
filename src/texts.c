@@ -5,7 +5,7 @@
 #define SIDE_RIGHT false
 
 // Global variable definitions
-u8 game_language;
+u8 game_language=LANG_ENGLISH;
 
 const DialogItem system_dialog[] = { // System messages
     {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
@@ -178,8 +178,8 @@ const DialogItem act1_dialog4[] = { // Historians corridor
         {"No tengo tiempo de|sentarme|Madre me espera",
         "I don't have time|to seat|Mother is awating"}},
     {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
-        {"Esta es la nana|que me cantaba Madre|cada noche",
-        "That's the lullaby|Mother sang to me|every night"}},
+        {"Esta es la nana|que me cantaban|cada noche",
+        "That's the lullaby|they sang to me|every night"}},
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
         {"Has aprendido tu|primer patrón",
         "You have learned|your first pattern"}},
