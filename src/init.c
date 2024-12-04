@@ -129,6 +129,10 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
 
 // Free all resources used by the level
 void end_level() {
+
+    // Fade to black
+    PAL_fadeOutAll(SCREEN_FPS,false);
+
     // Free background maps
     if (background_BGA) {
         MAP_release(background_BGA);

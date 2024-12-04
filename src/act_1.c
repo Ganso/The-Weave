@@ -60,21 +60,26 @@ void act_1_scene_1(void)
     player_scroll_active=true;
     movement_active=true;
 
-    while (true)
+    bool item_interacted[4]={false,false,false,false};
+    bool scene_timeout=0;
+    while (scene_timeout<(SCREEN_FPS*2))
     {
         switch (pending_item_interaction) // Process item interactions
         {
         case 0: // Bed
             talk_dialog(&dialogs[ACT1_DIALOG4][3]);
             pending_item_interaction=ITEM_NONE;
+            item_interacted[0]=true;
             break;
         case 1: // Chair
             talk_dialog(&dialogs[ACT1_DIALOG4][5]);
             pending_item_interaction=ITEM_NONE;
+            item_interacted[1]=true;
             break;
         case 2: // Windowsill
             talk_dialog(&dialogs[ACT1_DIALOG4][4]);
             pending_item_interaction=ITEM_NONE;
+            item_interacted[2]=true;
             break;
         case 3: // Cabinet
             talk_dialog(&dialogs[ACT1_DIALOG4][6]);
@@ -84,12 +89,16 @@ void act_1_scene_1(void)
                 talk_dialog(&dialogs[ACT1_DIALOG4][7]);
                 talk_dialog(&dialogs[ACT1_DIALOG4][8]);
             }
+            item_interacted[3]=true;
             break;
         default:
             break;
         }
+        if (item_interacted[0]==true && item_interacted[1]==true && item_interacted[2]==true && item_interacted[3]==true) scene_timeout++;
         next_frame(true);
     }
+    talk_dialog(&dialogs[ACT1_DIALOG4][9]);
+    talk_dialog(&dialogs[ACT1_DIALOG4][10]);
 
     end_level(); // Free resources
     current_scene=2; // Next scene
