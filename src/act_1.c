@@ -23,26 +23,26 @@ void act_1_scene_1(void)
     init_item(3, &item_bedroom_cabinet, PAL0, 270, 79, 51, 0, 82, 0, true); // Cabinet and sheet music
     init_item(4, &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0, true); // Linus sleeping
 
-    // // Flash to white, show swan, fade back
-    // wait_seconds(2);
-    // PAL_getColors(0, paltmp, 64); // backup current palete
-    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    // move_character_instant(CHR_swan,141,110);
-    // show_character(CHR_swan, true); // show swan
-    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
-    // wait_seconds(2);
+    // Flash to white, show swan, fade back
+    wait_seconds(2);
+    PAL_getColors(0, paltmp, 64); // backup current palete
+    PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    move_character_instant(CHR_swan,141,110);
+    show_character(CHR_swan, true); // show swan
+    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    wait_seconds(2);
 
-    // // Dialog
-    // talk_dialog(&dialogs[ACT1_DIALOG4][0]);
-    // talk_dialog(&dialogs[ACT1_DIALOG4][1]);
+    // Dialog
+    talk_dialog(&dialogs[ACT1_DIALOG4][0]);
+    talk_dialog(&dialogs[ACT1_DIALOG4][1]);
 
-    // // Flash to white, hide swan, fade back
-    // wait_seconds(2);
-    // PAL_getColors(0, paltmp, 64); // backup current palete
-    // PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    // show_character(CHR_swan, false); // show swan
-    // PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
-    // wait_seconds(2);
+    // Flash to white, hide swan, fade back
+    wait_seconds(2);
+    PAL_getColors(0, paltmp, 64); // backup current palete
+    PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
+    show_character(CHR_swan, false); // show swan
+    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    wait_seconds(2);
     
     // Daytime
     PAL_fadeTo(0, 15, bedroom_pal.data, SCREEN_FPS, false);
@@ -79,9 +79,11 @@ void act_1_scene_1(void)
         case 3: // Cabinet
             talk_dialog(&dialogs[ACT1_DIALOG4][6]);
             pending_item_interaction=ITEM_NONE;
-            activate_spell(PTRN_SLEEP);
-            talk_dialog(&dialogs[ACT1_DIALOG4][7]);
-            talk_dialog(&dialogs[ACT1_DIALOG4][8]);
+            if (obj_pattern[PTRN_SLEEP].active==false) {
+                activate_spell(PTRN_SLEEP);
+                talk_dialog(&dialogs[ACT1_DIALOG4][7]);
+                talk_dialog(&dialogs[ACT1_DIALOG4][8]);
+            }
             break;
         default:
             break;
