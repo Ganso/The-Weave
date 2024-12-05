@@ -7,7 +7,8 @@ void theweave_intro(void)
     u8 nstar,x,y;
     bool exit_menu=false;
     
-    initialize();
+    initialize(false);
+
     PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
     PAL_setPalette(PAL1, geesebumps_pal_black.data, DMA);
 
