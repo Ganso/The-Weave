@@ -17,7 +17,7 @@ void geesebumps_logo(void)
     Sprite *logo_text, *logo_lines1, *logo_lines2;
     should_exit = false;
 
-    initialize();
+    initialize(false);
     
     // Set up the joystick handler
     JOY_setEventHandler(&joyEvent_Geesebumps);

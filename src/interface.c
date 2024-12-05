@@ -265,6 +265,9 @@ void pause_screen(void) {
     selected_pattern=254;
     for (npattern=0;npattern<MAX_PATTERNS;npattern++) {
         if (obj_pattern[npattern].active==true) {
+            #ifdef DEBUG_ON
+             kprintf("Patron %d activo", npattern);
+            #endif
             num_active_patterns++;
             if (selected_pattern==254) selected_pattern=npattern;
         } 

@@ -97,6 +97,7 @@ void act_1_scene_1(void)
         if (item_interacted[0]==true && item_interacted[1]==true && item_interacted[2]==true && item_interacted[3]==true) scene_timeout++;
         next_frame(true);
     }
+    anim_character(active_character, ANIM_IDLE);
     talk_dialog(&dialogs[ACT1_DIALOG4][9]);
     talk_dialog(&dialogs[ACT1_DIALOG4][10]);
 

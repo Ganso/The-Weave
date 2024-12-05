@@ -181,7 +181,7 @@ const DialogItem act1_dialog4[] = { // Linus bedroom
         {"Esta es la nana que me|cantaban cada noche",
         "That's the lullaby they used|to sing to me every night"}},
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
-        {"Has aprendido|tuprimer patrón",
+        {"Has aprendido|tu primer patrón",
         "You have learned|your first pattern"}},
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, 
         {"Entra en el menú de|pausa para verlo",

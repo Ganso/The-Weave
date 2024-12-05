@@ -4,11 +4,15 @@
 
 int main(bool hard)
 {
-    kprintf("The Weave - %s",GAMEVERSION);
-    kprintf("https://geese-bumps.itch.io/\n\n");
+    #ifdef DEBUG_ON
+     kprintf("The Weave - %s",GAMEVERSION);
+     kprintf("https://geese-bumps.itch.io/\n\n");
+    #endif
 
     //geesebumps_logo(); // GeeseBumps Logo
     //theweave_intro();  // Game intro
+
+    initialize(true);
 
     current_act=1;
     current_scene=1;

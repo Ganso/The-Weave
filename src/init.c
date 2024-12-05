@@ -1,7 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-void initialize(void)
+void initialize(bool first_time)
 {
     u8 i;
 
@@ -64,7 +64,7 @@ void initialize(void)
     player_pattern_effect_in_progress=PTRN_NONE;
     player_pattern_effect_reversed=false;
     player_pattern_effect_time=0;
-    init_patterns();
+    if (first_time) init_patterns();
 
     // Enemys and combat
     init_enemy_classes();
@@ -92,7 +92,7 @@ void initialize(void)
 // initialize level and load background
 void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u16 new_background_width, u8 new_scroll_mode, u8 new_scroll_speed)
 {
-    initialize(); // Reset hardware when starting each level
+    initialize(false); // Reset hardware when starting each level, but don't change only first-time options
     
     // Tile_bg and Map_bg are the background layer. They can be NULL
     if ((tile_bg!=NULL) && (map_bg!=NULL)) {
