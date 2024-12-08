@@ -10,7 +10,8 @@ void initialize(bool first_time)
 
     // Initialize audio driver
     Z80_init();
-    Z80_loadDriver(Z80_DRIVER_XGM2, 1);
+    if (XGM_VERSION==2) Z80_loadDriver(Z80_DRIVER_XGM2, 1);
+    else Z80_loadDriver(Z80_DRIVER_XGM, 1);
 
     // Initialize sprite Engine
     SPR_init();

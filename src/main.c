@@ -9,8 +9,8 @@ int main(bool hard)
      kprintf("https://geese-bumps.itch.io/\n\n");
     #endif
 
-    //geesebumps_logo(); // GeeseBumps Logo
-    //theweave_intro();  // Game intro
+    geesebumps_logo(); // GeeseBumps Logo
+    theweave_intro();  // Game intro
 
     initialize(true);
 

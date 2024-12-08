@@ -111,7 +111,7 @@ void show_note(u8 nnote, bool visible)
         // Add rod and pentagram sprites if they don't exist
         if (*rodsprite==NULL) *rodsprite = SPR_addSpriteSafe (rodspritedef, rod_x, 212, TILE_ATTR(PAL2, false, false, false));
         if (*pentsprite==NULL && player_patterns_enabled) *pentsprite = SPR_addSpriteSafe (pentsritedef, pent_x, 180, TILE_ATTR(PAL2, false, false, false));
-        XGM2_play(notesong); // Play the note sound
+        play_music(notesong); // Play the note sound
     }
     else {
         // Release both pentagram and rod sprites if they exist
