@@ -182,16 +182,16 @@ void play_pattern_sound(u16 npattern)
     switch (npattern)
     {
     case PTRN_HIDE:
-        XGM2_playPCM(snd_pattern_hide, sizeof(snd_pattern_hide), SOUND_PCM_CH_AUTO);
+        play_sample(snd_pattern_hide,sizeof(snd_pattern_hide));
         break;
     case PTRN_OPEN:
-        XGM2_playPCM(snd_pattern_open, sizeof(snd_pattern_open), SOUND_PCM_CH_AUTO);
+        play_sample(snd_pattern_open,sizeof(snd_pattern_open));
         break;
     case PTRN_ELECTRIC:
-        XGM2_playPCM(snd_pattern_thunder, sizeof(snd_pattern_thunder), SOUND_PCM_CH_AUTO);
+        play_sample(snd_pattern_thunder,sizeof(snd_pattern_thunder));
         break;
     default:
-        XGM2_playPCM(snd_pattern_invalid, sizeof(snd_pattern_invalid), SOUND_PCM_CH_AUTO);
+        play_sample(snd_pattern_invalid,sizeof(snd_pattern_invalid));
         break;        
     }
 }

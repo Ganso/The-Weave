@@ -35,7 +35,7 @@ void theweave_intro(void)
     for (nstar=0;nstar<MAXSTARS;nstar++) SPR_setAnimationLoop(star[nstar],false);
 
     // Background music
-    XGM2_play(music_intro);
+    play_music(music_intro);
 
     game_language=LANG_ENGLISH;    
     intro_update_language();
@@ -55,7 +55,7 @@ void theweave_intro(void)
 
     // Fade out music and graphics
     VDP_clearTextLineBG(WINDOW,23);
-    XGM2_fadeOutAndStop(SCREEN_FPS*2);
+    fade_music(SCREEN_FPS*2);
     PAL_fadeOutAll(SCREEN_FPS*2, true);
     waitMs(2000);
 

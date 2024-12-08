@@ -242,7 +242,7 @@ void show_enemy_note(u8 nnote, bool visible, bool play)
         }
         SPR_setVisibility(*rodsprite, VISIBLE);
         enemy_note_active[nnote - 1] = true;
-        if (play) XGM2_play(notesong);
+        if (play) play_music(notesong);
     } else {
         // Hide and cleanup note sprite
         if (*rodsprite != NULL) {

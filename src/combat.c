@@ -104,7 +104,7 @@ void hit_enemy(u16 nenemy)
     u16 remaining_enemies = 0;
 
     // Play hit sound effect
-    XGM2_playPCM(snd_player_hit_enemy, sizeof(snd_player_hit_enemy), SOUND_PCM_CH_AUTO);
+    play_sample(snd_player_hit_enemy,sizeof(snd_player_hit_enemy));
 
     // If enemy was attacking, clean up combat state
     if (enemy_attacking == nenemy) {
@@ -179,7 +179,7 @@ void hit_enemy(u16 nenemy)
  */
 void hit_caracter(u16 nchar)
 {
-    XGM2_playPCM(snd_player_hurt, sizeof(snd_player_hurt), SOUND_PCM_CH_AUTO);
+    play_sample(snd_player_hurt,sizeof(snd_player_hurt));
 }
 
 /******************************************************************************

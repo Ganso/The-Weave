@@ -29,7 +29,7 @@ void geesebumps_logo(void)
     PAL_setPalette(PAL3, geesebumps_pal_white.data, DMA);
 
     // Background music
-    XGM2_play(music_geesebumps);
+    play_music(music_geesebumps);
     
     // Fist part of the logo (Goose)
     VDP_drawImageEx(BG_A, &geesebumps_logo_bg, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind), 0, 0, false, true);
@@ -85,7 +85,7 @@ void geesebumps_logo(void)
     // Pause and fade out - these happen regardless of button press
     if (!should_exit) waitMs(3000);
     PAL_fadeOutAll(SCREEN_FPS*2, false);
-    XGM2_fadeOutAndStop(SCREEN_FPS*2);
+    fade_music(SCREEN_FPS*2);
     waitMs(2000);
 
     // Release everything

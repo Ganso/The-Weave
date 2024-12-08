@@ -31,7 +31,7 @@
 extern u16 tile_ind; // Tiles index
 extern u16 frame_counter; // Number of frames counter (random number generator, and frameskip counter in some functions)
 
-// Game libraries
+// Auxiliary game libraries
 #include "entity.h" // Every object in the game that has a sprite you can show, move...
 #include "characters.h" // Characters that can talk, or you can control
 #include "character_patterns.h" // Paterns the player can play and use
@@ -45,6 +45,7 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 #include "combat.h" // Combat related functions (including patterns enemy can use)
 #include "background.h" // Background and scenery related objects and functions
 #include "collisions.h" // Distance and collisions related functions
+#include "sound.h" // Music and SFX
 
 // Main game libraries
 #include "init.h" // Initialization functions
