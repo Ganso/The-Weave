@@ -26,10 +26,11 @@ void act_1_scene_1(void)
     // Flash to white, show swan, fade back
     wait_seconds(2);
     PAL_getColors(0, paltmp, 64); // backup current palete
+    play_sample(snd_effect_magic_appear, sizeof(snd_effect_magic_appear)); // something magically appearing sound effect
     PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
     move_character_instant(CHR_swan,141,110);
     show_character(CHR_swan, true); // show swan
-    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
+    PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to night palete
     wait_seconds(2);
 
     // Dialog
@@ -39,8 +40,9 @@ void act_1_scene_1(void)
     // Flash to white, hide swan, fade back
     wait_seconds(2);
     PAL_getColors(0, paltmp, 64); // backup current palete
+    play_sample(snd_effect_magic_disappear, sizeof(snd_effect_magic_disappear)); // something magically disappearing sound effect
     PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    show_character(CHR_swan, false); // show swan
+    show_character(CHR_swan, false); // hide swan
     PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to palete
     wait_seconds(2);
     
@@ -62,7 +64,7 @@ void act_1_scene_1(void)
 
     bool item_interacted[4]={false,false,false,false};
     bool scene_timeout=0;
-    while (scene_timeout<(SCREEN_FPS*2))
+    while (scene_timeout<(SCREEN_FPS*3)) // Scene ends 3 seconds after interacting every object
     {
         switch (pending_item_interaction) // Process item interactions
         {
@@ -97,7 +99,6 @@ void act_1_scene_1(void)
         if (item_interacted[0]==true && item_interacted[1]==true && item_interacted[2]==true && item_interacted[3]==true) scene_timeout++;
         next_frame(true);
     }
-    anim_character(active_character, ANIM_IDLE);
     talk_dialog(&dialogs[ACT1_DIALOG4][9]);
     talk_dialog(&dialogs[ACT1_DIALOG4][10]);
 
@@ -250,6 +251,8 @@ void act_1_scene_5(void)
     talk_dialog(&dialogs[ACT1_DIALOG3][0]);
     talk_dialog(&dialogs[ACT1_DIALOG3][1]);
     talk_dialog(&dialogs[ACT1_DIALOG3][11]);
+    talk_dialog(&dialogs[ACT1_DIALOG3][12]);
+    talk_dialog(&dialogs[ACT1_DIALOG3][13]);
 
     // Show the interface and allow character to move and play patterns
     player_scroll_active=true;
@@ -296,7 +299,5 @@ void act_1_scene_5(void)
     talk_dialog(&dialogs[ACT1_DIALOG3][8]);
     PAL_fadeOutAll(120,false);
 
-    while (true) {
-        // THE END
-    }
+    SYS_hardReset(); // Reset and start again
 }
