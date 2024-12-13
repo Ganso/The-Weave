@@ -11,4 +11,4 @@ SPRITE geesebumps_logo_line1 "Geesebumps/Logo_lines1.png" 11 13 BEST
 SPRITE geesebumps_logo_line2 "Geesebumps/Logo_lines2.png" 7 6 BEST
 
 # Intro Music
-XGM music_geesebumps "Sound/Music/Goosebumps_intro.vgm" 
+XGM2 music_geesebumps "Sound/Music/Goosebumps_intro.vgm" 

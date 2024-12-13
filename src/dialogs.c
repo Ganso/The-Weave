@@ -11,6 +11,12 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)
 
     char text_line1[40]={0},text_line2[40]={0},text_line3[40]={0};
 
+    // If the active character is walking, stop it
+    if (obj_character[active_character].state==STATE_WALKING) {
+        obj_character[active_character].state=STATE_IDLE;
+        update_character_animation();
+    }
+
     // Initialize the needed face
     if (nface!=FACE_none) init_face(nface);
 

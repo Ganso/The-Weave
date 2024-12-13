@@ -1,7 +1,7 @@
 #ifndef _SOUNDS_H_
 #define _SOUNDS_H_
 
-#define XGM_VERSION 1 // XGM or XGM2 sound driver
+#define XGM_VERSION 2 // XGM or XGM2 sound driver
 
 // VGM and WAV resources should be defined as XGM or XGM2 according to the driver version
 
