@@ -9,7 +9,7 @@ const ROMHeader rom_header = {
 #else
     "SEGA MEGA DRIVE ",
 #endif
-    "(C)Geesebumps'24",
+    "Geesebumps 2024 ",
     "The Weave                                       ",
     "The Weave                                       ",
     "GM 00000000-00",
