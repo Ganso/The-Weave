@@ -91,39 +91,37 @@ void check_active_character_state(void)
                 player_pattern_effect_reversed = false;
                 
                 // Handle thunder pattern
-                if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match) {
-                    if (!can_use_electric_pattern()) {
-                        obj_character[active_character].state = STATE_IDLE;
-                    } else {
-                        launch_electric_pattern();
-                    }
+                if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match && can_use_electric_pattern()) {
+                    kprintf("Thunder spell!");
+                    launch_electric_pattern();
                 }
                 // Handle hide pattern
-                else if (matched_pattern == PTRN_HIDE && !is_reverse_match) {
-                    if (!can_use_hide_pattern()) {
-                        obj_character[active_character].state = STATE_IDLE;
-                    } else {
-                        launch_hide_pattern();
-                    }
+                else if (matched_pattern == PTRN_HIDE && !is_reverse_match && can_use_hide_pattern()) {
+                    kprintf("Hide spell!");
+                    launch_hide_pattern();
                 }
                 // Handle sleep pattern
-                else if (matched_pattern == PTRN_SLEEP && !is_reverse_match) {
-                    if (!can_use_sleep_pattern()) {
-                        obj_character[active_character].state = STATE_IDLE;
-                    } else {
-                        launch_sleep_pattern();
-                    }
+                else if (matched_pattern == PTRN_SLEEP && !is_reverse_match && can_use_sleep_pattern()) {
+                    kprintf("Sleep spell!");
+                    launch_sleep_pattern();
+                }
+                // Handle open pattern
+                else if (matched_pattern == PTRN_OPEN && !is_reverse_match && can_use_open_pattern()) {
+                    kprintf("Open spell!");
+                    launch_open_pattern();
                 }
                 // Handle thunder counter (reverse thunder during enemy thunder)
                 else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match && 
                          player_pattern_effect_in_progress == PTRN_NONE && 
                          is_combat_active && enemy_attacking != ENEMY_NONE && 
                          enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
+                    kprintf("Reverse thunder spell detected");
                     obj_character[active_character].state = STATE_PATTERN_EFFECT;
                     player_pattern_effect_in_progress = PTRN_ELECTRIC;
                     player_pattern_effect_reversed = true;
                 }
                 else {
+                    kprintf("Pattern %d matched but not usable in current context", matched_pattern);
                     // Pattern matched but not usable in current context
                     show_pattern_icon(matched_pattern, true, true);
                     play_pattern_sound(PTRN_NONE);
@@ -136,6 +134,7 @@ void check_active_character_state(void)
             }
             else {
                 // No pattern matched
+                kprintf("No pattern match");
                 play_pattern_sound(PTRN_NONE);
                 obj_character[active_character].state = STATE_IDLE;
             }
@@ -272,7 +271,12 @@ bool can_use_hide_pattern(void)
 
 bool can_use_sleep_pattern(void)
 {
-    return true; // Currently no restrictions on sleep pattern
+    return false; // You can't currently use the spell
+}
+
+bool can_use_open_pattern(void)
+{
+    return false; // You can't currently use the spell
 }
 
 /**
@@ -430,6 +434,33 @@ void do_sleep_pattern_effect(void)
 }
 
 void finish_sleep_pattern_effect(void)
+{
+    player_pattern_effect_in_progress = PTRN_NONE;
+    player_pattern_effect_time = 0;
+}
+
+/**
+ * Open Pattern Functions
+ */
+
+void launch_open_pattern(void)
+{
+    obj_character[active_character].state = STATE_PATTERN_EFFECT;
+    show_pattern_icon(PTRN_OPEN, true, true);
+    player_pattern_effect_in_progress = PTRN_OPEN;
+    player_pattern_effect_time = 1;
+}
+
+void do_open_pattern_effect(void)
+{
+    // Effect complete
+    show_pattern_icon(PTRN_OPEN, false, false);
+    player_pattern_effect_in_progress = PTRN_NONE;
+    player_pattern_effect_time = 0;
+    obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
+}
+
+void finish_open_pattern_effect(void)
 {
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_time = 0;

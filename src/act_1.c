@@ -6,7 +6,7 @@ void act_1_scene_1(void)
     u16 paltmp[64];
 
     // Initialize level
-    new_level(&historians_bg_tile, &historians_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, 344, BG_SCRL_AUTO_RIGHT, 3);
+    new_level(&bedroom_bg_tile, &bedroom_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, 344, BG_SCRL_AUTO_RIGHT, 3);
     set_limits(20,145,278,176);
 
     // Use swan palette instead of characters palette
@@ -178,7 +178,7 @@ void act_1_scene_3(void)
     const DialogItem *current_dialog;
 
     // Initialize level
-    new_level(&historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, historians_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 2);
+    new_level(&historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, historians_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
     
     // Initialize characters and dialog faces
     init_character(CHR_linus);
@@ -186,8 +186,8 @@ void act_1_scene_3(void)
     init_character(CHR_xander);
     
     // Starting positions
-    move_character_instant(CHR_clio,20,174);
-    move_character_instant(CHR_linus,360,154);
+    move_character_instant(CHR_clio,40,174);
+    move_character_instant(CHR_linus,360,164);
     look_left(CHR_clio,false);
     look_left(CHR_linus,true);
     show_character(CHR_clio, true);
@@ -242,6 +242,8 @@ void act_1_scene_5(void)
     // Initialize spells
     obj_pattern[PTRN_ELECTRIC].active=true;
     obj_pattern[PTRN_HIDE].active=true;
+    obj_pattern[PTRN_OPEN].active=true;
+    obj_pattern[PTRN_SLEEP].active=true;
 
     // Dialog
     move_character(CHR_linus, 30, 154);
