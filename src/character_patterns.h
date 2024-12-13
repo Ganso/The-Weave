@@ -54,6 +54,7 @@ u8 validate_pattern_sequence(u8 *notes, bool *is_reverse); // Check if notes mat
 bool can_use_electric_pattern(void); // Check if thunder pattern can be used
 bool can_use_hide_pattern(void); // Check if hide pattern can be used
 bool can_use_sleep_pattern(void); // Check if sleep pattern can be used
+bool can_use_open_pattern(void); // Check if open pattern can be used
 
 // Pattern-specific effect functions
 void launch_electric_pattern(void); // Initialize thunder pattern effect
@@ -67,6 +68,10 @@ void finish_hide_pattern_effect(void); // Complete hide pattern effect
 void launch_sleep_pattern(void); // Initialize sleep pattern effect
 void do_sleep_pattern_effect(void); // Process ongoing sleep pattern effect
 void finish_sleep_pattern_effect(void); // Complete sleep pattern effect
+
+void launch_open_pattern(void); // Initialize sleep pattern effect
+void do_open_pattern_effect(void); // Process ongoing sleep pattern effect
+void finish_open_pattern_effect(void); // Complete sleep pattern effect
 
 // Pattern state management
 void reset_pattern_state(void); // Reset pattern input state
