@@ -22,6 +22,7 @@ void init_enemy(u16 numenemy, u16 class)
     u8 npal = PAL3;
     u8 x_size, y_size;
     u8 collision_x_offset=0,collision_y_offset=0,collision_width=0,collision_height=0;
+    bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
     const SpriteDefinition *nsprite_face = NULL;
  
@@ -64,7 +65,8 @@ void init_enemy(u16 numenemy, u16 class)
         true, nsprite, 0, 0, x_size, y_size, npal, false, false, 
         ANIM_IDLE, false, collision_x_offset, collision_y_offset, 
         collision_width, collision_height, STATE_IDLE, 
-        obj_enemy_class[class].follows_character, obj_enemy_class[class].follow_speed
+        obj_enemy_class[class].follows_character, obj_enemy_class[class].follow_speed,
+        drops_shadow
     };
 
     // Add enemy sprite if not already present

@@ -4,9 +4,48 @@
 // Global variable definitions
 Entity obj_character[MAX_CHR];
 Sprite *spr_chr[MAX_CHR];
+Sprite *spr_chr_shadow[MAX_CHR];
 u16 active_character;
 Entity obj_face[MAX_FACE];
 Sprite *spr_face[MAX_FACE];
+
+// Update shadow position for a character
+void update_character_shadow(u16 nchar)
+{
+    s16 base_x;
+
+    if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar] != NULL) {
+        // Base X depends on character
+        switch (nchar)
+        {
+        case CHR_clio:
+            base_x = 4;
+            break;
+        case CHR_linus:
+            base_x = 6;
+            break;
+        case CHR_xander:
+            base_x = 10;
+            break;
+        default:
+            base_x = 6;
+            break;
+        }
+
+        // Position shadow at the bottom of character's collision box
+        s16 shadow_x;
+        // Position shadow at the bottom center of character's collision box
+        if (obj_character[nchar].flipH) {
+            // When facing left, adjust base position to account for flipped sprite
+            base_x = obj_character[nchar].x_size - base_x - 24;
+        }
+        
+        shadow_x = obj_character[nchar].x + base_x;  // Center shadow (24/2 = 12)
+        s16 shadow_y = obj_character[nchar].y + obj_character[nchar].collision_y_offset - 4;      // Place at bottom (8/2 = 4)
+        
+        SPR_setPosition(spr_chr_shadow[nchar], shadow_x, shadow_y);
+    }
+}
 
 // Initialize a character
 void init_character(u16 nchar)
@@ -17,6 +56,7 @@ void init_character(u16 nchar)
     u8 collision_y_offset=63;
     u8 collision_width=36;
     u8 collision_height=2;
+    bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
 
     if (obj_character[nchar].sd == NULL) {
@@ -33,13 +73,14 @@ void init_character(u16 nchar)
             break;
         case CHR_swan:
             nsprite = &swan_sprite;
+            drops_shadow = false;
             break;
         default:
             return; 
         }
         x_size=nsprite->w; // Get width and height from the Sprite Definition
         y_size=nsprite->h;
-        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0 };
+        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow };
     } else {
         nsprite = obj_character[nchar].sd;
         npal = obj_character[nchar].palette;
@@ -52,6 +93,17 @@ void init_character(u16 nchar)
     if (spr_chr[nchar] != NULL) {
         SPR_setVisibility(spr_chr[nchar], HIDDEN);
     }
+
+    // Initialize shadow if character drops one
+    if (obj_character[nchar].drops_shadow) {
+        spr_chr_shadow[nchar] = SPR_addSpriteSafe(&shadow_sprite, 0, 0, TILE_ATTR(PAL1, TRUE, FALSE, FALSE));
+        
+        if (spr_chr_shadow[nchar] != NULL) {
+            SPR_setVisibility(spr_chr_shadow[nchar], HIDDEN);
+            SPR_setDepth(spr_chr_shadow[nchar], SPR_MAX_DEPTH); // Shadow always at back
+            update_character_shadow(nchar);
+        }
+    }
 }
 
 // Release a character from memory (Just the sprite, keep the Entity)
@@ -62,6 +114,13 @@ void release_character(u16 nchar)
     {
         SPR_releaseSprite(spr_chr[nchar]);
         spr_chr[nchar] = NULL;
+    }
+    
+    // Release shadow if it exists
+    if (spr_chr_shadow[nchar] != NULL)
+    {
+        SPR_releaseSprite(spr_chr_shadow[nchar]);
+        spr_chr_shadow[nchar] = NULL;
     }
 }
 
@@ -89,7 +148,7 @@ void init_face(u16 nface)
         default:
             return;
         }
-        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0 };
+        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0, false };
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
@@ -123,6 +182,7 @@ void update_character(u16 nchar)
     SPR_setVisibility(spr_chr[nchar],obj_character[nchar].visible?VISIBLE:HIDDEN);
     SPR_setHFlip(spr_chr[nchar],obj_character[nchar].flipH);
     SPR_setAnim(spr_chr[nchar],obj_character[nchar].animation);
+    update_character_shadow(nchar);
 }
 
 // Show or hide a character
@@ -130,6 +190,12 @@ void show_character(u16 nchar, bool show)
 {
     obj_character[nchar].visible=show;
     SPR_setVisibility(spr_chr[nchar],show?VISIBLE:HIDDEN);
+    
+    // Update shadow visibility if it exists
+    if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar] != NULL) {
+        SPR_setVisibility(spr_chr_shadow[nchar],show?VISIBLE:HIDDEN);
+    }
+    
     SPR_update();
 }
 
@@ -166,7 +232,6 @@ void move_character(u16 nchar, s16 newx, s16 newy)
     }
 
     move_entity(&obj_character[nchar], spr_chr[nchar], newx, newy);
-
     anim_character(nchar, ANIM_IDLE);
 }
 
@@ -178,6 +243,7 @@ void move_character_instant(u16 nchar,s16 x,s16 y)
     SPR_setPosition(spr_chr[nchar], x, y);
     obj_character[nchar].x = x;
     obj_character[nchar].y = y;
+    update_character_shadow(nchar);
     next_frame(false);
 }
 

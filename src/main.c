@@ -9,13 +9,13 @@ int main(bool hard)
      kprintf("https://geese-bumps.itch.io/\n\n");
     #endif
 
-    geesebumps_logo(); // GeeseBumps Logo
-    theweave_intro();  // Game intro
+    //geesebumps_logo(); // GeeseBumps Logo
+    //theweave_intro();  // Game intro
 
     initialize(true);
 
     current_act=1;
-    current_scene=1;
+    current_scene=3;
 
     while (true) { // MAIN LOOP
         switch (current_act)
@@ -27,10 +27,10 @@ int main(bool hard)
                 act_1_scene_1(); // ACT 1 - scene 1
                 break;
             case 2:
-                act_1_scene_2(); // ACT 1 - scene 1
+                act_1_scene_2(); // ACT 1 - scene 2
                 break;
             case 3:
-                act_1_scene_3(); // ACT 1 - scene 2
+                act_1_scene_3(); // ACT 1 - scene 3
                 break;
             case 5:
                 act_1_scene_5(); // ACT 1 - scene 5
