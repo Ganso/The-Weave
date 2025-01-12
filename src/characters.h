@@ -23,6 +23,7 @@
 // Characters
 extern Entity obj_character[MAX_CHR];
 extern Sprite *spr_chr[MAX_CHR];
+extern Sprite *spr_chr_shadow[MAX_CHR];
 extern u16 active_character; // Which character is the active one
 extern bool movement_active; // Can you move ?
 
@@ -41,6 +42,7 @@ void look_left(u16 nchar, bool left); // Make a character look to the left (or r
 void move_character(u16 nchar, s16 x, s16 y); // Move a character to a new position
 void move_character_instant(u16 nchar, s16 x, s16 y); // Move a character to a new position (instantly)
 void update_sprites_depth(void); // Update characters, items and enemies depth
+void update_character_shadow(u16 nchar); // Update shadow position for a character
 void follow_active_character(u16 nchar, bool follow, u8 follow_speed); // Follow (or unfollow active character)
 void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
 

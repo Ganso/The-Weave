@@ -1,5 +1,6 @@
 #include <genesis.h>
 #include "globals.h"
+#include "characters.h"
 
 // Global variable definitions
 bool movement_active;
@@ -7,6 +8,8 @@ bool movement_active;
 // Move an entity
 void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
 {
+    u16 nchar=CHR_NONE;
+
     newy-=entity->y_size; // Now all calculations are relative to the bottom line, not the upper one
     
     s16 x = entity->x;
@@ -19,10 +22,20 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
     s16 e2;
     bool old_movement_active=movement_active;
 
+
+    // Check if this entity is a character so we can update its shadow
+    for (u16 i = 0; i < MAX_CHR; i++) {
+        if (&obj_character[i] == entity) {
+            nchar = i;
+            break;
+        }
+    }
+
     movement_active=false; // Player can't move while an entity is moving
     for(;;)
     {
         SPR_setPosition(sprite, x, y);
+        if (nchar!=CHR_NONE) update_character_shadow(nchar);
         entity->x = x;
         entity->y = y;
         next_frame(false);
