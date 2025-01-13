@@ -9,6 +9,7 @@ bool movement_active;
 void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
 {
     u16 nchar=CHR_NONE;
+    u16 nenemy = ENEMY_NONE;
 
     newy-=entity->y_size; // Now all calculations are relative to the bottom line, not the upper one
     
@@ -31,11 +32,20 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
         }
     }
 
+    // Check if this entity is an enemy so we can update its shadow
+    for (u16 i = 0; i < MAX_ENEMIES; i++) {
+        if (&obj_enemy[i].obj_character == entity) {
+            nenemy = i;
+            break;
+        }
+    }
+
     movement_active=false; // Player can't move while an entity is moving
     for(;;)
     {
         SPR_setPosition(sprite, x, y);
-        if (nchar!=CHR_NONE) update_character_shadow(nchar);
+        if (nchar != CHR_NONE) update_character_shadow(nchar);
+        if (nenemy != ENEMY_NONE) update_enemy_shadow(nenemy);
         entity->x = x;
         entity->y = y;
         next_frame(false);

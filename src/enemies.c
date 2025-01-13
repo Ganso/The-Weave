@@ -8,6 +8,21 @@ Sprite *spr_enemy_face[MAX_ENEMIES];
 Sprite *spr_enemy_shadow[MAX_ENEMIES];
 Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES];
 
+// Update shadow position for an enemy
+void update_enemy_shadow(u16 nenemy)
+{
+    if (obj_enemy[nenemy].obj_character.drops_shadow && spr_enemy_shadow[nenemy] != NULL) {
+        // Position shadow at the bottom of enemy's collision box
+        s16 shadow_x = obj_enemy[nenemy].obj_character.x;
+        s16 shadow_y = obj_enemy[nenemy].obj_character.y + obj_enemy[nenemy].obj_character.collision_y_offset - 4;
+        
+        // Flip shadow if enemy is looking to the left
+        SPR_setHFlip(spr_enemy_shadow[nenemy], obj_enemy[nenemy].obj_character.flipH);
+
+        // Set shadow position
+        SPR_setPosition(spr_enemy_shadow[nenemy], shadow_x, shadow_y);
+    }
+}
 
 // Initialize enemy classes with their specific attributes
 void init_enemy_classes(void)
@@ -66,7 +81,7 @@ void init_enemy(u16 numenemy, u16 class)
 
     // Initialize enemy character with sprite, position, and collision attributes
     obj_enemy[numenemy].obj_character = (Entity) { 
-        true, nsprite, NULL, 0, 0, x_size, y_size, npal, false, false, 
+        true, nsprite, nsprite_shadow, 0, 0, x_size, y_size, npal, false, false, 
         ANIM_IDLE, false, collision_x_offset, collision_y_offset, 
         collision_width, collision_height, STATE_IDLE, 
         obj_enemy_class[class].follows_character, obj_enemy_class[class].follow_speed,
@@ -79,6 +94,18 @@ void init_enemy(u16 numenemy, u16 class)
     
     // Add enemy face sprite if not already present
     if (spr_enemy_face[numenemy]==NULL) spr_enemy_face[numenemy] = SPR_addSpriteSafe(nsprite_face, 198, 178, TILE_ATTR(npal, false, false, false));
+
+    // Initialize shadow if enemy drops one
+    if (obj_enemy[numenemy].obj_character.drops_shadow) {
+        if (spr_enemy_shadow[numenemy] == NULL) {
+            spr_enemy_shadow[numenemy] = SPR_addSpriteSafe(nsprite_shadow, 0, 0, TILE_ATTR(npal, TRUE, FALSE, FALSE));
+        }
+        if (spr_enemy_shadow[numenemy] != NULL) {
+            SPR_setVisibility(spr_enemy_shadow[numenemy], HIDDEN);
+            SPR_setDepth(spr_enemy_shadow[numenemy], SPR_MAX_DEPTH); // Shadow always at back
+            update_enemy_shadow(numenemy);
+        }
+    }
 
     // Initially hide enemy sprites
     SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
@@ -117,6 +144,10 @@ void release_enemy(u16 nenemy)
         SPR_releaseSprite(spr_enemy_face[nenemy]);
         spr_enemy_face[nenemy] = NULL;
     }
+    if (spr_enemy_shadow[nenemy] != NULL) {
+        SPR_releaseSprite(spr_enemy_shadow[nenemy]);
+        spr_enemy_shadow[nenemy] = NULL;
+    }
 }
 
 // Update an enemy's sprite based on its current attributes
@@ -127,6 +158,7 @@ void update_enemy(u16 nenemy)
     SPR_setVisibility(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.visible ? VISIBLE : HIDDEN);
     SPR_setHFlip(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.flipH);
     SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
+    update_enemy_shadow(nenemy);
     SPR_update();
 }
 
@@ -135,6 +167,12 @@ void show_enemy(u16 nenemy, bool show)
 {
     obj_enemy[nenemy].obj_character.visible = show;
     SPR_setVisibility(spr_enemy[nenemy], show ? VISIBLE : HIDDEN);
+    
+    // Update shadow visibility if it exists
+    if (obj_enemy[nenemy].obj_character.drops_shadow && spr_enemy_shadow[nenemy] != NULL) {
+        SPR_setVisibility(spr_enemy_shadow[nenemy], show ? VISIBLE : HIDDEN);
+    }
+    
     SPR_update();
 }
 
@@ -152,6 +190,7 @@ void look_enemy_left(u16 nenemy, bool direction_right)
 {
     obj_enemy[nenemy].obj_character.flipH = direction_right;
     SPR_setHFlip(spr_enemy[nenemy], direction_right);
+    update_enemy_shadow(nenemy);
     SPR_update();
 }
 
@@ -170,6 +209,7 @@ void move_enemy(u16 nenemy, s16 newx, s16 newy)
     }
 
     move_entity(&obj_enemy[nenemy].obj_character, spr_enemy[nenemy], newx, newy);
+    update_enemy_shadow(nenemy);
 
     anim_enemy(nenemy, ANIM_IDLE);
 }
@@ -182,6 +222,7 @@ void move_enemy_instant(u16 nenemy, s16 x, s16 y)
     SPR_setPosition(spr_enemy[nenemy], x, y);
     obj_enemy[nenemy].obj_character.x = x;
     obj_enemy[nenemy].obj_character.y = y;
+    update_enemy_shadow(nenemy);
     next_frame(false);
 }
 

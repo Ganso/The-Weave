@@ -42,5 +42,6 @@ void look_enemy_left(u16 nenemy, bool direction_right); // Make an enemy look to
 void move_enemy(u16 nenemy, s16 newx, s16 newy); // Move an enemy to a new position
 void move_enemy_instant(u16 nenemy, s16 x, s16 y); // Move an enemy to a new position (instantly)
 void approach_enemies(void); // Approach enemies to active character
+void update_enemy_shadow(u16 nenemy); // Update shadow position for an enemy
 
 #endif
