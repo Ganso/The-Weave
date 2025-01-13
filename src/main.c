@@ -15,7 +15,7 @@ int main(bool hard)
     initialize(true);
 
     current_act=1;
-    current_scene=1;
+    current_scene=5;
 
     while (true) { // MAIN LOOP
         switch (current_act)

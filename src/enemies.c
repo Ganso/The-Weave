@@ -5,6 +5,7 @@
 Enemy obj_enemy[MAX_ENEMIES];
 Sprite *spr_enemy[MAX_ENEMIES];
 Sprite *spr_enemy_face[MAX_ENEMIES];
+Sprite *spr_enemy_shadow[MAX_ENEMIES];
 Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES];
 
 
@@ -25,7 +26,8 @@ void init_enemy(u16 numenemy, u16 class)
     bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
     const SpriteDefinition *nsprite_face = NULL;
- 
+    const SpriteDefinition *nsprite_shadow = NULL;
+
     obj_enemy[numenemy].class_id=class;
     obj_enemy[numenemy].class=obj_enemy_class[class];
     obj_enemy[numenemy].hitpoints=obj_enemy_class[class].max_hitpoints;
@@ -38,6 +40,7 @@ void init_enemy(u16 numenemy, u16 class)
         collision_y_offset=95;
         nsprite = &badbobbin_sprite;
         nsprite_face = &badbobbin_sprite_face;
+        nsprite_shadow = &badbobbin_sprite_shadow;
         break;
     case ENEMY_CLS_3HEADMONKEY:
         collision_x_offset = 20;
@@ -46,6 +49,7 @@ void init_enemy(u16 numenemy, u16 class)
         collision_height = 2;
         nsprite = &three_head_monkey_sprite;
         nsprite_face = &three_head_monkey_sprite_face;
+        nsprite_shadow = &three_head_monkey_sprite_shadow;
         break;
     default:
         return;
@@ -62,7 +66,7 @@ void init_enemy(u16 numenemy, u16 class)
 
     // Initialize enemy character with sprite, position, and collision attributes
     obj_enemy[numenemy].obj_character = (Entity) { 
-        true, nsprite, 0, 0, x_size, y_size, npal, false, false, 
+        true, nsprite, NULL, 0, 0, x_size, y_size, npal, false, false, 
         ANIM_IDLE, false, collision_x_offset, collision_y_offset, 
         collision_width, collision_height, STATE_IDLE, 
         obj_enemy_class[class].follows_character, obj_enemy_class[class].follow_speed,

@@ -60,11 +60,13 @@ void init_character(u16 nchar)
         default:
             return; 
         }
+        
         x_size=nsprite->w; // Get width and height from the Sprite Definition
         y_size=nsprite->h;
-        obj_character[nchar] = (Entity) { true, nsprite, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow };
+        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow };
     } else {
         nsprite = obj_character[nchar].sd;
+        nsprite_shadow = obj_character[nchar].sd_shadow;
         npal = obj_character[nchar].palette;
         obj_character[nchar].active=true;
     }
@@ -133,7 +135,7 @@ void init_face(u16 nface)
         default:
             return;
         }
-        obj_face[nface] = (Entity) { true, nsprite, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0, false };
+        obj_face[nface] = (Entity) { true, nsprite, NULL, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0, false };
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
