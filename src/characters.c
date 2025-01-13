@@ -12,37 +12,15 @@ Sprite *spr_face[MAX_FACE];
 // Update shadow position for a character
 void update_character_shadow(u16 nchar)
 {
-    s16 base_x;
-
     if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar] != NULL) {
-        // Base X depends on character
-        switch (nchar)
-        {
-        case CHR_clio:
-            base_x = 4;
-            break;
-        case CHR_linus:
-            base_x = 6;
-            break;
-        case CHR_xander:
-            base_x = 10;
-            break;
-        default:
-            base_x = 6;
-            break;
-        }
-
         // Position shadow at the bottom of character's collision box
-        s16 shadow_x;
-        // Position shadow at the bottom center of character's collision box
-        if (obj_character[nchar].flipH) {
-            // When facing left, adjust base position to account for flipped sprite
-            base_x = obj_character[nchar].x_size - base_x - 24;
-        }
-        
-        shadow_x = obj_character[nchar].x + base_x;  // Center shadow (24/2 = 12)
+        s16 shadow_x = obj_character[nchar].x;  // Center shadow (24/2 = 12)
         s16 shadow_y = obj_character[nchar].y + obj_character[nchar].collision_y_offset - 4;      // Place at bottom (8/2 = 4)
         
+        // Flip shadow if character is looking to the left
+        SPR_setHFlip(spr_chr_shadow[nchar], obj_character[nchar].flipH);
+
+        // Set shadow position
         SPR_setPosition(spr_chr_shadow[nchar], shadow_x, shadow_y);
     }
 }
@@ -58,18 +36,22 @@ void init_character(u16 nchar)
     u8 collision_height=2;
     bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
+    const SpriteDefinition *nsprite_shadow = NULL;
 
     if (obj_character[nchar].sd == NULL) {
         switch (nchar)
         {
         case CHR_linus:
             nsprite = &linus_sprite;        
+            nsprite_shadow = &linus_shadow_sprite;
             break;
         case CHR_clio:
             nsprite = &clio_sprite;
+            nsprite_shadow = &clio_shadow_sprite;
             break;
         case CHR_xander:
             nsprite = &xander_sprite;
+            nsprite_shadow = &xander_shadow_sprite;
             break;
         case CHR_swan:
             nsprite = &swan_sprite;
@@ -96,7 +78,7 @@ void init_character(u16 nchar)
 
     // Initialize shadow if character drops one
     if (obj_character[nchar].drops_shadow) {
-        spr_chr_shadow[nchar] = SPR_addSpriteSafe(&shadow_sprite, 0, 0, TILE_ATTR(PAL1, TRUE, FALSE, FALSE));
+        spr_chr_shadow[nchar] = SPR_addSpriteSafe(nsprite_shadow, 0, 0, TILE_ATTR(PAL1, TRUE, FALSE, FALSE));
         
         if (spr_chr_shadow[nchar] != NULL) {
             SPR_setVisibility(spr_chr_shadow[nchar], HIDDEN);
@@ -122,6 +104,9 @@ void release_character(u16 nchar)
         SPR_releaseSprite(spr_chr_shadow[nchar]);
         spr_chr_shadow[nchar] = NULL;
     }
+    
+    // Update sprite engine after releasing sprites
+    SPR_update();
 }
 
 // Initialize a face
