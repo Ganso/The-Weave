@@ -95,6 +95,9 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
 {
     initialize(false); // Reset hardware when starting each level, but don't change only first-time options
     
+    // Reset tile index to start fresh
+    tile_ind = TILE_USER_INDEX;
+    
     // Tile_bg and Map_bg are the background layer. They can be NULL
     if ((tile_bg!=NULL) && (map_bg!=NULL)) {
         VDP_loadTileSet(tile_bg, tile_ind, CPU);
@@ -108,7 +111,10 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += tile_front->numTile;
 
+    // Set palettes after loading all tiles to avoid flicker
     PAL_setPalette(PAL0, new_pal.data, DMA);
+    PAL_setPalette(PAL1, linus_sprite.palette->data, DMA);
+    PAL_setPalette(PAL2, interface_pal.data, DMA);
 
     background_scroll_mode=new_scroll_mode;
     scroll_speed=new_scroll_speed;
@@ -130,8 +136,8 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
 
 // Free all resources used by the level
 void end_level() {
-
-    // Fade to black
+    // Fade out music and screen
+    fade_music(SCREEN_FPS);
     PAL_fadeOutAll(SCREEN_FPS,false);
 
     // Free background maps
@@ -205,4 +211,12 @@ void end_level() {
     // Reset all sprites after releasing everything
     VDP_releaseAllSprites();
     SPR_reset();
+    
+    // Reset VDP state
+    tile_ind = TILE_USER_INDEX;
+    VDP_resetScreen();
+    VDP_clearPlane(BG_A, TRUE);
+    VDP_clearPlane(BG_B, TRUE);
+    PAL_setColor(0, RGB24_TO_VDPCOLOR(0x000000));
+    VDP_setWindowVPos(TRUE, 22);
 }

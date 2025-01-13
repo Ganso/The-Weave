@@ -30,6 +30,7 @@ typedef struct
 extern Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
 extern Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
 extern Sprite *spr_enemy_face[MAX_ENEMIES]; // Enemy faces sprites
+extern Sprite *spr_enemy_shadow[MAX_ENEMIES]; // Enemy shadows sprites
 
 void init_enemy_classes(void); // initialize enemy classes
 void init_enemy(u16 numenemy, u16 class); // Initialize an enemy

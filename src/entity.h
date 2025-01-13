@@ -28,6 +28,7 @@ typedef struct
 {
     bool                    active;
     const SpriteDefinition  *sd;
+    const SpriteDefinition  *sd_shadow;
     s16                     x;
     s16                     y;
     u8                      x_size;

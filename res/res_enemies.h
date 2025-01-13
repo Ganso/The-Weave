@@ -3,7 +3,9 @@
 
 extern const SpriteDefinition badbobbin_sprite;
 extern const SpriteDefinition badbobbin_sprite_face;
+extern const SpriteDefinition badbobbin_sprite_shadow;
 extern const SpriteDefinition three_head_monkey_sprite;
 extern const SpriteDefinition three_head_monkey_sprite_face;
+extern const SpriteDefinition three_head_monkey_sprite_shadow;
 
 #endif // _RES_RES_ENEMIES_H_
