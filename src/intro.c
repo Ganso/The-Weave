@@ -54,6 +54,7 @@ void theweave_intro(void)
     }
 
     // Fade out music and graphics
+    VDP_clearTextLineBG(WINDOW,22);
     VDP_clearTextLineBG(WINDOW,23);
     fade_music(SCREEN_FPS*2);
     PAL_fadeOutAll(SCREEN_FPS*2, true);
@@ -68,23 +69,22 @@ void theweave_intro(void)
 
 void intro_update_language(void)
 {
-    char lang_text[40];
+    char eng_text[40];
+    char spa_text[40];
     
-    VDP_clearTextLineBG(WINDOW,23);
+    VDP_clearTextLineBG(WINDOW,22);
+    VDP_clearTextLineBG(WINDOW,24);
 
-    switch (game_language)
-    {
-    case LANG_ENGLISH:
-        strcpy(lang_text,"English");
-        break;
-    case LANG_SPANISH:
-        strcpy(lang_text,"Espa^ol");    
-    default:
-        break;
+    if (game_language == LANG_ENGLISH) {
+        strcpy(eng_text, "} English {");
+        strcpy(spa_text, "Espa^ol");
+    } else {
+        strcpy(eng_text, "English");
+        strcpy(spa_text, "} Espa^ol {");
     }
 
-    VDP_drawTextBG(WINDOW, lang_text, (40 - strlen(lang_text)) >> 1, 23);
-
+    VDP_drawTextBG(WINDOW, eng_text, (40 - strlen(eng_text)) >> 1, 22);
+    VDP_drawTextBG(WINDOW, spa_text, (40 - strlen(spa_text)) >> 1, 24);
 }
 
 bool intro_read_keys(void)
@@ -97,6 +97,8 @@ bool intro_read_keys(void)
     {
         case BUTTON_LEFT:
         case BUTTON_RIGHT:
+        case BUTTON_UP:
+        case BUTTON_DOWN:
             while (JOY_readJoypad(JOY_ALL)!=0) SYS_doVBlankProcess();
             if (game_language==LANG_ENGLISH) game_language=LANG_SPANISH;
             else game_language=LANG_ENGLISH;
