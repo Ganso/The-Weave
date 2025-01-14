@@ -175,9 +175,6 @@ void act_1_scene_2(void)
 
 void act_1_scene_3(void)
 {
-    u16 ndialog;
-    const DialogItem *current_dialog;
-
     // Initialize level
     new_level(&historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, historians_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
     
@@ -193,33 +190,43 @@ void act_1_scene_3(void)
     look_left(CHR_linus,true);
     show_character(CHR_clio, true);
     show_character(CHR_linus, true);
-    
+       
     // Dialog
-    ndialog=0;
-    while ((current_dialog = &dialogs[ACT1_DIALOG2][ndialog])->text[game_language] != NULL) {
-        switch(ndialog) {
-            case 3:
-                // After Clio's first line
-                move_character(CHR_linus, 200, 174);
-                break;
-            case 6:
-                // Xander's entrance
-                move_character(CHR_clio, 100, 154);
-                wait_seconds(1);
-                look_left(CHR_clio, true);
-                move_character_instant(CHR_xander,-30,174);
-                show_character(CHR_xander, true);
-                move_character(CHR_xander, 40, 174);
-                break;
-            case 20:
-                // Before Clio's last line
-                look_left(CHR_clio, false);
-                break;
-        }
-        talk_dialog(current_dialog);
-        ndialog++;
-    }
-
+    talk_dialog(&dialogs[ACT1_DIALOG2][0]); // (ES) "Gremio de los historiadores Año 8121" - (EN) "Historians guild Year 8121"
+    talk_dialog(&dialogs[ACT1_DIALOG2][1]); // (ES) "Lunes Primera hora de la mañana" - (EN) "Monday Early morning"
+    move_character(CHR_linus, 200, 174);
+    talk_dialog(&dialogs[ACT1_DIALOG2][2]); // (ES) "Es tarde, Linus Y uno no debe llegar tarde a su cumpleaños" - (EN) "It's late, Linus And you shouldn't be late at your birthday"
+    talk_dialog(&dialogs[ACT1_DIALOG2][3]); // (ES) "He tenido el sueño más extraño, Madre" - (EN) "I have had the strangest dream, Mother"
+    talk_dialog(&dialogs[ACT1_DIALOG2][4]); // (ES) "Un cisne venía a mi cuarto y..." - (EN) "A swan came to my room and..."
+    talk_dialog(&dialogs[ACT1_DIALOG2][5]); // (ES) "Luego me lo cuentas Xander nos espera" - (EN) "You can tell me later Xander is waiting for us"
+    // Xander's entrance
+    move_character(CHR_clio, 100, 154);
+    wait_seconds(1);
+    look_left(CHR_clio, true);
+    move_character_instant(CHR_xander,-30,174);
+    show_character(CHR_xander, true);
+    move_character(CHR_xander, 40, 174);
+    talk_dialog(&dialogs[ACT1_DIALOG2][6]); // (ES) "Por fin estás despierto, Linus" - (EN) "At last, you're awake Linus"
+    talk_dialog(&dialogs[ACT1_DIALOG2][7]); // (ES) "Perdóname, maestro Un extraño sueño me ha mantenido despierto" - (EN) "Forgive me, master A strange dream has kept me awake"
+    talk_dialog(&dialogs[ACT1_DIALOG2][8]); // (ES) "Ciertamente eres el hijo de tu padre Aiden tenía grandes sueños" - (EN) "You are certainly your father's son Aiden had big dreams"
+    talk_dialog(&dialogs[ACT1_DIALOG2][9]); // (ES) "Y estamos aquí para hablar sobre uno que nunca llegó a cumplir" - (EN) "And we are here to talk about one that he never achieved"
+    talk_dialog(&dialogs[ACT1_DIALOG2][10]); // (ES) "He leído sus historias mil veces ¿De cuál hablamos?" - (EN) "I've read his stories a thousand times Which one is this?"
+    talk_dialog(&dialogs[ACT1_DIALOG2][11]); // (ES) "Una que no encontrarás en un libro. La de la isla del gremio de los Tejedores" - (EN) "One you won't find in a book The one about Weavers guild island"
+    // Choice
+    u8 response=choice_dialog(&choices[ACT1_CHOICE1][0]);
+    kprintf("Response: %d\n",response);
+    talk_dialog(&dialogs[ACT1_DIALOG2][12+response]);
+    talk_dialog(&dialogs[ACT1_DIALOG2][15]); // (ES) "Tu padre quería encontrarla" - (EN) "Your father wanted to find it"
+    talk_dialog(&dialogs[ACT1_DIALOG2][16]); // (ES) "Nuestro destino es documentar hechos, no perseguirlos" - (EN) "Our destiny is to document facts, not to chase them"
+    talk_dialog(&dialogs[ACT1_DIALOG2][17]); // (ES) "Linus tiene diecisiete años Esa era mi edad cuando viajé por el mundo" - (EN) "Linus is seventeen That was my age when I traveled the world"
+    talk_dialog(&dialogs[ACT1_DIALOG2][18]); // (ES) "Y la edad de su padre cuando llegó aquí" - (EN) "And his father's age when he came to us"
+    talk_dialog(&dialogs[ACT1_DIALOG2][19]); // (ES) "Un año antes de que le acogiéramos como uno de los nuestros" - (EN) "A year before we took him as one of ours"
+    talk_dialog(&dialogs[ACT1_DIALOG2][20]); // (ES) "Madre..." - (EN) "Mother..."
+    // Choice
+    response=choice_dialog(&choices[ACT1_CHOICE1][1]);
+    look_left(CHR_clio, false);
+    talk_dialog(&dialogs[ACT1_DIALOG2][21+response]);
+    
     wait_seconds(2);
 
     end_level(); // Free resources
