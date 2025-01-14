@@ -1,5 +1,33 @@
 import os
 import re
+import sys
+
+def show_help():
+    print("""
+Add dialog text comments to C source files
+
+Usage:
+    python add_texts_comments.py <file>
+    python add_texts_comments.py *
+
+Arguments:
+    file    Path to a C source file to process (e.g., act_1.c)
+            Will be looked for in the src/ directory
+    *       Process all .c files in src/ directory (except texts.c)
+
+Description:
+    This script adds comments to talk_dialog() calls showing the Spanish and English
+    text for each dialog. It reads the dialog texts from texts.c and texts.h.
+
+    For each talk_dialog() call, it adds a comment like:
+    // (ES) "Spanish text" - (EN) "English text"
+
+    If a similar comment already exists, it will be replaced with the current text.
+
+Examples:
+    python add_texts_comments.py act_1.c
+    python add_texts_comments.py *
+""")
 
 def find_dialogs(c_file, texts_h_file, texts_c_file):
     # Load dialog IDs from texts.h
@@ -123,22 +151,22 @@ def process_all_c_files():
             find_dialogs(c_file, texts_h_file, texts_c_file)
 
 def main():
+    # Show help if no arguments provided
+    if len(sys.argv) < 2:
+        show_help()
+        return
+
     texts_h_file = "src/texts.h"
     texts_c_file = "src/texts.c"
 
-    # If * is provided, process all .c files
-    if len(sys.argv) > 1 and sys.argv[1] == "*":
+    # Process based on argument
+    if sys.argv[1] == "*":
         process_all_c_files()
     else:
-        # Default to act_1.c if no file specified
-        c_file = "src/act_1.c"
-        
-        # Use specified file if provided
-        if len(sys.argv) > 1:
-            c_file = sys.argv[1]
-            # Add src/ prefix if not provided
-            if not c_file.startswith("src/"):
-                c_file = f"src/{c_file}"
+        c_file = sys.argv[1]
+        # Add src/ prefix if not provided
+        if not c_file.startswith("src/"):
+            c_file = f"src/{c_file}"
 
         if not os.path.exists(c_file):
             print(f"Error: File {c_file} not found")
@@ -147,5 +175,4 @@ def main():
         find_dialogs(c_file, texts_h_file, texts_c_file)
 
 if __name__ == "__main__":
-    import sys
     main()
