@@ -10,7 +10,7 @@ int main(bool hard)
     #endif
 
     //geesebumps_logo(); // GeeseBumps Logo
-    //theweave_intro();  // Game intro
+    theweave_intro();  // Game intro
 
     initialize(true);
 
