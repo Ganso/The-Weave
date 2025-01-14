@@ -126,7 +126,7 @@ void check_active_character_state(void)
                     show_pattern_icon(matched_pattern, true, true);
                     play_pattern_sound(PTRN_NONE);
                     show_or_hide_interface(false);
-                    talk_dialog(&dialogs[SYSTEM_DIALOG][0]);
+                    talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón ahora mismo" - (EN) "I can't use that pattern right now"
                     show_or_hide_interface(true);
                     show_pattern_icon(matched_pattern, false, false);
                     obj_character[active_character].state = STATE_IDLE;
@@ -247,7 +247,7 @@ bool can_use_electric_pattern(void)
         // Can't use thunder during enemy thunder attack
         show_or_hide_interface(false);
         show_or_hide_enemy_combat_interface(false);
-        talk_dialog(&dialogs[ACT1_DIALOG3][6]);
+        talk_dialog(&dialogs[ACT1_DIALOG3][6]); // (ES) "Si reproduzco al revés las notas, podré contraatacar este hechizo" - (EN) "If I play the notes backwards I could be able to counter the spell"
         show_or_hide_enemy_combat_interface(true);
         show_or_hide_interface(true);
         return false;
@@ -256,7 +256,7 @@ bool can_use_electric_pattern(void)
         // Can't use thunder while hidden
         show_or_hide_interface(false);
         show_or_hide_enemy_combat_interface(false);
-        talk_dialog(&dialogs[ACT1_DIALOG3][9]);
+        talk_dialog(&dialogs[ACT1_DIALOG3][9]); // (ES) "No puedo lanzar hechizos si estoy escondido" - (EN) "I can't launch spells while hiding"
         show_or_hide_enemy_combat_interface(true);
         show_or_hide_interface(true);
         return false;

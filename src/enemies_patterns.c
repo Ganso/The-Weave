@@ -332,8 +332,8 @@ void finish_electric_enemy_pattern_effect(void) {
         hit_caracter(active_character);
         show_or_hide_interface(false);
         show_or_hide_enemy_combat_interface(false);
-        talk_dialog(&dialogs[ACT1_DIALOG3][2]);
-        talk_dialog(&dialogs[ACT1_DIALOG3][3]);
+        talk_dialog(&dialogs[ACT1_DIALOG3][2]); // (ES) "Eso ha dolido" - (EN) "That hurts"
+        talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "Quizá deba pensar al revés" - (EN) "I should maybe think backwards"
         show_or_hide_interface(true);
         show_or_hide_enemy_combat_interface(true);
     }
@@ -371,8 +371,8 @@ void finish_bite_enemy_pattern_effect(void) {
     hit_caracter(active_character);
     show_or_hide_interface(false);
     show_or_hide_enemy_combat_interface(false);
-    talk_dialog(&dialogs[ACT1_DIALOG3][2]);
-    talk_dialog(&dialogs[ACT1_DIALOG3][4]);
+    talk_dialog(&dialogs[ACT1_DIALOG3][2]); // (ES) "Eso ha dolido" - (EN) "That hurts"
+    talk_dialog(&dialogs[ACT1_DIALOG3][4]); // (ES) "Puedo probar a esconderme o tratar de invocar al trueno" - (EN) "I could try to hide or attempt to summon the thunder"
     show_or_hide_interface(true);
     show_or_hide_enemy_combat_interface(true);
     show_character(active_character, true);
