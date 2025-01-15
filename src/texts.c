@@ -97,8 +97,8 @@ const DialogItem act1_dialog2[] = { // Histoiran hall
         {"Desaparecieron sin dejar rastro|Aunque muchos creen|que era solo un cuento",
          "They vanished without a trace|Although many believe|it was just a tale"}},
     {FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME, // 15
-        {"Tu padre quería encontrarla", 
-         "Your father wanted to find it"}},
+        {"Tu padre quería encontrar|la isla donde vivían", 
+         "Your father wanted to find|their home island"}},
     {FACE_clio, SIDE_RIGHT, DEFAULT_TALK_TIME, // 16
         {"Nuestro destino es|documentar hechos,|no perseguirlos", 
          "Our destiny is to|document facts,|not to chase them"}},
@@ -216,7 +216,7 @@ const DialogItem *dialogs[] = {
 
 const ChoiceItem act1_choice1[] = {
     {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 3,
-        {{ "¿Los tejedores?", "Era mi leyenda favorita", "¿Qué pasó con ellos?"},
+        {{ "¿Los Tejedores?", "Era mi leyenda favorita", "¿Qué pasó con ellos?"},
         { "The Weavers?", "It was my favourite legend", "What happened to them?"}}},
     {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 2,
         {{ "Tengo que ir a la isla", "¿Vendrías conmigo?"},
