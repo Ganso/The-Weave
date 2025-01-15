@@ -175,6 +175,8 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
 {
     u16 faceposx, buttonposx;
     u16 textposx[MAX_CHOICES] = {0};
+    u8 choice_lenght[MAX_CHOICES];
+    char *encoded_text = NULL;
     u16 joy_state = JOY_readJoypad(JOY_ALL), prev_joy_state = 0;
     u8 current_option = 0;
     u16 num_ticks = 0;
@@ -210,21 +212,25 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
         buttonposx=296;
     }
 
-    // Show button A
-    SPR_setVisibility(spr_int_button_A, VISIBLE);
-    SPR_setPosition(spr_int_button_A, buttonposx, 208);
-
     // Show initial options and calculate positions
     u8 start_y = (num_options == 2) ? 24 : 23; // Start one line lower for 2 options
     
     for(u8 i = 0; i < num_options && i < MAX_CHOICES; i++) {
+        
+        // Calculate lenght (it's important do encode Spanish characters to the standard font before)
+        if (game_language==LANG_ENGLISH) choice_lenght[i]=strlen(options[i]);
+        else {
+            encoded_text = encode_spanish_text(options[i]);
+            choice_lenght[i] = strlen(encoded_text);
+        }
+
         // Center text (calculate position based on plain text)
         if(nface != FACE_none) {
-            textposx[i] = 8 + ((33 - strlen(options[i])) >> 1);
+            textposx[i] = 8 + ((33 - choice_lenght[i]) >> 1);
             if(!isinleft) textposx[i] -= 8;
         }
         else {
-            textposx[i] = ((40 - strlen(options[i])) >> 1);
+            textposx[i] = ((40 - choice_lenght[i]) >> 1);
         }
 
         // Show plain text first
@@ -233,8 +239,12 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
 
     // Add selection markers to initial option
     VDP_drawTextBG(WINDOW, "}", textposx[current_option] - 2, start_y + current_option);
-    VDP_drawTextBG(WINDOW, "{", textposx[current_option] + strlen(options[current_option]) + 1, start_y + current_option);
+    VDP_drawTextBG(WINDOW, "{", textposx[current_option] + choice_lenght[current_option] + 1, start_y + current_option);
 
+
+    // Show button A
+    SPR_setVisibility(spr_int_button_A, VISIBLE);
+    SPR_setPosition(spr_int_button_A, buttonposx, 208);
     next_frame(false);
 
     // Main loop
@@ -270,11 +280,11 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
             
             // Remove selection markers from previous option
             VDP_drawTextBG(WINDOW, " ", textposx[prev_option] - 2, start_y + prev_option);
-            VDP_drawTextBG(WINDOW, " ", textposx[prev_option] + strlen(options[prev_option]) + 1, start_y + prev_option);
+            VDP_drawTextBG(WINDOW, " ", textposx[prev_option] + choice_lenght[prev_option] + 1, start_y + prev_option);
 
             // Add selection markers to new option
             VDP_drawTextBG(WINDOW, "}", textposx[current_option] - 2, start_y + current_option);
-            VDP_drawTextBG(WINDOW, "{", textposx[current_option] + strlen(options[current_option]) + 1, start_y + current_option);
+            VDP_drawTextBG(WINDOW, "{", textposx[current_option] + choice_lenght[current_option] + 1, start_y + current_option);
         }
 
         next_frame(false);
