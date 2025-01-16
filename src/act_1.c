@@ -212,20 +212,23 @@ void act_1_scene_3(void)
     talk_dialog(&dialogs[ACT1_DIALOG2][9]); // (ES) "Y estamos aquí para hablar sobre uno que nunca llegó a cumplir" - (EN) "And we are here to talk about one that he never achieved"
     talk_dialog(&dialogs[ACT1_DIALOG2][10]); // (ES) "He leído sus historias mil veces ¿De cuál hablamos?" - (EN) "I've read his stories a thousand times Which one is this?"
     talk_dialog(&dialogs[ACT1_DIALOG2][11]); // (ES) "Una que no encontrarás en un libro. La de la isla del gremio de los Tejedores" - (EN) "One you won't find in a book The one about Weavers guild island"
-    // Choice
-    u8 response=choice_dialog(&choices[ACT1_CHOICE1][0]);
+    u8 response=choice_dialog(&choices[ACT1_CHOICE1][0]); // Choice - Options: "The Weavers?", "It was my favourite legend", "What happened to them?"
     kprintf("Response: %d\n",response);
-    talk_dialog(&dialogs[ACT1_DIALOG2][12+response]);
+    talk_dialog(&dialogs[ACT1_DIALOG2][12+response]); // Response texts:
+    // If response=0: (ES) "Según la leyenda Fueron un gremio capaz de tejer hechizos" - (EN) "According to the legend They were a guild able to weave spells"
+    // If response=1: (ES) "Para él no era una leyenda Los Pastores la cantaban como cierta" - (EN) "That was no legend for him Shepherds sang it as a fact"
+    // If response=2: (ES) "Desaparecieron sin dejar rastro Aunque muchos creen que era solo un cuento" - (EN) "They vanished without a trace Although many believe it was just a tale"
     talk_dialog(&dialogs[ACT1_DIALOG2][15]); // (ES) "Tu padre quería encontrar la isla donde vivían" - (EN) "Your father wanted to find their home island"
     talk_dialog(&dialogs[ACT1_DIALOG2][16]); // (ES) "Nuestro destino es documentar hechos, no perseguirlos" - (EN) "Our destiny is to document facts, not to chase them"
     talk_dialog(&dialogs[ACT1_DIALOG2][17]); // (ES) "Linus tiene diecisiete años Esa era mi edad cuando viajé por el mundo" - (EN) "Linus is seventeen That was my age when I traveled the world"
     talk_dialog(&dialogs[ACT1_DIALOG2][18]); // (ES) "Y la edad de su padre cuando llegó aquí" - (EN) "And his father's age when he came to us"
     talk_dialog(&dialogs[ACT1_DIALOG2][19]); // (ES) "Un año antes de que le acogiéramos como uno de los nuestros" - (EN) "A year before we took him as one of ours"
     talk_dialog(&dialogs[ACT1_DIALOG2][20]); // (ES) "Madre..." - (EN) "Mother..."
-    // Choice
-    response=choice_dialog(&choices[ACT1_CHOICE1][1]);
+    response=choice_dialog(&choices[ACT1_CHOICE1][1]); // Choice - Options: "I have to go to the island", "Would you come with me?"
     look_left(CHR_clio, false);
-    talk_dialog(&dialogs[ACT1_DIALOG2][21+response]);
+    talk_dialog(&dialogs[ACT1_DIALOG2][21+response]); // Response texts:
+    // If response=0: (ES) "Si Xander lo quiere, así será Pero no irás solo" - (EN) "If Xander wants it that way, so it will be But you'll not go alone"
+    // If response=1: (ES) "Nunca me ha gustado viajar Pero no dejaré que vayas solo" - (EN) "I've never liked to travel But I won't let you go alone"
     
     wait_seconds(2);
 
