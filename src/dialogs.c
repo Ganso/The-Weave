@@ -1,8 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Displays a face, in the left (or not), and a text string, during a maximum of maxtime milisecons
-void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)
+void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display dialog with optional face portrait and timed text
 {
     u16 faceposx,buttonposx;
     u16 textposx_line1=0, textposx_line2=0, textposx_line3=0;
@@ -102,14 +101,12 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)
     next_frame(false);
 }
 
-// Talk a dialog line
-void talk_dialog(const DialogItem *dialog)
+void talk_dialog(const DialogItem *dialog)    // Display a predefined dialog item with face and text
 {
     talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds);
 }
 
-// Split a text in up to three lines
-void split_text(char *text, char *line1, char *line2, char *line3)
+void split_text(char *text, char *line1, char *line2, char *line3)    // Break text into three lines using | as separator
 {
     u16 len = strlen(text);
     u16 i, lineStart = 0;
@@ -133,7 +130,7 @@ void split_text(char *text, char *line1, char *line2, char *line3)
     }
 }
 
-void print_line(char *text, u16 x, u16 y)
+void print_line(char *text, u16 x, u16 y)    // Display text line with character-by-character animation
 {
     int i = 0;
     u16 joy_state;
@@ -170,8 +167,7 @@ void print_line(char *text, u16 x, u16 y)
     }
 }
 
-// Shows a choice dialog directly
-u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_seconds)
+u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_seconds)    // Display dialog with multiple choice options
 {
     u16 faceposx, buttonposx;
     u16 textposx[MAX_CHOICES] = {0};
@@ -316,8 +312,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     return current_option;
 }
 
-// Shows a choice dialog from a ChoiceItem
-u8 choice_dialog(const ChoiceItem *item)
+u8 choice_dialog(const ChoiceItem *item)    // Display a predefined choice dialog item
 {
     return choice(item->face, item->side, (char **)item->options[game_language], item->num_options, item->max_seconds);
 }

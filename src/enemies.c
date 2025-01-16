@@ -1,15 +1,13 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-Enemy obj_enemy[MAX_ENEMIES];
-Sprite *spr_enemy[MAX_ENEMIES];
-Sprite *spr_enemy_face[MAX_ENEMIES];
-Sprite *spr_enemy_shadow[MAX_ENEMIES];
-Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES];
+Enemy obj_enemy[MAX_ENEMIES];                    // Array of enemy instances with their properties
+Sprite *spr_enemy[MAX_ENEMIES];                  // Array of enemy sprites
+Sprite *spr_enemy_face[MAX_ENEMIES];             // Array of enemy face sprites for dialogs
+Sprite *spr_enemy_shadow[MAX_ENEMIES];           // Array of enemy shadow sprites
+Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES];  // Array of enemy class definitions
 
-// Update shadow position for an enemy
-void update_enemy_shadow(u16 nenemy)
+void update_enemy_shadow(u16 nenemy)    // Update shadow sprite position based on enemy position
 {
     if (obj_enemy[nenemy].obj_character.drops_shadow && spr_enemy_shadow[nenemy] != NULL) {
         // Position shadow at the bottom of enemy's collision box
@@ -24,15 +22,13 @@ void update_enemy_shadow(u16 nenemy)
     }
 }
 
-// Initialize enemy classes with their specific attributes
-void init_enemy_classes(void)
+void init_enemy_classes(void)    // Setup enemy class definitions with HP, patterns, and behavior
 {
     obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, 0}; // 2 HP, can use electric pattern, don't follow
     obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 3}; // 3 HP, can use bite pattern, follows at speed 3
 }
 
-// Initialize an enemy with specific attributes based on its class
-void init_enemy(u16 numenemy, u16 class)
+void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of given class with sprites and collision
 {
     u16 i;
     u8 npal = PAL3;
@@ -115,8 +111,7 @@ void init_enemy(u16 numenemy, u16 class)
     for (i=0;i<MAX_PATTERN_ENEMY;i++) obj_enemy[numenemy].last_pattern_time[i]=0;
 }
 
-// Release an enemy's sprites and clean up combat state
-void release_enemy(u16 nenemy)
+void release_enemy(u16 nenemy)    // Free enemy resources and reset related combat state
 {
     // Clean up combat state if this enemy was attacking
     if (enemy_attacking == nenemy) {
@@ -150,8 +145,7 @@ void release_enemy(u16 nenemy)
     }
 }
 
-// Update an enemy's sprite based on its current attributes
-void update_enemy(u16 nenemy)
+void update_enemy(u16 nenemy)    // Update enemy sprite properties from current state
 {
     SPR_setPosition(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.x, obj_enemy[nenemy].obj_character.y);
     SPR_setPriority(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.priority);
@@ -162,8 +156,7 @@ void update_enemy(u16 nenemy)
     SPR_update();
 }
 
-// Show or hide an enemy's sprite
-void show_enemy(u16 nenemy, bool show)
+void show_enemy(u16 nenemy, bool show)    // Toggle visibility of enemy and its shadow
 {
     obj_enemy[nenemy].obj_character.visible = show;
     SPR_setVisibility(spr_enemy[nenemy], show ? VISIBLE : HIDDEN);
@@ -176,8 +169,7 @@ void show_enemy(u16 nenemy, bool show)
     SPR_update();
 }
 
-// Change an enemy's animation if it's different from the current one
-void anim_enemy(u16 nenemy, u8 newanimation)
+void anim_enemy(u16 nenemy, u8 newanimation)    // Set enemy animation if different from current
 {
     if (obj_enemy[nenemy].obj_character.animation != newanimation) {
         obj_enemy[nenemy].obj_character.animation = newanimation;
@@ -185,8 +177,7 @@ void anim_enemy(u16 nenemy, u8 newanimation)
     }
 }
 
-// Make an enemy face left or right
-void look_enemy_left(u16 nenemy, bool direction_right)
+void look_enemy_left(u16 nenemy, bool direction_right)    // Set enemy sprite horizontal flip
 {
     obj_enemy[nenemy].obj_character.flipH = direction_right;
     SPR_setHFlip(spr_enemy[nenemy], direction_right);
@@ -194,8 +185,7 @@ void look_enemy_left(u16 nenemy, bool direction_right)
     SPR_update();
 }
 
-// Move an enemy to a new position with animation
-void move_enemy(u16 nenemy, s16 newx, s16 newy)
+void move_enemy(u16 nenemy, s16 newx, s16 newy)    // Move enemy with walking animation and direction update
 {
     show_enemy(nenemy, true);
     anim_enemy(nenemy, ANIM_WALK);
@@ -214,8 +204,7 @@ void move_enemy(u16 nenemy, s16 newx, s16 newy)
     anim_enemy(nenemy, ANIM_IDLE);
 }
 
-// Move an enemy to a new position instantly without animation
-void move_enemy_instant(u16 nenemy, s16 x, s16 y)
+void move_enemy_instant(u16 nenemy, s16 x, s16 y)    // Set enemy position immediately without animation
 {
     y-=obj_enemy[nenemy].obj_character.y_size; // Adjust y position relative to the bottom line
 
@@ -226,8 +215,7 @@ void move_enemy_instant(u16 nenemy, s16 x, s16 y)
     next_frame(false);
 }
 
-// Move enemies towards the active character during combat
-void approach_enemies(void)
+void approach_enemies(void)    // Update enemy positions to follow player during combat
 {
     u16 nenemy;
     s16 newx, newy;

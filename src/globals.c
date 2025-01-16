@@ -1,15 +1,13 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-u16 tile_ind;
-u16 frame_counter;
-u8 current_act;
-u8 current_scene;
-u8 SCREEN_FPS;
+u16 tile_ind;        // Current tile index for VDP tile loading
+u16 frame_counter;   // Counter incremented each frame for RNG and timing
+u8 current_act;      // Current game act number
+u8 current_scene;    // Current scene number within act
+u8 SCREEN_FPS;      // Screen refresh rate (50 for PAL, 60 for NTSC)
 
-// Wait for N seconds
-void wait_seconds(int sec)
+void wait_seconds(int sec)    // Pause execution for specified number of seconds
 {
     u16 num_ticks=0;
     u16 max_ticks=sec*SCREEN_FPS; // Ticks
@@ -20,8 +18,7 @@ void wait_seconds(int sec)
     }
 }
 
-// Wait for next frame and do each-frame actions, including interactive actions if selected
-void next_frame(bool interactive)
+void next_frame(bool interactive)    // Process next frame with optional interactive updates (movement, combat, etc)
 {
     if (interactive==true) {
         // Check controller
@@ -57,7 +54,7 @@ void next_frame(bool interactive)
     SYS_doVBlankProcess();
 }
 
-u16 calc_ticks(u16 milliseconds) // Translate millisecons to ticks
+u16 calc_ticks(u16 milliseconds)    // Convert milliseconds to system ticks based on screen refresh rate
 {
     if (SCREEN_FPS == 50) {
         // 50 FPS: 1 tick ≈ 20 ms

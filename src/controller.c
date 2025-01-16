@@ -1,11 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-/**
- * Main function to check and handle joystick input.
- * This function is called every frame to process player input.
- */
-void joy_check(void)
+void joy_check(void)    // Process joystick input each frame for movement, actions, and pause
 {
     // Read the current state of the joystick
     u16 joy_value = JOY_readJoypad(JOY_ALL);
@@ -27,13 +23,7 @@ void joy_check(void)
     handle_pause_button(joy_value);
 }
 
-/**
- * Handle character movement based on joystick input.
- * This function checks for directional button presses and moves the character accordingly.
- * 
- * @param joy_value The current state of the joystick
- */
-void handle_movement(u16 joy_value)
+void handle_movement(u16 joy_value)    // Process directional inputs and update character movement state
 {
     bool moved = false;
     s16 dx = 0, dy = 0;
@@ -71,8 +61,7 @@ void handle_movement(u16 joy_value)
     update_character_animation();
 }
 
-// Move the character if there's no collision and it's within the screen limits. This function also handles background scrolling if the character is at the screen edge.
-void handle_character_movement(s16 dx, s16 dy)
+void handle_character_movement(s16 dx, s16 dy)    // Update character position with collision and screen boundary checks
 {
     // dx Horizontal movement (-1 for left, 1 for right, 0 for no horizontal movement)
     // dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
@@ -120,10 +109,7 @@ void handle_character_movement(s16 dx, s16 dy)
     }
 }
 
-/**
- * Update the character's animation based on its current state.
- */
-void update_character_animation(void)
+void update_character_animation(void)    // Set appropriate animation based on character state
 {
     // Don't change animation if we're in PATTERN_EFFECT with HIDE
     if (obj_character[active_character].state == STATE_PATTERN_EFFECT && 
@@ -164,13 +150,7 @@ void update_character_animation(void)
     }
 }
 
-/**
- * Handle action button inputs (A, B, C, X, Y, Z).
- * Each button plays a different musical note.
- * 
- * @param joy_value The current state of the joystick
- */
-void handle_action_buttons(u16 joy_value)
+void handle_action_buttons(u16 joy_value)    // Process action buttons for item interaction and musical notes
 {
     // Only allow item interaction and note playing in IDLE or WALKING states
     if (obj_character[active_character].state != STATE_IDLE && 
@@ -198,13 +178,7 @@ void handle_action_buttons(u16 joy_value)
     }
 }
 
-/**
- * Handle the pause button input.
- * When the START button is pressed, the game pauses.
- * 
- * @param joy_value The current state of the joystick
- */
-void handle_pause_button(u16 joy_value)
+void handle_pause_button(u16 joy_value)    // Handle START button press to show pause screen
 {
     if (joy_value & BUTTON_START) {
         // Wait for the START button to be released

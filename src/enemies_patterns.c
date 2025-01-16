@@ -1,19 +1,17 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY];
-u16 enemy_attacking;
-u16 enemy_attack_pattern;
-u8 enemy_attack_pattern_notes;
-u16 enemy_attack_time;
-bool enemy_attack_effect_in_progress;
-u16 enemy_attack_effect_time; 
-bool enemy_note_active[6];
+Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY];    // Stores all enemy pattern definitions
+u16 enemy_attacking;                                   // Currently attacking enemy ID
+u16 enemy_attack_pattern;                             // Current attack pattern type
+u8 enemy_attack_pattern_notes;                        // Index in current note sequence
+u16 enemy_attack_time;                                // Attack state timer
+bool enemy_attack_effect_in_progress;                 // If attack effect is active
+u16 enemy_attack_effect_time;                         // Effect duration timer
+bool enemy_note_active[6];                            // Active note indicators
 
 
-// Initialize enemy pattern
-void init_enemy_patterns(void)
+void init_enemy_patterns(void)    // Setup enemy attack patterns and timings
 {
     obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 150}; // Electric pattern: 4 steps, 150ms interval
     obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {3, {2,3,2,NULL}, 150}; // Bite pattern: 3 steps, 150ms interval
@@ -36,11 +34,7 @@ void init_enemy_patterns(void)
  * 5. STATE_IDLE: Ready for next attack
  */
 
-/**
- * Main state machine for enemy pattern system
- * Controls enemy attack patterns, timing, and effects
- */
-void check_enemy_state(void)
+void check_enemy_state(void)    // Main state machine for enemy pattern system
 {
     u8 numenemy, npattern;
     u16 max_effect_time;
@@ -178,15 +172,7 @@ void check_enemy_state(void)
     }
 }
 
-/**
- * Display and optionally play an enemy note
- * Manages note sprites and sound effects
- * 
- * @param nnote: Note to display (1-6 for MI through DO)
- * @param visible: Whether to show or hide the note
- * @param play: Whether to play the note sound
- */
-void show_enemy_note(u8 nnote, bool visible, bool play)
+void show_enemy_note(u8 nnote, bool visible, bool play)    // Display/play enemy note (1-6:MI-DO), manage sprites and sound
 {
     Sprite **rodsprite;
     const SpriteDefinition *rodspritedef;
@@ -253,11 +239,8 @@ void show_enemy_note(u8 nnote, bool visible, bool play)
     }
 }
 
-/**
- * Conclude an enemy attack pattern
- * Handles cleanup and final effects
- */
-void finish_enemy_pattern_effect(void) {
+void finish_enemy_pattern_effect(void)    // Clean up and finish enemy attack pattern effects
+{
     // Reset enemy state
     anim_enemy(enemy_attacking, ANIM_IDLE);
     obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern] = 0;
@@ -279,19 +262,14 @@ void finish_enemy_pattern_effect(void) {
  *                        Pattern-Specific Effects                             *
  ******************************************************************************/
 
-/**
- * Initialize electric pattern attack
- */
-void launch_electric_enemy_pattern(void) {
+void launch_electric_enemy_pattern(void)    // Start electric pattern attack sequence
+{
     play_pattern_sound(PTRN_ELECTRIC);
     anim_enemy(enemy_attacking, ANIM_MAGIC);
 }
 
-/**
- * Process ongoing electric pattern effect
- * Handles visual effects and counter-spell interaction
- */
-void do_electric_enemy_pattern_effect(void) {
+void do_electric_enemy_pattern_effect(void)    // Process electric pattern effect and counter-spell checks
+{
     // Create lightning flash effect
     if (frame_counter % 2 == 0) VDP_setHilightShadow(true);
     else VDP_setHilightShadow(false);
@@ -321,11 +299,8 @@ void do_electric_enemy_pattern_effect(void) {
     }
 }
 
-/**
- * Complete electric pattern effect
- * Applies damage if player failed to counter
- */
-void finish_electric_enemy_pattern_effect(void) {
+void finish_electric_enemy_pattern_effect(void)    // Complete electric pattern and apply damage if not countered
+{
     VDP_setHilightShadow(false);
     if (enemy_attacking != ENEMY_NONE) {
         // Player failed to counter
@@ -339,28 +314,20 @@ void finish_electric_enemy_pattern_effect(void) {
     }
 }
 
-/**
- * Initialize bite pattern attack
- */
-void launch_bite_enemy_pattern(void) {
+void launch_bite_enemy_pattern(void)    // Start bite pattern attack sequence
+{
     anim_enemy(enemy_attacking, ANIM_MAGIC);
 }
 
-/**
- * Process ongoing bite pattern effect
- * Checks for player hide state
- */
-void do_bite_enemy_pattern_effect(void) {
+void do_bite_enemy_pattern_effect(void)    // Process bite pattern effect and check player hide state
+{
     if (player_pattern_effect_in_progress == PTRN_HIDE) {
         enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_BITE) - 1;
     }
 }
 
-/**
- * Complete bite pattern effect
- * Applies damage if player is not hidden
- */
-void finish_bite_enemy_pattern_effect(void) {
+void finish_bite_enemy_pattern_effect(void)    // Complete bite pattern and apply damage if player not hidden
+{
     if (player_pattern_effect_in_progress == PTRN_HIDE) {
         // Player successfully avoided attack
         return;
@@ -378,11 +345,8 @@ void finish_bite_enemy_pattern_effect(void) {
     show_character(active_character, true);
 }
 
-/**
- * Clean up all active enemy notes
- * Used when resetting combat state
- */
-void cleanup_enemy_notes(void) {
+void cleanup_enemy_notes(void)    // Clean up all active enemy notes when resetting combat
+{
     // Clean up all note sprites and states
     for (u8 note = 0; note < 6; note++) {
         if (enemy_note_active[note]) {

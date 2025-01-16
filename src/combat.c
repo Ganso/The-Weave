@@ -1,8 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-bool is_combat_active;
+bool is_combat_active;    // Whether combat sequence is currently active
 
 /**
  * Combat System
@@ -14,26 +13,7 @@ bool is_combat_active;
  * - State tracking for active combats
  */
 
-/******************************************************************************
- *                            Combat Management                                 *
- ******************************************************************************/
-
-/**
- * Initialize or cleanup a combat sequence
- * 
- * When starting combat:
- * - Initializes RNG for unpredictable combat events
- * - Resets enemy health and randomizes initial pattern timings
- * - Sets up combat UI elements
- * - Disables player scrolling during combat
- * 
- * When ending combat:
- * - Cleans up UI elements
- * - Re-enables player movement
- * 
- * @param start: true to start combat, false to end it
- */
-void start_combat(bool start)
+void start_combat(bool start)    // Initialize or cleanup combat sequence with UI and enemy states
 {
     u8 numenemy, npattern, nnote;
 
@@ -85,21 +65,7 @@ void start_combat(bool start)
     }
 }
 
-/******************************************************************************
- *                            Damage Processing                                 *
- ******************************************************************************/
-
-/**
- * Process damage dealt to an enemy
- * 
- * - Reduces enemy HP by 1
- * - Handles enemy defeat if HP reaches 0
- * - Updates combat UI to show damage
- * - Checks for combat end if all enemies defeated
- * 
- * @param nenemy: Index of the enemy taking damage
- */
-void hit_enemy(u16 nenemy)
+void hit_enemy(u16 nenemy)    // Apply damage to enemy, handle defeat, and update UI
 {
     u16 remaining_enemies = 0;
 
@@ -169,40 +135,12 @@ void hit_enemy(u16 nenemy)
     }
 }
 
-/**
- * Process damage dealt to a player character
- * 
- * Currently only plays hurt sound effect.
- * TODO: Implement actual damage system for player characters
- * 
- * @param nchar: Index of the character taking damage
- */
-void hit_caracter(u16 nchar)
+void hit_caracter(u16 nchar)    // Handle player character damage (currently just sound)
 {
     play_sample(snd_player_hurt,sizeof(snd_player_hurt));
 }
 
-/******************************************************************************
- *                            Combat UI Management                             *
- ******************************************************************************/
-
-/**
- * Update visibility of enemy combat interface elements
- * 
- * When showing interface (show=true):
- * - Shows attacking enemy's face
- * - Hides other enemy faces
- * - Updates life counter for attacking enemy
- * - Shows active note indicators
- * 
- * When hiding interface (show=false):
- * - Hides all enemy faces
- * - Hides life counter
- * - Hides all note indicators
- * 
- * @param show: true to show interface, false to hide it
- */
-void show_or_hide_enemy_combat_interface(bool show)
+void show_or_hide_enemy_combat_interface(bool show)    // Toggle combat UI elements (faces, life counter, notes)
 {
     if (show && interface_active && is_combat_active && enemy_attacking != ENEMY_NONE) {
         // Show attacking enemy's interface

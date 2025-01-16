@@ -1,6 +1,13 @@
 #include <genesis.h>
 #include "globals.h"
 
+/**
+ * @brief Displays and handles the game's intro sequence
+ * 
+ * Shows the game logo with animated stars in the background, allows language selection,
+ * and waits for player input to proceed. Handles all resource loading/unloading and
+ * transitions including music and palette fades.
+ */
 void theweave_intro(void)
 {
     Sprite *star[MAXSTARS];
@@ -67,6 +74,12 @@ void theweave_intro(void)
     tile_ind-=intro_logo_bg.tileset->numTile;   
 }
 
+/**
+ * @brief Updates the language selection display in the intro screen
+ * 
+ * Clears and redraws the language options (English/Spanish) text,
+ * highlighting the currently selected language with brackets.
+ */
 void intro_update_language(void)
 {
     char eng_text[40];
@@ -87,6 +100,14 @@ void intro_update_language(void)
     VDP_drawTextBG(WINDOW, spa_text, (40 - strlen(spa_text)) >> 1, 24);
 }
 
+/**
+ * @brief Handles player input during the intro sequence
+ * 
+ * Processes directional inputs to switch language selection and
+ * A/Start buttons to confirm and exit the intro sequence.
+ * 
+ * @return true if player pressed A/Start to exit intro, false otherwise
+ */
 bool intro_read_keys(void)
 {
     u16 joy_state;

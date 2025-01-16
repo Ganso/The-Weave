@@ -1,5 +1,23 @@
 # System Patterns
 
+## Code Style Guidelines
+
+### Comments
+- Comments should be placed on the same line as the code they describe, not on a separate line
+- Use single-line comments (// style) for most documentation
+- Only use multi-line comments (/* */ style) when documentation is necessarily complex
+- Keep comments concise and to the point
+- Example:
+  ```c
+  u16 player_health;    // Current health points of the player
+  void init_game(void)  // Initialize game state and resources
+  ```
+
+### File Updates
+- When updating files, always preserve existing content
+- Add new sections without removing or modifying unrelated existing content
+- Read and understand existing patterns before making additions
+
 ## Architecture Overview
 The game is built as a traditional Sega Genesis/Megadrive ROM, using the SGDK (Sega Genesis Development Kit) framework.
 

@@ -2,11 +2,9 @@
 #include "globals.h"
 #include "characters.h"
 
-// Global variable definitions
-bool movement_active;
+bool movement_active;    // Whether entity movement is currently allowed
 
-// Move an entity
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)
+void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move entity to new position with smooth animation and shadow updates
 {
     u16 nchar=CHR_NONE;
     u16 nenemy = ENEMY_NONE;
