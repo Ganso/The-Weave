@@ -1,22 +1,20 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-Map *background_BGA;
-Map *background_BGB;
-u32 offset_BGA;
-u32 offset_BGB;
-u8 background_scroll_mode;
-u8 scroll_speed;
-bool player_scroll_active;
-u16 background_width;
-u16 x_limit_min;
-u16 x_limit_max;
-u16 y_limit_min;
-u16 y_limit_max;
+Map *background_BGA;              // Foreground layer tilemap
+Map *background_BGB;              // Background layer tilemap
+u32 offset_BGA;                   // Foreground scroll offset
+u32 offset_BGB;                   // Background scroll offset
+u8 background_scroll_mode;        // Current scrolling behavior mode
+u8 scroll_speed;                  // Parallax scroll speed divider
+bool player_scroll_active;        // Whether player can trigger scrolling
+u16 background_width;             // Total width of background in pixels
+u16 x_limit_min;                  // Minimum X position for movement
+u16 x_limit_max;                  // Maximum X position for movement
+u16 y_limit_min;                  // Minimum Y position for movement
+u16 y_limit_max;                  // Maximum Y position for movement
 
-// Update_background
-void update_bg(bool player_moved)
+void update_bg(bool player_moved)    // Update background scroll positions based on movement
 {
     // Front background layer
     if (player_moved) MAP_scrollTo(background_BGA, offset_BGA, 0); // Scroll background A
@@ -37,8 +35,7 @@ void update_bg(bool player_moved)
     }
 }
 
-// Set background limits
-void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max)
+void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max)    // Set movement boundary limits for characters
 {
     x_limit_min=x_min;
     y_limit_min=y_min;
@@ -46,8 +43,7 @@ void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max)
     y_limit_max=y_max;
 }
 
-// Scroll the background if the character is at the screen edge. This function is called when the character can't move but the background can scroll.
-void scroll_background(s16 dx)
+void scroll_background(s16 dx)    // Handle background scrolling when character reaches screen edge
 {
     if (player_scroll_active) { // Can player scroll?
         if (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) { // Scrolling mode is user dependant ?
@@ -68,8 +64,7 @@ void scroll_background(s16 dx)
     }
 }
 
-// Get screen X coordinate from background X coordinate
-u16 get_x_in_screen(u16 x_in_background, u8 width)
+u16 get_x_in_screen(u16 x_in_background, u8 width)    // Convert background X coordinate to screen space
 {
     s16 x_in_screen = x_in_background - offset_BGA;
     

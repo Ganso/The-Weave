@@ -2,14 +2,12 @@
 #include "globals.h"
 #include "characters.h"
 
-// Global variable definitions
-Item obj_item[MAX_ITEMS];
-Sprite *spr_item[MAX_ITEMS];
-u16 pending_item_interaction;
+Item obj_item[MAX_ITEMS];              // Array of game items with their properties
+Sprite *spr_item[MAX_ITEMS];           // Array of item sprites
+u16 pending_item_interaction;          // ID of item currently pending interaction
 
 
-// Initialize an item
-void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u16 collision_width, u16 collision_x_offset, u16 collision_height, u16 collision_y_offset, bool is_background)
+void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u16 collision_width, u16 collision_x_offset, u16 collision_height, u16 collision_y_offset, bool is_background)    // Initialize item with sprite and collision properties
 {
     u8 x_size, y_size;
 
@@ -34,8 +32,7 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
     display_item_if_visible(nitem);
 }
 
-// Release an item
-void release_item(u16 nitem)
+void release_item(u16 nitem)    // Free item resources and remove from game
 {
     obj_item[nitem].entity.active = false;
     if (spr_item[nitem] != NULL)
@@ -45,8 +42,7 @@ void release_item(u16 nitem)
     }
 }
 
-// Hide or display an item depending if the X coordinate is visible in the screen
-void display_item_if_visible(u16 nitem)
+void display_item_if_visible(u16 nitem)    // Show/hide item based on screen visibility
 {
     s16 x=get_x_in_screen(obj_item[nitem].x_in_background, obj_item[nitem].entity.x_size);
 
@@ -62,8 +58,7 @@ void display_item_if_visible(u16 nitem)
     }
 }
 
-// Check visibility of every item in screen
-void check_items_visibility(void)
+void check_items_visibility(void)    // Update visibility state of all active items
 {
     u16 nitem;
 
@@ -74,8 +69,7 @@ void check_items_visibility(void)
     }
 }
 
-// Detect if the active character is near an interactable item
-u16 detect_nearby_item()
+u16 detect_nearby_item()    // Find closest item within interaction range of active character
 {
     u16 nitem;
     u16 min_distance = 0xFFFF; // Maximum possible distance

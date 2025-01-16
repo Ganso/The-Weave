@@ -1,24 +1,18 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-bool player_patterns_enabled; // Can the character play a pattern right now?
-u8 note_playing; // The note the player is playing
-u16 note_playing_time; // How long has the note been played (in ticks)
-u16 time_since_last_note; // How long are we waiting for the pattern to finish
-u16 player_pattern_effect_in_progress; // Is a pattern effect currently in progress? Which one?
-bool player_pattern_effect_reversed; // Is the effect of a reverse pattern?
-u16 player_pattern_effect_time; // How long is the effect been active?
-u8 played_notes[4]; // Notes played in the current pattern
-u8 num_played_notes; // Number of notes of the current pattern
-Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
+bool player_patterns_enabled;              // Whether pattern system is currently enabled
+u8 note_playing;                          // Currently playing musical note (NOTE_NONE if none)
+u16 note_playing_time;                    // Duration of current note in ticks
+u16 time_since_last_note;                 // Time since last note in pattern sequence
+u16 player_pattern_effect_in_progress;    // Active pattern effect type (PTRN_NONE if none)
+bool player_pattern_effect_reversed;       // Whether current pattern is reversed
+u16 player_pattern_effect_time;           // Duration of current pattern effect
+u8 played_notes[4];                       // Sequence of notes played in current pattern
+u8 num_played_notes;                      // Number of notes played in current pattern
+Pattern obj_pattern[MAX_PATTERNS];         // Available pattern spells and their states
 
-/**
- * Activate a spell with animation and sound
- * Shows the spell icon in the center bottom of the screen
- * and plays each note of the spell sequence
- */
-void activate_spell(u16 npattern)
+void activate_spell(u16 npattern)    // Unlock new pattern spell with visual/audio feedback
 {
     // If pattern is already active, do nothing
     if (obj_pattern[npattern].active) {
@@ -38,11 +32,7 @@ void activate_spell(u16 npattern)
     obj_pattern[npattern].active = true;
 }
 
-/**
- * Process a new note being played
- * Initializes note playing state and updates character animation
- */
-void play_note(u8 nnote)
+void play_note(u8 nnote)    // Handle new musical note input and update character state
 {
     if (note_playing == NOTE_NONE) {
         if (note_playing_time == 0) {
@@ -60,10 +50,7 @@ void play_note(u8 nnote)
     }
 }
 
-/**
- * Main state machine for pattern system
- */
-void check_active_character_state(void)
+void check_active_character_state(void)    // Process character states for pattern system
 {
     bool is_reverse_match;
     u8 matched_pattern;
@@ -173,10 +160,7 @@ void check_active_character_state(void)
     }
 }
 
-/**
- * Play the appropriate sound effect for a pattern spell
- */
-void play_pattern_sound(u16 npattern)
+void play_pattern_sound(u16 npattern)    // Play sound effect for given pattern type
 {
     switch (npattern)
     {
@@ -195,10 +179,7 @@ void play_pattern_sound(u16 npattern)
     }
 }
 
-/**
- * Initialize the available patterns
- */
-void init_patterns(void)
+void init_patterns(void)    // Setup initial pattern definitions and states
 {
     obj_pattern[PTRN_ELECTRIC] = (Pattern) {false, {1,2,3,4}, NULL};
     obj_pattern[PTRN_HIDE] = (Pattern) {false, {2,5,3,6}, NULL};
@@ -206,11 +187,7 @@ void init_patterns(void)
     obj_pattern[PTRN_SLEEP] = (Pattern) {false, {2,1,6,4}, NULL};
 }
 
-/**
- * Pattern Validation Functions
- */
-
-bool validate_pattern_sequence(u8 *notes, bool *is_reverse)
+bool validate_pattern_sequence(u8 *notes, bool *is_reverse)    // Check if played notes match any known pattern
 {
     u8 npattern, nnote;
     u8 matches, reverse_matches;
@@ -279,17 +256,13 @@ bool can_use_open_pattern(void)
     return false; // You can't currently use the spell
 }
 
-/**
- * Pattern State Management
- */
-
-void reset_pattern_state(void)
+void reset_pattern_state(void)    // Clear current pattern sequence state
 {
     num_played_notes = 0;
     time_since_last_note = 0;
 }
 
-void handle_pattern_timeout(void)
+void handle_pattern_timeout(void)    // Check for pattern sequence timeout
 {
     if (time_since_last_note != 0) {
         time_since_last_note++;
@@ -301,7 +274,7 @@ void handle_pattern_timeout(void)
     }
 }
 
-void update_pattern_state(void)
+void update_pattern_state(void)    // Process note completion and check for pattern match
 {
     show_note(note_playing, false);
     note_playing = NOTE_NONE;
@@ -317,11 +290,7 @@ void update_pattern_state(void)
     update_character_animation();
 }
 
-/**
- * Electric Pattern Functions
- */
-
-void launch_electric_pattern(void)
+void launch_electric_pattern(void)    // Start electric pattern effect
 {
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
     anim_character(active_character, ANIM_MAGIC);
@@ -331,7 +300,7 @@ void launch_electric_pattern(void)
     player_pattern_effect_in_progress = PTRN_ELECTRIC;
 }
 
-void do_electric_pattern_effect(void)
+void do_electric_pattern_effect(void)    // Process electric pattern visual and combat effects
 {
     // Visual thunder effect
     for (u8 i = 0; i < 100; i++) {
@@ -361,17 +330,13 @@ void do_electric_pattern_effect(void)
     obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
 }
 
-void finish_electric_pattern_effect(void)
+void finish_electric_pattern_effect(void)    // Clean up electric pattern state
 {
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_time = 0;
 }
 
-/**
- * Hide Pattern Functions
- */
-
-void launch_hide_pattern(void)
+void launch_hide_pattern(void)    // Start hide pattern effect
 {
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
     show_pattern_icon(PTRN_HIDE, true, true);
@@ -381,7 +346,7 @@ void launch_hide_pattern(void)
     player_pattern_effect_time = 1;
 }
 
-void do_hide_pattern_effect(void)
+void do_hide_pattern_effect(void)    // Process hide pattern transparency effect
 {
     u16 max_effect_time = 400;
     movement_active = true;  // Keep movement enabled during effect
@@ -405,18 +370,14 @@ void do_hide_pattern_effect(void)
     }
 }
 
-void finish_hide_pattern_effect(void)
+void finish_hide_pattern_effect(void)    // Clean up hide pattern state
 {
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_time = 0;
     movement_active = false;
 }
 
-/**
- * Sleep Pattern Functions
- */
-
-void launch_sleep_pattern(void)
+void launch_sleep_pattern(void)    // Start sleep pattern effect
 {
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
     show_pattern_icon(PTRN_SLEEP, true, true);
@@ -424,7 +385,7 @@ void launch_sleep_pattern(void)
     player_pattern_effect_time = 1;
 }
 
-void do_sleep_pattern_effect(void)
+void do_sleep_pattern_effect(void)    // Process sleep pattern effect
 {
     // Effect complete
     show_pattern_icon(PTRN_SLEEP, false, false);
@@ -433,17 +394,13 @@ void do_sleep_pattern_effect(void)
     obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
 }
 
-void finish_sleep_pattern_effect(void)
+void finish_sleep_pattern_effect(void)    // Clean up sleep pattern state
 {
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_time = 0;
 }
 
-/**
- * Open Pattern Functions
- */
-
-void launch_open_pattern(void)
+void launch_open_pattern(void)    // Start open pattern effect
 {
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
     show_pattern_icon(PTRN_OPEN, true, true);
@@ -451,7 +408,7 @@ void launch_open_pattern(void)
     player_pattern_effect_time = 1;
 }
 
-void do_open_pattern_effect(void)
+void do_open_pattern_effect(void)    // Process open pattern effect
 {
     // Effect complete
     show_pattern_icon(PTRN_OPEN, false, false);
@@ -460,7 +417,7 @@ void do_open_pattern_effect(void)
     obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
 }
 
-void finish_open_pattern_effect(void)
+void finish_open_pattern_effect(void)    // Clean up open pattern state
 {
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_time = 0;

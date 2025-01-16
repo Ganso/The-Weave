@@ -1,11 +1,9 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-u8 num_colls;
+u8 num_colls;    // Counter to prevent infinite collision loops
 
-// Calculate distance between two characters at given coordinates
-u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)
+u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)    // Calculate Manhattan distance between character collision boxes
 {
     // Calculate char1's collision box boundaries
     s16 char1_left = x1 + obj_character[char1].collision_x_offset;
@@ -42,8 +40,7 @@ u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)
            abs((char1_top + char1_bottom) / 2 - closest_y);
 }
 
-// Calculate distance between coordinates and nearest point on item's collision box
-u16 item_distance(u16 nitem, u16 x, u8 y)
+u16 item_distance(u16 nitem, u16 x, u8 y)    // Calculate Manhattan distance from point to item collision box
 {
     // Calculate item's collision box boundaries
     s16 item_left = obj_item[nitem].entity.x + obj_item[nitem].entity.collision_x_offset;
@@ -72,8 +69,7 @@ u16 item_distance(u16 nitem, u16 x, u8 y)
     return abs(x - closest_x) + abs(y - closest_y);
 }
 
-// Detect collisions between a character and all other characters at given coordinates
-u16 detect_char_char_collision(u16 nchar, u16 x, u8 y)
+u16 detect_char_char_collision(u16 nchar, u16 x, u8 y)    // Check for collisions between character and other characters
 {
     u16 other_char;
 
@@ -126,8 +122,7 @@ u16 detect_char_char_collision(u16 nchar, u16 x, u8 y)
     return CHR_NONE;
 }
 
-// Detect collisions between a character and every item, given some new coordinates
-u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)
+u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)    // Check for collisions between character and items
 {
     u16 nitem;
     s16 char_left, char_right, char_top, char_bottom;
@@ -166,8 +161,7 @@ u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)
     return ITEM_NONE; // No collision detected
 }
 
-// Detect collisions between a character and all enemies at given coordinates
-u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)
+u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)    // Check for collisions between character and enemies
 {
     u16 nenemy;
 
@@ -220,8 +214,7 @@ u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)
     return ENEMY_NONE;
 }
 
-// Detect collisions between an enemy and all characters at given coordinates
-u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)
+u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)    // Check for collisions between enemy and characters
 {
     u16 nchar;
 

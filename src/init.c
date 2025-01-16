@@ -1,7 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-void initialize(bool first_time)
+void initialize(bool first_time)    // Initialize system hardware, sprites, controllers and global game state
 {
     u8 i;
 
@@ -91,7 +91,7 @@ void initialize(bool first_time)
 }
 
 // initialize level and load background
-void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u16 new_background_width, u8 new_scroll_mode, u8 new_scroll_speed)
+void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u16 new_background_width, u8 new_scroll_mode, u8 new_scroll_speed)    // Load and setup a new game level with background layers and scroll settings
 {
     initialize(false); // Reset hardware when starting each level, but don't change only first-time options
     
@@ -135,7 +135,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
 }
 
 // Free all resources used by the level
-void end_level() {
+void end_level() {    // Clean up level resources and reset game state
     // Fade out music and screen
     fade_music(SCREEN_FPS);
     PAL_fadeOutAll(SCREEN_FPS,false);

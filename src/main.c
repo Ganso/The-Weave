@@ -2,7 +2,7 @@
 #include "globals.h"
 
 
-int main(bool hard)
+int main(bool hard)    // Main game loop - handles initialization and scene transitions
 {
     #ifdef DEBUG_ON
      kprintf("The Weave - %s",GAMEVERSION);

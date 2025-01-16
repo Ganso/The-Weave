@@ -1,22 +1,20 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-Sprite *spr_face_left;
-Sprite *spr_face_right;
-Sprite *spr_int_button_A;
-Map *map_int_rod;
-Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6;
-Sprite *spr_int_enemy_rod_1,*spr_int_enemy_rod_2,*spr_int_enemy_rod_3,*spr_int_enemy_rod_4,*spr_int_enemy_rod_5,*spr_int_enemy_rod_6;
-Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6;
-Sprite *spr_int_life_counter;
-Sprite *spr_pause_icon[5];
-Sprite *spr_pattern_list_note[4];
-bool interface_active;
+Sprite *spr_face_left;                    // Left character face background sprite
+Sprite *spr_face_right;                   // Right character face background sprite
+Sprite *spr_int_button_A;                 // Button A interface sprite
+Map *map_int_rod;                         // Rod interface map
+Sprite *spr_int_rod_1,*spr_int_rod_2,*spr_int_rod_3,*spr_int_rod_4,*spr_int_rod_5,*spr_int_rod_6;    // Player rod note sprites
+Sprite *spr_int_enemy_rod_1,*spr_int_enemy_rod_2,*spr_int_enemy_rod_3,*spr_int_enemy_rod_4,*spr_int_enemy_rod_5,*spr_int_enemy_rod_6;    // Enemy rod note sprites
+Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_pentagram_4,*spr_int_pentagram_5,*spr_int_pentagram_6;    // Pentagram note sprites
+Sprite *spr_int_life_counter;             // Life counter interface sprite
+Sprite *spr_pause_icon[5];                // Pattern icons shown in pause screen
+Sprite *spr_pattern_list_note[4];         // Note sprites shown in pause pattern list
+bool interface_active;                     // Whether game interface is currently shown
 
 
-// Show or hide the bottom interface of the game
-void show_or_hide_interface(bool visible)
+void show_or_hide_interface(bool visible)    // Toggle visibility of game's bottom interface
 {
     if (interface_active==true) {
         if (visible == true) {
@@ -37,8 +35,7 @@ void show_or_hide_interface(bool visible)
     }
 }
 
-// Show or hide a specific note in the interface
-void show_note(u8 nnote, bool visible)
+void show_note(u8 nnote, bool visible)    // Display or hide a musical note (1-6:MI-DO) with its rod and pentagram sprites
 {
     Sprite **pentsprite;
     Sprite **rodsprite;
@@ -127,8 +124,7 @@ void show_note(u8 nnote, bool visible)
     SPR_update();
 }
 
-// Hide all rod icons in the interface
-void hide_rod_icons(void)
+void hide_rod_icons(void)    // Remove all rod note sprites from interface
 {
     // Release all rod sprites and set pointers to NULL
     if (spr_int_rod_1!=NULL) SPR_releaseSprite(spr_int_rod_1);
@@ -146,8 +142,7 @@ void hide_rod_icons(void)
     SPR_update();
 }
 
-// Hide all pentagram icons in the interface
-void hide_pentagram_icons(void)
+void hide_pentagram_icons(void)    // Remove all pentagram note sprites from interface
 {
     // Release all pentagram sprites
     if (spr_int_pentagram_1!=NULL) SPR_releaseSprite(spr_int_pentagram_1);
@@ -159,8 +154,7 @@ void hide_pentagram_icons(void)
     SPR_update();
 }
 
-// Hide all pattern icons in the interface
-void hide_pattern_icons(void)
+void hide_pattern_icons(void)    // Remove all pattern spell icons from interface
 {
     u16 npattern;
 
@@ -172,8 +166,7 @@ void hide_pattern_icons(void)
     }
 }
 
-// Show or hide a specific pattern icon in the interface
-void show_pattern_icon(u16 npattern, bool show, bool priority)
+void show_pattern_icon(u16 npattern, bool show, bool priority)    // Display or hide a pattern spell icon in interface
 {
     u8 npal = PAL2;
     const SpriteDefinition *nsprite = NULL;
@@ -196,8 +189,8 @@ void show_pattern_icon(u16 npattern, bool show, bool priority)
     }
 }
 
-// Function to hide all sprites and save their state
-SpriteState* hideAllSprites(u16* count) {
+SpriteState* hideAllSprites(u16* count)    // Hide all active sprites and save their visibility state
+{
     Sprite* currentSprite = firstSprite;
     u16 spriteCount = 0;
     
@@ -230,8 +223,8 @@ SpriteState* hideAllSprites(u16* count) {
     return states;
 }
 
-// Function to restore the visibility of sprites
-void restoreSpritesVisibility(SpriteState* states, u16 count) {
+void restoreSpritesVisibility(SpriteState* states, u16 count)    // Restore previously saved sprite visibility states
+{
     for (u16 i = 0; i < count; i++) {
         if (states[i].sprite != NULL) {
             SPR_setVisibility(states[i].sprite, states[i].visibility);
@@ -242,8 +235,8 @@ void restoreSpritesVisibility(SpriteState* states, u16 count) {
     MEM_free(states);
 }
 
-// Display the pause/state screen
-void pause_screen(void) {
+void pause_screen(void)    // Handle pause screen with pattern spell selection
+{
     u16 value; // Joypad value
     u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
     bool next_pattern_found;
@@ -339,8 +332,7 @@ void pause_screen(void) {
     VDP_waitVSync();
 }
 
-// Show or hide the pattern list in the pause screen
-void show_pause_pattern_list(bool show, u8 active_pattern)
+void show_pause_pattern_list(bool show, u8 active_pattern)    // Display pattern list in pause screen with active pattern highlighted
 {
     u16 x_initial,x, nicon;
     u8 nnote, npattern, num_active_patterns=0;
@@ -367,8 +359,7 @@ void show_pause_pattern_list(bool show, u8 active_pattern)
     }
 }
 
-// Show one of the notes of a pattern in the pattern list (Pause screen)
-void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)
+void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)    // Display a note in the pause screen pattern list
 {
     SpriteDefinition *pentsprite;
     u8 note;
@@ -411,8 +402,7 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)
     }
 }
 
-// Show or hide the icon of a pattern spell in the pause list
-void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool priority)
+void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool priority)    // Display a pattern icon in the pause screen list
 {
     u8 npal = PAL2;
     const SpriteDefinition *nsprite = NULL;

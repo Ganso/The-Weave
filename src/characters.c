@@ -1,16 +1,14 @@
 #include <genesis.h>
 #include "globals.h"
 
-// Global variable definitions
-Entity obj_character[MAX_CHR];
-Sprite *spr_chr[MAX_CHR];
-Sprite *spr_chr_shadow[MAX_CHR];
-u16 active_character;
-Entity obj_face[MAX_FACE];
-Sprite *spr_face[MAX_FACE];
+Entity obj_character[MAX_CHR];         // Array of game characters with their properties
+Sprite *spr_chr[MAX_CHR];             // Array of character sprites
+Sprite *spr_chr_shadow[MAX_CHR];      // Array of character shadow sprites
+u16 active_character;                 // Currently controlled character ID
+Entity obj_face[MAX_FACE];            // Array of character face entities for dialogs
+Sprite *spr_face[MAX_FACE];           // Array of character face sprites
 
-// Update shadow position for a character
-void update_character_shadow(u16 nchar)
+void update_character_shadow(u16 nchar)    // Update shadow sprite position based on character position
 {
     if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar] != NULL) {
         // Position shadow at the bottom of character's collision box
@@ -25,8 +23,7 @@ void update_character_shadow(u16 nchar)
     }
 }
 
-// Initialize a character
-void init_character(u16 nchar)
+void init_character(u16 nchar)    // Create new character instance with sprites and collision
 {
     u8 npal = PAL1;
     u8 x_size, y_size; // We can get them from the Sprite Definition
@@ -90,8 +87,7 @@ void init_character(u16 nchar)
     }
 }
 
-// Release a character from memory (Just the sprite, keep the Entity)
-void release_character(u16 nchar)
+void release_character(u16 nchar)    // Free character sprite resources but keep entity data
 {
     obj_character[nchar].active = false;
     if (spr_chr[nchar] != NULL)
@@ -111,8 +107,7 @@ void release_character(u16 nchar)
     SPR_update();
 }
 
-// Initialize a face
-void init_face(u16 nface)
+void init_face(u16 nface)    // Create new character face sprite for dialogs
 {
     u8 npal = PAL1;
     const SpriteDefinition *nsprite = NULL;
@@ -150,8 +145,7 @@ void init_face(u16 nface)
     }
 }
 
-// Release a face from memory (Just the sprite, keep the Entity)
-void release_face(u16 nface)
+void release_face(u16 nface)    // Free face sprite resources but keep entity data
 {
     obj_face[nface].active = false;
     if (spr_face[nface] != NULL)
@@ -161,8 +155,7 @@ void release_face(u16 nface)
     }
 }
 
-// Update a character based on every parameter
-void update_character(u16 nchar)
+void update_character(u16 nchar)    // Update character sprite properties from current state
 {
     SPR_setPosition(spr_chr[nchar],obj_character[nchar].x,obj_character[nchar].y);
     SPR_setPriority(spr_chr[nchar],obj_character[nchar].priority);
@@ -172,8 +165,7 @@ void update_character(u16 nchar)
     update_character_shadow(nchar);
 }
 
-// Show or hide a character
-void show_character(u16 nchar, bool show)
+void show_character(u16 nchar, bool show)    // Toggle visibility of character and its shadow
 {
     obj_character[nchar].visible=show;
     SPR_setVisibility(spr_chr[nchar],show?VISIBLE:HIDDEN);
@@ -186,8 +178,7 @@ void show_character(u16 nchar, bool show)
     SPR_update();
 }
 
-// Change a character's animation
-void anim_character(u16 nchar, u8 newanimation)
+void anim_character(u16 nchar, u8 newanimation)    // Set character animation if different from current
 {
     if (obj_character[nchar].animation!=newanimation) {
         obj_character[nchar].animation=newanimation;
@@ -196,16 +187,14 @@ void anim_character(u16 nchar, u8 newanimation)
     }
 }
 
-// Make a character look to the left (or right)
-void look_left(u16 nchar, bool direction_right)
+void look_left(u16 nchar, bool direction_right)    // Set character sprite horizontal flip
 {
     obj_character[nchar].flipH=direction_right;
     SPR_setHFlip (spr_chr[nchar], direction_right);
     SPR_update();
 }
 
-// Move a character to a new position
-void move_character(u16 nchar, s16 newx, s16 newy)
+void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with walking animation and direction update
 {
     show_character(nchar, true);
     anim_character(nchar, ANIM_WALK);
@@ -222,8 +211,7 @@ void move_character(u16 nchar, s16 newx, s16 newy)
     anim_character(nchar, ANIM_IDLE);
 }
 
-// Move a character to a new position (instantly)
-void move_character_instant(u16 nchar,s16 x,s16 y)
+void move_character_instant(u16 nchar,s16 x,s16 y)    // Set character position immediately without animation
 {
     y-=obj_character[nchar].y_size; // Now all calculations are relative to the bottom line, not the upper one
 
@@ -234,8 +222,7 @@ void move_character_instant(u16 nchar,s16 x,s16 y)
     next_frame(false);
 }
 
-// Update characters, items and enemies depth
-void update_sprites_depth(void)
+void update_sprites_depth(void)    // Sort sprite layers based on Y position for proper overlap
 {
     u16 i;
 
@@ -265,8 +252,7 @@ void update_sprites_depth(void)
     }
 }
 
-// Follow (or unfollow active character)
-void follow_active_character(u16 nchar, bool follow, u8 follow_speed)
+void follow_active_character(u16 nchar, bool follow, u8 follow_speed)    // Set character to follow active character
 {
     obj_character[nchar].follows_character=follow;
     obj_character[nchar].follow_speed=follow_speed;
@@ -274,8 +260,7 @@ void follow_active_character(u16 nchar, bool follow, u8 follow_speed)
     show_character(nchar, true);
 }
 
-// Move characters with STATE_FOLLOWING towards the active character
-void approach_characters(void)
+void approach_characters(void)    // Update positions of following characters to move toward active character
 {
     u16 nchar;
     s16 newx, newy;

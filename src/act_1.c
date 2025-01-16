@@ -1,7 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-void act_1_scene_1(void)
+void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learning
 {
     u16 paltmp[64];
 
@@ -106,7 +106,7 @@ void act_1_scene_1(void)
     current_scene=2; // Next scene
 }
 
-void act_1_scene_2(void)
+void act_1_scene_2(void)    // Corridor scene with history books and memories
 {
     // Initialize level
     new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 576, BG_SCRL_USER_LEFT, 0);
@@ -173,7 +173,7 @@ void act_1_scene_2(void)
     current_scene=3; // Next scene
 }
 
-void act_1_scene_3(void)
+void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weavers
 {
     // Initialize level
     new_level(&historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, historians_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
@@ -236,7 +236,7 @@ void act_1_scene_3(void)
     current_scene=5; // Next scene
 }
 
-void act_1_scene_5(void)
+void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
 {
     // Initialize level
     new_level(&weavers_bg_tile, &weavers_bg_map, &weavers_front_tile, &weavers_front_map, weavers_pal, 1000, BG_SCRL_USER_RIGHT, 2);
