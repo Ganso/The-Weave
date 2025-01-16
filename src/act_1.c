@@ -216,7 +216,7 @@ void act_1_scene_3(void)
     u8 response=choice_dialog(&choices[ACT1_CHOICE1][0]);
     kprintf("Response: %d\n",response);
     talk_dialog(&dialogs[ACT1_DIALOG2][12+response]);
-    talk_dialog(&dialogs[ACT1_DIALOG2][15]); // (ES) "Tu padre quería encontrarla" - (EN) "Your father wanted to find it"
+    talk_dialog(&dialogs[ACT1_DIALOG2][15]); // (ES) "Tu padre quería encontrar la isla donde vivían" - (EN) "Your father wanted to find their home island"
     talk_dialog(&dialogs[ACT1_DIALOG2][16]); // (ES) "Nuestro destino es documentar hechos, no perseguirlos" - (EN) "Our destiny is to document facts, not to chase them"
     talk_dialog(&dialogs[ACT1_DIALOG2][17]); // (ES) "Linus tiene diecisiete años Esa era mi edad cuando viajé por el mundo" - (EN) "Linus is seventeen That was my age when I traveled the world"
     talk_dialog(&dialogs[ACT1_DIALOG2][18]); // (ES) "Y la edad de su padre cuando llegó aquí" - (EN) "And his father's age when he came to us"
