@@ -351,7 +351,9 @@ def find_dialogs_and_choices(c_file, texts_h_file, texts_c_file):
                 # Check if line has a choice_dialog call
                 choice_match = re.search(r'choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[0\]\s*\);(.*?)$', line.rstrip())
 
-                # DON'T PROCESS CHOICES - IT'S NOT WORKING PROPERLY
+                # *****************************************************
+                # * DON'T PROCESS CHOICES - IT'S NOT WORKING PROPERLY *
+                # *****************************************************
                 if choice_match:
                     choice_match = False
                     print("DISCARDING DETECTED CHOICE")
