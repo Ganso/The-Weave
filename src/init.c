@@ -70,7 +70,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     // Enemys and combat
     init_enemy_classes();
     init_enemy_patterns();
-    is_combat_active=false;
+    combat_sm.is_active=false;
 
     // Items
     pending_item_interaction=ITEM_NONE;
@@ -187,7 +187,7 @@ void end_level() {    // Clean up level resources and reset game state
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_reversed = false;
     player_pattern_effect_time = 0;
-    is_combat_active = false;
+    combat_sm.is_active = false;
     pending_item_interaction = ITEM_NONE;
 
     // Reset scroll values

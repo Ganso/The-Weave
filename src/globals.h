@@ -1,20 +1,29 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
+// Debug settings
 #define DEBUG_ON
+#define DEBUG_STATE_MACHINES 1
 
-// Create version using compile date
+// Version macro
 #define GAMEVERSION ({ static char version[20]; sprintf(version, "v%c%c%c%c%c%c%c", (__DATE__[4] == ' ' ? '0' : __DATE__[4]), __DATE__[5], __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[9], __DATE__[10]); version; })
 
-// Sega Genesis
+// Core includes
 #include <genesis.h>
 
-// Debug
+// Constants and types
+#include "game_constants.h"
+
+// Debug tools
 #ifdef DEBUG_ON
 #include "KDebug.h"
 #include "tools.h"
 #include "timer.h"
 #endif
+
+// Core systems
+#include "state_machine.h"    // State machine framework
+#include "message_system.h"   // Message passing system
 
 // Resources
 #include "../res/resources.h"
@@ -28,32 +37,39 @@
 #include "../res/res_geesebumps.h"
 #include "../res/res_intro.h"
 
-extern u16 tile_ind; // Tiles index
-extern u16 frame_counter; // Number of frames counter (random number generator, and frameskip counter in some functions)
+// Global variables
+extern u16 tile_ind;        // Tiles index
+extern u16 frame_counter;   // Frame counter for random numbers and frameskip
 
-// Auxiliary game libraries
-#include "entity.h" // Every object in the game that has a sprite you can show, move...
-#include "characters.h" // Characters that can talk, or you can control
-#include "character_patterns.h" // Paterns the player can play and use
-#include "enemies_patterns.h" // Patterns the enemies can play and use
-#include "enemies.h" // Enemies you fight
-#include "items.h" // Items in the scenery
-#include "texts.h" // Text strings (English / Spanish)
-#include "dialogs.h" // Dialog and text related functions
-#include "controller.h" // Controller related functions
-#include "interface.h" // Game interface
-#include "combat.h" // Combat related functions (including patterns enemy can use)
-#include "background.h" // Background and scenery related objects and functions
-#include "collisions.h" // Distance and collisions related functions
-#include "sound.h" // Music and SFX
+// Entity implementations
+#include "entity.h"          // Base entity system
+#include "characters.h"      // Character entities
+#include "enemies.h"         // Enemy entities
+#include "items.h"           // Item entities
+
+// Combat system
+#include "combat_states.h"   // Combat state machine
+#include "enemy_pattern_states.h" // Enemy pattern state machine
+#include "character_patterns.h" // Player patterns
+#include "enemies_patterns.h" // Enemy patterns
+#include "combat.h"          // Combat core
+
+// Game systems
+#include "texts.h"           // Text strings
+#include "dialogs.h"         // Dialog system
+#include "controller.h"      // Input handling
+#include "interface.h"       // UI system
+#include "background.h"      // Background handling
+#include "collisions.h"      // Collision detection
+#include "sound.h"           // Audio system
 
 // Main game libraries
-#include "init.h" // Initialization functions
-#include "intro.h" // Game intro
-#include "geesebumps.h" // Geesebumps logo
-#include "act_1.h" // Act 1
+#include "init.h"            // Initialization functions
+#include "intro.h"           // Game intro
+#include "geesebumps.h"      // Geesebumps logo
+#include "act_1.h"           // Act 1
 
-// Global definitions (NTSC)
+// Screen constants
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 224
 extern u8 SCREEN_FPS;
@@ -63,8 +79,8 @@ extern u8 current_act;
 extern u8 current_scene;
 
 // Global functions
-void wait_seconds(int sec); // Wait for N seconds
-void next_frame(bool interactive); // Wait for next frame and do each-frame actions, including interactive actions if selected
-u16 calc_ticks(u16 milliseconds); // Translate millisecons to ticks
+void wait_seconds(int sec);                    // Wait for N seconds
+void next_frame(bool interactive);             // Wait for next frame and handle input
+u16 calc_ticks(u16 milliseconds);             // Convert milliseconds to ticks
 
-#endif
+#endif // _GLOBALS_H_

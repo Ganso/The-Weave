@@ -59,7 +59,39 @@ The game is built as a traditional Sega Genesis/Megadrive ROM, using the SGDK (S
 - Sound effect and music handling
 - Memory optimization for 16-bit hardware
 
-7. Input Handling
+7. State Machine System
+- Generic state machine framework for managing complex game states
+- Message-based communication between systems
+- Highly documented for maintainability
+- Debug output through kprintf for testing
+- Key components:
+  * State definitions with enter/exit handlers
+  * Message queue for asynchronous communication
+  * State transitions based on messages
+  * Support for state-specific data
+
+8. Combat State Machine
+- Built on top of the generic state machine
+- Handles both player and enemy pattern casting
+- Support for pattern interruption
+- Clear state transitions:
+  * IDLE -> PLAYER_CAST/ENEMY_CAST
+  * PLAYER_CAST -> PATTERN_EFFECT/IDLE
+  * ENEMY_CAST -> PATTERN_EFFECT/IDLE
+  * PATTERN_EFFECT -> IDLE
+- Extensive debug output for testing
+
+9. Message System
+- Decoupled communication between game systems
+- Support for immediate and queued messages
+- Multiple message handlers per type
+- Debug logging of all message flow
+- Message types for:
+  * Combat events (start/end)
+  * Pattern casting
+  * Effects and interrupts
+
+10. Input Handling
 - Controller input processing
 - Movement controls
 - Pattern/spell activation

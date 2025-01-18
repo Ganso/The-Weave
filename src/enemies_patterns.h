@@ -1,49 +1,63 @@
 #ifndef _ENM_PATTERNS_H_
 #define _ENM_PATTERNS_H_
 
+#include "globals.h"
 
-// Enemy Patterns
-#define MAX_PATTERN_ENEMY 2
-
-#define PTRN_EN_NONE         254
-#define PTRN_EN_ELECTIC      0   // Electricity spell
-#define PTRN_EN_BITE         1   // Bite Spell
-
-#define MAX_ATTACK_NOTE_PLAYING_TIME  500  // Attack note playing time (in milliseconds)
-#define MAX_TIME_AFTER_ATTACK        1000  // Time to stay in STATE_ATTACK_FINISHED (in milliseconds)
-
-// Pattern-specific max effect times (in milliseconds)
-#define MAX_EFFECT_TIME_ELECTRIC 1600
-#define MAX_EFFECT_TIME_BITE     1400
-
-// Enemy pattern struct
-typedef struct
-{
-    u8 numnotes;
-    u8 notes[4];
-    u16 recharge_time;
+/**
+ * @brief Enemy pattern definition structure
+ */
+typedef struct {
+    u8 numnotes;           // Number of notes in sequence
+    u8 notes[4];          // Note sequence (1-6:MI-DO)
+    u16 recharge_time;    // Ticks between pattern uses
 } Pattern_Enemy;
-extern Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY]; // Enemie pattern object
 
-// Enemy pattern state variables
-extern u16 enemy_attacking; // Which enemy is attacking?
-extern u16 enemy_attack_pattern; // Which pattern is the enemy using?
-extern u8 enemy_attack_pattern_notes; // How many notes has the enemy launched yet?
-extern u16 enemy_attack_time; // How long is the enemy attacking?
-extern bool enemy_attack_effect_in_progress; // An enemy pattern attack effect is in progress
-extern u16 enemy_attack_effect_time; // How long has been the enemy pattern effect working?
-extern bool enemy_note_active[6]; // Is the note # MI-DO active?
+// Pattern definitions
+extern Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY];
 
-// Initialization function
-void init_enemy_patterns(void); // initialize enemy patterns
+// Currently attacking enemy tracking
+extern u16 enemy_attacking;         // Which enemy is attacking
+extern u16 enemy_attack_pattern;    // Which pattern is being used
 
-// Main state machine function
-void check_enemy_state(void); // Main state machine for enemy pattern system
+// Note indicator states
+extern bool enemy_note_active[6];   // Is note # (MI-DO) active
 
-// Helper functions
-void show_enemy_note(u8 nnote, bool visible, bool play); // Show and play (or not) an enemy note
-void finish_enemy_pattern_effect(void); // Finish the enemy pattern effect
-void cleanup_enemy_notes(void); //Clean up all active enemy notes
+/**
+ * @brief Initialize enemy pattern system
+ * 
+ * Sets up:
+ * - Pattern definitions
+ * - Pattern state machine
+ * - Initial states
+ */
+void init_enemy_patterns(void);
+
+/**
+ * @brief Update enemy pattern system
+ * 
+ * - Updates pattern state machine
+ * - Checks for new pattern opportunities
+ * - Manages pattern cooldowns
+ */
+void check_enemy_state(void);
+
+/**
+ * @brief Show/hide and optionally play enemy note
+ * @param nnote Note number (1-6:MI-DO)
+ * @param visible Whether to show note
+ * @param play Whether to play note sound
+ */
+void show_enemy_note(u8 nnote, bool visible, bool play);
+
+/**
+ * @brief Clean up pattern effect and reset states
+ */
+void finish_enemy_pattern_effect(void);
+
+/**
+ * @brief Clean up all active enemy notes
+ */
+void cleanup_enemy_notes(void);
 
 // Pattern-specific effect functions
 void launch_electric_enemy_pattern(void);
@@ -54,4 +68,4 @@ void launch_bite_enemy_pattern(void);
 void do_bite_enemy_pattern_effect(void);
 void finish_bite_enemy_pattern_effect(void);
 
-#endif
+#endif // _ENM_PATTERNS_H_

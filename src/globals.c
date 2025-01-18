@@ -31,7 +31,14 @@ void next_frame(bool interactive)    // Process next frame with optional interac
         approach_characters();
 
         // Combat related actions
-        if (is_combat_active==true) {
+        if (combat_sm.is_active) {
+            // Update combat state machine
+            combat_sm_update(&combat_sm);
+            
+            // Process any queued messages
+            msg_update();
+            
+            // Update enemy behavior
             check_enemy_state();
             approach_enemies();
         }

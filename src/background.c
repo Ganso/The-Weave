@@ -51,7 +51,7 @@ void scroll_background(s16 dx)    // Handle background scrolling when character 
                 offset_BGA+=dx; // Change offste
                 update_bg(true);
                 // Move following characters to the left
-                for (u16 nchar=0; nchar<MAX_CHR; nchar ++) {
+                for (u16 nchar = 0; nchar < MAX_CHR; nchar++) {
                     if (obj_character[nchar].follows_character==true) {
                         if (obj_character[nchar].x>-20) {
                             obj_character[nchar].x-=dx;
