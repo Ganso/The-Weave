@@ -116,9 +116,9 @@ void release_enemy(u16 nenemy)    // Free enemy resources and reset related comb
     // Clean up combat state if this enemy was attacking
     if (enemy_attacking == nenemy) {
         enemy_attacking = ENEMY_NONE;
-        enemy_attack_pattern_notes = 0;
-        enemy_attack_time = 0;
-        enemy_attack_effect_in_progress = false;
+        combat_sm.enemy_cast.notes_played = 0;
+        combat_sm.effect_timer = 0;
+        combat_sm.effect_in_progress = false;
         
         // Clean up note indicators
         for (u8 note = 0; note < 6; note++) {
@@ -223,7 +223,7 @@ void approach_enemies(void)    // Update enemy positions to follow player during
     u16 collision_result;
     bool has_moved;
 
-    if (is_combat_active == true && player_pattern_effect_in_progress != PTRN_HIDE) { // Only move enemies during combat when the player is not hidden
+    if (combat_sm.is_active && player_pattern_effect_in_progress != PTRN_HIDE) { // Only move enemies during combat when the player is not hidden
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
             has_moved=false;
             if (obj_enemy[nenemy].obj_character.follows_character == true) { // Check if this enemy type follows characters

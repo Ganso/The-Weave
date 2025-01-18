@@ -1,53 +1,45 @@
 #ifndef _ENTITY_H_
 #define _ENTITY_H_
 
-// Animations
-#define ANIM_IDLE       0
-#define ANIM_WALK       1
-#define ANIM_ACTION     2
-#define ANIM_MAGIC      3
+#include <genesis.h>
+#include "game_constants.h"
 
 // Global variables
 extern bool movement_active;
 
-// Entities states
-typedef enum {
-    STATE_IDLE,
-    STATE_WALKING,
-    STATE_PLAYING_NOTE,
-    STATE_PATTERN_FINISHED,
-    STATE_PATTERN_CHECK,
-    STATE_PATTERN_EFFECT,
-    STATE_PATTERN_EFFECT_FINISH,
-    STATE_ATTACK_FINISHED,
-    STATE_FOLLOWING
-} GameState;
-
-// Game entity definition
-typedef struct
-{
-    bool                    active;
-    const SpriteDefinition  *sd;
-    const SpriteDefinition  *sd_shadow;
-    s16                     x;
-    s16                     y;
-    u8                      x_size;
-    u8                      y_size;
-    u16                     palette;
-    u8                      priority;
-    u8                      flipH;
-    u8                      animation;
-    bool                    visible;
-    u8                      collision_x_offset;
-    u8                      collision_y_offset;
-    u8                      collision_width;
-    u8                      collision_height;
-    GameState               state;
-    bool                    follows_character;
-    u8                      follow_speed;
-    bool                    drops_shadow;
+/**
+ * @brief Game entity definition
+ */
+typedef struct {
+    bool                    active;             // Whether entity is active
+    const SpriteDefinition  *sd;                // Sprite definition
+    const SpriteDefinition  *sd_shadow;         // Shadow sprite definition
+    s16                     x;                  // X position
+    s16                     y;                  // Y position
+    u8                      x_size;             // Width
+    u8                      y_size;             // Height
+    u16                     palette;            // Color palette
+    u8                      priority;           // Sprite priority
+    u8                      flipH;              // Horizontal flip
+    u8                      animation;          // Current animation
+    bool                    visible;            // Visibility flag
+    u8                      collision_x_offset; // Collision box X offset
+    u8                      collision_y_offset; // Collision box Y offset
+    u8                      collision_width;    // Collision box width
+    u8                      collision_height;   // Collision box height
+    u8                      state;              // Current state
+    bool                    follows_character;  // Whether entity follows player
+    u8                      follow_speed;       // Following movement speed
+    bool                    drops_shadow;       // Whether entity casts shadow
 } Entity;
 
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Move an entity
+/**
+ * @brief Move entity to new position
+ * @param entity Entity to move
+ * @param sprite Entity's sprite
+ * @param newx New X position
+ * @param newy New Y position
+ */
+void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy);
 
-#endif
+#endif // _ENTITY_H_

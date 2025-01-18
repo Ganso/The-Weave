@@ -1,31 +1,39 @@
-#include <genesis.h>
 #include "globals.h"
+#include "combat.h"
 
-bool is_combat_active;    // Whether combat sequence is currently active
+// Debug output macro
+#define COMBAT_DEBUG(fmt, ...) \
+    if (DEBUG_STATE_MACHINES) { \
+        kprintf("[COMBAT] " fmt "\n", ##__VA_ARGS__); \
+    }
 
-/**
- * Combat System
- * 
- * This module handles the core combat mechanics including:
- * - Combat initialization and cleanup
- * - Damage calculation and application
- * - Combat UI management (life counters, enemy faces, note indicators)
- * - State tracking for active combats
- */
+// Combat state machine instance
+CombatStateMachine combat_sm;
 
 void start_combat(bool start)    // Initialize or cleanup combat sequence with UI and enemy states
 {
-    u8 numenemy, npattern, nnote;
+    u8 numenemy, npattern;
 
     if (start) {
+        COMBAT_DEBUG("Starting combat sequence");
+        
+        // Initialize combat state machine if not already done
+        static bool sm_initialized = false;
+        if (!sm_initialized) {
+            combat_sm_init(&combat_sm, DEBUG_STATE_MACHINES);
+            sm_initialized = true;
+            COMBAT_DEBUG("Combat state machine initialized");
+        }
+
         // Combat initialization
         setRandomSeed(frame_counter);
-        is_combat_active = true;
         player_scroll_active = false;
 
         // Reset enemies to combat-ready state
         for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
             if (obj_enemy[numenemy].obj_character.active) {
+                COMBAT_DEBUG("Initializing enemy %d", numenemy);
+                
                 // Reset enemy HP to max
                 obj_enemy[numenemy].hitpoints = obj_enemy[numenemy].class.max_hitpoints;
 
@@ -39,22 +47,20 @@ void start_combat(bool start)    // Initialize or cleanup combat sequence with U
             }
         }
 
-        // Initialize combat state
-        enemy_attacking = ENEMY_NONE;
-        enemy_attack_pattern_notes = 0;
-        enemy_attack_time = 0;
-        enemy_attack_effect_in_progress = false;
-        for (nnote = 0; nnote < 6; nnote++) {
-            enemy_note_active[nnote] = false;
-        }
-
         // Setup combat UI
         spr_int_life_counter = SPR_addSprite(&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
         SPR_setVisibility(spr_int_life_counter, HIDDEN);
+
+        // Start combat state machine
+        combat_sm_start(&combat_sm, enemy_attacking);
     }
     else {
+        COMBAT_DEBUG("Ending combat sequence");
+        
+        // End combat state machine
+        combat_sm_end(&combat_sm);
+        
         // Combat cleanup
-        is_combat_active = false;
         player_scroll_active = true;
         
         // Cleanup life counter sprite
@@ -69,28 +75,33 @@ void hit_enemy(u16 nenemy)    // Apply damage to enemy, handle defeat, and updat
 {
     u16 remaining_enemies = 0;
 
-    // Play hit sound effect
-    play_sample(snd_player_hit_enemy,sizeof(snd_player_hit_enemy));
+    COMBAT_DEBUG("Enemy %d hit", nenemy);
 
-    // If enemy was attacking, clean up combat state
+    // Play hit sound effect
+    play_sample(snd_player_hit_enemy, sizeof(snd_player_hit_enemy));
+
+    // If enemy was attacking, interrupt their pattern
     if (enemy_attacking == nenemy) {
+        COMBAT_DEBUG("Interrupting enemy %d pattern", nenemy);
+        
         // Clean up all active notes
         cleanup_enemy_notes();
         
         // Reset enemy state
         anim_enemy(nenemy, ANIM_IDLE);
-        enemy_attack_effect_in_progress = false;
         obj_enemy[nenemy].obj_character.state = STATE_IDLE;
         obj_enemy[nenemy].last_pattern_time[enemy_attack_pattern] = 0;
         enemy_attacking = ENEMY_NONE;
         
-        // Hide combat interface
-        show_or_hide_enemy_combat_interface(false);
+        // Interrupt enemy pattern cast
+        combat_sm_interrupt_cast(&combat_sm, nenemy);
     }
 
     // Apply damage and check for defeat
     obj_enemy[nenemy].hitpoints--;
     if (obj_enemy[nenemy].hitpoints == 0) {
+        COMBAT_DEBUG("Enemy %d defeated", nenemy);
+        
         // Enemy defeated
         SPR_setVisibility(spr_int_life_counter, HIDDEN);
         release_enemy(nenemy);
@@ -103,10 +114,13 @@ void hit_enemy(u16 nenemy)    // Apply damage to enemy, handle defeat, and updat
         }
         
         if (remaining_enemies == 0) {
+            COMBAT_DEBUG("All enemies defeated, ending combat");
             start_combat(false);  // End combat when all enemies defeated
         }
     }
     else {
+        COMBAT_DEBUG("Enemy %d HP: %d", nenemy, obj_enemy[nenemy].hitpoints);
+        
         // Enemy survived - Update UI
         if (spr_int_life_counter != NULL) {
             // Show damage animation
@@ -133,16 +147,26 @@ void hit_enemy(u16 nenemy)    // Apply damage to enemy, handle defeat, and updat
             }
         }
     }
+
+    // Send enemy hit message
+    msg_send(MSG_ENEMY_HIT, nenemy, obj_enemy[nenemy].hitpoints, NULL);
 }
 
-void hit_caracter(u16 nchar)    // Handle player character damage (currently just sound)
+void hit_character(u16 nchar)    // Handle player character damage (currently just sound)
 {
-    play_sample(snd_player_hurt,sizeof(snd_player_hurt));
+    COMBAT_DEBUG("Character %d hit", nchar);
+    
+    play_sample(snd_player_hurt, sizeof(snd_player_hurt));
+    
+    // Send player hit message
+    msg_send(MSG_PLAYER_HIT, nchar, 0, NULL);
 }
 
 void show_or_hide_enemy_combat_interface(bool show)    // Toggle combat UI elements (faces, life counter, notes)
 {
-    if (show && interface_active && is_combat_active && enemy_attacking != ENEMY_NONE) {
+    if (show && interface_active && combat_sm.is_active && enemy_attacking != ENEMY_NONE) {
+        COMBAT_DEBUG("Showing combat interface for enemy %d", enemy_attacking);
+        
         // Show attacking enemy's interface
         if (spr_enemy_face[enemy_attacking] != NULL) {
             SPR_setVisibility(spr_enemy_face[enemy_attacking], VISIBLE);
@@ -167,6 +191,8 @@ void show_or_hide_enemy_combat_interface(bool show)    // Toggle combat UI eleme
         }
     }
     else {
+        COMBAT_DEBUG("Hiding combat interface");
+        
         // Hide all interface elements
         for (u16 i = 0; i < MAX_ENEMIES; i++) {
             if (spr_enemy_face[i] != NULL) {

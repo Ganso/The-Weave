@@ -287,7 +287,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     move_enemy(0, 20, 156);
     show_or_hide_interface(true);
     start_combat(true);
-    while (is_combat_active==true) {
+    while (combat_sm.is_active) {
         next_frame(true);
     }
 
@@ -298,7 +298,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     move_enemy(0, 250, 136);
     move_enemy(1, 20, 156);
     start_combat(true);
-    while (is_combat_active==true) {
+    while (combat_sm.is_active) {
         next_frame(true);
     }
 

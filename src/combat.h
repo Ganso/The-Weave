@@ -1,57 +1,122 @@
 #ifndef _COMBAT_H_
 #define _COMBAT_H_
 
-/*
- * Combat System - Enemy Spell Casting
+#include "globals.h"
+#include "combat_states.h"
+
+/**
+ * Combat System
  * 
- * This module handles the enemy spell casting system in combat. The system is 
- * organized in a hierarchical structure with the following main components:
+ * This module handles the core combat mechanics including:
+ * - Combat initialization and cleanup
+ * - Damage calculation and application
+ * - Combat UI management (life counters, enemy faces, note indicators)
+ * - State tracking for active combats using a state machine
  * 
- * 1. Main Control Function:
- *    - check_enemy_pattern(): Oversees the entire spell casting process.
+ * The combat system uses a state machine to manage combat flow:
+ * - IDLE: No patterns being cast
+ *   - Transitions to PLAYER_CAST when player starts pattern
+ *   - Transitions to ENEMY_CAST when enemy starts pattern
  * 
- * 2. Pattern Check Functions:
- *    - check_[pattern_name]_pattern(): Checks if conditions are met for a specific pattern.
- *    - Naming convention: check_[pattern_name]_pattern
- *    - Example: check_electric_pattern, check_bite_pattern
+ * - PLAYER_CAST: Player is casting a pattern
+ *   - Tracks note sequence and timing
+ *   - Can be interrupted by enemy patterns
+ *   - Transitions to PATTERN_EFFECT on completion
  * 
- * 3. Pattern Launch Functions:
- *    - launch_[pattern_name]_pattern(): Initiates a specific pattern.
- *    - Naming convention: launch_[pattern_name]_pattern
- *    - Example: launch_electric_pattern, launch_bite_pattern
+ * - ENEMY_CAST: Enemy is casting a pattern
+ *   - Plays enemy note sequence
+ *   - Can be interrupted by player patterns
+ *   - Transitions to PATTERN_EFFECT on completion
  * 
- * 4. Pattern Effect Functions:
- *    - do_[pattern_name]_pattern_effect(): Handles the ongoing effect of a pattern.
- *    - Naming convention: do_[pattern_name]_pattern_effect
- *    - Example: do_electric_pattern_effect, do_bite_pattern_effect
+ * - PATTERN_EFFECT: Pattern effect is being applied
+ *   - Handles pattern-specific effects and durations
+ *   - Can be interrupted by opposing patterns
+ *   - Returns to IDLE when effect completes
  * 
- * 5. Pattern Finish Functions:
- *    - finish_[pattern_name]_pattern_effect(): Concludes the effect of a pattern.
- *    - Naming convention: finish_[pattern_name]_pattern_effect
- *    - Example: finish_electric_pattern_effect, finish_bite_pattern_effect
+ * - END: Combat is ending
+ *   - Cleans up combat state
+ *   - Returns game to exploration mode
  * 
- * Workflow:
- * 1. check_enemy_pattern() is called regularly to manage the spell casting process.
- * 2. It calls the appropriate check_[pattern_name]_pattern() functions.
- * 3. If conditions are met, enemy_launch_pattern() is called, which then calls 
- *    the appropriate launch_[pattern_name]_pattern() function.
- * 4. During the effect, do_enemy_pattern_effect() is called, which then calls 
- *    the appropriate do_[pattern_name]_pattern_effect() function.
- * 5. When the effect ends, finish_enemy_pattern_effect() is called, which then 
- *    calls the appropriate finish_[pattern_name]_pattern_effect() function.
+ * State transitions occur through messages:
+ * - MSG_COMBAT_START: Start combat with an enemy
+ * - MSG_PATTERN_COMPLETE: Pattern cast completed
+ * - MSG_ENEMY_ATTACK: Enemy starts casting
+ * - MSG_ENEMY_HIT: Enemy takes damage
+ * - MSG_PLAYER_HIT: Player takes damage
+ * - MSG_COMBAT_END: Combat is ending
  * 
- * To add a new pattern:
- * 1. Create new functions following the naming conventions above.
- * 2. Add the pattern to the relevant switch statements in the main control functions.
- * 3. Define any necessary constants (like MAX_EFFECT_TIME_[PATTERN_NAME]).
- * 4. Update this header with the new pattern information.
+ * Pattern casting follows these rules:
+ * 1. Only one pattern can be cast at a time (player or enemy)
+ * 2. Players can interrupt enemy patterns and vice versa
+ * 3. Interrupted patterns do not take effect
+ * 4. Pattern effects have a duration and can be interrupted
+ * 
+ * Debug output is controlled by DEBUG_STATE_MACHINES:
+ * - State transitions are logged
+ * - Pattern casting progress is tracked
+ * - Interruptions are reported
+ * - Effect durations are monitored
  */
 
-extern bool is_combat_active; // Are we in a combat?
+/**
+ * @brief Start or end a combat sequence
+ * @param start true to start combat, false to end it
+ * 
+ * When starting combat:
+ * - Initializes combat state machine if needed
+ * - Resets enemy states and HP
+ * - Sets up combat UI elements
+ * - Randomizes enemy pattern cooldowns
+ * - Transitions to IDLE state
+ * 
+ * When ending combat:
+ * - Cleans up combat state machine
+ * - Removes UI elements
+ * - Resets player movement state
+ * - Transitions through END state
+ */
+void start_combat(bool start);
 
-void start_combat(bool start); // Start (or end) a combat
-void hit_enemy(u16 nenemy); // Hit an enemy
-void hit_caracter(u16 nchar); // Hit a character
-void show_or_hide_enemy_combat_interface(bool show); // Show enemy face and hitpoints in the interface
+/**
+ * @brief Apply damage to an enemy
+ * @param nenemy Enemy index to damage
+ * 
+ * - Plays hit sound effect
+ * - Interrupts enemy pattern if they were casting
+ * - Updates enemy HP and UI
+ * - Handles enemy defeat if HP reaches 0
+ * - Sends MSG_ENEMY_HIT message
+ * - May trigger combat end if enemy defeated
+ */
+void hit_enemy(u16 nenemy);
 
-#endif
+/**
+ * @brief Apply damage to a player character
+ * @param nchar Character index to damage
+ * 
+ * - Plays hurt sound effect
+ * - Interrupts player pattern if casting
+ * - Updates character state
+ * - Sends MSG_PLAYER_HIT message
+ * - May trigger pattern interruption
+ */
+void hit_character(u16 nchar);
+
+/**
+ * @brief Show or hide combat interface elements
+ * @param show true to show interface, false to hide it
+ * 
+ * Controls visibility of:
+ * - Enemy face sprites
+ * - Life counter
+ * - Note indicators
+ * - Pattern effect indicators
+ * 
+ * Called during:
+ * - Combat start/end
+ * - Pattern casting
+ * - Effect visualization
+ */
+void show_or_hide_enemy_combat_interface(bool show);
+
+#endif // _COMBAT_H_

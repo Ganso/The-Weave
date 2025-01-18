@@ -11,13 +11,22 @@ The game is in early stages of development, currently functioning as a technical
 - Scene transitions and environment interactions
 
 ## Current Focus
-- Act 1 implementation and polish
-- Core gameplay mechanics refinement
-- Technical demo development
+- Combat system refactoring using state machine architecture
+- Implementation of message-based communication
+- Enhanced debugging and testing capabilities
 
 ## Next Steps
-1. Complete remaining Act 1 scenes
-2. Polish existing gameplay mechanics
-3. Implement additional spells and patterns
-4. Enhance combat system
+1. Complete combat system refactoring:
+   - Integrate state machine with existing combat code
+   - Test pattern interruption mechanics
+   - Verify debug output functionality
+   - Document all state transitions
+2. Apply state machine pattern to other systems:
+   - Dialog system could benefit from state management
+   - Pattern system may use similar message architecture
+3. Polish and test combat mechanics:
+   - Verify all pattern interactions
+   - Test enemy AI behavior
+   - Balance combat difficulty
+4. Complete remaining Act 1 scenes
 5. Add more character interactions and story elements

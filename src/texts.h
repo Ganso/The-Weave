@@ -1,46 +1,51 @@
 #ifndef _TXT_H_
 #define _TXT_H_
 
-// Languages
-#define NUM_LANGUAGES 2
-#define MAX_CHOICES 4
+#include "globals.h"
 
+/**
+ * @brief Supported languages enumeration
+ */
 enum Languages {
     LANG_SPANISH,
     LANG_ENGLISH
 };
+
+// Current game language
 extern u8 game_language;
 
-// Acts and dialogs
-#define SYSTEM_DIALOG   0
-#define ACT1_DIALOG1    1
-#define ACT1_DIALOG2    2
-#define ACT1_DIALOG3    3
-#define ACT1_DIALOG4    4
-
-// Choices
-#define ACT1_CHOICE1    0
-
+/**
+ * @brief Dialog item structure
+ * Represents a single line of dialog with translations
+ */
 typedef struct {
-    u8 face;
-    bool side;
-    u16 max_seconds;
-    const char *text[NUM_LANGUAGES];
+    u8 face;                          // Face ID to show
+    bool side;                        // Face position (SIDE_left/SIDE_right)
+    u16 max_seconds;                  // Display duration
+    const char *text[NUM_LANGUAGES];  // Translated text strings
 } DialogItem;
 
+/**
+ * @brief Choice item structure
+ * Represents a dialog choice with multiple options
+ */
 typedef struct {
-    u8 face;
-    bool side;
-    u16 max_seconds;
-    u8 num_options;
-    const char *options[NUM_LANGUAGES][MAX_CHOICES];
+    u8 face;                                      // Face ID to show
+    bool side;                                    // Face position (SIDE_left/SIDE_right)
+    u16 max_seconds;                              // Selection time limit
+    u8 num_options;                               // Number of choices
+    const char *options[NUM_LANGUAGES][MAX_CHOICES]; // Translated choice options
 } ChoiceItem;
 
-// Game texts
-extern const DialogItem *dialogs[];
-extern const ChoiceItem *choices[];
+// Dialog and choice collections
+extern const DialogItem *dialogs[];   // All game dialogs
+extern const ChoiceItem *choices[];   // All game choices
 
-// Functions
-char* encode_spanish_text(const char* input); // Code Spanish text in the game font charset
+/**
+ * @brief Convert text to use Spanish characters in game font
+ * @param input Text to convert
+ * @return Converted text string
+ */
+char* encode_spanish_text(const char* input);
 
-#endif
+#endif // _TXT_H_
