@@ -296,18 +296,24 @@ void approach_characters(void)    // Update positions of following characters to
                     // Update character position and animation
                     obj_character[nchar].x = newx;
                     obj_character[nchar].y = newy;
-                    obj_character[nchar].animation = ANIM_WALK;
                     obj_character[nchar].flipH = (dx < 0);
-                    update_character(nchar);
+                    SPR_setPosition(spr_chr[nchar], obj_character[nchar].x, obj_character[nchar].y);
+                    SPR_setHFlip(spr_chr[nchar], obj_character[nchar].flipH);
+                    if (obj_character[nchar].animation == ANIM_IDLE) {
+                        obj_character[nchar].animation = ANIM_WALK;
+                        SPR_setAnim(spr_chr[nchar], obj_character[nchar].animation);
+                    }
+                    update_character_shadow(nchar);
                     has_moved = true;
+                }
+                
+                // Set to idle if not moved
+                if (!has_moved && obj_character[nchar].state == STATE_FOLLOWING) {
+                    anim_character(nchar, ANIM_IDLE);
                 }
             }
         }
 
-        // Set to idle if not moved
-        if (!has_moved && obj_character[nchar].state == STATE_FOLLOWING) {
-            anim_character(nchar, ANIM_IDLE);
-        }
     }
 
     // Update sprite depths after movement
