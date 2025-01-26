@@ -15,7 +15,7 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
     initialize(true);
 
     current_act=1;
-    current_scene=3;
+    current_scene=1;
 
     while (true) { // MAIN LOOP
         switch (current_act)

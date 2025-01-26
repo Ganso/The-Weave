@@ -1,5 +1,5 @@
 # Linux
-SPRITE linus_sprite "Sprites/Characters/linus.png" 6 8 BEST 15
+SPRITE linus_sprite "Sprites/Characters/linus_tmp.png" 6 8 BEST 8
 SPRITE linus_shadow_sprite "Sprites/Characters/linus_shadow.png" 6 1 BEST 15
 
 # Clio
