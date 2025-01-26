@@ -341,7 +341,7 @@ void finish_electric_pattern_effect(void)    // Clean up electric pattern state
 void launch_hide_pattern(void)    // Start hide pattern effect
 {
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
-    anim_character(active_character, ANIM_WALK);
+    anim_character(active_character, ANIM_MAGIC);
     show_pattern_icon(PTRN_HIDE, true, true);
     play_pattern_sound(PTRN_HIDE);
     movement_active = true;  // Allow movement while hidden
