@@ -341,6 +341,7 @@ void finish_electric_pattern_effect(void)    // Clean up electric pattern state
 void launch_hide_pattern(void)    // Start hide pattern effect
 {
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
+    anim_character(active_character, ANIM_WALK);
     show_pattern_icon(PTRN_HIDE, true, true);
     play_pattern_sound(PTRN_HIDE);
     movement_active = true;  // Allow movement while hidden
@@ -369,6 +370,7 @@ void do_hide_pattern_effect(void)    // Process hide pattern transparency effect
         player_pattern_effect_in_progress = PTRN_NONE;
         player_pattern_effect_time = 0;
         obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
+        anim_character(active_character, ANIM_IDLE);
     }
 }
 
