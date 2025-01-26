@@ -305,9 +305,11 @@ void do_electric_pattern_effect(void)    // Process electric pattern visual and 
     // Visual thunder effect
     for (u8 i = 0; i < 100; i++) {
         VDP_setHilightShadow(true);
+        SPR_update();
         SYS_doVBlankProcess();
         VDP_setHilightShadow(false);
         SYS_doVBlankProcess();
+        SPR_update();
     }
     show_pattern_icon(PTRN_ELECTRIC, false, false);
     SPR_update();
