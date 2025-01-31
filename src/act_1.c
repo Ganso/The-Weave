@@ -10,7 +10,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     set_limits(20,145,278,176);
 
     // Use swan palette instead of characters palette
-    PAL_setPalette(PAL1, swan_sprite.palette->data, DMA);
+    PAL_setPalette(PAL1, swan_pal.data, DMA);
 
     // Initialize characters and dialog faces
     init_character(CHR_swan);
@@ -54,7 +54,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
 
     // Wake linus up
     release_item(4);
-    PAL_setPalette(PAL1, linus_sprite.palette->data, DMA);
+    PAL_setPalette(PAL1, characters_pal.data, DMA);
     move_character_instant(CHR_linus, 35, 175);
     show_character(CHR_linus, true);
     

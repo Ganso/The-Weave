@@ -8,6 +8,7 @@ extern const SpriteDefinition clio_shadow_sprite;
 extern const SpriteDefinition xander_sprite;
 extern const SpriteDefinition xander_shadow_sprite;
 extern const SpriteDefinition swan_sprite;
+extern const Palette characters_pal;
 extern const Palette swan_pal;
 
 #endif // _RES_RES_CHARACTERS_H_
