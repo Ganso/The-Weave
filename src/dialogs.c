@@ -38,9 +38,6 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
         else{
             faceposx=256;
             buttonposx=232;
-            textposx_line1-=8;
-            textposx_line2-=8;
-            textposx_line3-=8;
             SPR_setHFlip (spr_face[nface], true);
             SPR_setVisibility (spr_face_right, VISIBLE);
         }
