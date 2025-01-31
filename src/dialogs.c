@@ -22,10 +22,10 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
     // Divide the text in up to three lines
     split_text(text, text_line1, text_line2, text_line3);
 
-    // Center the text in each line
-    textposx_line1=8 + ((33 - strlen(text_line1)) >> 1);
-    textposx_line2=8 + ((33 - strlen(text_line2)) >> 1);
-    textposx_line3=8 + ((33 - strlen(text_line3)) >> 1);
+    // Calculate centered positions using reusable function
+    textposx_line1 = calculate_text_position(text_line1, isinleft, nface != FACE_none);
+    textposx_line2 = calculate_text_position(text_line2, isinleft, nface != FACE_none);
+    textposx_line3 = calculate_text_position(text_line3, isinleft, nface != FACE_none);
 
     // Check if face is in left or right (or none)
     if (nface!=FACE_none) {
@@ -49,9 +49,9 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
     }
     else { // No face
         buttonposx=296;
-        textposx_line1=((40 - strlen(text_line1)) >> 1); // Center text
-        textposx_line2=((40 - strlen(text_line2)) >> 1); // Center text
-        textposx_line3=((40 - strlen(text_line3)) >> 1); // Center text
+        textposx_line1 = calculate_text_position(text_line1, false, false); // Center text
+        textposx_line2 = calculate_text_position(text_line2, false, false); // Center text
+        textposx_line3 = calculate_text_position(text_line3, false, false); // Center text
     }
 
     // Show text and button
@@ -226,7 +226,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
             if(!isinleft) textposx[i] -= 8;
         }
         else {
-            textposx[i] = ((40 - choice_lenght[i]) >> 1);
+            textposx[i] = calculate_text_position(options[i], false, false);
         }
 
         // Show plain text first
