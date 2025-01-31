@@ -40,7 +40,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Initialize palettes
     // PAL0 is the background palette. It's initialized with the background
-    PAL_setPalette(PAL1, linus_sprite.palette->data, DMA); // Characters palette
+    PAL_setPalette(PAL1, characters_pal.data, DMA); // Characters palette
     PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
     // PAL2 is the enemies palette. It's initialized with the enemies
 
@@ -113,7 +113,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
 
     // Set palettes after loading all tiles to avoid flicker
     PAL_setPalette(PAL0, new_pal.data, DMA);
-    PAL_setPalette(PAL1, linus_sprite.palette->data, DMA);
+    PAL_setPalette(PAL1, characters_pal.data, DMA);
     PAL_setPalette(PAL2, interface_pal.data, DMA);
 
     background_scroll_mode=new_scroll_mode;
