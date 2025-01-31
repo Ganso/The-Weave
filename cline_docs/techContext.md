@@ -52,6 +52,10 @@
 - Resource compilation pipeline
 - Build system for ROM generation
 - Debugging tools for Genesis hardware
+- Header structure:
+  - genesis.h included via globals.h
+  - All other files inherit headers through global inclusion
+  - No individual SDK path configuration needed
 
 ## Technical Constraints
 - 16-bit architecture limitations

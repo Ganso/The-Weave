@@ -239,6 +239,22 @@ const ChoiceItem *choices[] = {
 // < --> ¿
 // > --> ¡
 
+u16 calculate_text_position(const char *text, bool is_face_left, bool has_face) {
+    u16 base_pos = 8; // Default left padding when face is present
+    u16 max_width = has_face ? 33 : 40; // Available characters based on face presence
+    
+    u16 text_length = strlen(text);
+    u16 centered_pos = (max_width - text_length) >> 1; // (width - len)/2 using bit shift
+    
+    if (has_face && !is_face_left) {
+        base_pos -= 8; // Adjust for right-positioned face
+    } else if (!has_face) {
+        base_pos = 0; // No face, full width centering
+    }
+    
+    return base_pos + centered_pos;
+}
+
 char* encode_spanish_text(const char* input) {
     if (input == NULL) {
         return NULL;
