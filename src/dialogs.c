@@ -175,6 +175,10 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     u16 num_ticks = 0;
     u16 max_ticks = max_seconds * SCREEN_FPS;
     
+    // Load magic animation sprite
+    Sprite* spr_magic_anim = SPR_addSprite(&int_magin_anim_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
+    SPR_setVisibility(spr_magic_anim, HIDDEN);
+    
     // If the active character is walking, stop it
     if (obj_character[active_character].state==STATE_WALKING) {
         obj_character[active_character].state=STATE_IDLE;
@@ -234,6 +238,11 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     VDP_drawTextBG(WINDOW, "}", textposx[current_option] - 2, start_y + current_option);
     VDP_drawTextBG(WINDOW, "{", textposx[current_option] + choice_lenght[current_option] + 1, start_y + current_option);
 
+    // Show magic animation on initial option
+    u16 magic_x = (textposx[current_option] * 8) + ((choice_lenght[current_option] * 8) / 2) - 80;
+    u16 magic_y = (start_y + current_option) * 8;
+    SPR_setPosition(spr_magic_anim, magic_x, magic_y);
+    SPR_setVisibility(spr_magic_anim, VISIBLE);
 
     // Show button A
     SPR_setVisibility(spr_int_button_A, VISIBLE);
@@ -278,6 +287,14 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
             // Add selection markers to new option
             VDP_drawTextBG(WINDOW, "}", textposx[current_option] - 2, start_y + current_option);
             VDP_drawTextBG(WINDOW, "{", textposx[current_option] + choice_lenght[current_option] + 1, start_y + current_option);
+            
+            // Update magic animation position
+            // Center horizontally: text position + (text length * 8) / 2 - (160 / 2)
+            u16 magic_x = (textposx[current_option] * 8) + ((choice_lenght[current_option] * 8) / 2) - 80;
+            // Vertically align with text: start_y + current_option lines down (8 pixels per line)
+            u16 magic_y = (start_y + current_option) * 8;
+            SPR_setPosition(spr_magic_anim, magic_x, magic_y);
+            SPR_setVisibility(spr_magic_anim, VISIBLE);
         }
 
         next_frame(false);
@@ -296,6 +313,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     SPR_setVisibility(spr_face_right, HIDDEN);
     if(nface != FACE_none) SPR_setVisibility(spr_face[nface], HIDDEN);
     SPR_setVisibility(spr_int_button_A, HIDDEN);
+    SPR_releaseSprite(spr_magic_anim);
     VDP_clearTextLineBG(WINDOW, 23);
     VDP_clearTextLineBG(WINDOW, 24);
     VDP_clearTextLineBG(WINDOW, 25);
