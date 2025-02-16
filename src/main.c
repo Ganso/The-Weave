@@ -10,12 +10,12 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
     #endif
 
     //geesebumps_logo(); // GeeseBumps Logo
-    //theweave_intro();  // Game intro
+    theweave_intro();  // Game intro
 
     initialize(true);
 
     current_act=1;
-    current_scene=3;
+    current_scene=1;
 
     while (true) { // MAIN LOOP
         switch (current_act)

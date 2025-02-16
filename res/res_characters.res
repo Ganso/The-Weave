@@ -11,7 +11,7 @@ SPRITE xander_sprite "Sprites/Characters/xander.png" 6 8 BEST 4
 SPRITE xander_shadow_sprite "Sprites/Characters/xander_shadow.png" 6 1 BEST
 
 # Swan
-SPRITE swan_sprite "Sprites/Characters/swan.png" 8 7 BEST 4
+SPRITE swan_sprite "Sprites/Characters/swan.png" 8 7 BEST 10
 
 # Palettes
 PALETTE characters_pal "Sprites/Characters/characters.pal"
