@@ -18,9 +18,9 @@ TILESET historians_bg_tile "Backgrounds/Act1/historians_bg_back.png" BEST
 MAP historians_bg_map "Backgrounds/Act1/historians_bg_back.png" historians_bg_tile BEST
 PALETTE historians_pal "Backgrounds/Act1/historians_bg_front.png"
 
-# Act 1 - Scene 5 - Weavers guild
-TILESET weavers_front_tile "Backgrounds/Act1/weavers_bg_front.png" BEST
-MAP weavers_front_map "Backgrounds/Act1/weavers_bg_front.png" weavers_front_tile BEST
-TILESET weavers_bg_tile "Backgrounds/Act1/weavers_bg_back.png" BEST
-MAP weavers_bg_map "Backgrounds/Act1/weavers_bg_back.png" weavers_bg_tile BEST
-PALETTE weavers_pal "Backgrounds/Act1/weavers_bg_front.png"
+# Act 1 - Scene 5 - Forest
+TILESET forest_front_tile "Backgrounds/Act1/forest_bg_front.png" BEST
+MAP forest_front_map "Backgrounds/Act1/forest_bg_front.png" forest_front_tile BEST
+TILESET forest_bg_tile "Backgrounds/Act1/forest_bg_back.png" BEST
+MAP forest_bg_map "Backgrounds/Act1/forest_bg_back.png" forest_bg_tile BEST
+PALETTE forest_pal "Backgrounds/Act1/forest.pal"

@@ -15,10 +15,10 @@ extern const MapDefinition historians_front_map;
 extern const TileSet historians_bg_tile;
 extern const MapDefinition historians_bg_map;
 extern const Palette historians_pal;
-extern const TileSet weavers_front_tile;
-extern const MapDefinition weavers_front_map;
-extern const TileSet weavers_bg_tile;
-extern const MapDefinition weavers_bg_map;
-extern const Palette weavers_pal;
+extern const TileSet forest_front_tile;
+extern const MapDefinition forest_front_map;
+extern const TileSet forest_bg_tile;
+extern const MapDefinition forest_bg_map;
+extern const Palette forest_pal;
 
 #endif // _RES_RES_BACKGROUNDS_H_
