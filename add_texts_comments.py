@@ -103,22 +103,21 @@ def parse_texts_c(texts_c_file):
         choice_texts[block_name.upper()] = texts  
     return dialog_texts, choice_texts  
 
-
 def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_texts):  
     modified = False  
     with open(c_file, 'r', encoding='utf-8') as f:  
         lines = f.readlines()  
 
     new_lines = []  
-    talk_re = re.compile(r'(\s*)(talk_dialog\s*\(\s*&dialogs\[(\w+)_DIALOG(?:\d+)?\]\[(\d+)\]\s*\);)(.*)$')  
-    choice_re = re.compile(r'(\s*)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)$')  
+    talk_re = re.compile(r'(\s*)(.*?)(talk_dialog\s*\(\s*&dialogs\[(\w+)_DIALOG(?:\d+)?\]\[(\d+)\]\s*\);)(.*)?$')  
+    choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')  
 
     for line in lines:  
         l = line.rstrip('\n')  
 
         m = talk_re.search(l)  
         if m:  
-            indent, call, act, idx, existing_comment = m.group(1), m.group(2), m.group(3), int(m.group(4)), m.group(5)  
+            indent, before, call, act, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), int(m.group(5)), m.group(6) or ""  
             key = "SYSTEM_DIALOG" if act.upper() == "SYSTEM" else None  
             if not key:  
                 dnum_match = re.search(r'_DIALOG(\d+)', call)  
@@ -127,20 +126,20 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
             texts = dialog_texts.get(key, [])  
             if idx < len(texts):  
                 comment = f' // (ES) "{texts[idx]["es"]}" - (EN) "{texts[idx]["en"]}"'  
-                l = f"{indent}{call}{comment}"  
+                l = f"{indent}{before}{call}{comment}"  
                 modified = True  
 
         else:  
             m = choice_re.search(l)  
             if m:  
-                indent, call, act, choice_num, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), int(m.group(5)), m.group(6)  
+                indent, before, call, act, choice_num, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5), int(m.group(6)), m.group(7) or ""  
                 key = f"{act}_CHOICE{choice_num}".upper()  
                 opts = choice_texts.get(key, [])  
                 if idx < len(opts):  
                     options = opts[idx]  
                     options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])  
                     comment = f' // {options_text}'  
-                    l = f"{indent}{call}{comment}"  
+                    l = f"{indent}{before}{call}{comment}"  
                     modified = True  
 
         new_lines.append(l + "\n")  
