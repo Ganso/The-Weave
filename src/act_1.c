@@ -212,7 +212,7 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     talk_dialog(&dialogs[ACT1_DIALOG2][9]); // (ES) "Y estamos aquí para hablar|sobre uno que|nunca llegó a cumplir" - (EN) "And we are here to talk|about one that he|never achieved"
     talk_dialog(&dialogs[ACT1_DIALOG2][10]); // (ES) "He leído sus historias|mil veces|¿De cuál hablamos?" - (EN) "I've read his stories|a thousand times|Which one is this?"
     talk_dialog(&dialogs[ACT1_DIALOG2][11]); // (ES) "Una que no encontrarás en|un libro. La de la isla|del gremio de los Tejedores" - (EN) "One you won't find in a book|The one about Weavers|guild island"
-    choice_dialog(&choices[ACT1_CHOICE1][0]); // (ES) "¿Los Tejedores?" - (EN) "The Weavers?", (ES) "Era mi leyenda favorita" - (EN) "It was my favourite legend", (ES) "¿Qué pasó con ellos?" - (EN) "What happened to them?"
+    u8 response = choice_dialog(&choices[ACT1_CHOICE1][0]); // (ES) "¿Los Tejedores?" - (EN) "The Weavers?", (ES) "Era mi leyenda favorita" - (EN) "It was my favourite legend", (ES) "¿Qué pasó con ellos?" - (EN) "What happened to them?"
     kprintf("Response: %d\n",response);
     talk_dialog(&dialogs[ACT1_DIALOG2][12+response]); // Response texts:
     // If response=0: (ES) "Según la leyenda Fueron un gremio capaz de tejer hechizos" - (EN) "According to the legend They were a guild able to weave spells"
@@ -224,7 +224,7 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     talk_dialog(&dialogs[ACT1_DIALOG2][18]); // (ES) "Y la edad de su padre cuando|llegó aquí" - (EN) "And his father's age when|he came to us"
     talk_dialog(&dialogs[ACT1_DIALOG2][19]); // (ES) "Un año antes de que|le acogiéramos|como uno de los nuestros" - (EN) "A year before we|took him as one of ours"
     talk_dialog(&dialogs[ACT1_DIALOG2][20]); // (ES) "Madre..." - (EN) "Mother..."
-    choice_dialog(&choices[ACT1_CHOICE1][1]); // (ES) "Tengo que ir a la isla" - (EN) "I have to go to the island", (ES) "¿Vendrías conmigo?" - (EN) "Would you come with me?"
+    response = choice_dialog(&choices[ACT1_CHOICE1][1]); // (ES) "Tengo que ir a la isla" - (EN) "I have to go to the island", (ES) "¿Vendrías conmigo?" - (EN) "Would you come with me?"
     look_left(CHR_clio, false);
     talk_dialog(&dialogs[ACT1_DIALOG2][21+response]); // Response texts:
     // If response=0: (ES) "Si Xander lo quiere, así será Pero no irás solo" - (EN) "If Xander wants it that way, so it will be But you'll not go alone"
@@ -271,7 +271,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     player_patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (offset_BGA<180) {
+    while (offset_BGA<300) {
         next_frame(true);
     }
 
