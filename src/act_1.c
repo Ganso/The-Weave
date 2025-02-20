@@ -17,11 +17,11 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     init_character(CHR_linus);
 
     // Initialize items
-    init_item(0, &item_bedroom_bed, PAL0, 31, 139, 93, 0, 23, 0, true); // Bed
-    init_item(1, &item_bedroom_chair, PAL0, 236, 110, 26, 0, 43, 0, true); // Chair
-    init_item(2, &item_bedroom_windowsill, PAL0, 125, 121, 99, 0, 22, 0, true); // Windowsill
-    init_item(3, &item_bedroom_cabinet, PAL0, 270, 79, 51, 0, 82, 0, true); // Cabinet and sheet music
-    init_item(4, &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0, true); // Linus sleeping
+    init_item(0, &item_bedroom_bed, PAL0, 31, 139, 93, 0, 23, 0, FORCE_BACKGROUND); // Bed
+    init_item(1, &item_bedroom_chair, PAL0, 236, 110, 26, 0, 43, 0, FORCE_BACKGROUND); // Chair
+    init_item(2, &item_bedroom_windowsill, PAL0, 125, 121, 99, 0, 22, 0, FORCE_BACKGROUND); // Windowsill
+    init_item(3, &item_bedroom_cabinet, PAL0, 270, 79, 51, 0, 82, 0, FORCE_BACKGROUND); // Cabinet and sheet music
+    init_item(4, &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0, FORCE_BACKGROUND); // Linus sleeping
 
     // Flash to white, show swan, fade back
     wait_seconds(2);
@@ -113,8 +113,8 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
     set_limits(0,131,275,170);
 
     // Initialize items
-    init_item(0, &item_corridor_bookpedestal_sprite, PAL0, 400, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, false); // Guild history book
-    init_item(1, &item_corridor_bookpedestal_sprite, PAL0, 200, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, false); // Myths and legends
+    init_item(0, &item_corridor_bookpedestal_sprite, PAL0, 400, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH); // Guild history book
+    init_item(1, &item_corridor_bookpedestal_sprite, PAL0, 200, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH); // Myths and legends
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
@@ -239,9 +239,17 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
 void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
 {
     // Initialize level
-    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1000, BG_SCRL_USER_RIGHT, 3);
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 720, BG_SCRL_USER_RIGHT, 3);
     set_limits(0,134,275,172);
 
+    // Initialize items
+    init_item(0, &item_forest_fg1_sprite, PAL0, 80, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(1, &item_forest_fg2_sprite, PAL0, 260, 174-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(2, &item_forest_fg3_sprite, PAL0, 480, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(3, &item_forest_fg1_sprite, PAL0, 650, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(4, &item_forest_fg4_sprite, PAL0, 210, 174-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    init_item(5, &item_forest_fg4_sprite, PAL0, 570, 174-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    
     // Initialize characters
     init_character(CHR_linus);
     init_character(CHR_clio);
@@ -271,7 +279,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     player_patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (offset_BGA<300) {
+    while (1==1 || offset_BGA<300) {
         next_frame(true);
     }
 
