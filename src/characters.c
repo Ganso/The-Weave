@@ -236,8 +236,10 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     // Update items depth
     for (i = 0; i < MAX_ITEMS; i++) {
         if (obj_item[i].entity.active==true) {
-            if (obj_item[i].is_background) {
+            if (obj_item[i].check_depth==FORCE_BACKGROUND) {
                 SPR_setDepth(spr_item[i], SPR_MAX_DEPTH); // Background items are always at the back
+            } else if (obj_item[i].check_depth==FORCE_FOREGROUND) {
+                SPR_setDepth(spr_item[i], SPR_MIN_DEPTH); // Foreground items are always at the front
             } else {
                 SPR_setDepth(spr_item[i], -obj_item[i].entity.y-obj_item[i].entity.y_size); // Negative of the bottom line of the sprite
             }
