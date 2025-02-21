@@ -68,7 +68,9 @@ u16 get_x_in_screen(u16 x_in_background, u8 width)    // Convert background X co
 {
     s16 x_in_screen = x_in_background - offset_BGA;
     
-    if (x_in_screen < -width || x_in_screen >= SCREEN_WIDTH) {
+    // Allow sprite to be partially visible at screen edges
+    // A sprite should be visible if any part of it is on screen
+    if (x_in_screen < -(s16)width || x_in_screen >= SCREEN_WIDTH) {
         return X_OUT_OF_BOUNDS;
     }
     
