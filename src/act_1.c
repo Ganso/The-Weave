@@ -244,11 +244,12 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
 
     // Initialize items
     init_item(0, &item_forest_fg1_sprite, PAL0, 80, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(1, &item_forest_fg2_sprite, PAL0, 260, 174-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(1, &item_forest_fg2_sprite, PAL0, 160, 174-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
     init_item(2, &item_forest_fg3_sprite, PAL0, 480, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
     init_item(3, &item_forest_fg1_sprite, PAL0, 650, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
     init_item(4, &item_forest_fg4_sprite, PAL0, 210, 174-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
-    //init_item(5, &item_forest_fg5_sprite, PAL0, 570, 174-120, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    init_item(5, &item_forest_fg5_sprite, PAL0, 570, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    init_item(6, &item_forest_fg5_sprite, PAL0, 100, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
     
     // Initialize characters
     init_character(CHR_linus);
