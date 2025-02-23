@@ -296,16 +296,27 @@ void approach_characters(void)    // Update positions of following characters to
                 // Start moving when distance >40, keep moving until distance >20
                 if ((obj_character[nchar].animation==ANIM_IDLE && distance>40) || (obj_character[nchar].animation==ANIM_WALK && distance>20)) {
                     // Update character position and animation
+                    // Update entity properties
                     obj_character[nchar].x = newx;
                     obj_character[nchar].y = newy;
                     obj_character[nchar].flipH = (dx < 0);
-                    SPR_setPosition(spr_chr[nchar], obj_character[nchar].x, obj_character[nchar].y);
-                    SPR_setHFlip(spr_chr[nchar], obj_character[nchar].flipH);
+
+                    // Update sprite properties directly
+                    SPR_setPosition(spr_chr[nchar], newx, newy);
+                    SPR_setHFlip(spr_chr[nchar], dx < 0);
+                    
+                    // Update shadow position
+                    if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar] != NULL) {
+                        s16 shadow_y = newy + obj_character[nchar].collision_y_offset - 4;
+                        SPR_setPosition(spr_chr_shadow[nchar], newx, shadow_y);
+                        SPR_setHFlip(spr_chr_shadow[nchar], dx < 0);
+                    }
+                    
+                    // Update animation if needed
                     if (obj_character[nchar].animation == ANIM_IDLE) {
                         obj_character[nchar].animation = ANIM_WALK;
-                        SPR_setAnim(spr_chr[nchar], obj_character[nchar].animation);
+                        SPR_setAnim(spr_chr[nchar], ANIM_WALK);
                     }
-                    update_character_shadow(nchar);
                     has_moved = true;
                 }
                 

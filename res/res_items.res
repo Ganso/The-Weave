@@ -13,4 +13,5 @@ SPRITE item_forest_fg1_sprite "Sprites/Items/Act1/forest_fgsprite1.png" 4 2 BEST
 SPRITE item_forest_fg2_sprite "Sprites/Items/Act1/forest_fgsprite2.png" 6 3 BEST 
 SPRITE item_forest_fg3_sprite "Sprites/Items/Act1/forest_fgsprite3.png" 6 2 BEST 
 SPRITE item_forest_fg4_sprite "Sprites/Items/Act1/forest_fgsprite4.png" 6 9 BEST 
-#SPRITE item_forest_fg5_sprite "Sprites/Items/Act1/forest_fgsprite5.png" 12 15 BEST 
+SPRITE item_forest_fg5_sprite "Sprites/Items/Act1/forest_fgsprite5.png" 4 22 BEST 
+

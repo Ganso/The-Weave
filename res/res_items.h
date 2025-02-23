@@ -11,5 +11,6 @@ extern const SpriteDefinition item_forest_fg1_sprite;
 extern const SpriteDefinition item_forest_fg2_sprite;
 extern const SpriteDefinition item_forest_fg3_sprite;
 extern const SpriteDefinition item_forest_fg4_sprite;
+extern const SpriteDefinition item_forest_fg5_sprite;
 
 #endif // _RES_RES_ITEMS_H_
