@@ -269,8 +269,8 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     move_character(CHR_linus, 30, 154);
     talk_dialog(&dialogs[ACT1_DIALOG3][0]); // (ES) "Algún tiempo después" - (EN) "Some time later"
     talk_dialog(&dialogs[ACT1_DIALOG3][1]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
-    talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
-    talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
+    //talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
+    //talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
     talk_dialog(&dialogs[ACT1_DIALOG3][13]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
 
     // Show the interface and allow character to move and play patterns
