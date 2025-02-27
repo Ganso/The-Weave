@@ -16,9 +16,15 @@
 #define FACE_xander   2
 #define FACE_swan     3
 #define FACE_none     250
+
+// Sides
 #define SIDE_left     true
 #define SIDE_right    false
 #define SIDE_none     true
+
+// Distances for following characters
+#define MAX_FOLLOW_DISTANCE 40
+#define MIN_FOLLOW_DISTANCE 20
 
 // Characters
 extern Entity obj_character[MAX_CHR];
