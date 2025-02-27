@@ -327,8 +327,12 @@ void approach_characters(void)    // Update positions of following characters to
                     has_moved = true;
                 }
 
-                // Set to idle if not moved
-                if (!has_moved && obj_character[nchar].state == STATE_FOLLOWING)
+                // Set to idle if close enough or not moved
+                if (distance <= 20)
+                {
+                    anim_character(nchar, ANIM_IDLE);
+                }
+                else if (!has_moved && obj_character[nchar].state == STATE_FOLLOWING)
                 {
                     anim_character(nchar, ANIM_IDLE);
                 }
