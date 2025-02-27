@@ -297,8 +297,8 @@ void approach_characters(void)    // Update positions of following characters to
                 // Check distance to active character at new position
                 distance = char_distance(nchar, newx, newy, active_character);
 
-                // Start moving when distance >40, keep moving until distance >20
-                if ((obj_character[nchar].animation == ANIM_IDLE && distance > 40) || (obj_character[nchar].animation == ANIM_WALK && distance > 20))
+                // Start moving when distance >MAX_FOLLOW_DISTANCE, keep moving until distance >MIN_FOLLOW_DISTANCE
+                if ((obj_character[nchar].animation == ANIM_IDLE && distance > MAX_FOLLOW_DISTANCE) || (obj_character[nchar].animation == ANIM_WALK && distance > MIN_FOLLOW_DISTANCE))
                 {
                     // Update character position and animation
                     // Update entity properties
@@ -328,7 +328,7 @@ void approach_characters(void)    // Update positions of following characters to
                 }
 
                 // Set to idle if close enough or not moved
-                if (distance <= 20)
+                if (distance <= MIN_FOLLOW_DISTANCE)
                 {
                     anim_character(nchar, ANIM_IDLE);
                 }
