@@ -65,7 +65,6 @@ void display_item_if_visible(u16 nitem)    // Show/hide item based on screen vis
     
     // Calculate screen position
     s16 x = get_x_in_screen(obj_item[nitem].x_in_background, sprite_width);
-    bool was_visible = obj_item[nitem].entity.visible;
     bool should_be_visible = (x != X_OUT_OF_BOUNDS);
 
     if (should_be_visible) {
