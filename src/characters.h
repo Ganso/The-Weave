@@ -16,9 +16,15 @@
 #define FACE_xander   2
 #define FACE_swan     3
 #define FACE_none     250
+
+// Sides
 #define SIDE_left     true
 #define SIDE_right    false
 #define SIDE_none     true
+
+// Distances for following characters
+#define MAX_FOLLOW_DISTANCE 40
+#define MIN_FOLLOW_DISTANCE 20
 
 // Characters
 extern Entity obj_character[MAX_CHR];
@@ -45,5 +51,6 @@ void update_sprites_depth(void); // Update characters, items and enemies depth
 void update_character_shadow(u16 nchar); // Update shadow position for a character
 void follow_active_character(u16 nchar, bool follow, u8 follow_speed); // Follow (or unfollow active character)
 void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
+void reset_character_animations(void); // Reset all character animations to idle
 
 #endif

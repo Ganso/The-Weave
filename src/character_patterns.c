@@ -302,6 +302,9 @@ void launch_electric_pattern(void)    // Start electric pattern effect
 
 void do_electric_pattern_effect(void)    // Process electric pattern visual and combat effects
 {
+    // Set every enemy and character animation (except active one) to IDLE
+    reset_character_animations();
+
     // Visual thunder effect
     for (u8 i = 0; i < 100; i++) {
         VDP_setHilightShadow(true);
@@ -328,7 +331,7 @@ void do_electric_pattern_effect(void)    // Process electric pattern visual and 
             }
         }
     }
-    anim_character(active_character, ANIM_IDLE);
+
     obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
 }
 
