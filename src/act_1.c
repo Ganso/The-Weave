@@ -239,17 +239,17 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
 void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
 {
     // Initialize level
-    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 720, BG_SCRL_USER_RIGHT, 3);
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
     set_limits(0,134,275,172);
 
     // Initialize items
     init_item(0, &item_forest_fg1_sprite, PAL0, 80, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(1, &item_forest_fg2_sprite, PAL0, 160, 174-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(2, &item_forest_fg3_sprite, PAL0, 480, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(3, &item_forest_fg1_sprite, PAL0, 650, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(4, &item_forest_fg4_sprite, PAL0, 210, 174-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
-    init_item(5, &item_forest_fg5_sprite, PAL0, 570, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
-    init_item(6, &item_forest_fg5_sprite, PAL0, 100, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    init_item(1, &item_forest_fg5_sprite, PAL0, 260, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    init_item(2, &item_forest_fg2_sprite, PAL0, 440, 174-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(3, &item_forest_fg3_sprite, PAL0, 680, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(4, &item_forest_fg4_sprite, PAL0, 810, 174-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    init_item(5, &item_forest_fg1_sprite, PAL0, 1050, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
+    init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
     
     // Initialize characters
     init_character(CHR_linus);
@@ -269,8 +269,8 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     move_character(CHR_linus, 30, 154);
     talk_dialog(&dialogs[ACT1_DIALOG3][0]); // (ES) "Algún tiempo después" - (EN) "Some time later"
     talk_dialog(&dialogs[ACT1_DIALOG3][1]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
-    talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
-    talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
+    //talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
+    //talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
     talk_dialog(&dialogs[ACT1_DIALOG3][13]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
 
     // Show the interface and allow character to move and play patterns

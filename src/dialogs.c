@@ -100,6 +100,7 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
 
 void talk_dialog(const DialogItem *dialog)    // Display a predefined dialog item with face and text
 {
+    reset_character_animations();
     talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds);
 }
 
@@ -329,5 +330,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
 
 u8 choice_dialog(const ChoiceItem *item)    // Display a predefined choice dialog item
 {
-    return choice(item->face, item->side, (char **)item->options[game_language], item->num_options, item->max_seconds);
+    reset_character_animations();
+    u8 result = choice(item->face, item->side, (char **)item->options[game_language], item->num_options, item->max_seconds);
+    return result;
 }

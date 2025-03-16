@@ -9,11 +9,26 @@ The game is in early stages of development, currently functioning as a technical
 - Musical pattern/spell system implementation
 - Character dialogue system with choice mechanics
 - Scene transitions and environment interactions
+- Created `projectBrief.md` to document project requirements
+- Initiated Memory Bank update
 
 ## Current Focus
 - Act 1 implementation and polish
 - Core gameplay mechanics refinement
 - Technical demo development
+- Updating Memory Bank with current project state
+
+## Development Setup
+- Genesis/Megadrive development environment
+- Resource compilation pipeline
+- Build system for ROM generation
+- Debugging tools for Genesis hardware
+
+## Code Conventions
+- Data types defined in Sega Genesis libraries are used: u8, u16, s8, s16, etc.
+- All include statements are centralized in `globals.h`.
+- Other header files (.h) do not require include statements.
+- C files (.c) only include `globals.h`.
 
 ## Next Steps
 1. Complete remaining Act 1 scenes
@@ -43,8 +58,8 @@ The game is in early stages of development, currently functioning as a technical
         - Phase 3: Implementación Core
             - Modify `character_patterns.c`, `enemies_patterns.c`, and `combat.c` to use the `PatternStateManager` and the message system.
             - Modify `combat.c` to handle the different states of the combat system, using the new state machine library.
-                - Implement a `combat_update` function that handles the state transitions based on messages.
-                - Implement functions to send messages: `send_message(MessageType type, u16 param)`.
+            - Implement a `combat_update` function that handles the state transitions based on messages.
+            - Implement functions to send messages: `send_message(MessageType type, u16 param)`.
             - Modify `enemies.c` to react to combat messages.
         - Phase 4: Finalization
             - Comprehensive testing of all combat scenarios.
