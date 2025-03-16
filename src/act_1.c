@@ -239,7 +239,7 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
 void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
 {
     // Initialize level
-    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_dark_pal, 1440, BG_SCRL_USER_RIGHT, 3);
     set_limits(0,134,275,172);
 
     // Initialize items
