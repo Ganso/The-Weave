@@ -24,3 +24,4 @@ MAP forest_front_map "Backgrounds/Act1/forest_bg_front.png" forest_front_tile BE
 TILESET forest_bg_tile "Backgrounds/Act1/forest_bg_back.png" BEST
 MAP forest_bg_map "Backgrounds/Act1/forest_bg_back.png" forest_bg_tile BEST
 PALETTE forest_pal "Backgrounds/Act1/forest.pal"
+PALETTE forest_dark_pal "Backgrounds/Act1/forest_dark.pal"

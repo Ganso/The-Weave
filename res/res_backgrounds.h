@@ -20,5 +20,6 @@ extern const MapDefinition forest_front_map;
 extern const TileSet forest_bg_tile;
 extern const MapDefinition forest_bg_map;
 extern const Palette forest_pal;
+extern const Palette forest_dark_pal;
 
 #endif // _RES_RES_BACKGROUNDS_H_
