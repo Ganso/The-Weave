@@ -3,8 +3,8 @@ TILESET bedroom_front_tile "Backgrounds/Act1/bedroom_bg_front.png" BEST
 MAP bedroom_front_map "Backgrounds/Act1/bedroom_bg_front.png" bedroom_front_tile BEST
 TILESET bedroom_bg_tile "Backgrounds/Act1/bedroom_bg_back.png" BEST
 MAP bedroom_bg_map "Backgrounds/Act1/bedroom_bg_back.png" bedroom_bg_tile BEST
-PALETTE bedroom_pal "Backgrounds/Act1/bedroom_bg_front.png"
-PALETTE bedroom_night_pal "Backgrounds/Act1/bedroom_night.pal"
+PALETTE bedroom_pal "Backgrounds/Act1/bedroom_daylight.pal"
+PALETTE bedroom_night_pal "Backgrounds/Act1/bedroom_midnight.pal"
 
 # OLD Act 1 - Scene 1 - Historians guild corridor
 TILESET historians_corridor_front_tile "Backgrounds/Act1/historians_corridor_front.png" NONE 
