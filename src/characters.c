@@ -39,7 +39,9 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         switch (nchar)
         {
         case CHR_linus:
-            nsprite = &linus_sprite;        
+            kprintf("Has rod: %d\n", player_has_rod);
+            if (player_has_rod) nsprite = &linus_sprite;
+            else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
             break;
         case CHR_clio:
@@ -90,6 +92,8 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
 void release_character(u16 nchar)    // Free character sprite resources but keep entity data
 {
     obj_character[nchar].active = false;
+    obj_character[nchar].sd = NULL;
+    obj_character[nchar].sd_shadow = NULL;
     if (spr_chr[nchar] != NULL)
     {
         SPR_releaseSprite(spr_chr[nchar]);

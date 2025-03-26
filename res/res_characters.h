@@ -2,6 +2,7 @@
 #define _RES_RES_CHARACTERS_H_
 
 extern const SpriteDefinition linus_sprite;
+extern const SpriteDefinition linus_norod_sprite;
 extern const SpriteDefinition linus_shadow_sprite;
 extern const SpriteDefinition clio_sprite;
 extern const SpriteDefinition clio_shadow_sprite;

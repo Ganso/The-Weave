@@ -253,6 +253,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
     
     // Initialize characters
+    player_has_rod=true; // Give player the rod
     init_character(CHR_linus);
     init_character(CHR_clio);
     active_character=CHR_linus;

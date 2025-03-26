@@ -13,6 +13,7 @@
 #define MAX_NOTE_PLAYING_TIME  500  // Note playing time in milliseconds
 #define MAX_PATTERN_WAIT_TIME 2000   // Time to wait for a next note before cancelling the pattern in milliseconds
 
+extern bool player_has_rod; // Has the player the rod?
 extern bool player_patterns_enabled; // Can the character play a pattern right now?
 
 extern u8 note_playing; // The note the player is playing

@@ -1,16 +1,17 @@
 #include <genesis.h>
 #include "globals.h"
 
-bool player_patterns_enabled;              // Whether pattern system is currently enabled
+bool player_has_rod;                      // Has the player the rod?
+bool player_patterns_enabled;             // Whether pattern system is currently enabled
 u8 note_playing;                          // Currently playing musical note (NOTE_NONE if none)
 u16 note_playing_time;                    // Duration of current note in ticks
 u16 time_since_last_note;                 // Time since last note in pattern sequence
 u16 player_pattern_effect_in_progress;    // Active pattern effect type (PTRN_NONE if none)
-bool player_pattern_effect_reversed;       // Whether current pattern is reversed
+bool player_pattern_effect_reversed;      // Whether current pattern is reversed
 u16 player_pattern_effect_time;           // Duration of current pattern effect
 u8 played_notes[4];                       // Sequence of notes played in current pattern
 u8 num_played_notes;                      // Number of notes played in current pattern
-Pattern obj_pattern[MAX_PATTERNS];         // Available pattern spells and their states
+Pattern obj_pattern[MAX_PATTERNS];        // Available pattern spells and their states
 
 void activate_spell(u16 npattern)    // Unlock new pattern spell with visual/audio feedback
 {
