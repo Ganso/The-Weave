@@ -58,6 +58,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Notes and patterns
     player_patterns_enabled=false;
+    player_has_rod=false;
     note_playing=0;
     note_playing_time=0;
     num_played_notes=0;
