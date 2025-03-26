@@ -57,9 +57,9 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
         textposx_line2=textposx_line1;
         strcpy(text_line1,"");
     }
-    print_line(text_line1, textposx_line1, 23);
-    print_line(text_line2, textposx_line2, 24);
-    print_line(text_line3, textposx_line3, 25);
+    print_line(text_line1, textposx_line1, 23, true);
+    print_line(text_line2, textposx_line2, 24, true);
+    print_line(text_line3, textposx_line3, 25, true);
     SPR_setVisibility (spr_int_button_A, VISIBLE);
     SPR_setPosition (spr_int_button_A, buttonposx, 208);
     next_frame(false);
@@ -128,7 +128,7 @@ void split_text(char *text, char *line1, char *line2, char *line3)    // Break t
     }
 }
 
-void print_line(char *text, u16 x, u16 y)    // Display text line with character-by-character animation
+void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display text line with character-by-character animation
 {
     int i = 0;
     u16 joy_state;
@@ -147,16 +147,20 @@ void print_line(char *text, u16 x, u16 y)    // Display text line with character
     while (text[i] != '\0') {
         temp[0] = text[i];
         VDP_drawTextBG(WINDOW, temp, x + i, y);
-        joy_state = JOY_readJoypad(JOY_ALL);
-        if ((joy_state & BUTTON_A) == 0) next_frame(false); // If button A is being pressed, skip frame update
+        if (wait_for_frame) {
+            joy_state = JOY_readJoypad(JOY_ALL);
+            if ((joy_state & BUTTON_A) == 0) next_frame(false); // If button A is being pressed, skip frame update
+        }
         i++;
     }
 
-    joy_state = JOY_readJoypad(JOY_ALL);
-    while ((joy_state & BUTTON_A) != 0)
-    {
+    if (wait_for_frame) {
         joy_state = JOY_readJoypad(JOY_ALL);
-        next_frame(false); // If button A is being pressed, wait until release
+        while ((joy_state & BUTTON_A) != 0)
+        {
+            joy_state = JOY_readJoypad(JOY_ALL);
+            next_frame(false); // If button A is being pressed, wait until release
+        }
     }
 
     // Free the encoded text if it was allocated
@@ -232,7 +236,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
         }
 
         // Show plain text first
-        print_line(options[i], textposx[i], start_y + i);
+        print_line(options[i], textposx[i], start_y + i, false);
     }
 
     // Add selection markers to initial option
