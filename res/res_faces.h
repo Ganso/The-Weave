@@ -1,3 +1,5 @@
+#include <genesis.h>
+
 #ifndef _RES_RES_FACES_H_
 #define _RES_RES_FACES_H_
 
