@@ -1,7 +1,6 @@
-# Bad Bobbin
-SPRITE badbobbin_sprite "Sprites/Enemies/bad_bobbin.png" 6 12 BEST 15
-SPRITE badbobbin_sprite_face "Sprites/Enemies/bad_bobbin_face.png" 2 2 BEST
-SPRITE badbobbin_sprite_shadow "Sprites/Enemies/bad_bobbin_shadow.png" 6 1 BEST 15
+# Weaver Ghost
+SPRITE weaver_ghost_sprite "Sprites/Enemies/weaver_ghost.png" 6 8 BEST 15
+SPRITE weaver_ghost_sprite_face "Sprites/Enemies/weaver_ghost_face.png" 2 2 BEST
 
 # Three Head Monkey
 SPRITE three_head_monkey_sprite "Sprites/Enemies/3_head_monkey.png" 8 7 BEST 5

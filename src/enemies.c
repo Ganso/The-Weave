@@ -24,7 +24,7 @@ void update_enemy_shadow(u16 nenemy)    // Update shadow sprite position based o
 
 void init_enemy_classes(void)    // Setup enemy class definitions with HP, patterns, and behavior
 {
-    obj_enemy_class[ENEMY_CLS_BADBOBBIN]=(Enemy_Class) {2, {true, false}, false, 0}; // 2 HP, can use electric pattern, don't follow
+    obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) {2, {true, false}, false, 0}; // 2 HP, can use electric pattern, don't follow
     obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, {false, true}, true, 3}; // 3 HP, can use bite pattern, follows at speed 3
 }
 
@@ -46,12 +46,13 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     // Set specific attributes based on enemy class
     switch (class)
     {
-    case ENEMY_CLS_BADBOBBIN:
+    case ENEMY_CLS_WEAVERGHOST:
         collision_x_offset=4;
         collision_y_offset=95;
-        nsprite = &badbobbin_sprite;
-        nsprite_face = &badbobbin_sprite_face;
-        nsprite_shadow = &badbobbin_sprite_shadow;
+        nsprite = &weaver_ghost_sprite;
+        nsprite_face = &weaver_ghost_sprite_face;
+        nsprite_shadow = NULL;
+        drops_shadow=false;
         break;
     case ENEMY_CLS_3HEADMONKEY:
         collision_x_offset = 20;
@@ -171,6 +172,7 @@ void show_enemy(u16 nenemy, bool show)    // Toggle visibility of enemy and its 
 
 void anim_enemy(u16 nenemy, u8 newanimation)    // Set enemy animation if different from current
 {
+    kprintf("Enemy %d animation %d\n", nenemy, newanimation);
     if (obj_enemy[nenemy].obj_character.animation != newanimation) {
         obj_enemy[nenemy].obj_character.animation = newanimation;
         SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
