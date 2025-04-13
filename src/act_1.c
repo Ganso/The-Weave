@@ -282,7 +282,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     player_patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (1==1 || offset_BGA<300) {
+    while (offset_BGA<150) {
         next_frame(true);
     }
 
@@ -290,24 +290,27 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     show_or_hide_interface(false);
 
     // Initialize enemies
-    PAL_setPalette(PAL3, three_head_monkey_sprite.palette->data, DMA); // Enemy palette
+    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA); // Enemy palette
 
-    init_enemy(0,ENEMY_CLS_3HEADMONKEY);
-    move_enemy_instant(0, -20, 156);
-    move_character(CHR_linus, 200, 144);
-    move_enemy(0, 20, 156);
-    show_or_hide_interface(true);
-    start_combat(true);
-    while (is_combat_active==true) {
-        next_frame(true);
-    }
+    // init_enemy(0,ENEMY_CLS_3HEADMONKEY);
+    // move_enemy_instant(0, -20, 156);
+    // move_character(CHR_linus, 200, 144);
+    // move_enemy(0, 20, 156);
+    // show_or_hide_interface(true);
+    // start_combat(true);
+    // while (is_combat_active==true) {
+    //     next_frame(true);
+    // }
 
-    init_enemy(0,ENEMY_CLS_BADBOBBIN);
-    init_enemy(1,ENEMY_CLS_BADBOBBIN);
+    anim_character(active_character, ANIM_IDLE);
+    reset_character_animations();
+    init_enemy(0,ENEMY_CLS_WEAVERGHOST);
+    init_enemy(1,ENEMY_CLS_WEAVERGHOST);
     move_enemy_instant(0, 350, 176);
     move_enemy_instant(1, -20, 156);
     move_enemy(0, 250, 136);
     move_enemy(1, 20, 156);
+    show_or_hide_interface(true);
     start_combat(true);
     while (is_combat_active==true) {
         next_frame(true);

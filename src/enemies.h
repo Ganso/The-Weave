@@ -3,7 +3,7 @@
 
 // Enemy classes
 #define MAX_ENEMY_CLASSES 10
-#define ENEMY_CLS_BADBOBBIN    0
+#define ENEMY_CLS_WEAVERGHOST    0
 #define ENEMY_CLS_3HEADMONKEY  1
 
 typedef struct
