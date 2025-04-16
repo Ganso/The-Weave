@@ -244,13 +244,13 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     set_limits(0,134,275,172);
 
     // Initialize items
-    init_item(0, &item_forest_fg1_sprite, PAL0, 80, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(1, &item_forest_fg5_sprite, PAL0, 260, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
-    init_item(2, &item_forest_fg2_sprite, PAL0, 440, 174-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(3, &item_forest_fg3_sprite, PAL0, 680, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(4, &item_forest_fg4_sprite, PAL0, 810, 174-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
-    init_item(5, &item_forest_fg1_sprite, PAL0, 1050, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock
-    init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree
+    init_item(0, &item_forest_fg1_sprite, PAL0, 260, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 1
+    init_item(1, &item_forest_fg5_sprite, PAL0, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
+    init_item(2, &item_forest_fg2_sprite, PAL0, 440, 174-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 2
+    init_item(3, &item_forest_fg3_sprite, PAL0, 880, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 3
+    init_item(4, &item_forest_fg4_sprite, PAL0, 1400, 174-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (big)
+    init_item(5, &item_forest_fg1_sprite, PAL0, 1050, 174-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 1
+    init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
     
     // Initialize characters
     player_has_rod=true; // Give player the rod
@@ -275,6 +275,9 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     //talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
     talk_dialog(&dialogs[ACT1_DIALOG3][13]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
 
+    // Fade to day palette
+    PAL_fadeTo(0, 15, forest_pal.data, SCREEN_FPS, false);
+
     // Show the interface and allow character to move and play patterns
     player_scroll_active=true;
     movement_active=true;
@@ -282,7 +285,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     player_patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (offset_BGA<150) {
+    while (offset_BGA<230) {
         next_frame(true);
     }
 

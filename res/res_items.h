@@ -1,3 +1,5 @@
+#include <genesis.h>
+
 #ifndef _RES_RES_ITEMS_H_
 #define _RES_RES_ITEMS_H_
 
