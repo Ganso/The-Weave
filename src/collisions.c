@@ -1,7 +1,7 @@
 #include <genesis.h>
 #include "globals.h"
 
-u8 num_colls;    // Counter to prevent infinite collision loops
+u8 last_collision_type; // Type of the last collision (for debugging)
 
 u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)    // Calculate Manhattan distance between character collision boxes
 {
@@ -106,13 +106,8 @@ u16 detect_char_char_collision(u16 nchar, u16 x, u8 y)    // Check for collision
                     char_col_x2 > other_col_x1 &&
                     char_col_y1 < other_col_y2 &&
                     char_col_y2 > other_col_y1) {
-                    if (num_colls < MAX_COLLISIONS) { // Prevent character from being trapped
-                        num_colls++;
-                        return other_char;
-                    } else {
-                        num_colls = 0;
-                        return CHR_NONE;
-                    }
+                    // Collision detected, return the character ID
+                    return other_char;
                 }
             }
         }
@@ -133,26 +128,21 @@ u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)    // Check for collision
     char_right = char_left + obj_character[nchar].collision_width;
     char_top = y + obj_character[nchar].collision_y_offset;
     char_bottom = char_top + obj_character[nchar].collision_height;
-    //kprintf("CAJA PERSONAJE: (%d,%d)-(%d,%d)",char_left,char_top,char_right,char_bottom);
 
     for (nitem = 0; nitem < MAX_ITEMS; nitem++)
     {
         if (obj_item[nitem].entity.active && obj_item[nitem].entity.visible)
         {
-            //kprintf("Detectando colisión con %d", nitem);
             // Calculate item's bounding box
             item_left = obj_item[nitem].entity.x + obj_item[nitem].entity.collision_x_offset;
             item_right = item_left + obj_item[nitem].entity.collision_width;
             item_top = obj_item[nitem].entity.y + obj_item[nitem].entity.collision_y_offset;
             item_bottom = item_top + obj_item[nitem].entity.collision_height;
-            //kprintf("DATOS OBJETO: (x,y)=(%d,%d), offset(x,y)=(%d,%d), tam(x,y)=(%d,%d)",obj_item[nitem].entity.x,obj_item[nitem].entity.y,obj_item[nitem].entity.collision_x_offset,obj_item[nitem].entity.collision_y_offset,obj_item[nitem].entity.collision_width,obj_item[nitem].entity.collision_height);
-            //kprintf("CAJA OBJETO: (%d,%d)-(%d,%d)",item_left,item_top,item_right,item_bottom);
 
             // Check for collision
             if (char_left < item_right && char_right > item_left &&
                 char_top < item_bottom && char_bottom > item_top)
             {
-                //kprintf(" *** COLISION ***");
                 return nitem; // Return the index of the collided item
             }
         }
@@ -198,13 +188,8 @@ u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)    // Check for collisio
                     char_col_x2 > enemy_col_x1 &&
                     char_col_y1 < enemy_col_y2 &&
                     char_col_y2 > enemy_col_y1) {
-                    if (num_colls<MAX_COLLISIONS) { // Prevent player from being trapped by limiting consecutive collisions
-                        num_colls++;
-                        return nenemy;
-                    } else {
-                        num_colls=0;
-                        return ENEMY_NONE;
-                    }
+                    // Collision detected, return the enemy ID
+                    return nenemy;
                 }
             }
         }

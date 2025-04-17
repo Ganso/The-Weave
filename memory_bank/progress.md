@@ -34,6 +34,15 @@
 - 🔄 Additional spell patterns
 - 🔄 Character interaction improvements
 - 🔄 Memory Bank Update
+- 🔄 Collision system optimization
+  - ✅ Detailed plan created (see `collision_system_optimization_plan.md`)
+  - ✅ Implementation of professional sliding collision system
+  - ✅ Elimination of collision counter "hack" approach
+  - ✅ Implementation of response-based collision handling
+  - ✅ Enhanced enemy collision detection with detailed logging
+  - ✅ Ultra simple collision solution with guaranteed escape from trapped situations
+  - ✅ Detailed debug logging for collision tracking
+  - ⏳ Improved corner detection and handling
 
 ## Remaining Work
 
@@ -51,6 +60,7 @@
 - ⏳ Enhanced visual effects
 - ⏳ Audio system improvements
 - 🔄 Combat system refactoring
+- 🔄 Collision system refactoring
   - ✅ Phase 1: Preparation (documentación, identificación de dependencias)
   - 🔄 Phase 2: Refactorización Base
     - ✅ Creación inicial de la biblioteca de máquina de estados
@@ -80,3 +90,15 @@ Technical demo in development, targeting January 2025 release. Core gameplay sys
 2. 🔄 Integrar la máquina de estados con el sistema de patrones del personaje (character_patterns.c)
 3. ⏳ Integrar la máquina de estados con el sistema de patrones de enemigos (enemies_patterns.c)
 4. ⏳ Crear una función combat_update en combat.c que utilice la máquina de estados
+5. 🔄 Implementar el nuevo sistema de colisiones según el plan en `collision_system_optimization_plan.md`
+   - ✅ Fase 1: Implementar sistema profesional de colisiones con deslizamiento
+   - ✅ Fase 1.5: Añadir sistema de depuración con kprintf
+   - ✅ Fase 1.6: Eliminar completamente el sistema de contador de colisiones
+   - ✅ Fase 1.7: Implementar sistema de respuestas de colisión (BLOCK, SLIDE, PUSH)
+   - ✅ Fase 1.8: Mejorar la detección de colisiones con enemigos
+   - ✅ Fase 1.9: Implementar solución ultra simple para garantizar escape de colisiones
+   - ✅ Fase 1.10: Añadir logging detallado para seguimiento de colisiones
+   - ⏳ Fase 2: Refactorizar las funciones de detección de colisiones
+   - ⏳ Fase 3: Mejorar la detección y manejo de esquinas
+   - ⏳ Fase 4: Optimizar el rendimiento
+   - ⏳ Fase 5: Pruebas y refinamiento
