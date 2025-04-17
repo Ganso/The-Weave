@@ -36,7 +36,7 @@ The game is in early stages of development, currently functioning as a technical
 3. Implement additional spells and patterns
 4. Enhance combat system
     - Refactor Combat System (Propuesta 1: Sistema de Estados y Mensajes)
-        - Phase 1: Preparation (Document current system, identify dependencies, create basic tests, backup code)
+        - Phase 1: Preparation ✅ (Document current system, identify dependencies, create basic tests, backup code)
             - Dependencies:
                 - `character_patterns.c`: `genesis.h`, `globals.h`
                 - `enemies_patterns.c`: `genesis.h`, `globals.h`
@@ -47,23 +47,25 @@ The game is in early stages of development, currently functioning as a technical
                 - `enemies_patterns.c`: `obj_Pattern_Enemy[MAX_PATTERN_ENEMY]`, `enemy_attacking`, `enemy_attack_pattern`, `enemy_attack_pattern_notes`, `enemy_attack_time`, `enemy_attack_effect_in_progress`, `enemy_attack_effect_time`, `enemy_note_active[6]`
                 - `combat.c`: `is_combat_active`
                 - `enemies.c`: `obj_enemy[MAX_ENEMIES]`, `spr_enemy[MAX_ENEMIES]`, `spr_enemy_face[MAX_ENEMIES]`, `spr_enemy_shadow[MAX_ENEMIES]`, `obj_enemy_class[MAX_ENEMY_CLASSES]`
-        - Phase 2: Refactorización Base
-            - Create `PatternState` enum in `combat.h`: `STATE_IDLE`, `STATE_PLAYING_NOTE`, `STATE_PATTERN_CHECK`, `STATE_PATTERN_EFFECT`, `STATE_PATTERN_EFFECT_FINISH`, `STATE_ATTACK_FINISHED`
-            - Create `PatternStateManager` struct in `combat.h`: `current_state`, `timer`, `notes[4]`, `note_count`
-            - Create `MessageType` enum in `combat.h`: `MSG_PATTERN_COMPLETE`, `MSG_COMBAT_START`, `MSG_ENEMY_DEFEATED`
-            - Create `Message` struct in `combat.h`: `type`, `param`
-            - Move global variables related to combat from `character_patterns.c`, `enemies_patterns.c`, `combat.c`, and `enemies.c` to the `PatternStateManager` struct.
-            - Create header files for each of the files mentioned above if they don't exist and include them in the relevant files.
-            - Use the new state machine library in the combat system.
-        - Phase 3: Implementación Core
-            - Modify `character_patterns.c`, `enemies_patterns.c`, and `combat.c` to use the `PatternStateManager` and the message system.
-            - Modify `combat.c` to handle the different states of the combat system, using the new state machine library.
-            - Implement a `combat_update` function that handles the state transitions based on messages.
-            - Implement functions to send messages: `send_message(MessageType type, u16 param)`.
-            - Modify `enemies.c` to react to combat messages.
-        - Phase 4: Finalization
-            - Comprehensive testing of all combat scenarios.
-            - Ensure compatibility with SGDK.
-            - Optimize performance.
-            - Final documentation and code cleanup.
+        - Phase 2: Refactorización Base 🔄 (En progreso)
+            - ✅ Creación inicial de la biblioteca de máquina de estados en `statemachine.h` y `statemachine.c`
+            - ✅ Expandir la implementación actual de `statemachine.h` y `statemachine.c`:
+                - ✅ Actualizar el enum `SM_State` para incluir: `SM_STATE_IDLE`, `SM_STATE_PLAYING_NOTE`, `SM_STATE_PATTERN_CHECK`, `SM_STATE_PATTERN_EFFECT`, `SM_STATE_PATTERN_EFFECT_FINISH`, `SM_STATE_ATTACK_FINISHED`
+                - ✅ Expandir el enum `MessageType` para incluir: `MSG_PATTERN_COMPLETE`, `MSG_COMBAT_START`, `MSG_COMBAT_END`, `MSG_ENEMY_DEFEATED`, `MSG_PLAYER_HIT`, `MSG_ENEMY_HIT`, `MSG_NOTE_PLAYED`, `MSG_PATTERN_TIMEOUT`
+                - ✅ Expandir la estructura `StateMachine` para incluir: `current_state`, `timer`, `notes[4]`, `note_count`, `current_note`, `note_time`, `pattern_time`, `active_pattern`, `is_reversed`, `effect_time`, `entity_id`
+                - ✅ Actualizar las funciones `StateMachine_Init` y `StateMachine_Update`
+                - ✅ Añadir función `StateMachine_SendMessage`
+            - ✅ Crear documentación detallada de la máquina de estados (ver `memory_bank/state_machine_implementation_plan.md`)
+            - 🔄 Pendiente: Mover variables globales relacionadas con el combate a la estructura `StateMachine`
+            - 🔄 Pendiente: Incluir los archivos de cabecera necesarios
+        - Phase 3: Implementación Core ⏳ (Pendiente)
+            - Modificar `character_patterns.c`, `enemies_patterns.c`, y `combat.c` para usar la máquina de estados
+            - Implementar función `combat_update` para manejar transiciones de estado basadas en mensajes
+            - Implementar funciones para enviar mensajes
+            - Modificar `enemies.c` para reaccionar a mensajes de combate
+        - Phase 4: Finalization ⏳ (Pendiente)
+            - Pruebas exhaustivas de todos los escenarios de combate
+            - Asegurar compatibilidad con SGDK
+            - Optimizar rendimiento
+            - Documentación final y limpieza de código
 5. Add more character interactions and story elements

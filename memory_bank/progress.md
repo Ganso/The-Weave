@@ -29,6 +29,8 @@
 ## In Progress
 - 🔄 Act 1 polish and refinement
 - 🔄 Combat system enhancement
+  - 🔄 Refactorización del sistema de combate usando máquina de estados
+  - 🔄 Expansión de la implementación de statemachine.c/h
 - 🔄 Additional spell patterns
 - 🔄 Character interaction improvements
 - 🔄 Memory Bank Update
@@ -48,6 +50,14 @@
 - ⏳ Additional gameplay mechanics
 - ⏳ Enhanced visual effects
 - ⏳ Audio system improvements
+- 🔄 Combat system refactoring
+  - ✅ Phase 1: Preparation (documentación, identificación de dependencias)
+  - 🔄 Phase 2: Refactorización Base
+    - ✅ Creación inicial de la biblioteca de máquina de estados
+    - ✅ Expansión de statemachine.c/h con estados y mensajes adicionales
+    - 🔄 Integración con sistemas existentes
+  - ⏳ Phase 3: Implementación Core
+  - ⏳ Phase 4: Finalization
 
 ### Polish
 - ⏳ UI/UX improvements
@@ -64,3 +74,9 @@
 
 ## Current Status
 Technical demo in development, targeting January 2025 release. Core gameplay systems are functional with Act 1 serving as the primary demonstration of features. `projectBrief.md` was created to document project requirements.
+
+## Próximos Pasos Inmediatos
+1. ✅ Implementar los cambios en statemachine.c/h según las instrucciones en `statemachine_implementation_instructions.md`
+2. 🔄 Integrar la máquina de estados con el sistema de patrones del personaje (character_patterns.c)
+3. ⏳ Integrar la máquina de estados con el sistema de patrones de enemigos (enemies_patterns.c)
+4. ⏳ Crear una función combat_update en combat.c que utilice la máquina de estados
