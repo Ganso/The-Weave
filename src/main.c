@@ -14,6 +14,13 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
 
     initialize(true);
 
+    #ifdef DEBUG_ON
+        // Run state machine tests
+        KLog("\n=== Running State Machine Tests ===\n");
+        run_state_machine_tests();
+        KLog("\n=== State Machine Tests Complete ===\n\n");
+    #endif
+
     current_act=1;
     current_scene=5;
 
