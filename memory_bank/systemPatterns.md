@@ -1,48 +1,13 @@
-# System Patterns
+# Default Collision Box Pattern
 
-## Code Organization
+Unless explicitly defined otherwise, collision boxes for all entities (characters, items, enemies) should follow this pattern:
 
-- All source files are in the `src/` directory
-- All resources (sprites, backgrounds, etc.) are in the `res/` directory
-- Only include globals.h in source files - it already includes everything needed for the project
+- Width: 50% of sprite width (x_size/2)
+- X offset: 25% of sprite width (x_size/4) to center the collision box horizontally
+- Height: 2 pixels
+- Y offset: At the bottom of sprite (y_size-1)
 
-## Resource Management
-
-- Resources are defined in .res files in the res/ directory
-- Each resource type has its own .res file (characters, faces, interface, etc.)
-- Resource names follow the pattern:
-  - Sprites: [category]_[name]_sprite
-  - Images: [category]_[name]_image
-  - Palettes: [category]_pal
-
-## Memory Management
-
-- Faces are loaded dynamically when needed and released after use
-- Sprites are managed through the SGDK sprite engine (SPR_)
-- Text is drawn directly to the background plane
-
-## UI Patterns
-
-- Dialog boxes use lines 23-25 of the window plane
-- Text is centered based on face position and text length
-- Faces can be positioned on left or right side
-- Button A sprite is used for interaction prompts
-- Magic animation sprite (96x8) is used for menu selection highlights
-
-## Input Handling
-
-- Button A is used for confirmation/advance
-- Up/Down for menu navigation
-- Input checking includes debouncing (prev_joy_state)
-
-## Animation
-
-- Character animations are state-based (idle, walking)
-- Text appears character by character
-- Menu selection uses animated magic effect
-
-## Error Handling
-
-- Memory allocation failures are checked for text encoding
-- Input validation for array bounds
-- State validation for character animations
+This creates a small collision area at the feet of the sprite, which is ideal for:
+- Character-to-character interactions
+- Item pickups
+- Combat collision detection

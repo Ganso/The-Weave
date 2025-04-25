@@ -47,18 +47,12 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     switch (class)
     {
     case ENEMY_CLS_WEAVERGHOST:
-        collision_x_offset=4;
-        collision_y_offset=95;
         nsprite = &weaver_ghost_sprite;
         nsprite_face = &weaver_ghost_sprite_face;
         nsprite_shadow = NULL;
         drops_shadow=false;
         break;
     case ENEMY_CLS_3HEADMONKEY:
-        collision_x_offset = 20;
-        collision_y_offset = 55;
-        collision_width = 20;
-        collision_height = 2;
         nsprite = &three_head_monkey_sprite;
         nsprite_face = &three_head_monkey_sprite_face;
         nsprite_shadow = &three_head_monkey_sprite_shadow;
