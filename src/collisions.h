@@ -3,7 +3,7 @@
 
 #define MAX_INTERACTIVE_DISTANCE 20 // Distance in pixels with items you can interact
 
-#define MAX_COLLISIONS 30 // If we collide with an enemy more than X times, move the character anyway (CHANGE IT!)
+#define MAX_COLLISIONS 100 // Maximimum number of collisions to check before fixing position
 extern u8 num_colls; // Number of collisions that already happened
 
 // Distances
@@ -17,4 +17,4 @@ u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y); // Detect collisons bet
 u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y); // Detect collisions between an enemy and every character, given some new coordinates
 
 
-#endif
+#endif  
