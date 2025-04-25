@@ -67,41 +67,54 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     // dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
 
     s16 current_x = obj_character[active_character].x;
+    s16 current_y = obj_character[active_character].y;
     s16 new_x = current_x + dx;
-    s16 new_y = obj_character[active_character].y + dy;
+    s16 new_y = current_y + dy;
     u8 player_y_size = obj_character[active_character].y_size;
     bool direction_changed = false;
+    bool has_collision = false;
 
     // Check if we're changing horizontal direction
-    if (dx != 0 && ((dx < 0 && !obj_character[active_character].flipH) ||
-                    (dx > 0 && obj_character[active_character].flipH))) {
-        direction_changed = true;
-        num_colls = 0; // Reset collision counter
+    if (dx != 0) {
+        direction_changed = ((dx < 0 && !obj_character[active_character].flipH) ||
+                           (dx > 0 && obj_character[active_character].flipH));
+    }
 
-        // Check for collision at current position
-        while ((detect_char_enemy_collision(active_character, current_x, new_y) != ENEMY_NONE ||
-               detect_char_item_collision(active_character, current_x, new_y) != ITEM_NONE ||
-               detect_char_char_collision(active_character, current_x, new_y) != CHR_NONE) &&
+    // Check for collision at new position
+    if ((detect_char_enemy_collision(active_character, new_x, new_y) != ENEMY_NONE) ||
+        (detect_char_item_collision(active_character, new_x, new_y) != ITEM_NONE) ||
+        (detect_char_char_collision(active_character, new_x, new_y) != CHR_NONE)) {
+        
+        has_collision = true;
+        num_colls = 0; // Reset collision counter
+        
+        // If changing direction, try moving in new direction
+        // If not changing direction, try moving in opposite direction
+        s16 move_dx = direction_changed ? dx : -dx;
+        s16 move_dy = direction_changed ? dy : -dy;
+        s16 test_x = direction_changed ? current_x : new_x;
+        s16 test_y = direction_changed ? current_y : new_y;
+
+        // Move pixel by pixel until no collision or MAX_COLLISIONS reached
+        while ((detect_char_enemy_collision(active_character, test_x, test_y) != ENEMY_NONE ||
+               detect_char_item_collision(active_character, test_x, test_y) != ITEM_NONE ||
+               detect_char_char_collision(active_character, test_x, test_y) != CHR_NONE) &&
                num_colls < MAX_COLLISIONS) {
             
-            // Move one pixel in new direction
-            current_x += dx;
+            test_x += move_dx;
+            test_y += move_dy;
             num_colls++;
 
             // Stay within screen boundaries
-            if (current_x < x_limit_min || current_x > x_limit_max) {
+            if (test_x < x_limit_min || test_x > x_limit_max ||
+                test_y + player_y_size < y_limit_min || test_y + player_y_size > y_limit_max) {
                 break;
             }
         }
-        new_x = current_x; // Update new_x with adjusted position
-    }
 
-    // If we haven't changed direction, check collision at new position
-    if (!direction_changed &&
-        ((detect_char_enemy_collision(active_character, new_x, new_y) != ENEMY_NONE) ||
-         (detect_char_item_collision(active_character, new_x, new_y) != ITEM_NONE) ||
-         (detect_char_char_collision(active_character, new_x, new_y) != CHR_NONE))) {
-        return; // Collision detected, don't move
+        // Update new position to where we found no collision
+        new_x = test_x;
+        new_y = test_y;
     }
 
     bool position_updated = false;
@@ -117,10 +130,11 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         else if (new_x >= x_limit_min && new_x <= x_limit_max) {
             // Update character position and flip state
             obj_character[active_character].x = new_x;
-            obj_character[active_character].flipH = (dx < 0); // Flip character sprite if moving left
+            if (direction_changed) {
+                obj_character[active_character].flipH = (dx < 0); // Only update flip if direction changed
+            }
             position_updated = true;
         }
-        // If new_x is outside boundaries and not in scrolling mode, do nothing
     }
 
     // Handle vertical movement
