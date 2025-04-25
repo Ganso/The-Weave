@@ -27,10 +27,10 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
 {
     u8 npal = PAL1;
     u8 x_size, y_size; // We can get them from the Sprite Definition
-    u8 collision_x_offset=4;
-    u8 collision_y_offset=63;
-    u8 collision_width=36;
-    u8 collision_height=2;
+    u8 collision_x_offset=0;
+    u8 collision_y_offset=0;
+    u8 collision_width=0;
+    u8 collision_height=0;
     bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
     const SpriteDefinition *nsprite_shadow = NULL;
@@ -62,6 +62,13 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         
         x_size=nsprite->w; // Get width and height from the Sprite Definition
         y_size=nsprite->h;
+
+        // Set default collision box if not defined
+        if (collision_width==0) collision_width=x_size/2; // Half width size
+        if (collision_x_offset==0) collision_x_offset=x_size/4; // Centered in X
+        if (collision_height==0) collision_height=2; // Two lines height
+        if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
+
         obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow };
     } else {
         nsprite = obj_character[nchar].sd;
