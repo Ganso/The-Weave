@@ -1,221 +1,104 @@
-# Instrucciones para Implementar la Máquina de Estados
+# Instrucciones de Implementación de la Máquina de Estados
 
-Este documento proporciona instrucciones detalladas para implementar los cambios necesarios en `statemachine.h` y `statemachine.c` como primer paso para la refactorización del sistema de combate.
+## Estado Actual
 
-## Cambios en statemachine.h
+Se ha completado la implementación base del sistema de estados con las siguientes características:
 
-Reemplaza el contenido actual de `statemachine.h` con el siguiente código:
+1. **Estructura Expandida**
+   - Sistema de patrones encapsulado en PatternSystem
+   - Soporte para callbacks de efectos
+   - Manejo de estados mejorado
 
-```c
-#ifndef STATEMACHINE_H
-#define STATEMACHINE_H
+2. **Patrón Eléctrico como Ejemplo**
+   - Implementación completa del ciclo de vida (launch, do, finish)
+   - Efectos visuales y de combate integrados
+   - Sistema de callbacks funcionando
 
-// Definición de constantes para tiempos máximos
-#define MAX_NOTE_PLAYING_TIME  500  // Tiempo máximo de reproducción de nota en milisegundos
-#define MAX_PATTERN_WAIT_TIME 2000  // Tiempo máximo de espera para la siguiente nota en milisegundos
-#define MAX_EFFECT_TIME       1600  // Tiempo máximo para efectos de patrón en milisegundos
-#define MAX_TIME_AFTER_ATTACK 1000  // Tiempo máximo después de un ataque en milisegundos
+3. **Conversión de Estados**
+   - Mapeo bidireccional entre estados del personaje y estados de la máquina
+   - Actualización automática de animaciones
 
-// Estados de la máquina de estados
-typedef enum {
-    SM_STATE_IDLE,               // Sistema inactivo
-    SM_STATE_PLAYING_NOTE,       // Reproduciendo una nota
-    SM_STATE_PATTERN_CHECK,      // Verificando si el patrón es válido
-    SM_STATE_PATTERN_EFFECT,     // Ejecutando el efecto del patrón
-    SM_STATE_PATTERN_EFFECT_FINISH, // Finalizando el efecto del patrón
-    SM_STATE_ATTACK_FINISHED     // Ataque finalizado, en enfriamiento
-} SM_State;
+## Próximo Paso Recomendado
 
-// Tipos de mensajes para comunicación entre componentes
-typedef enum {
-    MSG_PATTERN_COMPLETE,        // Patrón completado
-    MSG_COMBAT_START,            // Inicio de combate
-    MSG_COMBAT_END,              // Fin de combate
-    MSG_ENEMY_DEFEATED,          // Enemigo derrotado
-    MSG_PLAYER_HIT,              // Jugador golpeado
-    MSG_ENEMY_HIT,               // Enemigo golpeado
-    MSG_NOTE_PLAYED,             // Nota reproducida
-    MSG_PATTERN_TIMEOUT          // Tiempo de espera del patrón agotado
-} MessageType;
+Para probar la implementación, se sugiere:
 
-// Estructura de mensaje para comunicación
-typedef struct {
-    MessageType type;            // Tipo de mensaje
-    u16 param;                   // Parámetro adicional (depende del tipo de mensaje)
-} Message;
+1. Modificar la función `play_note` en character_patterns.c para usar la nueva máquina de estados:
+   ```c
+   void play_note(u8 nnote) {
+       if (!player_state_machine.pattern_system.is_note_playing) {
+           StateMachine_SendMessage(&player_state_machine, MSG_NOTE_PLAYED, nnote);
+           show_note(nnote, true);
+       }
+   }
+   ```
 
-// Estructura principal de la máquina de estados
-typedef struct {
-    SM_State current_state;      // Estado actual
-    u16 timer;                   // Temporizador general
-    u8 notes[4];                 // Notas del patrón actual
-    u8 note_count;               // Número de notas reproducidas
-    u8 current_note;             // Nota actual que se está reproduciendo
-    u16 note_time;               // Tiempo que lleva reproduciendo la nota
-    u16 pattern_time;            // Tiempo desde la última nota
-    u16 active_pattern;          // Patrón activo (si hay alguno)
-    bool is_reversed;            // Si el patrón es invertido
-    u16 effect_time;             // Tiempo que lleva el efecto activo
-    u16 entity_id;               // ID de la entidad (jugador o enemigo)
-} StateMachine;
+2. Crear una instancia global de StateMachine en character_patterns.c:
+   ```c
+   StateMachine player_state_machine;
+   ```
 
-// Funciones de la máquina de estados
-void StateMachine_Init(StateMachine *sm, u16 entity_id);
-void StateMachine_Update(StateMachine *sm, Message *msg);
-void StateMachine_SendMessage(StateMachine *sm, MessageType type, u16 param);
+3. Inicializar la máquina de estados en init_patterns():
+   ```c
+   void init_patterns(void) {
+       // Inicialización existente de patrones
+       obj_pattern[PTRN_ELECTRIC] = (Pattern) {false, {1,2,3,4}, NULL};
+       obj_pattern[PTRN_HIDE] = (Pattern) {false, {2,5,3,6}, NULL};
+       obj_pattern[PTRN_OPEN] = (Pattern) {false, {2,3,3,2}, NULL};
+       obj_pattern[PTRN_SLEEP] = (Pattern) {false, {2,1,6,4}, NULL};
 
-#endif
-```
+       // Inicializar máquina de estados
+       StateMachine_Init(&player_state_machine, active_character);
+   }
+   ```
 
-## Cambios en statemachine.c
+4. Modificar check_active_character_state para integrar con la máquina de estados:
+   ```c
+   void check_active_character_state(void) {
+       // Actualizar la máquina de estados
+       StateMachine_Update(&player_state_machine, NULL);
+       
+       // Actualizar el estado del personaje
+       update_character_from_sm_state(&obj_character[active_character], 
+                                    player_state_machine.current_state);
+   }
+   ```
 
-Reemplaza el contenido actual de `statemachine.c` con el siguiente código:
+## Beneficios de Este Enfoque
 
-```c
-#include "globals.h"
+1. **Gradual**: Permite probar la nueva implementación sin romper la existente
+2. **Verificable**: Cada paso puede ser probado individualmente
+3. **Reversible**: Fácil de revertir si se encuentran problemas
+4. **Mantenible**: Mejor organización del código
 
-/**
- * Inicializa una máquina de estados.
- * 
- * @param sm Puntero a la estructura StateMachine a inicializar
- * @param entity_id ID de la entidad asociada a esta máquina de estados
- */
-void StateMachine_Init(StateMachine *sm, u16 entity_id) {
-    sm->current_state = SM_STATE_IDLE;
-    sm->timer = 0;
-    sm->note_count = 0;
-    sm->current_note = 0;
-    sm->note_time = 0;
-    sm->pattern_time = 0;
-    sm->active_pattern = 0;
-    sm->is_reversed = false;
-    sm->effect_time = 0;
-    sm->entity_id = entity_id;
-    
-    // Inicializar array de notas
-    for (u8 i = 0; i < 4; i++) {
-        sm->notes[i] = 0;
-    }
-}
+## Consideraciones
 
-/**
- * Actualiza el estado de una máquina de estados basado en un mensaje.
- * 
- * @param sm Puntero a la estructura StateMachine a actualizar
- * @param msg Puntero al mensaje que se procesará (puede ser NULL)
- */
-void StateMachine_Update(StateMachine *sm, Message *msg) {
-    // Lógica de actualización para cada estado
-    switch (sm->current_state) {
-        case SM_STATE_IDLE:
-            // Manejar mensajes en estado IDLE
-            if (msg != NULL) {
-                switch (msg->type) {
-                    case MSG_COMBAT_START:
-                        sm->current_state = SM_STATE_PLAYING_NOTE;
-                        sm->timer = 0;
-                        break;
-                    case MSG_NOTE_PLAYED:
-                        sm->current_state = SM_STATE_PLAYING_NOTE;
-                        sm->current_note = msg->param;
-                        sm->notes[sm->note_count++] = msg->param;
-                        sm->note_time = 0;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            break;
-            
-        case SM_STATE_PLAYING_NOTE:
-            // Lógica para reproducir notas
-            sm->note_time++;
-            if (sm->note_time > MAX_NOTE_PLAYING_TIME) {
-                sm->current_state = SM_STATE_PATTERN_CHECK;
-                sm->note_time = 0;
-            }
-            break;
-            
-        case SM_STATE_PATTERN_CHECK:
-            // Aquí iría la lógica para verificar patrones
-            // Por ahora, simplemente transicionamos a IDLE o EFFECT
-            if (msg != NULL && msg->type == MSG_PATTERN_COMPLETE) {
-                sm->current_state = SM_STATE_PATTERN_EFFECT;
-                sm->active_pattern = msg->param;
-                sm->effect_time = 0;
-            } else {
-                sm->current_state = SM_STATE_IDLE;
-            }
-            break;
-            
-        case SM_STATE_PATTERN_EFFECT:
-            // Lógica para efectos de patrones
-            sm->effect_time++;
-            if (sm->effect_time > MAX_EFFECT_TIME) {
-                sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
-                sm->effect_time = 0;
-            }
-            break;
-            
-        case SM_STATE_PATTERN_EFFECT_FINISH:
-            // Lógica para finalizar efectos
-            sm->timer++;
-            if (sm->timer > 20) {
-                sm->current_state = SM_STATE_IDLE;
-                sm->timer = 0;
-                sm->active_pattern = 0;
-            }
-            break;
-            
-        case SM_STATE_ATTACK_FINISHED:
-            // Lógica para el estado post-ataque
-            sm->timer++;
-            if (sm->timer > MAX_TIME_AFTER_ATTACK) {
-                sm->current_state = SM_STATE_IDLE;
-                sm->timer = 0;
-            }
-            break;
-            
-        default:
-            // Manejar estado desconocido
-            sm->current_state = SM_STATE_IDLE;
-            sm->timer = 0;
-            break;
-    }
-}
+1. **Compatibilidad**: Asegurar que los estados se mapean correctamente
+2. **Timing**: Mantener la sincronización de efectos y animaciones
+3. **Memoria**: Monitorear el uso de memoria con la nueva estructura
+4. **Rendimiento**: Verificar que no hay impacto significativo
 
-/**
- * Envía un mensaje a una máquina de estados para su procesamiento.
- * 
- * @param sm Puntero a la estructura StateMachine que recibirá el mensaje
- * @param type Tipo de mensaje a enviar
- * @param param Parámetro adicional del mensaje
- */
-void StateMachine_SendMessage(StateMachine *sm, MessageType type, u16 param) {
-    Message msg;
-    msg.type = type;
-    msg.param = param;
-    StateMachine_Update(sm, &msg);
-}
-```
+## Plan de Pruebas
 
-## Notas Importantes
+1. **Pruebas Básicas**
+   - Reproducir notas individuales
+   - Verificar transiciones de estado
+   - Comprobar animaciones
 
-1. **Compatibilidad**: Esta implementación es compatible con el código existente, ya que mantiene las funciones originales mientras añade nuevas funcionalidades.
+2. **Pruebas de Patrones**
+   - Probar el patrón eléctrico completo
+   - Verificar efectos visuales
+   - Comprobar efectos de combate
 
-2. **Constantes**: Se han definido constantes para los tiempos máximos basados en los valores existentes en el código actual.
+3. **Pruebas de Error**
+   - Intentar patrones inválidos
+   - Verificar timeouts
+   - Comprobar límites de notas
 
-3. **Nuevos Estados**: Se han añadido los estados `SM_STATE_PLAYING_NOTE`, `SM_STATE_PATTERN_CHECK` y `SM_STATE_ATTACK_FINISHED` para manejar todas las fases del sistema de combate.
+## Siguientes Pasos
 
-4. **Nuevos Mensajes**: Se han añadido los mensajes `MSG_COMBAT_END`, `MSG_PLAYER_HIT`, `MSG_ENEMY_HIT`, `MSG_NOTE_PLAYED` y `MSG_PATTERN_TIMEOUT` para una comunicación más completa entre componentes.
+Una vez que esta implementación esté funcionando:
 
-5. **Nueva Función**: Se ha añadido la función `StateMachine_SendMessage` para facilitar el envío de mensajes a la máquina de estados.
-
-## Próximos Pasos
-
-Una vez implementados estos cambios, los siguientes pasos serían:
-
-1. Integrar la máquina de estados con el sistema de patrones del personaje
-2. Integrar la máquina de estados con el sistema de patrones de enemigos
-3. Crear una función combat_update en combat.c que utilice la máquina de estados
-4. Realizar pruebas exhaustivas para asegurar que todo funciona correctamente
+1. Implementar los demás patrones (HIDE, SLEEP, OPEN)
+2. Refinar el sistema de callbacks
+3. Optimizar el rendimiento si es necesario
+4. Documentar la API completa

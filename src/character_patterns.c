@@ -1,5 +1,7 @@
-#include <genesis.h>
 #include "globals.h"
+
+// Instancia global de la máquina de estados
+StateMachine player_state_machine;
 
 bool player_has_rod;                      // Has the player the rod?
 bool player_patterns_enabled;             // Whether pattern system is currently enabled
@@ -35,24 +37,47 @@ void activate_spell(u16 npattern)    // Unlock new pattern spell with visual/aud
 
 void play_note(u8 nnote)    // Handle new musical note input and update character state
 {
-    if (note_playing == NOTE_NONE) {
-        if (note_playing_time == 0) {
-            // Start playing the note
-            show_note(nnote, true);
-            note_playing = nnote;
-            note_playing_time++;
+    // Prevenir notas demasiado rápidas
+    if (note_playing_time < 5) {
+        return;
+    }
+
+    // Usar la máquina de estados para procesar la nota
+    if (!player_state_machine.pattern_system.is_note_playing) {
+        // Añadir la nota al patrón actual
+        if (num_played_notes < 4) {
             played_notes[num_played_notes] = nnote;
             num_played_notes++;
             
-            // Update character state
-            obj_character[active_character].state = STATE_PLAYING_NOTE;
-            update_character_animation();
+            // Sincronizar con la máquina de estados
+            for (u8 i = 0; i < 4; i++) {
+                player_state_machine.notes[i] = played_notes[i];
+            }
+            player_state_machine.note_count = num_played_notes;
         }
+        
+        // Enviar mensaje después de actualizar las notas
+        StateMachine_SendMessage(&player_state_machine, MSG_NOTE_PLAYED, nnote);
+        show_note(nnote, true);
+        
+        // Mantener la compatibilidad con el sistema actual
+        note_playing = nnote;
+        note_playing_time = 0;
     }
 }
 
 void check_active_character_state(void)    // Process character states for pattern system
 {
+    // Actualizar la máquina de estados
+    StateMachine_Update(&player_state_machine, NULL);
+    
+    // Solo actualizar el estado si no estamos en un estado de movimiento
+    if (obj_character[active_character].state != STATE_WALKING) {
+        update_character_from_sm_state(&obj_character[active_character],
+                                    player_state_machine.current_state);
+    }
+    
+    // Mantener la lógica existente temporalmente
     bool is_reverse_match;
     u8 matched_pattern;
 
@@ -72,16 +97,30 @@ void check_active_character_state(void)    // Process character states for patte
             break;
 
         case STATE_PATTERN_CHECK:
-            matched_pattern = validate_pattern_sequence(played_notes, &is_reverse_match);
-            hide_rod_icons();
+            kprintf("Checking pattern. Notes played: %d %d %d %d (count: %d)",
+                   played_notes[0], played_notes[1], played_notes[2], played_notes[3],
+                   num_played_notes);
+            
+            if (num_played_notes == 4) {
+                matched_pattern = validate_pattern_sequence(played_notes, &is_reverse_match);
+                hide_rod_icons();
 
-            if (matched_pattern != PTRN_NONE) {
+                if (matched_pattern != PTRN_NONE) {
                 player_pattern_effect_reversed = false;
                 
                 // Handle thunder pattern
                 if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match && can_use_electric_pattern()) {
-                    kprintf("Thunder spell!");
-                    launch_electric_pattern();
+                    kprintf("Thunder spell detected! Configuring callbacks");
+                    // Configurar callbacks para el patrón eléctrico
+                    player_state_machine.launch_effect = electric_pattern_launch;
+                    player_state_machine.do_effect = electric_pattern_do;
+                    player_state_machine.finish_effect = electric_pattern_finish;
+                    kprintf("Callbacks configured - launch: %d, do: %d, finish: %d",
+                           player_state_machine.launch_effect != NULL,
+                           player_state_machine.do_effect != NULL,
+                           player_state_machine.finish_effect != NULL);
+                    // Enviar mensaje para activar el efecto
+                    StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
                 }
                 // Handle hide pattern
                 else if (matched_pattern == PTRN_HIDE && !is_reverse_match && can_use_hide_pattern()) {
@@ -119,16 +158,20 @@ void check_active_character_state(void)    // Process character states for patte
                     show_pattern_icon(matched_pattern, false, false);
                     obj_character[active_character].state = STATE_IDLE;
                 }
-            }
-            else {
-                // No pattern matched
-                kprintf("No pattern match");
-                play_pattern_sound(PTRN_NONE);
+                }
+                else {
+                    // No pattern matched
+                    kprintf("No pattern match");
+                    play_pattern_sound(PTRN_NONE);
+                    obj_character[active_character].state = STATE_IDLE;
+                }
+                
+                reset_pattern_state();
+                next_frame(false);
+            } else {
+                kprintf("Not enough notes yet (%d/4), waiting...", num_played_notes);
                 obj_character[active_character].state = STATE_IDLE;
             }
-            
-            reset_pattern_state();
-            next_frame(false);
             break;
 
         case STATE_PATTERN_EFFECT:
@@ -182,10 +225,28 @@ void play_pattern_sound(u16 npattern)    // Play sound effect for given pattern 
 
 void init_patterns(void)    // Setup initial pattern definitions and states
 {
-    obj_pattern[PTRN_ELECTRIC] = (Pattern) {false, {1,2,3,4}, NULL};
-    obj_pattern[PTRN_HIDE] = (Pattern) {false, {2,5,3,6}, NULL};
-    obj_pattern[PTRN_OPEN] = (Pattern) {false, {2,3,3,2}, NULL};
-    obj_pattern[PTRN_SLEEP] = (Pattern) {false, {2,1,6,4}, NULL};
+    kprintf("Initializing patterns");
+    
+    // Inicializar patrones existentes
+    obj_pattern[PTRN_ELECTRIC] = (Pattern) {true, {1,2,3,4}, NULL, NULL};
+    obj_pattern[PTRN_HIDE] = (Pattern) {true, {2,5,3,6}, NULL, NULL};
+    obj_pattern[PTRN_OPEN] = (Pattern) {true, {2,3,3,2}, NULL, NULL};
+    obj_pattern[PTRN_SLEEP] = (Pattern) {true, {2,1,6,4}, NULL, NULL};
+
+    kprintf("Patterns initialized with active status: %d %d %d %d",
+            obj_pattern[PTRN_ELECTRIC].active,
+            obj_pattern[PTRN_HIDE].active,
+            obj_pattern[PTRN_OPEN].active,
+            obj_pattern[PTRN_SLEEP].active);
+
+    // Inicializar máquina de estados
+    StateMachine_Init(&player_state_machine, active_character);
+    
+    // Configurar patrones disponibles - asignar el puntero al array
+    player_state_machine.pattern_system.available_patterns = &obj_pattern[0];
+    player_state_machine.pattern_system.pattern_count = MAX_PATTERNS;
+    
+    kprintf("State machine initialized with entity_id: %d", active_character);
 }
 
 bool validate_pattern_sequence(u8 *notes, bool *is_reverse)    // Check if played notes match any known pattern
@@ -207,11 +268,15 @@ bool validate_pattern_sequence(u8 *notes, bool *is_reverse)    // Check if playe
         }
         // Pattern found if all notes match and pattern is active
         if (matches == 4 && obj_pattern[npattern].active == true) {
+            kprintf("Pattern matched (forward): %d", npattern);
             *is_reverse = false;
+            player_state_machine.pattern_system.effect_reversed = false;
             return npattern;
         }
         else if (reverse_matches == 4 && obj_pattern[npattern].active == true) {
+            kprintf("Pattern matched (reverse): %d", npattern);
             *is_reverse = true;
+            player_state_machine.pattern_system.effect_reversed = true;
             return npattern;
         }
     }
@@ -259,8 +324,19 @@ bool can_use_open_pattern(void)
 
 void reset_pattern_state(void)    // Clear current pattern sequence state
 {
-    num_played_notes = 0;
-    time_since_last_note = 0;
+    // Resetear estado solo cuando se completa un patrón
+    if (num_played_notes == 4) {
+        // Limpiar notas visuales
+        for (u8 i = 0; i < 4; i++) {
+            show_note(played_notes[i], false);
+        }
+        
+        // Resetear contadores
+        num_played_notes = 0;
+        time_since_last_note = 0;
+        player_state_machine.pattern_time = 0;
+        player_state_machine.note_count = 0;
+    }
 }
 
 void handle_pattern_timeout(void)    // Check for pattern sequence timeout
@@ -268,9 +344,17 @@ void handle_pattern_timeout(void)    // Check for pattern sequence timeout
     if (time_since_last_note != 0) {
         time_since_last_note++;
         if (time_since_last_note == calc_ticks(MAX_PATTERN_WAIT_TIME)) {
+            // Limpiar estado primero
+            reset_pattern_state();
+            
+            // Limpiar visuales
             hide_rod_icons();
-            time_since_last_note = 0;
-            num_played_notes = 0;
+            for (u8 i = 0; i < 4; i++) {
+                show_note(i+1, false);
+            }
+            
+            // Notificar timeout a la máquina de estados
+            StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_TIMEOUT, 0);
         }
     }
 }
@@ -278,12 +362,19 @@ void handle_pattern_timeout(void)    // Check for pattern sequence timeout
 void update_pattern_state(void)    // Process note completion and check for pattern match
 {
     show_note(note_playing, false);
+    
+    // Actualizar estado actual
     note_playing = NOTE_NONE;
     time_since_last_note = 1;
     note_playing_time = 0;
     
+    // Sincronizar con la máquina de estados
+    player_state_machine.pattern_system.is_note_playing = false;
+    player_state_machine.pattern_time = 1;
+    
     if (num_played_notes == 4) {
-        obj_character[active_character].state = STATE_PATTERN_FINISHED;
+        // La validación del patrón ahora se maneja en validate_pattern_sequence
+        // que enviará MSG_PATTERN_COMPLETE si corresponde
         obj_character[active_character].state = STATE_PATTERN_CHECK;
     } else {
         obj_character[active_character].state = STATE_IDLE;
@@ -298,31 +389,28 @@ void launch_electric_pattern(void)    // Start electric pattern effect
     show_pattern_icon(PTRN_ELECTRIC, true, true);
     SPR_update();
     play_pattern_sound(PTRN_ELECTRIC);
+    
+    // Inicializar estado del efecto
     player_pattern_effect_in_progress = PTRN_ELECTRIC;
+    player_pattern_effect_time = 0;
+    
+    // Configurar estado en la máquina de estados
+    player_state_machine.pattern_system.effect_in_progress = true;
+    player_state_machine.pattern_system.effect_type = PTRN_ELECTRIC;
 }
 
 void do_electric_pattern_effect(void)    // Process electric pattern visual and combat effects
 {
-    // Set every enemy and character animation (except active one) to IDLE
-    reset_character_animations();
-
     // Visual thunder effect
-    for (u8 i = 0; i < 100; i++) {
-        VDP_setHilightShadow(true);
-        SPR_update();
-        SYS_doVBlankProcess();
-        VDP_setHilightShadow(false);
-        SYS_doVBlankProcess();
-        SPR_update();
-    }
-    show_pattern_icon(PTRN_ELECTRIC, false, false);
+    VDP_setHilightShadow((player_pattern_effect_time % 2) == 0);
     SPR_update();
+    SYS_doVBlankProcess();
     
     // Apply combat effects
-    if (is_combat_active) {
+    if (is_combat_active && player_pattern_effect_time == 10) {
         for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            if (obj_enemy[nenemy].obj_character.active && 
-                obj_enemy[nenemy].class_id == ENEMY_CLS_3HEADMONKEY && 
+            if (obj_enemy[nenemy].obj_character.active &&
+                obj_enemy[nenemy].class_id == ENEMY_CLS_3HEADMONKEY &&
                 obj_enemy[nenemy].hitpoints > 0) {
                 hit_enemy(nenemy);
                 if (enemy_attack_pattern == PTRN_EN_BITE) {
@@ -333,13 +421,23 @@ void do_electric_pattern_effect(void)    // Process electric pattern visual and 
         }
     }
 
-    obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
+    player_pattern_effect_time++;
+    if (player_pattern_effect_time >= 20) {
+        show_pattern_icon(PTRN_ELECTRIC, false, false);
+        SPR_update();
+        obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
+    }
 }
 
 void finish_electric_pattern_effect(void)    // Clean up electric pattern state
 {
+    show_pattern_icon(PTRN_ELECTRIC, false, false);
+    SPR_update();
     player_pattern_effect_in_progress = PTRN_NONE;
     player_pattern_effect_time = 0;
+    obj_character[active_character].state = STATE_IDLE;
+    anim_character(active_character, ANIM_IDLE);
+    update_character_animation();
 }
 
 void launch_hide_pattern(void)    // Start hide pattern effect

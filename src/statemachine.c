@@ -1,4 +1,100 @@
 #include "globals.h"
+#include "entity.h"
+#include "characters.h"
+
+// Mapeo entre estados del personaje y estados de la máquina
+SM_State convert_to_sm_state(u16 current_state) {
+    switch(current_state) {
+        case STATE_IDLE:
+            return SM_STATE_IDLE;
+        case STATE_PLAYING_NOTE:
+            return SM_STATE_PLAYING_NOTE;
+        case STATE_PATTERN_CHECK:
+            return SM_STATE_PATTERN_CHECK;
+        case STATE_PATTERN_EFFECT:
+            return SM_STATE_PATTERN_EFFECT;
+        case STATE_PATTERN_EFFECT_FINISH:
+            return SM_STATE_PATTERN_EFFECT_FINISH;
+        default:
+            return SM_STATE_IDLE;
+    }
+}
+
+void update_character_from_sm_state(Entity* entity, SM_State state) {
+    // Solo actualizar si no estamos en movimiento o si es un estado de efecto
+    if (entity->state != STATE_WALKING ||
+        state == SM_STATE_PATTERN_EFFECT ||
+        state == SM_STATE_PATTERN_EFFECT_FINISH) {
+        
+        // Actualizar el estado de la entidad
+        switch(state) {
+            case SM_STATE_IDLE:
+                if (entity->state != STATE_WALKING) {
+                    entity->state = STATE_IDLE;
+                }
+                break;
+            case SM_STATE_PLAYING_NOTE:
+                entity->state = STATE_PLAYING_NOTE;
+                break;
+            case SM_STATE_PATTERN_CHECK:
+                entity->state = STATE_PATTERN_CHECK;
+                break;
+            case SM_STATE_PATTERN_EFFECT:
+                entity->state = STATE_PATTERN_EFFECT;
+                break;
+            case SM_STATE_PATTERN_EFFECT_FINISH:
+                entity->state = STATE_PATTERN_EFFECT_FINISH;
+                break;
+            default:
+                break;
+        }
+        
+        // Actualizar la animación si es un personaje
+        if (entity == &obj_character[active_character]) {
+            update_character_animation();
+        }
+    }
+}
+
+// Implementación del patrón eléctrico como ejemplo
+void electric_pattern_launch(StateMachine* sm) {
+    anim_character(sm->entity_id, ANIM_MAGIC);
+    show_pattern_icon(PTRN_ELECTRIC, true, true);
+    play_pattern_sound(PTRN_ELECTRIC);
+    sm->pattern_system.effect_type = PTRN_ELECTRIC;
+    sm->pattern_system.effect_in_progress = true;
+    sm->pattern_system.effect_duration = 0;
+}
+
+void electric_pattern_do(StateMachine* sm) {
+    // Efecto visual de trueno
+    VDP_setHilightShadow(true);
+    SPR_update();
+    SYS_doVBlankProcess();
+    VDP_setHilightShadow(false);
+    SYS_doVBlankProcess();
+    SPR_update();
+    
+    sm->pattern_system.effect_duration++;
+    
+    // Aplicar efectos de combate si es necesario
+    if (is_combat_active && sm->pattern_system.effect_duration == MAX_EFFECT_TIME / 2) {
+        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
+            if (obj_enemy[nenemy].obj_character.active &&
+                obj_enemy[nenemy].class_id == ENEMY_CLS_3HEADMONKEY &&
+                obj_enemy[nenemy].hitpoints > 0) {
+                hit_enemy(nenemy);
+            }
+        }
+    }
+}
+
+void electric_pattern_finish(StateMachine* sm) {
+    show_pattern_icon(PTRN_ELECTRIC, false, false);
+    sm->pattern_system.effect_type = PTRN_NONE;
+    sm->pattern_system.effect_in_progress = false;
+    sm->pattern_system.effect_duration = 0;
+}
 
 /**
  * Inicializa una máquina de estados.
@@ -7,6 +103,8 @@
  * @param entity_id ID de la entidad asociada a esta máquina de estados
  */
 void StateMachine_Init(StateMachine *sm, u16 entity_id) {
+    kprintf("Initializing state machine - MAX_NOTE_PLAYING_TIME ticks: %d", calc_ticks(MAX_NOTE_PLAYING_TIME));
+    // Inicializar campos base
     sm->current_state = SM_STATE_IDLE;
     sm->timer = 0;
     sm->note_count = 0;
@@ -22,6 +120,22 @@ void StateMachine_Init(StateMachine *sm, u16 entity_id) {
     for (u8 i = 0; i < 4; i++) {
         sm->notes[i] = 0;
     }
+    
+    // Inicializar sistema de patrones
+    sm->pattern_system.enabled = true;
+    sm->pattern_system.is_note_playing = false;
+    sm->pattern_system.time_since_last_note = 0;
+    sm->pattern_system.effect_in_progress = false;
+    sm->pattern_system.effect_type = PTRN_NONE;
+    sm->pattern_system.effect_reversed = false;
+    sm->pattern_system.effect_duration = 0;
+    sm->pattern_system.available_patterns = NULL;
+    sm->pattern_system.pattern_count = 0;
+    
+    // Inicializar callbacks
+    sm->launch_effect = NULL;
+    sm->do_effect = NULL;
+    sm->finish_effect = NULL;
 }
 
 /**
@@ -42,9 +156,11 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                         sm->timer = 0;
                         break;
                     case MSG_NOTE_PLAYED:
+                        kprintf("Note played message received - note: %d, current notes: %d %d %d %d",
+                               msg->param,
+                               sm->notes[0], sm->notes[1], sm->notes[2], sm->notes[3]);
                         sm->current_state = SM_STATE_PLAYING_NOTE;
                         sm->current_note = msg->param;
-                        sm->notes[sm->note_count++] = msg->param;
                         sm->note_time = 0;
                         break;
                     default:
@@ -56,30 +172,61 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
         case SM_STATE_PLAYING_NOTE:
             // Lógica para reproducir notas
             sm->note_time++;
-            if (sm->note_time > MAX_NOTE_PLAYING_TIME) {
+            if (sm->note_time == calc_ticks(MAX_NOTE_PLAYING_TIME)) {
                 sm->current_state = SM_STATE_PATTERN_CHECK;
                 sm->note_time = 0;
             }
             break;
             
         case SM_STATE_PATTERN_CHECK:
-            // Aquí iría la lógica para verificar patrones
-            // Por ahora, simplemente transicionamos a IDLE o EFFECT
+            kprintf("In pattern check state - note count: %d", sm->note_count);
+            // Verificar patrones y configurar callbacks según el tipo
             if (msg != NULL && msg->type == MSG_PATTERN_COMPLETE) {
+                kprintf("StateMachine: Pattern complete detected, pattern %d", msg->param);
                 sm->current_state = SM_STATE_PATTERN_EFFECT;
                 sm->active_pattern = msg->param;
                 sm->effect_time = 0;
+                
+                // Configurar callbacks según el tipo de patrón
+                switch (msg->param) {
+                    case PTRN_ELECTRIC:
+                        sm->launch_effect = electric_pattern_launch;
+                        sm->do_effect = electric_pattern_do;
+                        sm->finish_effect = electric_pattern_finish;
+                        break;
+                    // Aquí se añadirán más patrones en el futuro
+                    default:
+                        sm->launch_effect = NULL;
+                        sm->do_effect = NULL;
+                        sm->finish_effect = NULL;
+                        break;
+                }
+                
+                // Iniciar el efecto si hay un callback registrado
+                if (sm->launch_effect != NULL) {
+                    sm->launch_effect(sm);
+                }
             } else {
+                // Solo volver a IDLE si no hay patrón completo
                 sm->current_state = SM_STATE_IDLE;
             }
             break;
             
         case SM_STATE_PATTERN_EFFECT:
-            // Lógica para efectos de patrones
-            sm->effect_time++;
-            if (sm->effect_time > MAX_EFFECT_TIME) {
+            // Ejecutar efecto si hay un callback registrado
+            if (sm->do_effect != NULL && sm->pattern_system.effect_in_progress) {
+                sm->do_effect(sm);
+            }
+            
+            // Forzar la transición después de un tiempo
+            if (sm->pattern_system.effect_duration > 100) {
                 sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
                 sm->effect_time = 0;
+                
+                // Llamar al callback de finalización si existe
+                if (sm->finish_effect != NULL) {
+                    sm->finish_effect(sm);
+                }
             }
             break;
             
@@ -90,6 +237,13 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                 sm->current_state = SM_STATE_IDLE;
                 sm->timer = 0;
                 sm->active_pattern = 0;
+                
+                // Limpiar callbacks y estado del sistema de patrones
+                sm->launch_effect = NULL;
+                sm->do_effect = NULL;
+                sm->finish_effect = NULL;
+                sm->pattern_system.effect_in_progress = false;
+                sm->pattern_system.effect_type = PTRN_NONE;
             }
             break;
             
