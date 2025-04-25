@@ -1,209 +1,124 @@
-# Plan de Transición de la Máquina de Estados
+# Plan de Transición de Variables Globales a StateMachine
 
-## Contexto Actual
+## Objetivo
+Migrar las variables globales relacionadas con el combate a la estructura StateMachine de manera gradual y segura, manteniendo la funcionalidad existente en cada paso.
 
-### Estado Actual
-- Máquina de estados en entity.h
-- Framework de pruebas implementado
-- Problemas de includes pendientes
+## Fase 1: Migración de Variables de character_patterns.c
 
-### Objetivo
-Transición gradual y segura desde la máquina de estados actual en entity.h hacia la nueva implementación en statemachine.h, manteniendo la funcionalidad en todo momento.
-
-## Fases de Transición
-
-### Fase 1: Preparación y Testing
-
-#### 1.1 Resolución de Includes
+### Variables a Migrar
 ```c
-// Orden correcto de includes
-#include <genesis.h>
-#include "globals.h"
-#include "test.h"
+// Desde character_patterns.c
+bool player_patterns_enabled;
+bool note_playing;
+u16 note_playing_time;
+u16 time_since_last_note;
+bool player_pattern_effect_in_progress;
+bool player_pattern_effect_reversed;
+u16 player_pattern_effect_time;
+u8 played_notes[4];
+u8 num_played_notes;
+Pattern obj_pattern[MAX_PATTERNS];
 ```
 
-#### 1.2 Tests Iniciales
+### Estructura StateMachine Expandida
 ```c
-// Tests del sistema actual
-TestResult test_current_entity_states();
-TestResult test_current_combat_flow();
-TestResult test_current_pattern_system();
+typedef struct {
+    // Campos existentes
+    SM_State current_state;
+    u16 timer;
+    u8 notes[4];
+    u8 note_count;
+    u8 current_note;
+    u16 note_time;
+    u16 pattern_time;
+    u16 active_pattern;
+    bool is_reversed;
+    u16 effect_time;
+    u16 entity_id;
+
+    // Nuevos campos
+    bool patterns_enabled;
+    bool is_note_playing;
+    u16 time_since_last_note;
+    bool effect_in_progress;
+    Pattern *patterns;        // Array de patrones
+    u8 pattern_count;        // Número de patrones disponibles
+} StateMachine;
 ```
 
-### Fase 2: Desacoplamiento de Estados
+### Pasos de Implementación
 
-#### 2.1 Separación de Estados de Combate
+1. Actualizar statemachine.h:
+   - Añadir los nuevos campos a la estructura
+   - Definir constantes necesarias
+   - Actualizar la documentación
+
+2. Actualizar statemachine.c:
+   - Modificar StateMachine_Init para inicializar los nuevos campos
+   - Actualizar StateMachine_Update para usar los nuevos campos
+   - Añadir funciones auxiliares si son necesarias
+
+3. Modificar character_patterns.c:
+   - Crear una instancia de StateMachine para el jugador
+   - Reemplazar gradualmente el uso de variables globales por accesos a la estructura
+   - Mantener las variables globales temporalmente como referencias a los campos de StateMachine
+
+### Ejemplo de Código de Transición
+
 ```c
-// En entity.h - Mantener solo estados base
-typedef enum {
-    STATE_IDLE,
-    STATE_WALKING,
-    STATE_FOLLOWING
-} GameState;
+// En character_patterns.c
+StateMachine player_state_machine;
 
-// En statemachine.h - Estados de combate y patrones
-typedef enum {
-    SM_STATE_IDLE,
-    SM_STATE_PLAYING_NOTE,
-    SM_STATE_PATTERN_CHECK,
-    SM_STATE_PATTERN_EFFECT,
-    SM_STATE_PATTERN_EFFECT_FINISH,
-    SM_STATE_ATTACK_FINISHED
-} SM_State;
-```
+// Función de inicialización
+void init_character_patterns() {
+    StateMachine_Init(&player_state_machine, PLAYER_ENTITY_ID);
+    player_state_machine.patterns_enabled = true;
+    // ... resto de la inicialización
+}
 
-#### 2.2 Tests de Verificación
-```c
-// Verificar separación limpia
-TestResult test_base_game_states();
-TestResult test_combat_states();
-TestResult test_state_independence();
-```
-
-### Fase 3: Implementación Nueva Máquina
-
-#### 3.1 Sistema de Mensajes
-```c
-typedef enum {
-    MSG_PATTERN_COMPLETE,
-    MSG_COMBAT_START,
-    MSG_COMBAT_END,
-    MSG_ENEMY_DEFEATED,
-    MSG_PLAYER_HIT,
-    MSG_ENEMY_HIT,
-    MSG_NOTE_PLAYED,
-    MSG_PATTERN_TIMEOUT
-} MessageType;
-```
-
-#### 3.2 Tests de Mensajes
-```c
-TestResult test_message_handling();
-TestResult test_message_flow();
-TestResult test_state_transitions();
-```
-
-### Fase 4: Integración Gradual
-
-#### 4.1 Combat System
-```c
-void start_combat(bool start) {
-    if (start) {
-        is_combat_active = true;
-        StateMachine_SendMessage(&combat_sm, MSG_COMBAT_START, 0);
-    } else {
-        StateMachine_SendMessage(&combat_sm, MSG_COMBAT_END, 0);
-        is_combat_active = false;
+// Función de actualización
+void update_character_patterns() {
+    if (player_state_machine.is_note_playing) {
+        player_state_machine.note_time++;
+        // ... resto de la lógica
     }
 }
 ```
 
-#### 4.2 Tests de Integración
-```c
-TestResult test_combat_initialization();
-TestResult test_pattern_execution();
-TestResult test_combat_flow();
-```
+## Beneficios de Esta Fase
 
-## Plan de Testing
+1. Encapsulación más clara del estado del jugador
+2. Eliminación gradual de variables globales
+3. Mejor mantenibilidad del código
+4. Base sólida para las siguientes fases de migración
 
-### 1. Tests Base
-- Estado inicial correcto
-- Transiciones básicas
-- Manejo de mensajes
+## Siguientes Fases
 
-### 2. Tests de Transición
-- Compatibilidad con sistema actual
-- No regresiones
-- Estados intermedios válidos
+1. Fase 2: Migración de variables de enemies_patterns.c
+2. Fase 3: Migración de variables de combat.c
+3. Fase 4: Migración de variables de enemies.c
 
-### 3. Tests de Integración
-- Flujo de combate completo
-- Patrones y efectos
-- UI y feedback
+## Consideraciones
 
-## Verificación por Fase
+1. Mantener compatibilidad hacia atrás durante la transición
+2. Realizar la migración de forma incremental y testeable
+3. Documentar cada cambio en el código
+4. Actualizar las pruebas existentes según sea necesario
 
-### Fase 1: Preparación
-- [x] Framework de pruebas funcionando
-- [ ] Includes resueltos
-- [ ] Tests base ejecutándose
+## Plan de Pruebas
 
-### Fase 2: Desacoplamiento
-- [ ] Estados separados correctamente
-- [ ] No hay dependencias circulares
-- [ ] Tests de separación pasan
+1. Verificar que cada patrón funciona correctamente después de la migración
+2. Comprobar que las transiciones de estado son correctas
+3. Asegurar que el timing de las notas y efectos se mantiene
+4. Validar que no hay efectos secundarios en otras partes del sistema
 
-### Fase 3: Nueva Implementación
-- [ ] Sistema de mensajes funcionando
-- [ ] Máquina de estados operativa
-- [ ] Tests de comportamiento pasan
+## Riesgos y Mitigación
 
-### Fase 4: Integración
-- [ ] Sistema de combate usando nueva máquina
-- [ ] Patrones funcionando correctamente
-- [ ] Tests de integración pasan
+1. **Riesgo**: Pérdida de sincronización en el timing de las notas
+   - **Mitigación**: Implementar verificaciones de timing y logging temporal
 
-## Consideraciones Técnicas
+2. **Riesgo**: Conflictos con el código existente
+   - **Mitigación**: Mantener temporalmente las variables globales como referencias
 
-### 1. Compatibilidad
-- Mantener tipos SGDK
-- Respetar limitaciones de memoria
-- Considerar performance
-
-### 2. Testing
-- Tests independientes
-- Cobertura completa
-- Fácil mantenimiento
-
-### 3. Documentación
-- Actualizar a medida que se avanza
-- Documentar decisiones clave
-- Mantener diagramas actualizados
-
-## Próximos Pasos
-
-### Inmediato
-1. Resolver problemas de includes
-2. Implementar tests base
-3. Comenzar desacoplamiento
-
-### Corto Plazo
-1. Completar separación de estados
-2. Implementar sistema de mensajes
-3. Verificar comportamiento base
-
-### Medio Plazo
-1. Integrar con sistema de combate
-2. Expandir cobertura de tests
-3. Optimizar performance
-
-## Métricas de Éxito
-
-### 1. Funcionalidad
-- Todos los tests pasan
-- No hay regresiones
-- Comportamiento correcto
-
-### 2. Calidad
-- Cobertura de código >90%
-- No memory leaks
-- Performance mantenida
-
-### 3. Mantenibilidad
-- Código documentado
-- Estructura clara
-- Fácil de extender
-
-## Referencias
-
-1. Combat System Proposal
-2. SGDK Documentation
-3. Testing Best Practices
-
-## Notas
-
-- Mantener backup del código actual
-- Documentar cada paso de la transición
-- Verificar constantemente no hay regresiones
-- Considerar rollback si necesario
+3. **Riesgo**: Problemas de rendimiento
+   - **Mitigación**: Monitorizar el rendimiento durante la migración

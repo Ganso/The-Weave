@@ -1,142 +1,173 @@
-# Combat State Integration Plan - Revised
+# Plan de Integración del Sistema de Estados de Combate
 
-## Current Status Analysis
+## Fase 1: Preparación de la Estructura
 
-### Entity GameState (entity.h)
-Currently has a good set of core states:
-- STATE_IDLE
-- STATE_WALKING
-- STATE_PLAYING_NOTE
-- STATE_PATTERN_CHECK
-- STATE_PATTERN_EFFECT
-- STATE_PATTERN_EFFECT_FINISH
-- STATE_ATTACK_FINISHED
-- STATE_FOLLOWING
-
-### Combat System (combat.c)
-Currently handles:
-- Combat initialization/cleanup
-- Damage calculation
-- UI management
-- Uses is_combat_active flag
-
-## Next Step: Context-Aware State Behavior
-
-Instead of adding new combat states, we'll modify how existing states behave based on the combat context. This approach recognizes that entities maintain their fundamental states (idle, walking, etc.) regardless of combat status.
-
-### 1. Enhance State Behavior System
+### 1.1 Mapeo de Estados
 ```c
-void update_entity_behavior(Entity* entity) {
-    // Base behavior modified by combat context
-    switch(entity->state) {
-        case STATE_IDLE:
-            if (is_combat_active) {
-                // Combat-specific idle behavior
-                // - Check for attack opportunities
-                // - Monitor threat
-                // - Consider defensive actions
-            } else {
-                // Normal idle behavior
-                // - Standard animations
-                // - Environmental interactions
-            }
-            break;
-            
-        case STATE_WALKING:
-            if (is_combat_active) {
-                // Combat movement
-                // - Tactical positioning
-                // - Maintain combat distance
-                // - Dodge mechanics
-            } else {
-                // Normal walking
-                // - Path following
-                // - Exploration
-            }
-            break;
-            
-        // Other states follow similar pattern
+// Mapeo entre estados actuales y nuevos
+typedef enum {
+    SM_STATE_IDLE,               // Mapea a STATE_IDLE
+    SM_STATE_PLAYING_NOTE,       // Mapea a STATE_PLAYING_NOTE
+    SM_STATE_PATTERN_CHECK,      // Mapea a STATE_PATTERN_CHECK
+    SM_STATE_PATTERN_EFFECT,     // Mapea a STATE_PATTERN_EFFECT
+    SM_STATE_PATTERN_EFFECT_FINISH, // Mapea a STATE_PATTERN_EFFECT_FINISH
+    SM_STATE_ATTACK_FINISHED     // Nuevo estado para manejo post-ataque
+} SM_State;
+```
+
+### 1.2 Estructura StateMachine Expandida
+```c
+typedef struct {
+    // Estados y temporizadores base
+    SM_State current_state;
+    u16 timer;
+    
+    // Sistema de notas
+    u8 notes[4];
+    u8 note_count;
+    u8 current_note;
+    u16 note_time;
+    u16 pattern_time;
+    
+    // Sistema de patrones
+    u16 active_pattern;
+    bool is_reversed;
+    u16 effect_time;
+    u16 entity_id;
+    
+    // Nuevos campos para patrones específicos
+    struct {
+        bool enabled;
+        bool is_note_playing;
+        u16 time_since_last_note;
+        bool effect_in_progress;
+        u16 effect_type;         // PTRN_NONE, PTRN_ELECTRIC, etc.
+        bool effect_reversed;
+        u16 effect_duration;
+        Pattern *available_patterns;
+        u8 pattern_count;
+    } pattern_system;
+    
+    // Callbacks para efectos específicos
+    void (*launch_effect)(struct StateMachine*);
+    void (*do_effect)(struct StateMachine*);
+    void (*finish_effect)(struct StateMachine*);
+} StateMachine;
+```
+
+## Fase 2: Implementación Gradual
+
+### 2.1 Crear Funciones de Transición
+```c
+// Función para convertir estado actual a SM_State
+SM_State convert_to_sm_state(u16 current_state) {
+    switch(current_state) {
+        case STATE_IDLE: return SM_STATE_IDLE;
+        case STATE_PLAYING_NOTE: return SM_STATE_PLAYING_NOTE;
+        // etc.
+    }
+}
+
+// Función para actualizar estado del personaje desde SM_State
+void update_character_from_sm_state(Character* chr, SM_State state) {
+    switch(state) {
+        case SM_STATE_IDLE: chr->state = STATE_IDLE; break;
+        case SM_STATE_PLAYING_NOTE: chr->state = STATE_PLAYING_NOTE; break;
+        // etc.
     }
 }
 ```
 
-### 2. Update Combat System Integration
-Modify combat.c to focus on context switching rather than state management:
+### 2.2 Implementar Funciones de Callback
 ```c
-void start_combat(bool start) {
-    if (start) {
-        is_combat_active = true;
-        // Initialize combat-specific systems
-        // - Setup UI elements
-        // - Initialize pattern tracking
-        // - Set up threat assessment
-    } else {
-        is_combat_active = false;
-        // Cleanup combat-specific systems
-        // - Hide UI elements
-        // - Reset pattern tracking
-    }
-    // Entities keep their current states but behavior will adapt
+// Ejemplo para el patrón eléctrico
+void launch_electric_effect(StateMachine* sm) {
+    anim_character(sm->entity_id, ANIM_MAGIC);
+    show_pattern_icon(PTRN_ELECTRIC, true, true);
+    play_pattern_sound(PTRN_ELECTRIC);
+    sm->pattern_system.effect_type = PTRN_ELECTRIC;
+}
+
+void do_electric_effect(StateMachine* sm) {
+    // Implementar efecto visual de trueno
+    // Aplicar efectos de combate
+}
+
+void finish_electric_effect(StateMachine* sm) {
+    sm->pattern_system.effect_type = PTRN_NONE;
+    sm->pattern_system.effect_duration = 0;
 }
 ```
 
-### 3. Pattern Integration
-Enhance pattern system to be combat-aware:
-```c
-void handle_pattern(Entity* entity, Pattern* pattern) {
-    switch(entity->state) {
-        case STATE_PLAYING_NOTE:
-            if (is_combat_active) {
-                // Combat pattern mechanics
-                // - Damage calculations
-                // - Effect targeting
-            } else {
-                // Normal pattern effects
-                // - Environmental interactions
-                // - Puzzle solving
-            }
-            break;
-            
-        case STATE_PATTERN_EFFECT:
-            if (is_combat_active) {
-                // Combat effects
-                // - Apply damage
-                // - Status effects
-            } else {
-                // Normal effects
-                // - World interactions
-            }
-            break;
-    }
-}
-```
+## Fase 3: Plan de Migración
 
-## Implementation Order
+1. **Paso 1: Crear Instancia de StateMachine**
+   ```c
+   StateMachine player_sm;
+   StateMachine_Init(&player_sm, active_character);
+   ```
 
-1. Modify entity update logic to check combat context
-2. Update pattern system to handle combat/non-combat effects
-3. Enhance combat.c to focus on context management
-4. Add combat-specific behavior implementations
-5. Test state behavior in both contexts
+2. **Paso 2: Migrar Variables Globales**
+   ```c
+   // Antes
+   bool player_patterns_enabled;
+   // Después
+   player_sm.pattern_system.enabled = true;
+   ```
 
-## Benefits
+3. **Paso 3: Actualizar check_active_character_state**
+   ```c
+   void check_active_character_state(void) {
+       // Obtener estado de la máquina de estados
+       SM_State new_state = StateMachine_Update(&player_sm, NULL);
+       
+       // Actualizar estado del personaje
+       update_character_from_sm_state(&obj_character[active_character], new_state);
+       
+       // Procesar efectos si es necesario
+       if (player_sm.pattern_system.effect_in_progress && player_sm.do_effect) {
+           player_sm.do_effect(&player_sm);
+       }
+   }
+   ```
 
-- Simpler, more intuitive state system
-- More flexible entity behavior
-- Clearer separation between state and context
-- Easier to maintain and extend
-- More natural gameplay transitions
+## Fase 4: Plan de Pruebas
 
-## Considerations
+1. **Pruebas de Transición de Estados**
+   - Verificar que cada estado se mapea correctamente
+   - Comprobar que las animaciones se mantienen sincronizadas
+   - Validar el timing de las notas
 
-- Ensure smooth transitions when combat starts/ends
-- Keep combat UI synchronized with entity behavior
-- Balance combat and non-combat behavior differences
-- Consider performance of additional context checks
+2. **Pruebas de Patrones**
+   - Probar cada patrón individualmente
+   - Verificar efectos visuales y de combate
+   - Comprobar interacciones entre patrones
 
-## Next Steps After This Implementation
+3. **Pruebas de Integración**
+   - Validar la integración con el sistema de combate
+   - Comprobar la interacción con enemigos
+   - Verificar el manejo de eventos del juego
 
-1. Enhance pattern effects for combat
-2. Improve enemy AI behavior in combat
-3. Add more sophisticated combat mechanics
-4. Implement status effects system
+## Consideraciones de Implementación
+
+1. **Mantener Compatibilidad**
+   - Usar defines para facilitar la transición
+   - Mantener funciones wrapper temporales
+   - Documentar cambios en la API
+
+2. **Gestión de Memoria**
+   - Asegurar que los patrones se inicializan correctamente
+   - Liberar recursos apropiadamente
+   - Manejar límites de memoria de la Genesis
+
+3. **Rendimiento**
+   - Monitorizar el uso de CPU
+   - Optimizar accesos a memoria
+   - Mantener el rendimiento del juego
+
+## Próximos Pasos
+
+1. Implementar la estructura StateMachine expandida
+2. Crear las funciones de transición
+3. Migrar un patrón como prueba de concepto
+4. Evaluar resultados y ajustar el plan según sea necesario

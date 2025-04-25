@@ -34,13 +34,6 @@ extern u16 player_pattern_effect_time; // How long is the effect been active?
 extern u8 played_notes[4]; // Notes played in the current pattern
 extern u8 num_played_notes; // Number of notes of the current pattern
 
-typedef struct
-{
-    bool active;
-    u8 notes[4];
-    Sprite *sd;
-} Pattern;
-
 extern Pattern obj_pattern[MAX_PATTERNS]; // Patterns object
 
 // Core pattern system functions
