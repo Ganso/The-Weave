@@ -57,8 +57,8 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     SPR_setVisibility (spr_int_button_A, HIDDEN);
 
     // Notes and patterns
-    player_patterns_enabled=false;
-    player_has_rod=false;
+    player_patterns_enabled=true; // Ensure patterns are enabled
+    player_has_rod=true; // Ensure player has rod for testing
     note_playing=0;
     note_playing_time=0;
     num_played_notes=0;
@@ -180,7 +180,7 @@ void end_level() {    // Clean up level resources and reset game state
     }
 
     // Reset pattern and combat related variables
-    player_patterns_enabled = false;
+    // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos
     note_playing = 0;
     note_playing_time = 0;
     num_played_notes = 0;

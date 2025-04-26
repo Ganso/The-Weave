@@ -67,6 +67,22 @@ void electric_pattern_launch(StateMachine* sm) {
 }
 
 void electric_pattern_do(StateMachine* sm) {
+    // If a counter-spell has succeeded, don't do anything
+    if (counter_spell_success) {
+        // Reset state machine
+        sm->current_state = SM_STATE_IDLE;
+        sm->timer = 0;
+        sm->effect_time = 0;
+        sm->pattern_system.effect_in_progress = false;
+        sm->pattern_system.effect_type = PTRN_NONE;
+        sm->pattern_system.effect_duration = 0;
+        
+        // Reset visual effects
+        VDP_setHilightShadow(false);
+        
+        return;
+    }
+    
     // Efecto visual de trueno
     VDP_setHilightShadow(true);
     SPR_update();
@@ -156,12 +172,14 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                         sm->timer = 0;
                         break;
                     case MSG_NOTE_PLAYED:
-                        kprintf("Note played message received - note: %d, current notes: %d %d %d %d",
-                               msg->param,
-                               sm->notes[0], sm->notes[1], sm->notes[2], sm->notes[3]);
+                        if (msg->param > 0) {
+                            kprintf("Note played: %d", msg->param);
+                        }
                         sm->current_state = SM_STATE_PLAYING_NOTE;
                         sm->current_note = msg->param;
                         sm->note_time = 0;
+                        // Asegurarse de que el sistema de patrones sepa que estamos reproduciendo una nota
+                        sm->pattern_system.is_note_playing = true;
                         break;
                     default:
                         break;
@@ -175,14 +193,15 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
             if (sm->note_time == calc_ticks(MAX_NOTE_PLAYING_TIME)) {
                 sm->current_state = SM_STATE_PATTERN_CHECK;
                 sm->note_time = 0;
+                // Marcar que ya no estamos reproduciendo una nota
+                sm->pattern_system.is_note_playing = false;
             }
             break;
             
         case SM_STATE_PATTERN_CHECK:
-            kprintf("In pattern check state - note count: %d", sm->note_count);
             // Verificar patrones y configurar callbacks según el tipo
             if (msg != NULL && msg->type == MSG_PATTERN_COMPLETE) {
-                kprintf("StateMachine: Pattern complete detected, pattern %d", msg->param);
+                kprintf("Pattern complete: %d", msg->param);
                 sm->current_state = SM_STATE_PATTERN_EFFECT;
                 sm->active_pattern = msg->param;
                 sm->effect_time = 0;
@@ -194,7 +213,24 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                         sm->do_effect = electric_pattern_do;
                         sm->finish_effect = electric_pattern_finish;
                         break;
-                    // Aquí se añadirán más patrones en el futuro
+                    case PTRN_HIDE:
+                        // Añadir soporte para el patrón de esconderse
+                        sm->launch_effect = NULL; // Usar funciones existentes por ahora
+                        sm->do_effect = NULL;
+                        sm->finish_effect = NULL;
+                        break;
+                    case PTRN_OPEN:
+                        // Añadir soporte para el patrón de abrir
+                        sm->launch_effect = NULL;
+                        sm->do_effect = NULL;
+                        sm->finish_effect = NULL;
+                        break;
+                    case PTRN_SLEEP:
+                        // Añadir soporte para el patrón de dormir
+                        sm->launch_effect = NULL;
+                        sm->do_effect = NULL;
+                        sm->finish_effect = NULL;
+                        break;
                     default:
                         sm->launch_effect = NULL;
                         sm->do_effect = NULL;
@@ -218,8 +254,11 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                 sm->do_effect(sm);
             }
             
+            // Incrementar el tiempo de efecto
+            sm->effect_time++;
+            
             // Forzar la transición después de un tiempo
-            if (sm->pattern_system.effect_duration > 100) {
+            if (sm->pattern_system.effect_duration > 100 || sm->effect_time > calc_ticks(MAX_EFFECT_TIME)) {
                 sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
                 sm->effect_time = 0;
                 
