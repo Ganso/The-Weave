@@ -118,8 +118,68 @@ void check_active_character_state(void)    // Process character states for patte
                     player_pattern_effect_reversed = is_reverse_match;
                     player_state_machine.pattern_system.effect_reversed = is_reverse_match;
                     
+                    // Special case for direct thunder during enemy thunder attack
+                    if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match &&
+                        is_combat_active && enemy_attacking != ENEMY_NONE &&
+                        enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
+                        
+                        kprintf("Direct thunder during enemy thunder - showing hint only");
+                        
+                        // Show hint dialog
+                        show_or_hide_interface(false);
+                        show_or_hide_enemy_combat_interface(false);
+                        talk_dialog(&dialogs[ACT1_DIALOG3][6]); // (ES) "Si reproduzco al revés|las notas, podré|contraatacar este hechizo" - (EN) "If I play the notes backwards|I could be able to|counter the spell"
+                        show_or_hide_enemy_combat_interface(true);
+                        show_or_hide_interface(true);
+                        
+                        // Reset state without showing the "can't use pattern" dialog
+                        play_pattern_sound(PTRN_NONE);
+                        obj_character[active_character].state = STATE_IDLE;
+                        
+                        // Apply damage to player since they failed to counter
+                        hit_caracter(active_character);
+                        
+                        // Directly reset enemy state variables to allow new attacks
+                        u16 current_enemy = enemy_attacking;
+                        u16 current_pattern = enemy_attack_pattern;
+                        
+                        // Log the current state
+                        kprintf("BEFORE RESET: enemy=%d, pattern=%d, effect_in_progress=%d",
+                                enemy_attacking, enemy_attack_pattern, enemy_attack_effect_in_progress);
+                        
+                        // Reset visual effects
+                        VDP_setHilightShadow(false);
+                        
+                        // Reset enemy state
+                        if (current_enemy != ENEMY_NONE) {
+                            anim_enemy(current_enemy, ANIM_IDLE);
+                            obj_enemy[current_enemy].obj_character.state = STATE_IDLE;
+                            
+                            // Set cooldown to allow attacks after a delay
+                            if (current_pattern != PTRN_EN_NONE) {
+                                obj_enemy[current_enemy].last_pattern_time[current_pattern] =
+                                    obj_Pattern_Enemy[current_pattern].recharge_time / 2;
+                            }
+                        }
+                        
+                        // Reset global state variables
+                        enemy_attack_effect_in_progress = false;
+                        enemy_attack_effect_time = 0;
+                        enemy_attack_pattern = PTRN_EN_NONE;
+                        enemy_attacking = ENEMY_NONE;
+                        
+                        // Clean up any active notes
+                        cleanup_enemy_notes();
+                        
+                        // Update sprites
+                        SPR_update();
+                        
+                        // Log the state after reset
+                        kprintf("AFTER RESET: enemy=%d, pattern=%d, effect_in_progress=%d",
+                                enemy_attacking, enemy_attack_pattern, enemy_attack_effect_in_progress);
+                    }
                     // Handle thunder pattern
-                    if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match && can_use_electric_pattern()) {
+                    else if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match && can_use_electric_pattern()) {
                         kprintf("Thunder spell detected! Sending pattern complete message");
                         // Enviar mensaje para activar el efecto
                         StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
@@ -298,14 +358,10 @@ bool validate_pattern_sequence(u8 *notes, bool *is_reverse)    // Check if playe
 
 bool can_use_electric_pattern(void)
 {
-    if (is_combat_active && enemy_attacking != ENEMY_NONE && 
+    // Check if we're trying to cast during an enemy thunder attack
+    // This is now handled in check_active_character_state
+    if (is_combat_active && enemy_attacking != ENEMY_NONE &&
         enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
-        // Can't use thunder during enemy thunder attack
-        show_or_hide_interface(false);
-        show_or_hide_enemy_combat_interface(false);
-        talk_dialog(&dialogs[ACT1_DIALOG3][6]); // (ES) "Si reproduzco al revés|las notas, podré|contraatacar este hechizo" - (EN) "If I play the notes backwards|I could be able to|counter the spell"
-        show_or_hide_enemy_combat_interface(true);
-        show_or_hide_interface(true);
         return false;
     }
     else if (player_pattern_effect_in_progress == PTRN_HIDE) {
