@@ -37,13 +37,17 @@ void activate_spell(u16 npattern)    // Unlock new pattern spell with visual/aud
 
 void play_note(u8 nnote)    // Handle new musical note input and update character state
 {
-    // Prevenir notas demasiado rápidas
-    if (note_playing_time < 5) {
+    // Prevenir notas demasiado rápidas, pero permitir la primera nota
+    // o si ha pasado suficiente tiempo desde la última nota
+    if (note_playing_time < MIN_TIME_BETWEEN_NOTES && note_playing != 0) {
+        kprintf("Rejecting note: too soon after previous note");
         return;
     }
 
-    // Usar la máquina de estados para procesar la nota
+    // Verificar si podemos reproducir una nota ahora
     if (!player_state_machine.pattern_system.is_note_playing) {
+        kprintf("Playing note: %d, current count: %d", nnote, num_played_notes);
+        
         // Añadir la nota al patrón actual
         if (num_played_notes < 4) {
             played_notes[num_played_notes] = nnote;
@@ -56,13 +60,15 @@ void play_note(u8 nnote)    // Handle new musical note input and update characte
             player_state_machine.note_count = num_played_notes;
         }
         
-        // Enviar mensaje después de actualizar las notas
-        StateMachine_SendMessage(&player_state_machine, MSG_NOTE_PLAYED, nnote);
+        // Mostrar la nota visualmente
         show_note(nnote, true);
         
         // Mantener la compatibilidad con el sistema actual
         note_playing = nnote;
         note_playing_time = 0;
+        
+        // Enviar mensaje después de actualizar las notas
+        StateMachine_SendMessage(&player_state_machine, MSG_NOTE_PLAYED, nnote);
     }
 }
 
@@ -86,9 +92,12 @@ void check_active_character_state(void)    // Process character states for patte
         case STATE_PLAYING_NOTE:
             if (note_playing_time != 0) {
                 if (note_playing_time == calc_ticks(MAX_NOTE_PLAYING_TIME)) {
+                    kprintf("Note playing time reached max, updating pattern state");
                     update_pattern_state();
                 }
-                else note_playing_time++;
+                else {
+                    note_playing_time++;
+                }
             }
             break;
 
@@ -106,58 +115,55 @@ void check_active_character_state(void)    // Process character states for patte
                 hide_rod_icons();
 
                 if (matched_pattern != PTRN_NONE) {
-                player_pattern_effect_reversed = false;
-                
-                // Handle thunder pattern
-                if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match && can_use_electric_pattern()) {
-                    kprintf("Thunder spell detected! Configuring callbacks");
-                    // Configurar callbacks para el patrón eléctrico
-                    player_state_machine.launch_effect = electric_pattern_launch;
-                    player_state_machine.do_effect = electric_pattern_do;
-                    player_state_machine.finish_effect = electric_pattern_finish;
-                    kprintf("Callbacks configured - launch: %d, do: %d, finish: %d",
-                           player_state_machine.launch_effect != NULL,
-                           player_state_machine.do_effect != NULL,
-                           player_state_machine.finish_effect != NULL);
-                    // Enviar mensaje para activar el efecto
-                    StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
-                }
-                // Handle hide pattern
-                else if (matched_pattern == PTRN_HIDE && !is_reverse_match && can_use_hide_pattern()) {
-                    kprintf("Hide spell!");
-                    launch_hide_pattern();
-                }
-                // Handle sleep pattern
-                else if (matched_pattern == PTRN_SLEEP && !is_reverse_match && can_use_sleep_pattern()) {
-                    kprintf("Sleep spell!");
-                    launch_sleep_pattern();
-                }
-                // Handle open pattern
-                else if (matched_pattern == PTRN_OPEN && !is_reverse_match && can_use_open_pattern()) {
-                    kprintf("Open spell!");
-                    launch_open_pattern();
-                }
-                // Handle thunder counter (reverse thunder during enemy thunder)
-                else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match && 
-                         player_pattern_effect_in_progress == PTRN_NONE && 
-                         is_combat_active && enemy_attacking != ENEMY_NONE && 
-                         enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
-                    kprintf("Reverse thunder spell detected");
-                    obj_character[active_character].state = STATE_PATTERN_EFFECT;
-                    player_pattern_effect_in_progress = PTRN_ELECTRIC;
-                    player_pattern_effect_reversed = true;
-                }
-                else {
-                    kprintf("Pattern %d matched but not usable in current context", matched_pattern);
-                    // Pattern matched but not usable in current context
-                    show_pattern_icon(matched_pattern, true, true);
-                    play_pattern_sound(PTRN_NONE);
-                    show_or_hide_interface(false);
-                    talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
-                    show_or_hide_interface(true);
-                    show_pattern_icon(matched_pattern, false, false);
-                    obj_character[active_character].state = STATE_IDLE;
-                }
+                    player_pattern_effect_reversed = is_reverse_match;
+                    player_state_machine.pattern_system.effect_reversed = is_reverse_match;
+                    
+                    // Handle thunder pattern
+                    if (matched_pattern == PTRN_ELECTRIC && !is_reverse_match && can_use_electric_pattern()) {
+                        kprintf("Thunder spell detected! Sending pattern complete message");
+                        // Enviar mensaje para activar el efecto
+                        StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
+                    }
+                    // Handle hide pattern
+                    else if (matched_pattern == PTRN_HIDE && !is_reverse_match && can_use_hide_pattern()) {
+                        kprintf("Hide spell! Sending pattern complete message");
+                        StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_HIDE);
+                        launch_hide_pattern(); // Mantener compatibilidad por ahora
+                    }
+                    // Handle sleep pattern
+                    else if (matched_pattern == PTRN_SLEEP && !is_reverse_match && can_use_sleep_pattern()) {
+                        kprintf("Sleep spell! Sending pattern complete message");
+                        StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_SLEEP);
+                        launch_sleep_pattern(); // Mantener compatibilidad por ahora
+                    }
+                    // Handle open pattern
+                    else if (matched_pattern == PTRN_OPEN && !is_reverse_match && can_use_open_pattern()) {
+                        kprintf("Open spell! Sending pattern complete message");
+                        StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_OPEN);
+                        launch_open_pattern(); // Mantener compatibilidad por ahora
+                    }
+                    // Handle thunder counter (reverse thunder during enemy thunder)
+                    else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match &&
+                             player_pattern_effect_in_progress == PTRN_NONE &&
+                             is_combat_active && enemy_attacking != ENEMY_NONE &&
+                             enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
+                        kprintf("Reverse thunder spell detected");
+                        StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
+                        obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                        player_pattern_effect_in_progress = PTRN_ELECTRIC;
+                        player_pattern_effect_reversed = true;
+                    }
+                    else {
+                        kprintf("Pattern %d matched but not usable in current context", matched_pattern);
+                        // Pattern matched but not usable in current context
+                        show_pattern_icon(matched_pattern, true, true);
+                        play_pattern_sound(PTRN_NONE);
+                        show_or_hide_interface(false);
+                        talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+                        show_or_hide_interface(true);
+                        show_pattern_icon(matched_pattern, false, false);
+                        obj_character[active_character].state = STATE_IDLE;
+                    }
                 }
                 else {
                     // No pattern matched
@@ -175,6 +181,7 @@ void check_active_character_state(void)    // Process character states for patte
             break;
 
         case STATE_PATTERN_EFFECT:
+            // La máquina de estados ahora maneja esto, pero mantenemos compatibilidad
             if (player_pattern_effect_in_progress == PTRN_HIDE) {
                 do_hide_pattern_effect();
             }
@@ -187,6 +194,7 @@ void check_active_character_state(void)    // Process character states for patte
             break;
 
         case STATE_PATTERN_EFFECT_FINISH:
+            // La máquina de estados ahora maneja esto, pero mantenemos compatibilidad
             if (player_pattern_effect_in_progress == PTRN_HIDE) {
                 finish_hide_pattern_effect();
             }
@@ -245,6 +253,11 @@ void init_patterns(void)    // Setup initial pattern definitions and states
     // Configurar patrones disponibles - asignar el puntero al array
     player_state_machine.pattern_system.available_patterns = &obj_pattern[0];
     player_state_machine.pattern_system.pattern_count = MAX_PATTERNS;
+    
+    // Configurar callbacks para el patrón eléctrico
+    player_state_machine.launch_effect = electric_pattern_launch;
+    player_state_machine.do_effect = electric_pattern_do;
+    player_state_machine.finish_effect = electric_pattern_finish;
     
     kprintf("State machine initialized with entity_id: %d", active_character);
 }
@@ -324,12 +337,19 @@ bool can_use_open_pattern(void)
 
 void reset_pattern_state(void)    // Clear current pattern sequence state
 {
-    // Resetear estado solo cuando se completa un patrón
-    if (num_played_notes == 4) {
+    // Limpiar notas visuales (tanto en la vara como en el pentagrama)
+    if (num_played_notes > 0) {
+        kprintf("Clearing pattern state");
+        
         // Limpiar notas visuales
         for (u8 i = 0; i < 4; i++) {
-            show_note(played_notes[i], false);
+            if (i < num_played_notes) {
+                show_note(played_notes[i], false);
+            }
         }
+        
+        // Limpiar visuales del pentagrama
+        hide_pentagram_icons();
         
         // Resetear contadores
         num_played_notes = 0;
@@ -337,25 +357,57 @@ void reset_pattern_state(void)    // Clear current pattern sequence state
         player_state_machine.pattern_time = 0;
         player_state_machine.note_count = 0;
     }
+    
+    // Asegurarse de que note_playing_time se incremente para permitir nuevas notas
+    if (note_playing_time < MIN_TIME_BETWEEN_NOTES) {
+        note_playing_time = MIN_TIME_BETWEEN_NOTES;
+    }
 }
 
 void handle_pattern_timeout(void)    // Check for pattern sequence timeout
 {
-    if (time_since_last_note != 0) {
-        time_since_last_note++;
+    // Incrementar note_playing_time para permitir nuevas notas
+    if (note_playing_time < 100) {
+        note_playing_time++;
+    }
+    
+    // Manejar timeout para patrones en progreso o a mitad de un patrón
+    if (time_since_last_note != 0 || num_played_notes > 0) {
+        // Si hay notas en progreso, incrementar el contador de tiempo
+        if (time_since_last_note == 0 && num_played_notes > 0) {
+            time_since_last_note = 1; // Iniciar el contador si hay notas pero no se ha iniciado
+        } else {
+            time_since_last_note++;
+        }
+        
+        // Verificar si se ha alcanzado el tiempo máximo de espera
         if (time_since_last_note == calc_ticks(MAX_PATTERN_WAIT_TIME)) {
+            kprintf("Pattern timeout detected - clearing %d notes", num_played_notes);
+            
             // Limpiar estado primero
             reset_pattern_state();
             
-            // Limpiar visuales
+            // Limpiar todas las visuales
             hide_rod_icons();
-            for (u8 i = 0; i < 4; i++) {
-                show_note(i+1, false);
+            hide_pentagram_icons();
+            
+            // Limpiar todas las notas posibles
+            for (u8 i = 1; i <= 6; i++) {
+                show_note(i, false);
             }
+            
+            // Reproducir sonido de patrón inválido
+            play_pattern_sound(PTRN_NONE);
             
             // Notificar timeout a la máquina de estados
             StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_TIMEOUT, 0);
         }
+    }
+    // Limpiar visuales incluso si no hay patrón en progreso
+    else if (num_played_notes == 0 && note_playing == 0) {
+        // Asegurarse de que no haya notas visibles
+        hide_rod_icons();
+        hide_pentagram_icons();
     }
 }
 
@@ -401,6 +453,32 @@ void launch_electric_pattern(void)    // Start electric pattern effect
 
 void do_electric_pattern_effect(void)    // Process electric pattern visual and combat effects
 {
+    // If a counter-spell has succeeded, don't do anything
+    if (counter_spell_success) {
+        // Reset player state machine
+        player_state_machine.current_state = SM_STATE_IDLE;
+        player_state_machine.timer = 0;
+        player_state_machine.effect_time = 0;
+        player_state_machine.pattern_system.effect_in_progress = false;
+        player_state_machine.pattern_system.effect_type = PTRN_NONE;
+        player_state_machine.pattern_system.effect_duration = 0;
+        player_state_machine.launch_effect = NULL;
+        player_state_machine.do_effect = NULL;
+        player_state_machine.finish_effect = NULL;
+        
+        // Reset player state
+        player_pattern_effect_in_progress = PTRN_NONE;
+        player_pattern_effect_reversed = false;
+        player_pattern_effect_time = 0;
+        obj_character[active_character].state = STATE_IDLE;
+        anim_character(active_character, ANIM_IDLE);
+        
+        // Hide any pattern icons
+        show_pattern_icon(PTRN_ELECTRIC, false, false);
+        
+        return;
+    }
+    
     // Visual thunder effect
     VDP_setHilightShadow((player_pattern_effect_time % 2) == 0);
     SPR_update();

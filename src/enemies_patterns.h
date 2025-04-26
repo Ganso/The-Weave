@@ -33,6 +33,7 @@ extern u16 enemy_attack_time; // How long is the enemy attacking?
 extern bool enemy_attack_effect_in_progress; // An enemy pattern attack effect is in progress
 extern u16 enemy_attack_effect_time; // How long has been the enemy pattern effect working?
 extern bool enemy_note_active[6]; // Is the note # MI-DO active?
+extern bool counter_spell_success; // Flag indicating a counter-spell has successfully hit
 
 // Initialization function
 void init_enemy_patterns(void); // initialize enemy patterns

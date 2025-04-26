@@ -144,13 +144,19 @@ void hide_rod_icons(void)    // Remove all rod note sprites from interface
 
 void hide_pentagram_icons(void)    // Remove all pentagram note sprites from interface
 {
-    // Release all pentagram sprites
+    // Release all pentagram sprites and set pointers to NULL
     if (spr_int_pentagram_1!=NULL) SPR_releaseSprite(spr_int_pentagram_1);
     if (spr_int_pentagram_2!=NULL) SPR_releaseSprite(spr_int_pentagram_2);
     if (spr_int_pentagram_3!=NULL) SPR_releaseSprite(spr_int_pentagram_3);
     if (spr_int_pentagram_4!=NULL) SPR_releaseSprite(spr_int_pentagram_4);
     if (spr_int_pentagram_5!=NULL) SPR_releaseSprite(spr_int_pentagram_5);
     if (spr_int_pentagram_6!=NULL) SPR_releaseSprite(spr_int_pentagram_6);
+    spr_int_pentagram_1=NULL;
+    spr_int_pentagram_2=NULL;
+    spr_int_pentagram_3=NULL;
+    spr_int_pentagram_4=NULL;
+    spr_int_pentagram_5=NULL;
+    spr_int_pentagram_6=NULL;
     SPR_update();
 }
 

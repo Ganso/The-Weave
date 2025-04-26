@@ -9,6 +9,7 @@ u16 enemy_attack_time;                                // Attack state timer
 bool enemy_attack_effect_in_progress;                 // If attack effect is active
 u16 enemy_attack_effect_time;                         // Effect duration timer
 bool enemy_note_active[6];                            // Active note indicators
+bool counter_spell_success = false;                   // Flag for successful counter-spell
 
 
 void init_enemy_patterns(void)    // Setup enemy attack patterns and timings
@@ -38,33 +39,50 @@ void check_enemy_state(void)    // Main state machine for enemy pattern system
 {
     u8 numenemy, npattern;
     u16 max_effect_time;
+    
+    // Reset counter-spell success flag at the start of each frame
+    // This allows new attacks to start after a counter-spell has been processed
+    counter_spell_success = false;
 
     // Check for new attack opportunities when no attack is in progress
     if (!enemy_attack_effect_in_progress && enemy_attacking == ENEMY_NONE) {
-        for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
-            if (obj_enemy[numenemy].obj_character.active) {
-                for (npattern = 0; npattern < MAX_PATTERN_ENEMY; npattern++) {
-                    if (obj_enemy[numenemy].class.has_pattern[npattern]) {
-                        // Check if pattern cooldown is complete
-                        if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
-                            if (player_pattern_effect_in_progress == PTRN_HIDE) {
-                                // Reduce cooldown if player is hidden
-                                obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
+        // Check if player is currently casting a spell or has an active effect
+        bool player_is_casting = (obj_character[active_character].state == STATE_PLAYING_NOTE ||
+                                obj_character[active_character].state == STATE_PATTERN_CHECK ||
+                                obj_character[active_character].state == STATE_PATTERN_EFFECT ||
+                                obj_character[active_character].state == STATE_PATTERN_EFFECT_FINISH);
+        
+        // Check if player has an active counter-spell
+        bool player_has_counter = (player_pattern_effect_in_progress != PTRN_NONE &&
+                                 player_pattern_effect_reversed);
+        
+        // Only allow enemy attacks if player is not casting and has no counter active
+        if (!player_is_casting && !player_has_counter) {
+            for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
+                if (obj_enemy[numenemy].obj_character.active) {
+                    for (npattern = 0; npattern < MAX_PATTERN_ENEMY; npattern++) {
+                        if (obj_enemy[numenemy].class.has_pattern[npattern]) {
+                            // Check if pattern cooldown is complete
+                            if (obj_enemy[numenemy].last_pattern_time[npattern] == obj_Pattern_Enemy[npattern].recharge_time) {
+                                if (player_pattern_effect_in_progress == PTRN_HIDE) {
+                                    // Reduce cooldown if player is hidden
+                                    obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
+                                } else {
+                                    // Start new attack sequence
+                                    enemy_attack_pattern_notes = 0;
+                                    enemy_attack_time = 0;
+                                    enemy_attack_pattern = npattern;
+                                    enemy_attacking = numenemy;
+                                    anim_enemy(numenemy, ANIM_ACTION);
+                                    obj_enemy[numenemy].obj_character.state = STATE_PLAYING_NOTE;
+                                    show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[0], true, true);
+                                    show_or_hide_enemy_combat_interface(true);
+                                }
                             } else {
-                                // Start new attack sequence
-                                enemy_attack_pattern_notes = 0;
-                                enemy_attack_time = 0;
-                                enemy_attack_pattern = npattern;
-                                enemy_attacking = numenemy;
-                                anim_enemy(numenemy, ANIM_ACTION);
-                                obj_enemy[numenemy].obj_character.state = STATE_PLAYING_NOTE;
-                                show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[0], true, true);
-                                show_or_hide_enemy_combat_interface(true);
-                            }
-                        } else {
-                            // Random cooldown progression
-                            if ((random() % 2) == 0) {
-                                obj_enemy[numenemy].last_pattern_time[npattern]++;
+                                // Random cooldown progression
+                                if ((random() % 2) == 0) {
+                                    obj_enemy[numenemy].last_pattern_time[npattern]++;
+                                }
                             }
                         }
                     }
@@ -243,7 +261,13 @@ void finish_enemy_pattern_effect(void)    // Clean up and finish enemy attack pa
 {
     // Reset enemy state
     anim_enemy(enemy_attacking, ANIM_IDLE);
-    obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern] = 0;
+    
+    // Set the cooldown to 50% of the recharge time to allow the enemy to attack again after a delay
+    // This is less than the 75% used for counter-spells, so enemies will attack sooner after normal attacks
+    if (enemy_attacking != ENEMY_NONE && enemy_attack_pattern != PTRN_EN_NONE) {
+        obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern] = obj_Pattern_Enemy[enemy_attack_pattern].recharge_time / 2;
+    }
+    
     enemy_attack_effect_time = 0;
     enemy_attack_effect_in_progress = false;
 
@@ -270,13 +294,24 @@ void launch_electric_enemy_pattern(void)    // Start electric pattern attack seq
 
 void do_electric_enemy_pattern_effect(void)    // Process electric pattern effect and counter-spell checks
 {
+    // If counter-spell already succeeded, don't do anything
+    if (counter_spell_success) {
+        return;
+    }
+    
     // Create lightning flash effect
     if (frame_counter % 2 == 0) VDP_setHilightShadow(true);
     else VDP_setHilightShadow(false);
 
     // Check for player counter-spell
     if (player_pattern_effect_in_progress == PTRN_ELECTRIC && player_pattern_effect_reversed == true) {
+        // Set the counter-spell success flag
+        counter_spell_success = true;
+        
+        // Stop all visual effects immediately
         VDP_setHilightShadow(false);
+        
+        // Damage the enemy
         hit_enemy(enemy_attacking);
         
         // Clean up all active notes
@@ -286,16 +321,43 @@ void do_electric_enemy_pattern_effect(void)    // Process electric pattern effec
         anim_enemy(enemy_attacking, ANIM_IDLE);
         enemy_attack_effect_in_progress = false;
         obj_enemy[enemy_attacking].obj_character.state = STATE_IDLE;
-        obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern] = 0;
+        
+        // Set the cooldown to 75% of the recharge time to allow the enemy to attack again after a delay
+        u16 current_enemy = enemy_attacking;
+        u16 current_pattern = enemy_attack_pattern;
+        obj_enemy[current_enemy].last_pattern_time[current_pattern] = obj_Pattern_Enemy[current_pattern].recharge_time * 3 / 4;
+        
+        // Reset attack state
+        enemy_attack_pattern = PTRN_EN_NONE;
         enemy_attacking = ENEMY_NONE;
         
         // Reset player state
         player_pattern_effect_in_progress = PTRN_NONE;
         player_pattern_effect_reversed = false;
+        player_pattern_effect_time = 0;
         obj_character[active_character].state = STATE_IDLE;
+        anim_character(active_character, ANIM_IDLE);
         
         // Hide combat interface
         show_or_hide_enemy_combat_interface(false);
+        
+        // Reset any other active effects
+        for (u16 i = 0; i < MAX_ENEMIES; i++) {
+            if (obj_enemy[i].obj_character.active) {
+                // Reset any enemy in pattern effect state
+                if (obj_enemy[i].obj_character.state == STATE_PATTERN_EFFECT ||
+                    obj_enemy[i].obj_character.state == STATE_PATTERN_EFFECT_FINISH) {
+                    obj_enemy[i].obj_character.state = STATE_IDLE;
+                    anim_enemy(i, ANIM_IDLE);
+                }
+            }
+        }
+        
+        // Hide any pattern icons
+        show_pattern_icon(PTRN_ELECTRIC, false, false);
+        
+        // Update sprites to reflect changes
+        SPR_update();
     }
 }
 
