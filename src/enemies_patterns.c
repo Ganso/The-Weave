@@ -44,6 +44,12 @@ void check_enemy_state(void)    // Main state machine for enemy pattern system
     // This allows new attacks to start after a counter-spell has been processed
     counter_spell_success = false;
 
+    // Log the current state every 60 frames
+    if (frame_counter % 60 == 0) {
+        kprintf("ENEMY STATE CHECK: enemy=%d, pattern=%d, effect_in_progress=%d",
+                enemy_attacking, enemy_attack_pattern, enemy_attack_effect_in_progress);
+    }
+    
     // Check for new attack opportunities when no attack is in progress
     if (!enemy_attack_effect_in_progress && enemy_attacking == ENEMY_NONE) {
         // Check if player is currently casting a spell or has an active effect
@@ -55,6 +61,12 @@ void check_enemy_state(void)    // Main state machine for enemy pattern system
         // Check if player has an active counter-spell
         bool player_has_counter = (player_pattern_effect_in_progress != PTRN_NONE &&
                                  player_pattern_effect_reversed);
+        
+        // Log when we're checking for new attacks
+        if (frame_counter % 60 == 0) {
+            kprintf("CHECKING FOR NEW ATTACKS: player_casting=%d, player_counter=%d",
+                    player_is_casting, player_has_counter);
+        }
         
         // Only allow enemy attacks if player is not casting and has no counter active
         if (!player_is_casting && !player_has_counter) {
@@ -259,6 +271,9 @@ void show_enemy_note(u8 nnote, bool visible, bool play)    // Display/play enemy
 
 void finish_enemy_pattern_effect(void)    // Clean up and finish enemy attack pattern effects
 {
+    kprintf("FINISH_ENEMY_PATTERN_EFFECT called: enemy=%d, pattern=%d",
+            enemy_attacking, enemy_attack_pattern);
+    
     // Reset enemy state
     anim_enemy(enemy_attacking, ANIM_IDLE);
     
@@ -266,6 +281,8 @@ void finish_enemy_pattern_effect(void)    // Clean up and finish enemy attack pa
     // This is less than the 75% used for counter-spells, so enemies will attack sooner after normal attacks
     if (enemy_attacking != ENEMY_NONE && enemy_attack_pattern != PTRN_EN_NONE) {
         obj_enemy[enemy_attacking].last_pattern_time[enemy_attack_pattern] = obj_Pattern_Enemy[enemy_attack_pattern].recharge_time / 2;
+        kprintf("  - Set cooldown for enemy %d pattern %d to %d",
+                enemy_attacking, enemy_attack_pattern, obj_Pattern_Enemy[enemy_attack_pattern].recharge_time / 2);
     }
     
     enemy_attack_effect_time = 0;
@@ -363,6 +380,8 @@ void do_electric_enemy_pattern_effect(void)    // Process electric pattern effec
 
 void finish_electric_enemy_pattern_effect(void)    // Complete electric pattern and apply damage if not countered
 {
+    kprintf("FINISH_ELECTRIC_ENEMY_PATTERN_EFFECT called: enemy=%d", enemy_attacking);
+    
     VDP_setHilightShadow(false);
     if (enemy_attacking != ENEMY_NONE) {
         // Player failed to counter
@@ -374,6 +393,8 @@ void finish_electric_enemy_pattern_effect(void)    // Complete electric pattern 
         show_or_hide_interface(true);
         show_or_hide_enemy_combat_interface(true);
     }
+    
+    kprintf("FINISH_ELECTRIC_ENEMY_PATTERN_EFFECT completed");
 }
 
 void launch_bite_enemy_pattern(void)    // Start bite pattern attack sequence
