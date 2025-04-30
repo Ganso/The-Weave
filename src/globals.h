@@ -4,6 +4,10 @@
 
 #define DEBUG_ON
 
+// Game constants
+#define MAX_ENEMIES 3
+#define ENEMY_ENTITY_ID_BASE 100
+
 // Create version using compile date
 #define GAMEVERSION ({ static char version[20]; sprintf(version, "v%c%c%c%c%c%c%c", (__DATE__[4] == ' ' ? '0' : __DATE__[4]), __DATE__[5], __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[9], __DATE__[10]); version; })
 
@@ -38,9 +42,9 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 #include "patterns.h" // Pattern structure and definitions
 #include "statemachine.h" // State machine library
 #include "characters.h" // Characters that can talk, or you can control
+#include "enemies.h" // Enemies you fight
 #include "character_patterns.h" // Paterns the player can play and use
 #include "enemies_patterns.h" // Patterns the enemies can play and use
-#include "enemies.h" // Enemies you fight
 #include "items.h" // Items in the scenery
 #include "texts.h" // Text strings (English / Spanish)
 #include "dialogs.h" // Dialog and text related functions

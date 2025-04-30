@@ -1,6 +1,4 @@
 #include "globals.h"
-#include "entity.h"
-#include "characters.h"
 
 // Mapeo entre estados del personaje y estados de la máquina
 SM_State convert_to_sm_state(u16 current_state) {
@@ -112,6 +110,120 @@ void electric_pattern_finish(StateMachine* sm) {
     sm->pattern_system.effect_duration = 0;
 }
 
+// Implementación del patrón HIDE (esconderse)
+void hide_pattern_launch(StateMachine* sm) {
+    anim_character(sm->entity_id, ANIM_MAGIC);
+    show_pattern_icon(PTRN_HIDE, true, true);
+    play_pattern_sound(PTRN_HIDE);
+    sm->pattern_system.effect_type = PTRN_HIDE;
+    sm->pattern_system.effect_in_progress = true;
+    sm->pattern_system.effect_duration = 0;
+    movement_active = true;  // Permitir movimiento mientras está escondido
+}
+
+void hide_pattern_do(StateMachine* sm) {
+    u16 max_effect_time = 400;
+    
+    // Crear efecto de parpadeo
+    if (sm->pattern_system.effect_duration % 2 == 0) {
+        show_character(sm->entity_id, true);
+    } else {
+        show_character(sm->entity_id, false);
+    }
+    
+    sm->pattern_system.effect_duration++;
+    
+    // Verificar si el efecto ha terminado
+    if (sm->pattern_system.effect_duration >= max_effect_time) {
+        sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
+    }
+}
+
+void hide_pattern_finish(StateMachine* sm) {
+    show_pattern_icon(PTRN_HIDE, false, false);
+    show_character(sm->entity_id, true);
+    sm->pattern_system.effect_type = PTRN_NONE;
+    sm->pattern_system.effect_in_progress = false;
+    sm->pattern_system.effect_duration = 0;
+    movement_active = true;  // Permitir que el personaje siga siendo controlable
+}
+
+// Implementación del patrón SLEEP (dormir)
+void sleep_pattern_launch(StateMachine* sm) {
+    anim_character(sm->entity_id, ANIM_MAGIC);
+    show_pattern_icon(PTRN_SLEEP, true, true);
+    play_pattern_sound(PTRN_SLEEP);
+    sm->pattern_system.effect_type = PTRN_SLEEP;
+    sm->pattern_system.effect_in_progress = true;
+    sm->pattern_system.effect_duration = 0;
+}
+
+void sleep_pattern_do(StateMachine* sm) {
+    // En combate, aplicar efecto de parálisis a los enemigos
+    if (is_combat_active && sm->pattern_system.effect_duration == 10) {
+        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
+            if (obj_enemy[nenemy].obj_character.active &&
+                obj_enemy[nenemy].hitpoints > 0) {
+                // Paralizar al enemigo (no puede atacar por un tiempo)
+                obj_enemy[nenemy].paralyzed = true;
+                obj_enemy[nenemy].paralyzed_time = 300; // Duración de la parálisis
+            }
+        }
+    }
+    
+    sm->pattern_system.effect_duration++;
+    
+    // Efecto visual breve
+    if (sm->pattern_system.effect_duration >= 30) {
+        sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
+    }
+}
+
+void sleep_pattern_finish(StateMachine* sm) {
+    show_pattern_icon(PTRN_SLEEP, false, false);
+    sm->pattern_system.effect_type = PTRN_NONE;
+    sm->pattern_system.effect_in_progress = false;
+    sm->pattern_system.effect_duration = 0;
+}
+
+// Implementación del patrón OPEN (abrir)
+void open_pattern_launch(StateMachine* sm) {
+    anim_character(sm->entity_id, ANIM_MAGIC);
+    show_pattern_icon(PTRN_OPEN, true, true);
+    play_pattern_sound(PTRN_OPEN);
+    sm->pattern_system.effect_type = PTRN_OPEN;
+    sm->pattern_system.effect_in_progress = true;
+    sm->pattern_system.effect_duration = 0;
+}
+
+void open_pattern_do(StateMachine* sm) {
+    // En combate, hacer a los enemigos más vulnerables
+    if (is_combat_active && sm->pattern_system.effect_duration == 10) {
+        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
+            if (obj_enemy[nenemy].obj_character.active &&
+                obj_enemy[nenemy].hitpoints > 0) {
+                // Hacer al enemigo más vulnerable (recibe más daño)
+                obj_enemy[nenemy].vulnerable = true;
+                obj_enemy[nenemy].vulnerable_time = 300; // Duración de la vulnerabilidad
+            }
+        }
+    }
+    
+    sm->pattern_system.effect_duration++;
+    
+    // Efecto visual breve
+    if (sm->pattern_system.effect_duration >= 30) {
+        sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
+    }
+}
+
+void open_pattern_finish(StateMachine* sm) {
+    show_pattern_icon(PTRN_OPEN, false, false);
+    sm->pattern_system.effect_type = PTRN_NONE;
+    sm->pattern_system.effect_in_progress = false;
+    sm->pattern_system.effect_duration = 0;
+}
+
 /**
  * Inicializa una máquina de estados.
  * 
@@ -214,22 +326,22 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                         sm->finish_effect = electric_pattern_finish;
                         break;
                     case PTRN_HIDE:
-                        // Añadir soporte para el patrón de esconderse
-                        sm->launch_effect = NULL; // Usar funciones existentes por ahora
-                        sm->do_effect = NULL;
-                        sm->finish_effect = NULL;
+                        // Asignar callbacks para el patrón de esconderse
+                        sm->launch_effect = hide_pattern_launch;
+                        sm->do_effect = hide_pattern_do;
+                        sm->finish_effect = hide_pattern_finish;
                         break;
                     case PTRN_OPEN:
-                        // Añadir soporte para el patrón de abrir
-                        sm->launch_effect = NULL;
-                        sm->do_effect = NULL;
-                        sm->finish_effect = NULL;
+                        // Asignar callbacks para el patrón de abrir
+                        sm->launch_effect = open_pattern_launch;
+                        sm->do_effect = open_pattern_do;
+                        sm->finish_effect = open_pattern_finish;
                         break;
                     case PTRN_SLEEP:
-                        // Añadir soporte para el patrón de dormir
-                        sm->launch_effect = NULL;
-                        sm->do_effect = NULL;
-                        sm->finish_effect = NULL;
+                        // Asignar callbacks para el patrón de dormir
+                        sm->launch_effect = sleep_pattern_launch;
+                        sm->do_effect = sleep_pattern_do;
+                        sm->finish_effect = sleep_pattern_finish;
                         break;
                     default:
                         sm->launch_effect = NULL;

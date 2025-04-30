@@ -1,6 +1,10 @@
 #ifndef _ENEMIES_H_
 #define _ENEMIES_H_
 
+// Enemies
+#define ENEMY_NONE 254
+#define MAX_PATTERN_ENEMY 2
+
 // Enemy classes
 #define MAX_ENEMY_CLASSES 10
 #define ENEMY_CLS_WEAVERGHOST    0
@@ -15,10 +19,6 @@ typedef struct
 } Enemy_Class;
 extern Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object
 
-// Enemies
-#define MAX_ENEMIES 10
-#define ENEMY_NONE 254
-
 typedef struct
 {
     Enemy_Class class;
@@ -26,6 +26,10 @@ typedef struct
     Entity obj_character;
     u16 hitpoints;
     u16 last_pattern_time[MAX_PATTERN_ENEMY];
+    bool paralyzed;           // Si el enemigo está paralizado (efecto SLEEP)
+    u16 paralyzed_time;       // Tiempo restante de parálisis
+    bool vulnerable;          // Si el enemigo es vulnerable (efecto OPEN)
+    u16 vulnerable_time;      // Tiempo restante de vulnerabilidad
 } Enemy;
 extern Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
 extern Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites

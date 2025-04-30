@@ -1,5 +1,7 @@
-#include <genesis.h>
 #include "globals.h"
+
+// Referencia a la máquina de estados del jugador
+extern StateMachine player_state_machine;
 
 bool is_combat_active;    // Whether combat sequence is currently active
 
@@ -22,6 +24,9 @@ void start_combat(bool start)    // Initialize or cleanup combat sequence with U
         setRandomSeed(frame_counter);
         is_combat_active = true;
         player_scroll_active = false;
+        
+        // Enviar mensaje a la máquina de estados del jugador
+        StateMachine_SendMessage(&player_state_machine, MSG_COMBAT_START, 0);
 
         // Reset enemies to combat-ready state
         for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
@@ -37,6 +42,9 @@ void start_combat(bool start)    // Initialize or cleanup combat sequence with U
                     }
                 }
             }
+            
+            // Inicializar la máquina de estados del enemigo
+            StateMachine_Init(&enemy_state_machines[numenemy], ENEMY_ENTITY_ID_BASE + numenemy);
         }
 
         // Initialize combat state
@@ -56,6 +64,9 @@ void start_combat(bool start)    // Initialize or cleanup combat sequence with U
         // Combat cleanup
         is_combat_active = false;
         player_scroll_active = true;
+        
+        // Enviar mensaje a la máquina de estados del jugador
+        StateMachine_SendMessage(&player_state_machine, MSG_COMBAT_END, 0);
         
         // Cleanup life counter sprite
         if (spr_int_life_counter != NULL) {
@@ -90,9 +101,17 @@ void hit_enemy(u16 nenemy)    // Apply damage to enemy, handle defeat, and updat
 
     // Apply damage and check for defeat
     obj_enemy[nenemy].hitpoints--;
+    
+    // Enviar mensaje a la máquina de estados del enemigo
+    StateMachine_SendMessage(&enemy_state_machines[nenemy], MSG_ENEMY_HIT, 0);
+    
     if (obj_enemy[nenemy].hitpoints == 0) {
         // Enemy defeated
         SPR_setVisibility(spr_int_life_counter, HIDDEN);
+        
+        // Enviar mensaje de enemigo derrotado
+        StateMachine_SendMessage(&enemy_state_machines[nenemy], MSG_ENEMY_DEFEATED, 0);
+        
         release_enemy(nenemy);
 
         // Check if all enemies defeated
@@ -138,6 +157,9 @@ void hit_enemy(u16 nenemy)    // Apply damage to enemy, handle defeat, and updat
 void hit_caracter(u16 nchar)    // Handle player character damage (currently just sound)
 {
     play_sample(snd_player_hurt,sizeof(snd_player_hurt));
+    
+    // Enviar mensaje a la máquina de estados del jugador
+    StateMachine_SendMessage(&player_state_machine, MSG_PLAYER_HIT, 0);
 }
 
 void show_or_hide_enemy_combat_interface(bool show)    // Toggle combat UI elements (faces, life counter, notes)
@@ -184,4 +206,25 @@ void show_or_hide_enemy_combat_interface(bool show)    // Toggle combat UI eleme
     }
 
     SPR_update();
+}
+
+/**
+ * Actualiza todas las máquinas de estado en combate.
+ * Esta función debe llamarse en cada frame durante el combate.
+ */
+void combat_update(void)
+{
+    if (!is_combat_active) {
+        return;
+    }
+    
+    // Actualizar máquina de estado del jugador
+    StateMachine_Update(&player_state_machine, NULL);
+    
+    // Actualizar máquinas de estado de enemigos
+    for (u8 i = 0; i < MAX_ENEMIES; i++) {
+        if (obj_enemy[i].obj_character.active) {
+            StateMachine_Update(&enemy_state_machines[i], NULL);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 #ifndef _ENM_PATTERNS_H_
 #define _ENM_PATTERNS_H_
 
+#include "globals.h"
 
 // Enemy Patterns
 #define MAX_PATTERN_ENEMY 2
@@ -34,6 +35,9 @@ extern bool enemy_attack_effect_in_progress; // An enemy pattern attack effect i
 extern u16 enemy_attack_effect_time; // How long has been the enemy pattern effect working?
 extern bool enemy_note_active[6]; // Is the note # MI-DO active?
 extern bool counter_spell_success; // Flag indicating a counter-spell has successfully hit
+
+// State machines for enemies
+extern StateMachine enemy_state_machines[MAX_ENEMIES];
 
 // Initialization function
 void init_enemy_patterns(void); // initialize enemy patterns

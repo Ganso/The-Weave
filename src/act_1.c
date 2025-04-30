@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learning
@@ -316,6 +315,9 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     show_or_hide_interface(true);
     start_combat(true);
     while (is_combat_active==true) {
+        // Actualizar las máquinas de estado en combate
+        combat_update();
+        
         next_frame(true);
     }
 

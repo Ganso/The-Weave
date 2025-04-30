@@ -93,9 +93,24 @@ void StateMachine_Init(StateMachine *sm, u16 entity_id);
 void StateMachine_Update(StateMachine *sm, Message *msg);
 void StateMachine_SendMessage(StateMachine *sm, MessageType type, u16 param);
 
-// Funciones de efectos para el patrón eléctrico (como ejemplo inicial)
+// Funciones de efectos para el patrón eléctrico
 void electric_pattern_launch(StateMachine* sm);
 void electric_pattern_do(StateMachine* sm);
 void electric_pattern_finish(StateMachine* sm);
+
+// Funciones de efectos para el patrón de esconderse (HIDE)
+void hide_pattern_launch(StateMachine* sm);
+void hide_pattern_do(StateMachine* sm);
+void hide_pattern_finish(StateMachine* sm);
+
+// Funciones de efectos para el patrón de dormir (SLEEP)
+void sleep_pattern_launch(StateMachine* sm);
+void sleep_pattern_do(StateMachine* sm);
+void sleep_pattern_finish(StateMachine* sm);
+
+// Funciones de efectos para el patrón de abrir (OPEN)
+void open_pattern_launch(StateMachine* sm);
+void open_pattern_do(StateMachine* sm);
+void open_pattern_finish(StateMachine* sm);
 
 #endif

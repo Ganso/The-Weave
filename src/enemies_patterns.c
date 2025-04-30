@@ -1,5 +1,7 @@
-#include <genesis.h>
 #include "globals.h"
+
+// Referencia a la máquina de estados del jugador
+extern StateMachine player_state_machine;
 
 Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY];    // Stores all enemy pattern definitions
 u16 enemy_attacking;                                   // Currently attacking enemy ID
@@ -11,11 +13,18 @@ u16 enemy_attack_effect_time;                         // Effect duration timer
 bool enemy_note_active[6];                            // Active note indicators
 bool counter_spell_success = false;                   // Flag for successful counter-spell
 
+// State machines for enemies
+StateMachine enemy_state_machines[MAX_ENEMIES];       // State machines for each enemy
 
 void init_enemy_patterns(void)    // Setup enemy attack patterns and timings
 {
     obj_Pattern_Enemy[PTRN_EN_ELECTIC]=(Pattern_Enemy) {4, {1,2,3,4}, 150}; // Electric pattern: 4 steps, 150ms interval
     obj_Pattern_Enemy[PTRN_EN_BITE]=(Pattern_Enemy) {3, {2,3,2,NULL}, 150}; // Bite pattern: 3 steps, 150ms interval
+    
+    // Initialize state machines for enemies
+    for (u8 i = 0; i < MAX_ENEMIES; i++) {
+        StateMachine_Init(&enemy_state_machines[i], ENEMY_ENTITY_ID_BASE + i);
+    }
 }
 
 /**
@@ -80,11 +89,18 @@ void check_enemy_state(void)    // Main state machine for enemy pattern system
                                     // Reduce cooldown if player is hidden
                                     obj_enemy[numenemy].last_pattern_time[npattern] -= 50;
                                 } else {
-                                    // Start new attack sequence
+                                    // Start new attack sequence using state machine
                                     enemy_attack_pattern_notes = 0;
                                     enemy_attack_time = 0;
                                     enemy_attack_pattern = npattern;
                                     enemy_attacking = numenemy;
+                                    
+                                    // Enviar mensaje a la máquina de estados del enemigo
+                                    StateMachine_SendMessage(&enemy_state_machines[numenemy],
+                                                           MSG_NOTE_PLAYED,
+                                                           obj_Pattern_Enemy[npattern].notes[0]);
+                                    
+                                    // Mantener compatibilidad con el código existente
                                     anim_enemy(numenemy, ANIM_ACTION);
                                     obj_enemy[numenemy].obj_character.state = STATE_PLAYING_NOTE;
                                     show_enemy_note(obj_Pattern_Enemy[enemy_attack_pattern].notes[0], true, true);
@@ -316,6 +332,10 @@ void do_electric_enemy_pattern_effect(void)    // Process electric pattern effec
         return;
     }
     
+    // Check if player is currently playing notes
+    bool player_is_playing_notes = (obj_character[active_character].state == STATE_PLAYING_NOTE ||
+                                  num_played_notes > 0);
+    
     // Create lightning flash effect
     if (frame_counter % 2 == 0) VDP_setHilightShadow(true);
     else VDP_setHilightShadow(false);
@@ -327,6 +347,13 @@ void do_electric_enemy_pattern_effect(void)    // Process electric pattern effec
         
         // Stop all visual effects immediately
         VDP_setHilightShadow(false);
+        
+        // Show success message
+        show_or_hide_interface(false);
+        show_or_hide_enemy_combat_interface(false);
+        talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
+        show_or_hide_enemy_combat_interface(true);
+        show_or_hide_interface(true);
         
         // Damage the enemy
         hit_enemy(enemy_attacking);
@@ -376,22 +403,58 @@ void do_electric_enemy_pattern_effect(void)    // Process electric pattern effec
         // Update sprites to reflect changes
         SPR_update();
     }
+    
+    // If player is playing notes, extend the effect time to give them a chance to counter
+    if (player_is_playing_notes && enemy_attack_effect_time >= calc_ticks(MAX_EFFECT_TIME_ELECTRIC) - 30) {
+        // Keep the effect going a bit longer
+        enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC) - 30;
+        kprintf("Player is playing notes - extending enemy attack time");
+    }
 }
 
 void finish_electric_enemy_pattern_effect(void)    // Complete electric pattern and apply damage if not countered
 {
-    kprintf("FINISH_ELECTRIC_ENEMY_PATTERN_EFFECT called: enemy=%d", enemy_attacking);
+    kprintf("FINISH_ELECTRIC_ENEMY_PATTERN_EFFECT called: enemy=%d, counter_success=%d",
+            enemy_attacking, counter_spell_success);
+    
+    // If counter-spell already succeeded, don't do anything
+    if (counter_spell_success) {
+        kprintf("Counter spell already successful, skipping damage and dialog");
+        VDP_setHilightShadow(false);
+        return;
+    }
     
     VDP_setHilightShadow(false);
+    
+    // Check if player is currently playing notes
+    bool player_is_playing_notes = (obj_character[active_character].state == STATE_PLAYING_NOTE ||
+                                  num_played_notes > 0);
+    
     if (enemy_attacking != ENEMY_NONE) {
-        // Player failed to counter
-        hit_caracter(active_character);
-        show_or_hide_interface(false);
-        show_or_hide_enemy_combat_interface(false);
-        talk_dialog(&dialogs[ACT1_DIALOG3][2]); // (ES) "Eso ha dolido" - (EN) "That hurts"
-        talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
-        show_or_hide_interface(true);
-        show_or_hide_enemy_combat_interface(true);
+        if (player_is_playing_notes) {
+            // Player is still trying to counter, give them more time
+            kprintf("Player is still playing notes - delaying damage");
+            
+            // Extend the effect time to give them a chance to counter
+            enemy_attack_effect_time = calc_ticks(MAX_EFFECT_TIME_ELECTRIC) - 30;
+            
+            // Don't apply damage yet
+            return;
+        } else {
+            // Player failed to counter
+            hit_caracter(active_character);
+            show_or_hide_interface(false);
+            show_or_hide_enemy_combat_interface(false);
+            talk_dialog(&dialogs[ACT1_DIALOG3][2]); // (ES) "Eso ha dolido" - (EN) "That hurts"
+            
+            // Only show the hint if they haven't successfully countered before
+            if (!counter_spell_success) {
+                talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
+            }
+            
+            show_or_hide_interface(true);
+            show_or_hide_enemy_combat_interface(true);
+        }
     }
     
     kprintf("FINISH_ELECTRIC_ENEMY_PATTERN_EFFECT completed");
@@ -438,3 +501,4 @@ void cleanup_enemy_notes(void)    // Clean up all active enemy notes when resett
         }
     }
 }
+
