@@ -44,6 +44,12 @@ void play_note(u8 nnote)    // Handle new musical note input and update characte
         return;
     }
 
+    // Asegurarse de que la nota sea válida (1-6)
+    if (nnote < 1 || nnote > 6) {
+        kprintf("Invalid note: %d", nnote);
+        return;
+    }
+
     // Verificar si podemos reproducir una nota ahora
     if (!player_state_machine.pattern_system.is_note_playing) {
         kprintf("Playing note: %d, current count: %d", nnote, num_played_notes);
@@ -66,6 +72,7 @@ void play_note(u8 nnote)    // Handle new musical note input and update characte
         // Mantener la compatibilidad con el sistema actual
         note_playing = nnote;
         note_playing_time = 0;
+        obj_character[active_character].state = STATE_PLAYING_NOTE;
         
         // Enviar mensaje después de actualizar las notas
         StateMachine_SendMessage(&player_state_machine, MSG_NOTE_PLAYED, nnote);
@@ -81,6 +88,54 @@ void check_active_character_state(void)    // Process character states for patte
     if (obj_character[active_character].state != STATE_WALKING) {
         update_character_from_sm_state(&obj_character[active_character],
                                     player_state_machine.current_state);
+    }
+    
+    // Verificar si estamos en combate y hay un ataque enemigo en progreso
+    if (is_combat_active && enemy_attacking != ENEMY_NONE && enemy_attack_effect_in_progress) {
+        kprintf("In combat with enemy %d attacking, pattern %d, effect_in_progress=%d",
+                enemy_attacking, enemy_attack_pattern, enemy_attack_effect_in_progress);
+        
+        // Si tenemos 4 notas, verificar si es un contraataque
+        if (num_played_notes == 4) {
+            bool is_reverse_match = false;
+            u8 matched_pattern = validate_pattern_sequence(played_notes, &is_reverse_match);
+            
+            if (matched_pattern == PTRN_ELECTRIC && is_reverse_match) {
+                kprintf("COUNTER-ATTACK DETECTED DURING ENEMY ATTACK!");
+                
+                // Mostrar mensaje de éxito
+                show_or_hide_interface(false);
+                show_or_hide_enemy_combat_interface(false);
+                talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
+                show_or_hide_enemy_combat_interface(true);
+                show_or_hide_interface(true);
+                
+                // Activar el contraataque
+                StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
+                obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                player_pattern_effect_in_progress = PTRN_ELECTRIC;
+                player_pattern_effect_reversed = true;
+                
+                // Establecer la bandera de contraataque exitoso
+                counter_spell_success = true;
+                
+                // Golpear al enemigo
+                hit_enemy(enemy_attacking);
+                
+                // Resetear el estado del enemigo
+                enemy_attack_effect_in_progress = false;
+                enemy_attack_effect_time = 0;
+                enemy_attack_pattern = PTRN_EN_NONE;
+                
+                // Limpiar el estado del patrón
+                reset_pattern_state();
+                
+                // Actualizar sprites
+                SPR_update();
+                
+                return;
+            }
+        }
     }
     
     // Mantener la lógica existente temporalmente
@@ -123,42 +178,49 @@ void check_active_character_state(void)    // Process character states for patte
                         is_combat_active && enemy_attacking != ENEMY_NONE &&
                         enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
                         
-                        kprintf("Direct thunder during enemy thunder - showing hint only");
+                        kprintf("Direct thunder during enemy thunder - checking if already shown hint");
                         
-                        // Show hint dialog
-                        show_or_hide_interface(false);
-                        show_or_hide_enemy_combat_interface(false);
-                        talk_dialog(&dialogs[ACT1_DIALOG3][6]); // (ES) "Si reproduzco al revés|las notas, podré|contraatacar este hechizo" - (EN) "If I play the notes backwards|I could be able to|counter the spell"
-                        show_or_hide_enemy_combat_interface(true);
-                        show_or_hide_interface(true);
-                        
-                        // Reset state without showing the "can't use pattern" dialog
-                        play_pattern_sound(PTRN_NONE);
-                        obj_character[active_character].state = STATE_IDLE;
-                        
-                        // Apply damage to player since they failed to counter
-                        hit_caracter(active_character);
-                        
-                        // Directly reset enemy state variables to allow new attacks
-                        u16 current_enemy = enemy_attacking;
-                        u16 current_pattern = enemy_attack_pattern;
-                        
-                        // Log the current state
-                        kprintf("BEFORE RESET: enemy=%d, pattern=%d, effect_in_progress=%d",
-                                enemy_attacking, enemy_attack_pattern, enemy_attack_effect_in_progress);
-                        
-                        // Reset visual effects
-                        VDP_setHilightShadow(false);
-                        
-                        // Reset enemy state
-                        if (current_enemy != ENEMY_NONE) {
-                            anim_enemy(current_enemy, ANIM_IDLE);
-                            obj_enemy[current_enemy].obj_character.state = STATE_IDLE;
+                        // Verificar si ya hemos tenido éxito con un contraataque
+                        if (counter_spell_success) {
+                            // Si ya hemos tenido éxito con un contraataque, tratar como un patrón normal
+                            kprintf("Counter spell already successful, treating as normal pattern");
+                            StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
+                        } else {
+                            // Show hint dialog
+                            show_or_hide_interface(false);
+                            show_or_hide_enemy_combat_interface(false);
+                            talk_dialog(&dialogs[ACT1_DIALOG3][6]); // (ES) "Si reproduzco al revés|las notas, podré|contraatacar este hechizo" - (EN) "If I play the notes backwards|I could be able to|counter the spell"
+                            show_or_hide_enemy_combat_interface(true);
+                            show_or_hide_interface(true);
                             
-                            // Set cooldown to allow attacks after a delay
-                            if (current_pattern != PTRN_EN_NONE) {
-                                obj_enemy[current_enemy].last_pattern_time[current_pattern] =
-                                    obj_Pattern_Enemy[current_pattern].recharge_time / 2;
+                            // Reset state without showing the "can't use pattern" dialog
+                            play_pattern_sound(PTRN_NONE);
+                            obj_character[active_character].state = STATE_IDLE;
+                            
+                            // Apply damage to player since they failed to counter
+                            hit_caracter(active_character);
+                            
+                            // Directly reset enemy state variables to allow new attacks
+                            u16 current_enemy = enemy_attacking;
+                            u16 current_pattern = enemy_attack_pattern;
+                            
+                            // Log the current state
+                            kprintf("BEFORE RESET: enemy=%d, pattern=%d, effect_in_progress=%d",
+                                    enemy_attacking, enemy_attack_pattern, enemy_attack_effect_in_progress);
+                            
+                            // Reset visual effects
+                            VDP_setHilightShadow(false);
+                            
+                            // Reset enemy state
+                            if (current_enemy != ENEMY_NONE) {
+                                anim_enemy(current_enemy, ANIM_IDLE);
+                                obj_enemy[current_enemy].obj_character.state = STATE_IDLE;
+                                
+                                // Set cooldown to allow attacks after a delay
+                                if (current_pattern != PTRN_EN_NONE) {
+                                    obj_enemy[current_enemy].last_pattern_time[current_pattern] =
+                                        obj_Pattern_Enemy[current_pattern].recharge_time / 2;
+                                }
                             }
                         }
                         
@@ -203,15 +265,54 @@ void check_active_character_state(void)    // Process character states for patte
                         launch_open_pattern(); // Mantener compatibilidad por ahora
                     }
                     // Handle thunder counter (reverse thunder during enemy thunder)
-                    else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match &&
-                             player_pattern_effect_in_progress == PTRN_NONE &&
-                             is_combat_active && enemy_attacking != ENEMY_NONE &&
-                             enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
-                        kprintf("Reverse thunder spell detected");
-                        StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
-                        obj_character[active_character].state = STATE_PATTERN_EFFECT;
-                        player_pattern_effect_in_progress = PTRN_ELECTRIC;
-                        player_pattern_effect_reversed = true;
+                    else if (matched_pattern == PTRN_ELECTRIC && is_reverse_match) {
+                        kprintf("Reverse thunder spell detected! Combat active: %d, Enemy attacking: %d, Effect in progress: %d",
+                                is_combat_active, enemy_attacking, enemy_attack_effect_in_progress);
+                        
+                        if (is_combat_active && enemy_attacking != ENEMY_NONE && enemy_attack_effect_in_progress) {
+                            kprintf("COUNTER-ATTACK ACTIVATED!");
+                            
+                            // Establecer la bandera de contraataque exitoso PRIMERO
+                            counter_spell_success = true;
+                            kprintf("Counter spell success flag set to: %d", counter_spell_success);
+                            
+                            // Mostrar mensaje de éxito
+                            show_or_hide_interface(false);
+                            show_or_hide_enemy_combat_interface(false);
+                            talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
+                            show_or_hide_enemy_combat_interface(true);
+                            show_or_hide_interface(true);
+                            
+                            // Activar el contraataque
+                            StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
+                            obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                            player_pattern_effect_in_progress = PTRN_ELECTRIC;
+                            player_pattern_effect_reversed = true;
+                            
+                            // Golpear al enemigo
+                            hit_enemy(enemy_attacking);
+                            
+                            // Resetear el estado del enemigo
+                            enemy_attack_effect_in_progress = false;
+                            enemy_attack_effect_time = 0;
+                            enemy_attack_pattern = PTRN_EN_NONE;
+                            
+                            // Asegurarse de que el efecto visual se desactive
+                            VDP_setHilightShadow(false);
+                            
+                            // Actualizar sprites
+                            SPR_update();
+                        } else {
+                            // Si no estamos en combate o no hay un ataque en progreso, mostrar mensaje de error
+                            kprintf("Reverse thunder spell not usable in current context");
+                            show_pattern_icon(matched_pattern, true, true);
+                            play_pattern_sound(PTRN_NONE);
+                            show_or_hide_interface(false);
+                            talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+                            show_or_hide_interface(true);
+                            show_pattern_icon(matched_pattern, false, false);
+                            obj_character[active_character].state = STATE_IDLE;
+                        }
                     }
                     else {
                         kprintf("Pattern %d matched but not usable in current context", matched_pattern);
@@ -327,9 +428,26 @@ bool validate_pattern_sequence(u8 *notes, bool *is_reverse)    // Check if playe
     u8 npattern, nnote;
     u8 matches, reverse_matches;
     
+    kprintf("Validating pattern sequence: %d %d %d %d", notes[0], notes[1], notes[2], notes[3]);
+    
+    // Verificar si estamos en combate y hay un ataque enemigo en progreso
+    if (is_combat_active && enemy_attacking != ENEMY_NONE && enemy_attack_effect_in_progress) {
+        kprintf("In combat with enemy %d attacking, pattern %d, effect_in_progress=%d",
+                enemy_attacking, enemy_attack_pattern, enemy_attack_effect_in_progress);
+    }
+    
     for (npattern = 0; npattern < MAX_PATTERNS; npattern++) {
         matches = 0;
         reverse_matches = 0;
+        
+        kprintf("Checking pattern %d: %d %d %d %d (active=%d)",
+                npattern,
+                obj_pattern[npattern].notes[0],
+                obj_pattern[npattern].notes[1],
+                obj_pattern[npattern].notes[2],
+                obj_pattern[npattern].notes[3],
+                obj_pattern[npattern].active);
+        
         // Check both forward and reverse pattern matches
         for (nnote = 0; nnote < 4; nnote++) {
             if (notes[nnote] == obj_pattern[npattern].notes[nnote]) {
@@ -339,6 +457,9 @@ bool validate_pattern_sequence(u8 *notes, bool *is_reverse)    // Check if playe
                 reverse_matches++;
             }
         }
+        
+        kprintf("Pattern %d: forward matches=%d, reverse matches=%d", npattern, matches, reverse_matches);
+        
         // Pattern found if all notes match and pattern is active
         if (matches == 4 && obj_pattern[npattern].active == true) {
             kprintf("Pattern matched (forward): %d", npattern);
@@ -353,15 +474,23 @@ bool validate_pattern_sequence(u8 *notes, bool *is_reverse)    // Check if playe
             return npattern;
         }
     }
+    
+    kprintf("No pattern match found");
     return PTRN_NONE;
 }
 
 bool can_use_electric_pattern(void)
 {
-    // Check if we're trying to cast during an enemy thunder attack
-    // This is now handled in check_active_character_state
+    // Permitir siempre el contraataque (patrón invertido)
     if (is_combat_active && enemy_attacking != ENEMY_NONE &&
         enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
+        kprintf("Electric pattern can be used as counter-attack");
+        return true;
+    }
+    // No permitir el patrón eléctrico normal durante un ataque eléctrico enemigo
+    else if (is_combat_active && enemy_attacking != ENEMY_NONE &&
+             enemy_attack_effect_in_progress && enemy_attack_pattern == PTRN_EN_ELECTIC) {
+        kprintf("Cannot use normal electric pattern during enemy electric attack");
         return false;
     }
     else if (player_pattern_effect_in_progress == PTRN_HIDE) {
@@ -427,6 +556,56 @@ void handle_pattern_timeout(void)    // Check for pattern sequence timeout
         note_playing_time++;
     }
     
+    // Verificar si estamos en combate y hay un ataque enemigo en progreso
+    if (is_combat_active && enemy_attacking != ENEMY_NONE && enemy_attack_effect_in_progress) {
+        // Si tenemos 4 notas, verificar si es un contraataque
+        if (num_played_notes == 4) {
+            bool is_reverse_match = false;
+            u8 matched_pattern = validate_pattern_sequence(played_notes, &is_reverse_match);
+            
+            kprintf("Checking for counter-attack in timeout: pattern=%d, is_reverse=%d", matched_pattern, is_reverse_match);
+            
+            if (matched_pattern == PTRN_ELECTRIC && is_reverse_match) {
+                kprintf("COUNTER-ATTACK DETECTED IN handle_pattern_timeout!");
+                
+                // Mostrar mensaje de éxito
+                show_or_hide_interface(false);
+                show_or_hide_enemy_combat_interface(false);
+                talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
+                show_or_hide_enemy_combat_interface(true);
+                show_or_hide_interface(true);
+                
+                // Activar el contraataque
+                StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
+                obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                player_pattern_effect_in_progress = PTRN_ELECTRIC;
+                player_pattern_effect_reversed = true;
+                
+                // Establecer la bandera de contraataque exitoso
+                counter_spell_success = true;
+                
+                // Golpear al enemigo
+                hit_enemy(enemy_attacking);
+                
+                // Resetear el estado del enemigo
+                enemy_attack_effect_in_progress = false;
+                enemy_attack_effect_time = 0;
+                enemy_attack_pattern = PTRN_EN_NONE;
+                
+                // Asegurarse de que el efecto visual se desactive
+                VDP_setHilightShadow(false);
+                
+                // Limpiar el estado del patrón
+                reset_pattern_state();
+                
+                // Actualizar sprites
+                SPR_update();
+                
+                return;
+            }
+        }
+    }
+    
     // Manejar timeout para patrones en progreso o a mitad de un patrón
     if (time_since_last_note != 0 || num_played_notes > 0) {
         // Si hay notas en progreso, incrementar el contador de tiempo
@@ -479,6 +658,59 @@ void update_pattern_state(void)    // Process note completion and check for patt
     // Sincronizar con la máquina de estados
     player_state_machine.pattern_system.is_note_playing = false;
     player_state_machine.pattern_time = 1;
+    
+    // Verificar si estamos en combate y hay un ataque enemigo en progreso
+    if (is_combat_active && enemy_attacking != ENEMY_NONE && enemy_attack_effect_in_progress) {
+        kprintf("In update_pattern_state: Combat active with enemy %d attacking, pattern %d",
+                enemy_attacking, enemy_attack_pattern);
+        
+        // Si tenemos 4 notas, verificar si es un contraataque
+        if (num_played_notes == 4) {
+            bool is_reverse_match = false;
+            u8 matched_pattern = validate_pattern_sequence(played_notes, &is_reverse_match);
+            
+            kprintf("Checking for counter-attack: pattern=%d, is_reverse=%d", matched_pattern, is_reverse_match);
+            
+            if (matched_pattern == PTRN_ELECTRIC && is_reverse_match) {
+                kprintf("COUNTER-ATTACK DETECTED IN update_pattern_state!");
+                
+                // Mostrar mensaje de éxito
+                show_or_hide_interface(false);
+                show_or_hide_enemy_combat_interface(false);
+                talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
+                show_or_hide_enemy_combat_interface(true);
+                show_or_hide_interface(true);
+                
+                // Activar el contraataque
+                StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
+                obj_character[active_character].state = STATE_PATTERN_EFFECT;
+                player_pattern_effect_in_progress = PTRN_ELECTRIC;
+                player_pattern_effect_reversed = true;
+                
+                // Establecer la bandera de contraataque exitoso
+                counter_spell_success = true;
+                
+                // Golpear al enemigo
+                hit_enemy(enemy_attacking);
+                
+                // Resetear el estado del enemigo
+                enemy_attack_effect_in_progress = false;
+                enemy_attack_effect_time = 0;
+                enemy_attack_pattern = PTRN_EN_NONE;
+                
+                // Asegurarse de que el efecto visual se desactive
+                VDP_setHilightShadow(false);
+                
+                // Limpiar el estado del patrón
+                reset_pattern_state();
+                
+                // Actualizar sprites
+                SPR_update();
+                
+                return;
+            }
+        }
+    }
     
     if (num_played_notes == 4) {
         // La validación del patrón ahora se maneja en validate_pattern_sequence
@@ -557,6 +789,8 @@ void do_electric_pattern_effect(void)    // Process electric pattern visual and 
 
     player_pattern_effect_time++;
     if (player_pattern_effect_time >= 20) {
+        // Asegurarse de que el efecto visual se desactive
+        VDP_setHilightShadow(false);
         show_pattern_icon(PTRN_ELECTRIC, false, false);
         SPR_update();
         obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
@@ -565,6 +799,8 @@ void do_electric_pattern_effect(void)    // Process electric pattern visual and 
 
 void finish_electric_pattern_effect(void)    // Clean up electric pattern state
 {
+    // Asegurarse de que el efecto visual se desactive
+    VDP_setHilightShadow(false);
     show_pattern_icon(PTRN_ELECTRIC, false, false);
     SPR_update();
     player_pattern_effect_in_progress = PTRN_NONE;

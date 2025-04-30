@@ -53,5 +53,6 @@ void start_combat(bool start); // Start (or end) a combat
 void hit_enemy(u16 nenemy); // Hit an enemy
 void hit_caracter(u16 nchar); // Hit a character
 void show_or_hide_enemy_combat_interface(bool show); // Show enemy face and hitpoints in the interface
+void combat_update(void); // Update all state machines in combat
 
 #endif
