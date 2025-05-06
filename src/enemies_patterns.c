@@ -12,6 +12,7 @@ bool enemy_attack_effect_in_progress;                 // If attack effect is act
 u16 enemy_attack_effect_time;                         // Effect duration timer
 bool enemy_note_active[6];                            // Active note indicators
 bool counter_spell_success = false;                   // Flag for successful counter-spell
+u16 pending_counter_hit_enemy = ENEMY_NONE;           // Enemigo pendiente de recibir contraataque
 
 // State machines for enemies
 StateMachine enemy_state_machines[MAX_ENEMIES];       // State machines for each enemy
@@ -49,9 +50,19 @@ void check_enemy_state(void)    // Main state machine for enemy pattern system
     u8 numenemy, npattern;
     u16 max_effect_time;
     
-    // Reset counter-spell success flag at the start of each frame
-    // This allows new attacks to start after a counter-spell has been processed
-    counter_spell_success = false;
+    // Process cuonter spell if still pending
+    if (counter_spell_success && pending_counter_hit_enemy != ENEMY_NONE) {
+        kprintf("Delayed counter-hit to enemy %d", pending_counter_hit_enemy);
+        hit_enemy(pending_counter_hit_enemy);
+        pending_counter_hit_enemy = ENEMY_NONE;
+        counter_spell_success = false;
+        player_pattern_effect_in_progress = PTRN_NONE;
+        player_pattern_effect_reversed = false;
+        player_state_machine.pattern_system.effect_type = PTRN_NONE;
+        player_state_machine.pattern_system.effect_in_progress = false;
+        player_state_machine.pattern_system.effect_reversed = false;
+        player_state_machine.pattern_system.effect_duration = 0;
+    }
 
     // Log the current state every 60 frames
     if (frame_counter % 60 == 0) {
