@@ -103,13 +103,6 @@ void check_active_character_state(void)    // Process character states for patte
             if (matched_pattern == PTRN_ELECTRIC && is_reverse_match) {
                 kprintf("COUNTER-ATTACK DETECTED DURING ENEMY ATTACK!");
                 
-                // Mostrar mensaje de éxito
-                show_or_hide_interface(false);
-                show_or_hide_enemy_combat_interface(false);
-                talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
-                show_or_hide_enemy_combat_interface(true);
-                show_or_hide_interface(true);
-                
                 // Activar el contraataque
                 StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
                 obj_character[active_character].state = STATE_PATTERN_EFFECT;
@@ -120,12 +113,16 @@ void check_active_character_state(void)    // Process character states for patte
                 counter_spell_success = true;
                 
                 // Golpear al enemigo
-                hit_enemy(enemy_attacking);
+                pending_counter_hit_enemy = enemy_attacking;
+                counter_spell_success = true;
                 
                 // Resetear el estado del enemigo
                 enemy_attack_effect_in_progress = false;
                 enemy_attack_effect_time = 0;
                 enemy_attack_pattern = PTRN_EN_NONE;
+
+                // Finalizar el efecto de relámpago
+                VDP_setHilightShadow(false);
                 
                 // Limpiar el estado del patrón
                 reset_pattern_state();
@@ -275,13 +272,6 @@ void check_active_character_state(void)    // Process character states for patte
                             // Establecer la bandera de contraataque exitoso PRIMERO
                             counter_spell_success = true;
                             kprintf("Counter spell success flag set to: %d", counter_spell_success);
-                            
-                            // Mostrar mensaje de éxito
-                            show_or_hide_interface(false);
-                            show_or_hide_enemy_combat_interface(false);
-                            talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
-                            show_or_hide_enemy_combat_interface(true);
-                            show_or_hide_interface(true);
                             
                             // Activar el contraataque
                             StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
@@ -568,13 +558,6 @@ void handle_pattern_timeout(void)    // Check for pattern sequence timeout
             if (matched_pattern == PTRN_ELECTRIC && is_reverse_match) {
                 kprintf("COUNTER-ATTACK DETECTED IN handle_pattern_timeout!");
                 
-                // Mostrar mensaje de éxito
-                show_or_hide_interface(false);
-                show_or_hide_enemy_combat_interface(false);
-                talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
-                show_or_hide_enemy_combat_interface(true);
-                show_or_hide_interface(true);
-                
                 // Activar el contraataque
                 StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);
                 obj_character[active_character].state = STATE_PATTERN_EFFECT;
@@ -673,13 +656,6 @@ void update_pattern_state(void)    // Process note completion and check for patt
             
             if (matched_pattern == PTRN_ELECTRIC && is_reverse_match) {
                 kprintf("COUNTER-ATTACK DETECTED IN update_pattern_state!");
-                
-                // Mostrar mensaje de éxito
-                show_or_hide_interface(false);
-                show_or_hide_enemy_combat_interface(false);
-                talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "¡Contraataque!" - (EN) "Counter-attack!"
-                show_or_hide_enemy_combat_interface(true);
-                show_or_hide_interface(true);
                 
                 // Activar el contraataque
                 StateMachine_SendMessage(&player_state_machine, MSG_PATTERN_COMPLETE, PTRN_ELECTRIC);

@@ -35,6 +35,7 @@ extern bool enemy_attack_effect_in_progress; // An enemy pattern attack effect i
 extern u16 enemy_attack_effect_time; // How long has been the enemy pattern effect working?
 extern bool enemy_note_active[6]; // Is the note # MI-DO active?
 extern bool counter_spell_success; // Flag indicating a counter-spell has successfully hit
+extern u16 pending_counter_hit_enemy; // Enemigo pendiente de recibir contraataque
 
 // State machines for enemies
 extern StateMachine enemy_state_machines[MAX_ENEMIES];

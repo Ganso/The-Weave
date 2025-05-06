@@ -92,7 +92,9 @@ void hit_enemy(u16 nenemy)    // Apply damage to enemy, handle defeat, and updat
         anim_enemy(nenemy, ANIM_IDLE);
         enemy_attack_effect_in_progress = false;
         obj_enemy[nenemy].obj_character.state = STATE_IDLE;
-        obj_enemy[nenemy].last_pattern_time[enemy_attack_pattern] = 0;
+        if (enemy_attack_pattern < MAX_PATTERN_ENEMY) {
+            obj_enemy[nenemy].last_pattern_time[enemy_attack_pattern] = 0;
+        }
         enemy_attacking = ENEMY_NONE;
         
         // Hide combat interface
