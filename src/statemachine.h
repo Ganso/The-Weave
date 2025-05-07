@@ -2,6 +2,7 @@
 #define STATEMACHINE_H
 
 #include "globals.h"
+#include "patterns.h"
 
 // Forward declarations
 struct StateMachine;
@@ -11,6 +12,10 @@ struct StateMachine;
 #define MAX_PATTERN_WAIT_TIME 2000  // Tiempo máximo de espera para la siguiente nota en milisegundos
 #define MAX_EFFECT_TIME       1600  // Tiempo máximo para efectos de patrón en milisegundos
 #define MAX_TIME_AFTER_ATTACK 1000  // Tiempo máximo después de un ataque en milisegundos
+
+// Owner types for patterns
+#define OWNER_PLAYER 0
+#define OWNER_ENEMY 1
 
 // Estados de la máquina de estados
 typedef enum {
@@ -72,8 +77,10 @@ typedef struct StateMachine {
     // Sistema de patrones base
     u16 active_pattern;          // Patrón activo (si hay alguno)
     bool is_reversed;            // Si el patrón es invertido
+    bool is_counter_spell;       // Si el patrón es un contraataque
     u16 effect_time;             // Tiempo que lleva el efecto activo
     u16 entity_id;               // ID de la entidad (jugador o enemigo)
+    u16 owner_type;              // Tipo de propietario (OWNER_PLAYER o OWNER_ENEMY)
     
     // Sistema de patrones expandido
     PatternSystem pattern_system;
@@ -82,6 +89,10 @@ typedef struct StateMachine {
     EffectCallback launch_effect;  // Función para iniciar un efecto
     EffectCallback do_effect;      // Función para procesar un efecto
     EffectCallback finish_effect;  // Función para finalizar un efecto
+    
+    // Funciones de validación de patrones
+    bool (*validate_pattern)(u8* notes, bool* is_reverse);
+    void (*pattern_complete)(struct StateMachine* sm, u16 pattern_id, bool is_reverse);
 } StateMachine;
 
 // Funciones de conversión de estados
@@ -92,6 +103,11 @@ void update_character_from_sm_state(Entity* entity, SM_State state);
 void StateMachine_Init(StateMachine *sm, u16 entity_id);
 void StateMachine_Update(StateMachine *sm, Message *msg);
 void StateMachine_SendMessage(StateMachine *sm, MessageType type, u16 param);
+
+// Nuevas funciones para manejo de patrones
+void StateMachine_HandlePatternComplete(StateMachine* sm, u16 pattern_id, bool is_reverse);
+void StateMachine_HandleNoteInput(StateMachine* sm, u8 note);
+void StateMachine_HandlePatternTimeout(StateMachine* sm);
 
 // Funciones de efectos para el patrón eléctrico
 void electric_pattern_launch(StateMachine* sm);
@@ -113,4 +129,4 @@ void open_pattern_launch(StateMachine* sm);
 void open_pattern_do(StateMachine* sm);
 void open_pattern_finish(StateMachine* sm);
 
-#endif
+#endif // STATEMACHINE_H

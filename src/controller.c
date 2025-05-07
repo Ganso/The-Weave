@@ -215,7 +215,7 @@ void handle_action_buttons(u16 joy_value)    // Process action buttons for item 
             u16 nitem=detect_nearby_item();
             if (nitem!=ITEM_NONE) {
                 pending_item_interaction=nitem;
-                return;
+                // Don't return here, continue to process note playing
             }
         }
     }

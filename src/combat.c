@@ -1,7 +1,10 @@
 #include "globals.h"
+#include "patterns_registry.h"
+#include "counter_spell.h"
 
 // Referencia a la máquina de estados del jugador
 extern StateMachine player_state_machine;
+extern StateMachine enemy_state_machines[MAX_ENEMIES];
 
 bool is_combat_active;    // Whether combat sequence is currently active
 
@@ -45,6 +48,7 @@ void start_combat(bool start)    // Initialize or cleanup combat sequence with U
             
             // Inicializar la máquina de estados del enemigo
             StateMachine_Init(&enemy_state_machines[numenemy], ENEMY_ENTITY_ID_BASE + numenemy);
+            enemy_state_machines[numenemy].owner_type = OWNER_ENEMY;
         }
 
         // Initialize combat state
@@ -55,6 +59,10 @@ void start_combat(bool start)    // Initialize or cleanup combat sequence with U
         for (nnote = 0; nnote < 6; nnote++) {
             enemy_note_active[nnote] = false;
         }
+
+        // Reset counter-spell state
+        counter_spell_success = false;
+        pending_counter_hit_enemy = ENEMY_NONE;
 
         // Setup combat UI
         spr_int_life_counter = SPR_addSprite(&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
@@ -67,6 +75,13 @@ void start_combat(bool start)    // Initialize or cleanup combat sequence with U
         
         // Enviar mensaje a la máquina de estados del jugador
         StateMachine_SendMessage(&player_state_machine, MSG_COMBAT_END, 0);
+        
+        // Reset all enemy state machines
+        for (numenemy = 0; numenemy < MAX_ENEMIES; numenemy++) {
+            if (obj_enemy[numenemy].obj_character.active) {
+                StateMachine_SendMessage(&enemy_state_machines[numenemy], MSG_COMBAT_END, 0);
+            }
+        }
         
         // Cleanup life counter sprite
         if (spr_int_life_counter != NULL) {
