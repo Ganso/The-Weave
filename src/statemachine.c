@@ -1,4 +1,6 @@
 #include "globals.h"
+#include "patterns_registry.h"
+#include "counter_spell.h"
 
 // Mapeo entre estados del personaje y estados de la máquina
 SM_State convert_to_sm_state(u16 current_state) {
@@ -19,31 +21,79 @@ SM_State convert_to_sm_state(u16 current_state) {
 }
 
 void update_character_from_sm_state(Entity* entity, SM_State state) {
+    // Debug log for enemy entities
+    bool is_enemy = false;
+    u16 entity_id = 0;
+    
+    // Check if this is an enemy entity
+    for (u16 i = 0; i < MAX_ENEMIES; i++) {
+        if (entity == &obj_enemy[i].obj_character) {
+            is_enemy = true;
+            entity_id = i;
+            break;
+        }
+    }
+    
+    if (is_enemy && entity_id == enemy_attacking) {
+        kprintf("update_character_from_sm_state: enemy=%d, current_state=%d, new_state=%d, walking=%d",
+                entity_id, entity->state, state, (entity->state == STATE_WALKING));
+    }
+    
     // Solo actualizar si no estamos en movimiento o si es un estado de efecto
-    if (entity->state != STATE_WALKING ||
+    // Also skip updating if the entity is an enemy that's currently attacking and in a special state
+    bool skip_update = false;
+    
+    // Only skip if the entity state and state machine state are different
+    if (is_enemy && entity_id == enemy_attacking &&
+        (entity->state == STATE_PLAYING_NOTE || entity->state == STATE_PATTERN_EFFECT) &&
+        ((entity->state == STATE_PLAYING_NOTE && state != SM_STATE_PLAYING_NOTE) ||
+         (entity->state == STATE_PATTERN_EFFECT && state != SM_STATE_PATTERN_EFFECT))) {
+        kprintf("  SKIPPING state update for attacking enemy in state %d (sm_state: %d)", entity->state, state);
+        skip_update = true;
+    }
+    
+    if (!skip_update && (entity->state != STATE_WALKING ||
         state == SM_STATE_PATTERN_EFFECT ||
-        state == SM_STATE_PATTERN_EFFECT_FINISH) {
+        state == SM_STATE_PATTERN_EFFECT_FINISH)) {
         
         // Actualizar el estado de la entidad
         switch(state) {
             case SM_STATE_IDLE:
                 if (entity->state != STATE_WALKING) {
                     entity->state = STATE_IDLE;
+                    if (is_enemy && entity_id == enemy_attacking) {
+                        kprintf("  Setting enemy state to IDLE");
+                    }
                 }
                 break;
             case SM_STATE_PLAYING_NOTE:
                 entity->state = STATE_PLAYING_NOTE;
+                if (is_enemy && entity_id == enemy_attacking) {
+                    kprintf("  Setting enemy state to PLAYING_NOTE");
+                }
                 break;
             case SM_STATE_PATTERN_CHECK:
                 entity->state = STATE_PATTERN_CHECK;
+                if (is_enemy && entity_id == enemy_attacking) {
+                    kprintf("  Setting enemy state to PATTERN_CHECK");
+                }
                 break;
             case SM_STATE_PATTERN_EFFECT:
                 entity->state = STATE_PATTERN_EFFECT;
+                if (is_enemy && entity_id == enemy_attacking) {
+                    kprintf("  Setting enemy state to PATTERN_EFFECT");
+                }
                 break;
             case SM_STATE_PATTERN_EFFECT_FINISH:
                 entity->state = STATE_PATTERN_EFFECT_FINISH;
+                if (is_enemy && entity_id == enemy_attacking) {
+                    kprintf("  Setting enemy state to PATTERN_EFFECT_FINISH");
+                }
                 break;
             default:
+                if (is_enemy && entity_id == enemy_attacking) {
+                    kprintf("  Unknown state: %d", state);
+                }
                 break;
         }
         
@@ -52,176 +102,6 @@ void update_character_from_sm_state(Entity* entity, SM_State state) {
             update_character_animation();
         }
     }
-}
-
-// Implementación del patrón eléctrico como ejemplo
-void electric_pattern_launch(StateMachine* sm) {
-    anim_character(sm->entity_id, ANIM_MAGIC);
-    show_pattern_icon(PTRN_ELECTRIC, true, true);
-    play_pattern_sound(PTRN_ELECTRIC);
-    sm->pattern_system.effect_type = PTRN_ELECTRIC;
-    sm->pattern_system.effect_in_progress = true;
-    sm->pattern_system.effect_duration = 0;
-}
-
-void electric_pattern_do(StateMachine* sm) {
-    // If a counter-spell has succeeded, don't do anything
-    if (counter_spell_success) {
-        // Reset state machine
-        sm->current_state = SM_STATE_IDLE;
-        sm->timer = 0;
-        sm->effect_time = 0;
-        sm->pattern_system.effect_in_progress = false;
-        sm->pattern_system.effect_type = PTRN_NONE;
-        sm->pattern_system.effect_duration = 0;
-        
-        // Reset visual effects
-        VDP_setHilightShadow(false);
-        
-        return;
-    }
-    
-    // Efecto visual de trueno
-    VDP_setHilightShadow(true);
-    SPR_update();
-    SYS_doVBlankProcess();
-    VDP_setHilightShadow(false);
-    SYS_doVBlankProcess();
-    SPR_update();
-    
-    sm->pattern_system.effect_duration++;
-    
-    // Aplicar efectos de combate si es necesario
-    if (is_combat_active && sm->pattern_system.effect_duration == MAX_EFFECT_TIME / 2) {
-        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            if (obj_enemy[nenemy].obj_character.active &&
-                obj_enemy[nenemy].class_id == ENEMY_CLS_3HEADMONKEY &&
-                obj_enemy[nenemy].hitpoints > 0) {
-                hit_enemy(nenemy);
-            }
-        }
-    }
-}
-
-void electric_pattern_finish(StateMachine* sm) {
-    show_pattern_icon(PTRN_ELECTRIC, false, false);
-    sm->pattern_system.effect_type = PTRN_NONE;
-    sm->pattern_system.effect_in_progress = false;
-    sm->pattern_system.effect_duration = 0;
-}
-
-// Implementación del patrón HIDE (esconderse)
-void hide_pattern_launch(StateMachine* sm) {
-    anim_character(sm->entity_id, ANIM_MAGIC);
-    show_pattern_icon(PTRN_HIDE, true, true);
-    play_pattern_sound(PTRN_HIDE);
-    sm->pattern_system.effect_type = PTRN_HIDE;
-    sm->pattern_system.effect_in_progress = true;
-    sm->pattern_system.effect_duration = 0;
-    movement_active = true;  // Permitir movimiento mientras está escondido
-}
-
-void hide_pattern_do(StateMachine* sm) {
-    u16 max_effect_time = 400;
-    
-    // Crear efecto de parpadeo
-    if (sm->pattern_system.effect_duration % 2 == 0) {
-        show_character(sm->entity_id, true);
-    } else {
-        show_character(sm->entity_id, false);
-    }
-    
-    sm->pattern_system.effect_duration++;
-    
-    // Verificar si el efecto ha terminado
-    if (sm->pattern_system.effect_duration >= max_effect_time) {
-        sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
-    }
-}
-
-void hide_pattern_finish(StateMachine* sm) {
-    show_pattern_icon(PTRN_HIDE, false, false);
-    show_character(sm->entity_id, true);
-    sm->pattern_system.effect_type = PTRN_NONE;
-    sm->pattern_system.effect_in_progress = false;
-    sm->pattern_system.effect_duration = 0;
-    movement_active = true;  // Permitir que el personaje siga siendo controlable
-}
-
-// Implementación del patrón SLEEP (dormir)
-void sleep_pattern_launch(StateMachine* sm) {
-    anim_character(sm->entity_id, ANIM_MAGIC);
-    show_pattern_icon(PTRN_SLEEP, true, true);
-    play_pattern_sound(PTRN_SLEEP);
-    sm->pattern_system.effect_type = PTRN_SLEEP;
-    sm->pattern_system.effect_in_progress = true;
-    sm->pattern_system.effect_duration = 0;
-}
-
-void sleep_pattern_do(StateMachine* sm) {
-    // En combate, aplicar efecto de parálisis a los enemigos
-    if (is_combat_active && sm->pattern_system.effect_duration == 10) {
-        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            if (obj_enemy[nenemy].obj_character.active &&
-                obj_enemy[nenemy].hitpoints > 0) {
-                // Paralizar al enemigo (no puede atacar por un tiempo)
-                obj_enemy[nenemy].paralyzed = true;
-                obj_enemy[nenemy].paralyzed_time = 300; // Duración de la parálisis
-            }
-        }
-    }
-    
-    sm->pattern_system.effect_duration++;
-    
-    // Efecto visual breve
-    if (sm->pattern_system.effect_duration >= 30) {
-        sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
-    }
-}
-
-void sleep_pattern_finish(StateMachine* sm) {
-    show_pattern_icon(PTRN_SLEEP, false, false);
-    sm->pattern_system.effect_type = PTRN_NONE;
-    sm->pattern_system.effect_in_progress = false;
-    sm->pattern_system.effect_duration = 0;
-}
-
-// Implementación del patrón OPEN (abrir)
-void open_pattern_launch(StateMachine* sm) {
-    anim_character(sm->entity_id, ANIM_MAGIC);
-    show_pattern_icon(PTRN_OPEN, true, true);
-    play_pattern_sound(PTRN_OPEN);
-    sm->pattern_system.effect_type = PTRN_OPEN;
-    sm->pattern_system.effect_in_progress = true;
-    sm->pattern_system.effect_duration = 0;
-}
-
-void open_pattern_do(StateMachine* sm) {
-    // En combate, hacer a los enemigos más vulnerables
-    if (is_combat_active && sm->pattern_system.effect_duration == 10) {
-        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            if (obj_enemy[nenemy].obj_character.active &&
-                obj_enemy[nenemy].hitpoints > 0) {
-                // Hacer al enemigo más vulnerable (recibe más daño)
-                obj_enemy[nenemy].vulnerable = true;
-                obj_enemy[nenemy].vulnerable_time = 300; // Duración de la vulnerabilidad
-            }
-        }
-    }
-    
-    sm->pattern_system.effect_duration++;
-    
-    // Efecto visual breve
-    if (sm->pattern_system.effect_duration >= 30) {
-        sm->current_state = SM_STATE_PATTERN_EFFECT_FINISH;
-    }
-}
-
-void open_pattern_finish(StateMachine* sm) {
-    show_pattern_icon(PTRN_OPEN, false, false);
-    sm->pattern_system.effect_type = PTRN_NONE;
-    sm->pattern_system.effect_in_progress = false;
-    sm->pattern_system.effect_duration = 0;
 }
 
 /**
@@ -241,8 +121,10 @@ void StateMachine_Init(StateMachine *sm, u16 entity_id) {
     sm->pattern_time = 0;
     sm->active_pattern = 0;
     sm->is_reversed = false;
+    sm->is_counter_spell = false;
     sm->effect_time = 0;
     sm->entity_id = entity_id;
+    sm->owner_type = OWNER_PLAYER; // Default to player
     
     // Inicializar array de notas
     for (u8 i = 0; i < 4; i++) {
@@ -264,6 +146,8 @@ void StateMachine_Init(StateMachine *sm, u16 entity_id) {
     sm->launch_effect = NULL;
     sm->do_effect = NULL;
     sm->finish_effect = NULL;
+    sm->validate_pattern = NULL;
+    sm->pattern_complete = NULL;
 }
 
 /**
@@ -318,41 +202,55 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                 sm->active_pattern = msg->param;
                 sm->effect_time = 0;
                 
-                // Configurar callbacks según el tipo de patrón
-                switch (msg->param) {
-                    case PTRN_ELECTRIC:
-                        sm->launch_effect = electric_pattern_launch;
-                        sm->do_effect = electric_pattern_do;
-                        sm->finish_effect = electric_pattern_finish;
-                        break;
-                    case PTRN_HIDE:
-                        // Asignar callbacks para el patrón de esconderse
-                        sm->launch_effect = hide_pattern_launch;
-                        sm->do_effect = hide_pattern_do;
-                        sm->finish_effect = hide_pattern_finish;
-                        break;
-                    case PTRN_OPEN:
-                        // Asignar callbacks para el patrón de abrir
-                        sm->launch_effect = open_pattern_launch;
-                        sm->do_effect = open_pattern_do;
-                        sm->finish_effect = open_pattern_finish;
-                        break;
-                    case PTRN_SLEEP:
-                        // Asignar callbacks para el patrón de dormir
-                        sm->launch_effect = sleep_pattern_launch;
-                        sm->do_effect = sleep_pattern_do;
-                        sm->finish_effect = sleep_pattern_finish;
-                        break;
-                    default:
-                        sm->launch_effect = NULL;
-                        sm->do_effect = NULL;
-                        sm->finish_effect = NULL;
-                        break;
-                }
-                
-                // Iniciar el efecto si hay un callback registrado
-                if (sm->launch_effect != NULL) {
-                    sm->launch_effect(sm);
+                // Obtener el patrón del registro
+                Pattern* pattern = get_pattern(msg->param, sm->owner_type);
+                if (pattern) {
+                    // Configurar callbacks desde el patrón
+                    sm->launch_effect = pattern->launch;
+                    sm->do_effect = pattern->do_effect;
+                    sm->finish_effect = pattern->finish;
+                    
+                    // Iniciar el efecto si hay un callback registrado
+                    if (sm->launch_effect != NULL) {
+                        sm->launch_effect(sm);
+                    }
+                } else {
+                    // Configurar callbacks según el tipo de patrón (para compatibilidad)
+                    switch (msg->param) {
+                        case PTRN_ELECTRIC:
+                            sm->launch_effect = electric_pattern_launch;
+                            sm->do_effect = electric_pattern_do;
+                            sm->finish_effect = electric_pattern_finish;
+                            break;
+                        case PTRN_HIDE:
+                            // Asignar callbacks para el patrón de esconderse
+                            sm->launch_effect = hide_pattern_launch;
+                            sm->do_effect = hide_pattern_do;
+                            sm->finish_effect = hide_pattern_finish;
+                            break;
+                        case PTRN_OPEN:
+                            // Asignar callbacks para el patrón de abrir
+                            sm->launch_effect = open_pattern_launch;
+                            sm->do_effect = open_pattern_do;
+                            sm->finish_effect = open_pattern_finish;
+                            break;
+                        case PTRN_SLEEP:
+                            // Asignar callbacks para el patrón de dormir
+                            sm->launch_effect = sleep_pattern_launch;
+                            sm->do_effect = sleep_pattern_do;
+                            sm->finish_effect = sleep_pattern_finish;
+                            break;
+                        default:
+                            sm->launch_effect = NULL;
+                            sm->do_effect = NULL;
+                            sm->finish_effect = NULL;
+                            break;
+                    }
+                    
+                    // Iniciar el efecto si hay un callback registrado
+                    if (sm->launch_effect != NULL) {
+                        sm->launch_effect(sm);
+                    }
                 }
             } else {
                 // Solo volver a IDLE si no hay patrón completo
@@ -388,6 +286,7 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
                 sm->current_state = SM_STATE_IDLE;
                 sm->timer = 0;
                 sm->active_pattern = 0;
+                sm->is_counter_spell = false;
                 
                 // Limpiar callbacks y estado del sistema de patrones
                 sm->launch_effect = NULL;
@@ -423,8 +322,140 @@ void StateMachine_Update(StateMachine *sm, Message *msg) {
  * @param param Parámetro adicional del mensaje
  */
 void StateMachine_SendMessage(StateMachine *sm, MessageType type, u16 param) {
+    // Debug log for enemy state machines
+    bool is_enemy = false;
+    u16 entity_id = 0;
+    
+    // Check if this is an enemy state machine
+    for (u16 i = 0; i < MAX_ENEMIES; i++) {
+        if (sm->entity_id == ENEMY_ENTITY_ID_BASE + i) {
+            is_enemy = true;
+            entity_id = i;
+            break;
+        }
+    }
+    
+    if (is_enemy && entity_id == enemy_attacking) {
+        kprintf("StateMachine_SendMessage: enemy=%d, type=%d, param=%d, current_state=%d",
+                entity_id, type, param, sm->current_state);
+    }
+    
     Message msg;
     msg.type = type;
     msg.param = param;
     StateMachine_Update(sm, &msg);
+    
+    if (is_enemy && entity_id == enemy_attacking) {
+        kprintf("StateMachine_SendMessage: enemy=%d, new_state=%d after message",
+                entity_id, sm->current_state);
+    }
+}
+
+/**
+ * Maneja la finalización de un patrón y la transición al estado de efecto.
+ * 
+ * @param sm Puntero a la estructura StateMachine
+ * @param pattern_id ID del patrón completado
+ * @param is_reverse Si el patrón se ejecutó en reversa
+ */
+void StateMachine_HandlePatternComplete(StateMachine* sm, u16 pattern_id, bool is_reverse) {
+    // Debug log for enemy state machines
+    bool is_enemy = false;
+    u16 entity_id = 0;
+    
+    // Check if this is an enemy state machine
+    for (u16 i = 0; i < MAX_ENEMIES; i++) {
+        if (sm->entity_id == ENEMY_ENTITY_ID_BASE + i) {
+            is_enemy = true;
+            entity_id = i;
+            break;
+        }
+    }
+    
+    if (is_enemy && entity_id == enemy_attacking) {
+        kprintf("StateMachine_HandlePatternComplete: enemy=%d, pattern=%d, is_reverse=%d, current_state=%d",
+                entity_id, pattern_id, is_reverse, sm->current_state);
+    }
+    
+    // Actualizar estado
+    sm->current_state = SM_STATE_PATTERN_EFFECT;
+    sm->active_pattern = pattern_id;
+    sm->is_reversed = is_reverse;
+    sm->effect_time = 0;
+    
+    if (is_enemy && entity_id == enemy_attacking) {
+        kprintf("  State updated: current_state=%d, active_pattern=%d, is_reversed=%d",
+                sm->current_state, sm->active_pattern, sm->is_reversed);
+    }
+    
+    // Obtener el patrón del registro
+    Pattern* pattern = get_pattern(pattern_id, sm->owner_type);
+    
+    if (is_enemy && entity_id == enemy_attacking) {
+        kprintf("  Got pattern from registry: %s", pattern ? "SUCCESS" : "FAILED");
+    }
+    
+    if (pattern) {
+        // Configurar callbacks desde el patrón
+        sm->launch_effect = pattern->launch;
+        sm->do_effect = pattern->do_effect;
+        sm->finish_effect = pattern->finish;
+        
+        if (is_enemy && entity_id == enemy_attacking) {
+            kprintf("  Callbacks configured: launch=%s, do_effect=%s, finish=%s",
+                    sm->launch_effect ? "YES" : "NO",
+                    sm->do_effect ? "YES" : "NO",
+                    sm->finish_effect ? "YES" : "NO");
+        }
+        
+        // Iniciar el efecto
+        if (sm->launch_effect) {
+            if (is_enemy && entity_id == enemy_attacking) {
+                kprintf("  Launching effect");
+            }
+            sm->launch_effect(sm);
+        }
+    }
+}
+
+/**
+ * Maneja la entrada de una nueva nota en el patrón.
+ * 
+ * @param sm Puntero a la estructura StateMachine
+ * @param note Nota reproducida (1-6)
+ */
+void StateMachine_HandleNoteInput(StateMachine* sm, u8 note) {
+    // Verificar si la nota es válida
+    if (note < 1 || note > 6) {
+        return;
+    }
+    
+    // Actualizar estado
+    sm->current_state = SM_STATE_PLAYING_NOTE;
+    sm->current_note = note;
+    sm->note_time = 0;
+    sm->pattern_system.is_note_playing = true;
+    
+    // Añadir la nota al patrón actual
+    if (sm->note_count < 4) {
+        sm->notes[sm->note_count] = note;
+        sm->note_count++;
+    }
+}
+
+/**
+ * Maneja el timeout de un patrón en progreso.
+ * 
+ * @param sm Puntero a la estructura StateMachine
+ */
+void StateMachine_HandlePatternTimeout(StateMachine* sm) {
+    // Resetear el estado del patrón
+    sm->note_count = 0;
+    sm->pattern_time = 0;
+    sm->current_state = SM_STATE_IDLE;
+    
+    // Limpiar notas
+    for (u8 i = 0; i < 4; i++) {
+        sm->notes[i] = 0;
+    }
 }

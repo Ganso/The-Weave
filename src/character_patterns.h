@@ -45,13 +45,15 @@ void init_patterns(void); // initialize patterns
 void activate_spell(u16 npattern); // Activate a spell with animation and sound
 
 // Pattern validation functions
-u8 validate_pattern_sequence(u8 *notes, bool *is_reverse); // Check if notes match a pattern
+// Use the new version from patterns_registry.h instead
+u8 validate_player_pattern(u8 *notes, bool *is_reverse); // Check if notes match a player pattern
 bool can_use_electric_pattern(void); // Check if thunder pattern can be used
 bool can_use_hide_pattern(void); // Check if hide pattern can be used
 bool can_use_sleep_pattern(void); // Check if sleep pattern can be used
 bool can_use_open_pattern(void); // Check if open pattern can be used
 
 // Pattern-specific effect functions
+// These are now implemented in pattern_types/*.c files
 void launch_electric_pattern(void); // Initialize thunder pattern effect
 void do_electric_pattern_effect(void); // Process ongoing thunder pattern effect
 void finish_electric_pattern_effect(void); // Complete thunder pattern effect
@@ -73,4 +75,4 @@ void reset_pattern_state(void); // Reset pattern input state
 void handle_pattern_timeout(void); // Handle pattern input timeout
 void update_pattern_state(void); // Update pattern state after note completion
 
-#endif
+#endif // _CHR_PATTERNS_H_

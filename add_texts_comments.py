@@ -1,6 +1,3 @@
-
-#!/usr/bin/env python3  
-
 import os, re, sys  
 
 
@@ -162,11 +159,12 @@ def process_file(c_file):
     update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_texts)  
 
 
-def process_all_files():  
-    for file in os.listdir("src"):  
-        if file.endswith(".c") and file != "texts.c":  
-            c_file = os.path.join("src", file)  
-            process_file(c_file)  
+def process_all_files():
+    for root, _, files in os.walk("src"):
+        for file in files:
+            if file.endswith(".c") and file != "texts.c":
+                c_file = os.path.join(root, file)
+                process_file(c_file)
 
 
 def main():  

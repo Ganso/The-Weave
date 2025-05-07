@@ -10,7 +10,7 @@
 #define PTRN_EN_ELECTIC      0   // Electricity spell
 #define PTRN_EN_BITE         1   // Bite Spell
 
-#define MAX_ATTACK_NOTE_PLAYING_TIME  500  // Attack note playing time (in milliseconds)
+#define MAX_ATTACK_NOTE_PLAYING_TIME  300  // Attack note playing time (in milliseconds)
 #define MAX_TIME_AFTER_ATTACK        1000  // Time to stay in STATE_ATTACK_FINISHED (in milliseconds)
 
 // Pattern-specific max effect times (in milliseconds)
