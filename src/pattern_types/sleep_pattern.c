@@ -34,17 +34,7 @@ void sleep_pattern_launch(StateMachine* sm) {
 }
 
 void sleep_pattern_do(StateMachine* sm) {
-    // In combat, apply effect of paralysis to enemies
-    if (is_combat_active && sm->pattern_system.effect_duration == 10) {
-        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            if (obj_enemy[nenemy].obj_character.active &&
-                obj_enemy[nenemy].hitpoints > 0) {
-                // Paralyze enemy (can't attack for a time)
-                obj_enemy[nenemy].paralyzed = true;
-                obj_enemy[nenemy].paralyzed_time = 300; // Duration of paralysis
-            }
-        }
-    }
+    // Do nothing by now, just wait for the effect to finish
     
     // Update duration
     sm->pattern_system.effect_duration++;

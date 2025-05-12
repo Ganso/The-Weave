@@ -19,6 +19,8 @@ void show_or_hide_interface(bool visible)    // Toggle visibility of game's bott
     if (interface_active==true) {
         if (visible == true) {
             // Draw the rod and pentagram images in the window plane
+            VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 22, false, true);
+            tile_ind+=int_screen_limit.tileset->numTile;
             VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 23, false, true);
             tile_ind+=int_rod_image.tileset->numTile;
             VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);

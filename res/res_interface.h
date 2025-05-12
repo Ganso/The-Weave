@@ -31,5 +31,6 @@ extern const SpriteDefinition int_pattern_sleep;
 extern const SpriteDefinition int_life_counter_sprite;
 extern const SpriteDefinition int_button_A_sprite;
 extern const SpriteDefinition int_magin_anim_sprite;
+extern const Image int_screen_limit;
 
 #endif // _RES_RES_INTERFACE_H_
