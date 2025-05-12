@@ -41,12 +41,11 @@ void reset_all_states_after_counter_spell(u16 enemy_id) {
     obj_character[active_character].state = STATE_IDLE;
     
     // Reset player state machine - use the global character_state_machines array
-    
-    character_state_machines[active_character].current_state = SM_STATE_IDLE;
-    character_state_machines[active_character].pattern_system.effect_in_progress = false;
-    character_state_machines[active_character].pattern_system.effect_type = PTRN_NONE;
-    character_state_machines[active_character].pattern_system.effect_duration = 0;
-    character_state_machines[active_character].pattern_system.effect_reversed = false;
+    player_state_machine.current_state = SM_STATE_IDLE;
+    player_state_machine.pattern_system.effect_in_progress = false;
+    player_state_machine.pattern_system.effect_type = PTRN_NONE;
+    player_state_machine.pattern_system.effect_duration = 0;
+    player_state_machine.pattern_system.effect_reversed = false;
     
     // Reset enemy state
     if (enemy_id != ENEMY_NONE && enemy_id < MAX_ENEMIES) {

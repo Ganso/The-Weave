@@ -26,10 +26,6 @@ typedef struct
     Entity obj_character;
     u16 hitpoints;
     u16 last_pattern_time[MAX_PATTERN_ENEMY];
-    bool paralyzed;           // Si el enemigo está paralizado (efecto SLEEP)
-    u16 paralyzed_time;       // Tiempo restante de parálisis
-    bool vulnerable;          // Si el enemigo es vulnerable (efecto OPEN)
-    u16 vulnerable_time;      // Tiempo restante de vulnerabilidad
 } Enemy;
 extern Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
 extern Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites

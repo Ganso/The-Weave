@@ -6,8 +6,7 @@
 #include "pattern_types/sleep_pattern.h"
 #include "pattern_types/open_pattern.h"
 
-// Instancia global de la máquina de estados
-StateMachine player_state_machine;
+StateMachine player_state_machine;        // Global state machine for player character
 
 bool player_has_rod;                      // Has the player the rod?
 bool player_patterns_enabled;             // Whether pattern system is currently enabled

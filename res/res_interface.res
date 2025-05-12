@@ -34,3 +34,4 @@ SPRITE int_pattern_sleep "Sprites/Interface/pattern_sleep.png" 4 4 BEST
 SPRITE int_life_counter_sprite "Sprites/Interface/life_counter.png" 4 1 BEST 
 SPRITE int_button_A_sprite "Sprites/Interface/button_A.png" 2 2 BEST 10
 SPRITE int_magin_anim_sprite "Sprites/Interface/magic_anim.png" 20 1 BEST 10
+IMAGE int_screen_limit "Sprites/Interface/screen_limit.png" BEST

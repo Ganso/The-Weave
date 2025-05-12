@@ -34,18 +34,8 @@ void open_pattern_launch(StateMachine* sm) {
 }
 
 void open_pattern_do(StateMachine* sm) {
-    // In combat, make enemies more vulnerable
-    if (is_combat_active && sm->pattern_system.effect_duration == 10) {
-        for (u16 nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            if (obj_enemy[nenemy].obj_character.active &&
-                obj_enemy[nenemy].hitpoints > 0) {
-                // Make enemy more vulnerable (receives more damage)
-                obj_enemy[nenemy].vulnerable = true;
-                obj_enemy[nenemy].vulnerable_time = 300; // Duration of vulnerability
-            }
-        }
-    }
-    
+    // Do nothing by now, just wait for the effect to finish
+
     // Update duration
     sm->pattern_system.effect_duration++;
     
