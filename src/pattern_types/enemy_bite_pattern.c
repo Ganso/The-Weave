@@ -1,4 +1,4 @@
-#include "bite_pattern.h"
+#include "enemy_bite_pattern.h"
 #include "../statemachine.h"
 #include "../characters.h"
 #include "../enemies.h"
