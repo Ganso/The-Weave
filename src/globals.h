@@ -19,7 +19,6 @@
 #include "KDebug.h"
 #include "tools.h"
 #include "timer.h"
-#include "test_config.h"      // Test configuration
 #endif
 
 // Resources
@@ -54,10 +53,6 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 #include "background.h" // Background and scenery related objects and functions
 #include "collisions.h" // Distance and collisions related functions
 #include "sound.h" // Music and SFX
-
-#ifdef DEBUG_ON
-#include "test_statemachine.h" // State machine tests
-#endif
 
 // Main game libraries
 #include "init.h" // Initialization functions
