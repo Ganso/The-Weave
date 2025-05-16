@@ -2,7 +2,7 @@
 #include "patterns_registry.h"
 #include "counter_spell.h"
 #include "pattern_types/enemy_electric_pattern.h"
-#include "pattern_types/bite_pattern.h"
+#include "pattern_types/enemy_bite_pattern.h"
 
 // Referencia a la máquina de estados del jugador
 extern StateMachine player_state_machine;
