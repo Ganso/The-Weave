@@ -4,10 +4,6 @@
 
 #define DEBUG_ON
 
-// Game constants
-#define MAX_ENEMIES 3
-#define ENEMY_ENTITY_ID_BASE 100
-
 // Create version using compile date
 #define GAMEVERSION ({ static char version[20]; sprintf(version, "v%c%c%c%c%c%c%c", (__DATE__[4] == ' ' ? '0' : __DATE__[4]), __DATE__[5], __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[9], __DATE__[10]); version; })
 
