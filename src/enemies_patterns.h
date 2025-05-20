@@ -26,6 +26,7 @@ typedef struct
 } Pattern_Enemy;
 extern Pattern_Enemy obj_Pattern_Enemy[MAX_PATTERN_ENEMY]; // Enemie pattern object
 
+// ********  OLD COMBAT SYSTEM (replace with context) **********
 // Enemy pattern state variables
 extern u16 enemy_attacking; // Which enemy is attacking?
 extern u16 enemy_attack_pattern; // Which pattern is the enemy using?
@@ -37,6 +38,7 @@ extern bool enemy_note_active[6]; // Is the note # MI-DO active?
 extern bool counter_spell_success; // Flag indicating a counter-spell has successfully hit
 extern u16 pending_counter_hit_enemy; // Enemigo pendiente de recibir contraataque
 
+// ******* OLD COMBAT SYSTEM (replace with context) **********
 // State machines for enemies
 extern StateMachine enemy_state_machines[MAX_ENEMIES];
 
