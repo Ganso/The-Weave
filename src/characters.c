@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 Entity obj_character[MAX_CHR];         // Array of game characters with their properties
@@ -39,9 +38,8 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         switch (nchar)
         {
         case CHR_linus:
-            kprintf("Has rod: %d\n", player_has_rod);
-            if (player_has_rod) nsprite = &linus_sprite;
-            else nsprite = &linus_norod_sprite;
+            // if (player_has_rod) nsprite = &linus_sprite;
+            // else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
             break;
         case CHR_clio:
@@ -370,8 +368,8 @@ void reset_character_animations()
     {
         if (obj_enemy[nenemy].obj_character.active)
         {
-            anim_enemy(nenemy, ANIM_IDLE);
-            obj_enemy[nenemy].obj_character.state = STATE_IDLE;
+            // anim_enemy(nenemy, ANIM_IDLE);
+            // obj_enemy[nenemy].obj_character.state = STATE_IDLE;
         }
     }
 }

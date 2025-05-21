@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 #define SIDE_LEFT true

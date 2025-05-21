@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 Map *background_BGA;              // Foreground layer tilemap

@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 void joy_check(void)    // Process joystick input each frame for movement, actions, and pause
@@ -12,20 +11,15 @@ void joy_check(void)    // Process joystick input each frame for movement, actio
     // Read the current state of the joystick
     u16 joy_value = JOY_readJoypad(JOY_ALL);
 
-    if (should_log) {
-        kprintf("joy_check: frame=%d, joy_value=%04x, movement_active=%d, player_patterns_enabled=%d",
-                frame_counter, joy_value, movement_active, player_patterns_enabled);
-    }
-
     // Only process movement and action buttons if movement is allowed
     if (movement_active) {
         // Handle movement if character is in IDLE, WALKING, or during HIDE effect
-        if (obj_character[active_character].state == STATE_IDLE ||
-            obj_character[active_character].state == STATE_WALKING ||
-            (obj_character[active_character].state == STATE_PATTERN_EFFECT &&
-             player_pattern_effect_in_progress == PTRN_HIDE)) {
-            handle_movement(joy_value);
-        }
+        // if (obj_character[active_character].state == STATE_IDLE ||
+        //     obj_character[active_character].state == STATE_WALKING ||
+        //     (obj_character[active_character].state == STATE_PATTERN_EFFECT &&
+        //      player_pattern_effect_in_progress == PTRN_HIDE)) {
+        //     handle_movement(joy_value);
+        // }
         
         // Always check action buttons, even during pattern effects
         handle_action_buttons(joy_value);
@@ -65,10 +59,10 @@ void handle_movement(u16 joy_value)    // Process directional inputs and update 
     // Update the character's state and animation based on movement
     if (moved) {
         // Don't change state if we're in PATTERN_EFFECT with HIDE
-        if (!(obj_character[active_character].state == STATE_PATTERN_EFFECT && 
-              player_pattern_effect_in_progress == PTRN_HIDE)) {
-            obj_character[active_character].state = STATE_WALKING;
-        }
+        // if (!(obj_character[active_character].state == STATE_PATTERN_EFFECT && 
+        //       player_pattern_effect_in_progress == PTRN_HIDE)) {
+        //     obj_character[active_character].state = STATE_WALKING;
+        // }
     } else if (obj_character[active_character].state == STATE_WALKING) {
         obj_character[active_character].state = STATE_IDLE;
     }
@@ -164,10 +158,10 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
 void update_character_animation(void)    // Set appropriate animation based on character state
 {
     // Don't change animation if we're in PATTERN_EFFECT with HIDE
-    if (obj_character[active_character].state == STATE_PATTERN_EFFECT && 
-        player_pattern_effect_in_progress == PTRN_HIDE) {
-        return;
-    }
+    // if (obj_character[active_character].state == STATE_PATTERN_EFFECT && 
+    //     player_pattern_effect_in_progress == PTRN_HIDE) {
+    //     return;
+    // }
 
     switch (obj_character[active_character].state) {
         case STATE_WALKING:
@@ -220,26 +214,26 @@ void handle_action_buttons(u16 joy_value)    // Process action buttons for item 
         }
     }
 
-    if (player_patterns_enabled) { // Detect if player is trying to play a note
-        if (joy_value & BUTTON_A) {
-            play_note(NOTE_MI);
-        }
-        if (joy_value & BUTTON_B) {
-            play_note(NOTE_FA);
-        }
-        if (joy_value & BUTTON_C) {
-            play_note(NOTE_SOL);
-        }
-        if (joy_value & BUTTON_X) {
-            play_note(NOTE_LA);
-        }
-        if (joy_value & BUTTON_Y) {
-            play_note(NOTE_SI);
-        }
-        if (joy_value & BUTTON_Z) {
-            play_note(NOTE_DO);
-        }
-    }
+    // if (player_patterns_enabled) { // Detect if player is trying to play a note
+        // if (joy_value & BUTTON_A) {
+        //     play_note(NOTE_MI);
+        // }
+        // if (joy_value & BUTTON_B) {
+        //     play_note(NOTE_FA);
+        // }
+        // if (joy_value & BUTTON_C) {
+        //     play_note(NOTE_SOL);
+        // }
+        // if (joy_value & BUTTON_X) {
+        //     play_note(NOTE_LA);
+        // }
+        // if (joy_value & BUTTON_Y) {
+        //     play_note(NOTE_SI);
+        // }
+        // if (joy_value & BUTTON_Z) {
+        //     play_note(NOTE_DO);
+        // }
+    // }
 }
 
 void handle_pause_button(u16 joy_value)    // Handle START button press to show pause screen

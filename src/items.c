@@ -1,6 +1,4 @@
-#include <genesis.h>
 #include "globals.h"
-#include "characters.h"
 
 Item obj_item[MAX_ITEMS];              // Array of game items with their properties
 Sprite *spr_item[MAX_ITEMS];           // Array of item sprites

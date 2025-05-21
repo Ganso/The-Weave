@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 static bool should_exit = false;

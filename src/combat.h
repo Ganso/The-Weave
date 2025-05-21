@@ -1,7 +1,6 @@
 #ifndef _COMBAT_H_
 #define _COMBAT_H_
 
-// ********* NEW COMBAT SYSTEM WITHOUT STATE MACHINES **********
 typedef enum
 {
     COMBAT_NO,                          /* no combat active - no enemies */
@@ -23,34 +22,19 @@ typedef enum
 extern CombatState combat_state; // Current combat state
 
 typedef struct {
-    CombatState state;        /* current combat phase                      */
-    u16         frameInState; /* ++ every frame, reset on state change     */
+    CombatState state;        // current combat phase                      
+    u16         frameInState; // ++ every frame, reset on state change     
     /* active pattern (either side) -------------------------------------- */
-    u16         activePattern;/*                                           */
-    u16         effectTimer;  /* frames since effect started               */
-    bool     patternReversed; /* true = effect was reflected / reversed    */
+    u16         activePattern;
+    u16         effectTimer;  // frames since effect started               
+    bool     patternReversed; // true = effect was reflected / reversed    
     /* note–playing phase ------------------------------------------------ */
-    u16         noteTimer;    /* frames since current note started         */
-    u8          playerNotes;  /* how many notes the player has played (0-4)*/
-    u8          enemyNotes;   /* how many notes the enemy has played  (0-4)*/
+    u16         noteTimer;    // frames since current note started         
+    u8          playerNotes;  // how many notes the player has played (0-4)
+    u8          enemyNotes;   // how many notes the enemy has played  (0-4)
     /* attacker id (relevant only during enemy phases) ------------------- */
-    u8          activeEnemy;  /* 255 = none                                */
+    u8          activeEnemy;  // ENEMY_NONE = none                         
 } CombatContext;
 extern CombatContext combatContext; // Combat context
-
-// ********* OLD COMBAT SYSTEM (replace with context) **********
-extern bool is_combat_active; // Are we in a combat?
-extern u16  enemyAttacking;                 /* index of the attacking enemy, or ENEMY_NONE */
-extern bool enemyEffectActive;              /* true while the spell effect is running      */
-extern u16  enemyPattern;                   /* pattern currently being cast                */
-extern u16  enemyCurrentNote;               /* note 0-3 being played                       */
-extern u16  enemyNoteTimer;                 /* frames since note started                   */
-extern u16  enemyEffectTimer;               /* frames since effect started                 */
-
-void start_combat(bool start); // Start (or end) a combat
-void hit_enemy(u16 nenemy); // Hit an enemy
-void hit_caracter(u16 nchar); // Hit a character
-void show_or_hide_enemy_combat_interface(bool show); // Show enemy face and hitpoints in the interface
-void combat_update(void); // Update all state machines in combat
 
 #endif

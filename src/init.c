@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 void initialize(bool first_time)    // Initialize system hardware, sprites, controllers and global game state
@@ -57,21 +56,21 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     SPR_setVisibility (spr_int_button_A, HIDDEN);
 
     // Notes and patterns
-    player_patterns_enabled=true; // Ensure patterns are enabled
-    player_has_rod=true; // Ensure player has rod for testing
-    note_playing=0;
-    note_playing_time=0;
-    num_played_notes=0;
-    time_since_last_note=0;
-    player_pattern_effect_in_progress=PTRN_NONE;
-    player_pattern_effect_reversed=false;
-    player_pattern_effect_time=0;
-    if (first_time) init_patterns();
+    // player_patterns_enabled=true; // Ensure patterns are enabled
+    // player_has_rod=true; // Ensure player has rod for testing
+    // note_playing=0;
+    // note_playing_time=0;
+    // num_played_notes=0;
+    // time_since_last_note=0;
+    // player_pattern_effect_in_progress=PTRN_NONE;
+    // player_pattern_effect_reversed=false;
+    // player_pattern_effect_time=0;
+    // if (first_time) init_patterns();
 
     // Enemys and combat
-    init_enemy_classes();
-    init_enemy_patterns();
-    is_combat_active=false;
+    // init_enemy_classes();
+    // init_enemy_patterns();
+    // is_combat_active=false;
 
     // Items
     pending_item_interaction=ITEM_NONE;
@@ -181,15 +180,15 @@ void end_level() {    // Clean up level resources and reset game state
 
     // Reset pattern and combat related variables
     // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos
-    note_playing = 0;
-    note_playing_time = 0;
-    num_played_notes = 0;
-    time_since_last_note = 0;
-    player_pattern_effect_in_progress = PTRN_NONE;
-    player_pattern_effect_reversed = false;
-    player_pattern_effect_time = 0;
-    is_combat_active = false;
-    pending_item_interaction = ITEM_NONE;
+    // note_playing = 0;
+    // note_playing_time = 0;
+    // num_played_notes = 0;
+    // time_since_last_note = 0;
+    // player_pattern_effect_in_progress = PTRN_NONE;
+    // player_pattern_effect_reversed = false;
+    // player_pattern_effect_time = 0;
+    // is_combat_active = false;
+    // pending_item_interaction = ITEM_NONE;
 
     // Reset scroll values
     offset_BGA = 0;

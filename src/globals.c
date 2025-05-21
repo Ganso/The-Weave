@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 u16 tile_ind;        // Current tile index for VDP tile loading
@@ -25,16 +24,16 @@ void next_frame(bool interactive)    // Process next frame with optional interac
         if (movement_active==true) joy_check();
 
         // Active haracter state related actions 
-        check_active_character_state();
+        // check_active_character_state();
 
         // Approach other characters
         approach_characters();
 
         // Combat related actions
-        if (is_combat_active==true) {
-            check_enemy_state();
-            approach_enemies();
-        }
+        // if (is_combat_active==true) {
+            // check_enemy_state();
+            // approach_enemies();
+        // }
     }
 
     // Screen related actions
