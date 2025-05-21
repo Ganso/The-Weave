@@ -43,7 +43,7 @@ static inline bool enemyPatternReady(u8 slot, u8 pslot)
 // Player-side: Initialisation
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
-// initPlayerPatterns  –  set up the 4 default spells (electric, hide,
+// initPlayerPatterns  –  set up the 4 default spells (thunder, hide,
 //                        open, sleep) according to the new system.
 // ---------------------------------------------------------------------
 void initPlayerPatterns(void)
@@ -66,14 +66,14 @@ void initPlayerPatterns(void)
     }
 
     // 1) Electric
-    playerPatterns[PATTERN_ELECTRIC] = (PlayerPattern){
-        .id       = PATTERN_ELECTRIC,
+    playerPatterns[PATTERN_THUNDER] = (PlayerPattern){
+        .id       = PATTERN_THUNDER,
         .enabled  = true,
         .notes    = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
         .baseDuration = 60,
-        .canUse   = NULL,
-        .launch   = playerElectricLaunch,   // PENDING - real fn
-        .update   = playerElectricUpdate,   // PENDING - real fn
+        .canUse   = playerThuderCanUse,
+        .launch   = playerThunderLaunch,
+        .update   = playerThunderUpdate,
         .icon     = NULL // Will load on demand
    };
 
@@ -83,9 +83,9 @@ void initPlayerPatterns(void)
         .enabled  = true,
         .notes    = { NOTE_FA, NOTE_SI, NOTE_SOL, NOTE_DO }, // 2-5-3-6
         .baseDuration = 90,
-        .canUse   = NULL,
-        .launch   = playerHideLaunch,       // PENDING
-        .update   = playerHideUpdate,       // PENDING
+        .canUse   = playerHideCanUse,
+        .launch   = playerHideLaunch,
+        .update   = playerHideUpdate,
         .icon     = NULL // Will load on demand
     };
 
@@ -95,9 +95,9 @@ void initPlayerPatterns(void)
         .enabled  = true,
         .notes    = { NOTE_FA, NOTE_SOL, NOTE_SOL, NOTE_FA }, // 2-3-3-2
         .baseDuration = 45,
-        .canUse   = NULL,
-        .launch   = playerOpenLaunch,       // PENDING
-        .update   = playerOpenUpdate,       // PENDING
+        .canUse   = playerOpenCanUse,
+        .launch   = playerOpenLaunch,
+        .update   = playerOpenUpdate,
         .icon     = NULL // Will load on demand
     };
 
@@ -107,14 +107,14 @@ void initPlayerPatterns(void)
         .enabled  = true,
         .notes    = { NOTE_FA, NOTE_MI, NOTE_DO, NOTE_LA }, // 2-1-6-4
         .baseDuration = 75,
-        .canUse   = NULL,
-        .launch   = playerSleepLaunch,      // PENDING
-        .update   = playerSleepUpdate,      // PENDING
+        .canUse   = playerSleepCanUse,
+        .launch   = playerSleepLaunch,
+        .update   = playerSleepUpdate,
         .icon     = NULL // Will load on demand
     };
 
     kprintf("Player patterns ready: E=%d H=%d O=%d S=%d",
-            playerPatterns[PATTERN_ELECTRIC].enabled,
+            playerPatterns[PATTERN_THUNDER].enabled,
             playerPatterns[PATTERN_HIDE].enabled,
             playerPatterns[PATTERN_OPEN].enabled,
             playerPatterns[PATTERN_SLEEP].enabled);
@@ -163,7 +163,7 @@ bool updatePlayerPattern(void)
 
     // If there's no update callback, we finish immediately
     bool finished = (p->update)
-                  ? p->update(&combatContext.effectTimer)
+                  ? p->update()
                   : true;
 
     if (finished) {
@@ -193,6 +193,43 @@ void patternPlayerAddNote(u8 noteCode)
 
     // PENDING - display HUD icon for player's note
 }
+
+
+// ---------------------------------------------------------------------
+// Enemy-side: Initialisation
+// ---------------------------------------------------------------------
+/*  Rellena la tabla de un enemigo concreto.
+ *  Llama a esta función justo al entrar en combate
+ *  para cada enemigo activo.                                       */
+void initEnemyPatterns(u8 enemyId)
+{
+    /* --- THUNDER / ELECTRIC  (slot 0) --------------------------- */
+    enemyPatterns[enemyId][0] = (EnemyPattern){
+        .id             = PATTERN_EN_THUNDER,
+        .noteCount      = 0,
+        .baseDuration   = SCREEN_FPS, 
+        .rechargeFrames = SCREEN_FPS*3,
+        .enabled        = TRUE,
+        .launch         = enemyThunderLaunch,
+        .update         = enemyThunderUpdate,
+        .counterable    = TRUE,
+        .onCounter      = enemyThunderOnCounter
+    };
+
+    /* --- BITE  (slot 1) ----------------------------------------- */
+    enemyPatterns[enemyId][1] = (EnemyPattern){
+        .id             = PATTERN_EN_BITE,
+        .noteCount      = 0,
+        .baseDuration   = SCREEN_FPS,
+        .rechargeFrames = SCREEN_FPS*2,
+        .enabled        = TRUE,
+        .launch         = enemyBiteLaunch,
+        .update         = enemyBiteUpdate,
+        .counterable    = FALSE,
+        .onCounter      = NULL
+    };
+}
+
 
 // ---------------------------------------------------------------------
 // Enemy-side: launch / update
@@ -229,7 +266,7 @@ bool updateEnemyPattern(u8 enemySlot)
             if (pat->rechargeFrames) --pat->rechargeFrames;
 
             bool finished = (pat->update)
-                          ? pat->update(enemySlot, &combatContext.effectTimer)
+                          ? pat->update(enemySlot)
                           : true;
 
             if (finished) {

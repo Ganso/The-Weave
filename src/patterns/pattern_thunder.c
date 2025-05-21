@@ -8,7 +8,7 @@ void playerThunderLaunch(void)
 // Update callback
 bool playerThunderUpdate(void)
 {
-    const u16 duration = playerPatterns[PATTERN_ELECTRIC].baseDuration;
+    const u16 duration = playerPatterns[PATTERN_THUNDER].baseDuration;
 
     if (++combatContext.effectTimer >= duration)
         return true;        // finished

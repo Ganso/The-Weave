@@ -4,7 +4,7 @@
 #include "globals.h"
 
 // Launch the spell
-void playerTuhderLaunch(void);
+void playerThunderLaunch(void);
 
 // Update the ongoing spell.
 // Returns true when the effect is finished.
