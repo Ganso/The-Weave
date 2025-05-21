@@ -1,3 +1,4 @@
+#include <genesis.h>
 #include "globals.h"
 
 u8 num_colls;    // Counter to prevent infinite collision loops

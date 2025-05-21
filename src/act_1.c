@@ -86,11 +86,11 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
         case 3: // Cabinet
             talk_dialog(&dialogs[ACT1_DIALOG4][6]); // (ES) "Esta es la nana que me|cantaban cada noche" - (EN) "That's the lullaby they used|to sing to me every night"
             pending_item_interaction=ITEM_NONE;
-            if (obj_pattern[PTRN_SLEEP].active==false) {
-                activate_spell(PTRN_SLEEP);
-                talk_dialog(&dialogs[ACT1_DIALOG4][7]); // (ES) "Has aprendido|tu primer patrón" - (EN) "You have learned|your first pattern"
-                talk_dialog(&dialogs[ACT1_DIALOG4][8]); // (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
-            }
+            // if (obj_pattern[PTRN_SLEEP].active==false) {
+            //     activate_spell(PTRN_SLEEP);
+            //     talk_dialog(&dialogs[ACT1_DIALOG4][7]); // (ES) "Has aprendido|tu primer patrón" - (EN) "You have learned|your first pattern"
+            //     talk_dialog(&dialogs[ACT1_DIALOG4][8]); // (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
+            // }
             item_interacted[3]=true;
             break;
         default:
@@ -252,7 +252,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
     
     // Initialize characters
-    player_has_rod=true; // Give player the rod
+    // player_has_rod=true; // Give player the rod
     init_character(CHR_linus);
     init_character(CHR_clio);
     active_character=CHR_linus;
@@ -261,10 +261,10 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     follow_active_character(CHR_clio, true, 2);
 
     // Initialize spells
-    obj_pattern[PTRN_ELECTRIC].active=true;
-    obj_pattern[PTRN_HIDE].active=true;
-    obj_pattern[PTRN_OPEN].active=true;
-    obj_pattern[PTRN_SLEEP].active=true;
+    // obj_pattern[PTRN_ELECTRIC].active=true;
+    // obj_pattern[PTRN_HIDE].active=true;
+    // obj_pattern[PTRN_OPEN].active=true;
+    // obj_pattern[PTRN_SLEEP].active=true;
 
     // Dialog
     move_character(CHR_linus, 30, 154);
@@ -281,7 +281,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     player_scroll_active=true;
     movement_active=true;
     interface_active=true;
-    player_patterns_enabled=true;
+    // player_patterns_enabled=true;
     show_or_hide_interface(true);
 
     while (offset_BGA<230) {
@@ -306,20 +306,20 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
 
     anim_character(active_character, ANIM_IDLE);
     reset_character_animations();
-    init_enemy(0,ENEMY_CLS_WEAVERGHOST);
-    init_enemy(1,ENEMY_CLS_WEAVERGHOST);
-    move_enemy_instant(0, 350, 176);
-    move_enemy_instant(1, -20, 156);
-    move_enemy(0, 250, 136);
-    move_enemy(1, 20, 156);
+    // init_enemy(0,ENEMY_CLS_WEAVERGHOST);
+    // init_enemy(1,ENEMY_CLS_WEAVERGHOST);
+    // move_enemy_instant(0, 350, 176);
+    // move_enemy_instant(1, -20, 156);
+    // move_enemy(0, 250, 136);
+    // move_enemy(1, 20, 156);
     show_or_hide_interface(true);
-    start_combat(true);
-    while (is_combat_active==true) {
-        // Actualizar las máquinas de estado en combate
-        combat_update();
+    // start_combat(true);
+    // while (is_combat_active==true) {
+    //     // Actualizar las máquinas de estado en combate
+    //     combat_update();
         
-        next_frame(true);
-    }
+    //     next_frame(true);
+    // }
 
     show_or_hide_interface(false);
     talk_dialog(&dialogs[ACT1_DIALOG3][10]); // (ES) "¡Esto es todo!|(por ahora)" - (EN) "That's all!|(by now)"

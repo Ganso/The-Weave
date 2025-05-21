@@ -1,6 +1,4 @@
-#include <genesis.h>
 #include "globals.h"
-#include "characters.h"
 
 bool movement_active;    // Whether entity movement is currently allowed
 

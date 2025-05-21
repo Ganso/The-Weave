@@ -1,4 +1,3 @@
-#include <genesis.h>
 #include "globals.h"
 
 void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display dialog with optional face portrait and timed text

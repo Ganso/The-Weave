@@ -1,8 +1,6 @@
 #ifndef _CONTROLLER_H_
 #define _CONTROLLER_H_
 
-#include <genesis.h>
-
 void joy_check(void); // Main function to check and handle joystick input
 void handle_movement(u16 joy_value); // Handle character movement based on joystick input
 void handle_character_movement(s16 dx, s16 dy); // Move the character if there's no collision and it's within the screen limits. This function also handles background scrolling if the character is at the screen edge.
