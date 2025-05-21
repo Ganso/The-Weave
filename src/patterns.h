@@ -8,13 +8,15 @@
 #include "patterns/pattern_hide.h"
 #include "patterns/pattern_sleep.h"
 #include "patterns/pattern_thunder.h"
+#include "patterns/pattern_en_thunder.h"
+#include "patterns/pattern_en_bite.h"
 
 /* Max */
 #define MAX_PLAYER_PATTERNS   6   /* maximum slots for player spells     */
 #define MAX_ENEMY_PATTERNS    8   /* maximum slots for enemy spells      */
 
 /* Player patterns  */
-#define PATTERN_ELECTRIC   0
+#define PATTERN_THUNDER   0
 #define PATTERN_HIDE       1
 #define PATTERN_OPEN       2
 #define PATTERN_SLEEP      3
@@ -22,7 +24,7 @@
 #define PATTERN_PLAYER_NONE   254
 
 /* Enemy patterns */
-#define PATTERN_EN_ELECTRIC   0
+#define PATTERN_EN_THUNDER   0
 #define PATTERN_EN_BITE       1
 
 #define PATTERN_ENEMY_COUNT   2
@@ -66,7 +68,7 @@ typedef struct
 
     /* callbacks */
     void (*launch)(u16 enemyId); // called when the pattern is launched
-    bool (*update)(u16 enemyId, u16* timer); // called every frame (true = finished)
+    bool (*update)(u16 enemyId); // called every frame (true = finished)
 
     /* counter-spell support */
     bool counterable; // can the player counter this pattern?

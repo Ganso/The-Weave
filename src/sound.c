@@ -56,7 +56,7 @@ void playPlayerPatternSound(u16 patternId)
 {
     switch (patternId)
     {
-        case PATTERN_ELECTRIC:
+        case PATTERN_THUNDER:
             // PENDING - playSample(snd_pattern_electric, sizeof(...));
             break;
         case PATTERN_HIDE:
@@ -81,7 +81,7 @@ void playEnemyPatternSound(u16 patternId)
 {
     switch (patternId)
     {
-        case PATTERN_EN_ELECTRIC:
+        case PATTERN_EN_THUNDER:
             // PENDING
             break;
         case PATTERN_EN_BITE:
