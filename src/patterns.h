@@ -67,12 +67,12 @@ typedef struct
     bool enabled; // true if available for the enemy
 
     /* callbacks */
-    void (*launch)(u16 enemyId); // called when the pattern is launched
-    bool (*update)(u16 enemyId); // called every frame (true = finished)
+    void (*launch)(u8 enemyId); // called when the pattern is launched
+    bool (*update)(u8 enemyId); // called every frame (true = finished)
 
     /* counter-spell support */
     bool counterable; // can the player counter this pattern?
-    void (*onCounter)(u16 enemyId); // NULL if not counterable
+    void (*onCounter)(u8 enemyId); // NULL if not counterable
 } EnemyPattern;
 
 /* -------------------------------------------------------------------

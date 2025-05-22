@@ -34,6 +34,7 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 
 // Auxiliary game libraries
 #include "entity.h" // Every object in the game that has a sprite you can show, move...
+#include "combat.h" // Combat related functions
 #include "characters.h" // Characters that can talk, or you can control
 #include "enemies.h" // Enemies you fight
 #include "patterns.h" // Pattern structure and definitions
@@ -42,7 +43,6 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 #include "dialogs.h" // Dialog and text related functions
 #include "controller.h" // Controller related functions
 #include "interface.h" // Game interface
-#include "combat.h" // Combat related functions (including patterns enemy can use)
 #include "background.h" // Background and scenery related objects and functions
 #include "collisions.h" // Distance and collisions related functions
 #include "sound.h" // Music and SFX
