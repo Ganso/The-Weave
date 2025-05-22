@@ -50,4 +50,22 @@ extern Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
 extern Sprite *spr_enemy_face[MAX_ENEMIES]; // Enemy faces sprites
 extern Sprite *spr_enemy_shadow[MAX_ENEMIES]; // Enemy shadows sprites
 
+
+/* --- Init / cleanup --- */
+void init_enemy_classes(void);
+void init_enemy(u16 numenemy, u16 class_id);
+void release_enemy(u16 nenemy);
+
+/* --- Runtime updates --- */
+void update_enemy_shadow(u16 nenemy);
+void update_enemy(u16 nenemy);
+void show_enemy(u16 nenemy, bool show);
+void anim_enemy(u16 nenemy, u8 newanimation);
+void look_enemy_left(u16 nenemy, bool direction_right);
+void move_enemy(u16 nenemy, s16 newx, s16 newy);
+void move_enemy_instant(u16 nenemy, s16 x, s16 y);
+
+/* --- AI movement --- */
+void approach_enemies(void);
+
 #endif
