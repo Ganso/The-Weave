@@ -39,6 +39,11 @@
 #define NOTE_SI   5
 #define NOTE_DO   6
 
+// Globals
+extern bool player_has_rod;          /* can physically use patterns?      */
+extern bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
+
+
 typedef struct
 {
     /* identity & availability */
