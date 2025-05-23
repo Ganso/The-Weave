@@ -14,8 +14,9 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
     initialize(true);
 
     current_act=1;
-    current_scene=3;
+    current_scene=1;
 
+    kprintf("Loading Act %d, Scene %d\n", current_act, current_scene);
     while (true) { // MAIN LOOP
         switch (current_act)
         {

@@ -2,6 +2,8 @@
 
 #include "globals.h"
 
+bool player_has_rod;          /* can physically use patterns?      */
+bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
 
 // --------------------------------------------------------------------
 // Static player-pattern table
@@ -71,7 +73,7 @@ void initPlayerPatterns(void)
         .enabled  = true,
         .notes    = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
         .baseDuration = 60,
-        .canUse   = playerThuderCanUse,
+        .canUse   = playerThunderCanUse,
         .launch   = playerThunderLaunch,
         .update   = playerThunderUpdate,
         .icon     = NULL // Will load on demand

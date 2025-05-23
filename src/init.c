@@ -2,6 +2,7 @@
 
 void initialize(bool first_time)    // Initialize system hardware, sprites, controllers and global game state
 {
+    kprintf("Initializing system, first_time=%d\n", first_time);
     u8 i;
 
     // Initialize VPD
@@ -9,8 +10,14 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Initialize audio driver
     Z80_init();
-    if (XGM_VERSION==2) Z80_loadDriver(Z80_DRIVER_XGM2, 1);
-    else Z80_loadDriver(Z80_DRIVER_XGM, 1);
+    if (XGM_VERSION==2) {
+        Z80_loadDriver(Z80_DRIVER_XGM2, 1);
+        kprintf("XGM2 driver loaded\n");
+    }
+    else {
+        Z80_loadDriver(Z80_DRIVER_XGM, 1);
+        kprintf("XGM driver loaded\n");
+    }
 
     // Initialize sprite Engine
     SPR_init();
@@ -22,7 +29,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     VDP_setScreenWidth320();
     VDP_setScreenHeight224();
 
-    // Detect FPS
+    // Detect refresh rate
     u8 vers = *(u8 *)0xA10001;
     if(vers & (1 << 6)) SCREEN_FPS=50; // PAL
     else SCREEN_FPS=60; // NTSC
@@ -38,12 +45,14 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     VDP_setWindowVPos(TRUE, 22);
 
     // Initialize palettes
+    kprintf("Loading palettes\n");
     // PAL0 is the background palette. It's initialized with the background
     PAL_setPalette(PAL1, characters_pal.data, DMA); // Characters palette
     PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
     // PAL2 is the enemies palette. It's initialized with the enemies
 
     // Interface: Face backgrounds
+    kprintf("Loading face backgrounds\n");
     spr_face_left = SPR_addSpriteSafe ( &face_left_sprite, 0, 160, TILE_ATTR(PAL1, false, false, true));
     SPR_setVisibility (spr_face_left, HIDDEN);
     spr_face_right = SPR_addSpriteSafe ( &face_right_sprite, 256, 160, TILE_ATTR(PAL1, false, false, true));
@@ -55,22 +64,23 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     spr_int_button_A = SPR_addSpriteSafe (&int_button_A_sprite, 0, 0, TILE_ATTR(PAL2, false, false, false));
     SPR_setVisibility (spr_int_button_A, HIDDEN);
 
-    // Notes and patterns
-    // player_patterns_enabled=true; // Ensure patterns are enabled
-    // player_has_rod=true; // Ensure player has rod for testing
-    // note_playing=0;
-    // note_playing_time=0;
-    // num_played_notes=0;
-    // time_since_last_note=0;
-    // player_pattern_effect_in_progress=PTRN_NONE;
-    // player_pattern_effect_reversed=false;
-    // player_pattern_effect_time=0;
-    // if (first_time) init_patterns();
-
-    // Enemys and combat
-    // init_enemy_classes();
-    // init_enemy_patterns();
-    // is_combat_active=false;
+    // Patterns & combat context
+    if (first_time) {
+        kprintf("Initializing patterns\n");
+        initPlayerPatterns();
+        kprintf("Initializing enemy classes\n");
+        init_enemy_classes();
+    }
+    kprintf("Initializing combat context\n");
+    combatContext.state          = COMBAT_NO;
+    combatContext.frameInState   = 0;
+    combatContext.activePattern  = PATTERN_PLAYER_NONE;
+    combatContext.effectTimer    = 0;
+    combatContext.patternReversed= FALSE;
+    combatContext.noteTimer      = 0;
+    combatContext.playerNotes    = 0;
+    combatContext.enemyNotes     = 0;
+    combatContext.activeEnemy    = ENEMY_NONE;
 
     // Items
     pending_item_interaction=ITEM_NONE;
@@ -93,6 +103,8 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 // initialize level and load background
 void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u16 new_background_width, u8 new_scroll_mode, u8 new_scroll_speed)    // Load and setup a new game level with background layers and scroll settings
 {
+    kprintf("Loading new level: bg_width=%d scroll_mode=%d\n", new_background_width, new_scroll_mode);
+    
     initialize(false); // Reset hardware when starting each level, but don't change only first-time options
     
     // Reset tile index to start fresh
@@ -100,6 +112,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     
     // Tile_bg and Map_bg are the background layer. They can be NULL
     if ((tile_bg!=NULL) && (map_bg!=NULL)) {
+        kprintf("Loading background tileset, tiles=%d\n", tile_bg->numTile);
         VDP_loadTileSet(tile_bg, tile_ind, CPU);
         background_BGB = MAP_create(map_bg, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
         tile_ind += tile_bg->numTile;
@@ -107,11 +120,13 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     else background_BGB=NULL;
 
     // Tile_front and Map_front are the foreground layer. Thay can't be NULL.
+    kprintf("Loading foreground tileset, tiles=%d\n", tile_front->numTile);
     VDP_loadTileSet(tile_front, tile_ind, CPU);
     background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += tile_front->numTile;
 
     // Set palettes after loading all tiles to avoid flicker
+    kprintf("Loading palettes\n");
     PAL_setPalette(PAL0, new_pal.data, DMA);
     PAL_setPalette(PAL1, characters_pal.data, DMA);
     PAL_setPalette(PAL2, interface_pal.data, DMA);
@@ -136,6 +151,8 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
 
 // Free all resources used by the level
 void end_level() {    // Clean up level resources and reset game state
+    kprintf("Ending level, freeing resources\n");
+    
     // Fade out music and screen
     fade_music(SCREEN_FPS);
     PAL_fadeOutAll(SCREEN_FPS,false);
@@ -151,6 +168,7 @@ void end_level() {    // Clean up level resources and reset game state
     }
 
     // Release active characters
+    kprintf("Releasing active characters\n");
     for (u16 i = 0; i < MAX_CHR; i++) {
         if (obj_character[i].active) {
             release_character(i);
@@ -178,17 +196,22 @@ void end_level() {    // Clean up level resources and reset game state
         }
     }
 
-    // Reset pattern and combat related variables
+    // Reset combat context
+    combatContext = (CombatContext){
+        .state           = COMBAT_NO,
+        .frameInState    = 0,
+        .activePattern   = PATTERN_PLAYER_NONE,
+        .effectTimer     = 0,
+        .patternReversed = FALSE,
+        .noteTimer       = 0,
+        .playerNotes     = 0,
+        .enemyNotes      = 0,
+        .activeEnemy     = ENEMY_NONE
+    };
+
     // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos
-    // note_playing = 0;
-    // note_playing_time = 0;
-    // num_played_notes = 0;
-    // time_since_last_note = 0;
-    // player_pattern_effect_in_progress = PTRN_NONE;
-    // player_pattern_effect_reversed = false;
-    // player_pattern_effect_time = 0;
-    // is_combat_active = false;
-    // pending_item_interaction = ITEM_NONE;
+
+    pending_item_interaction = ITEM_NONE;
 
     // Reset scroll values
     offset_BGA = 0;
@@ -219,4 +242,6 @@ void end_level() {    // Clean up level resources and reset game state
     VDP_clearPlane(BG_B, TRUE);
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x000000));
     VDP_setWindowVPos(TRUE, 22);
+
+    kprintf("Level cleanup complete\n");
 }

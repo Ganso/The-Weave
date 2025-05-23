@@ -11,6 +11,6 @@ void playerThunderLaunch(void);
 bool playerThunderUpdate(void);
 
 // Check if the pattern can be used
-bool playerThuderCanUse(void);
+bool playerThunderCanUse(void);
 
 #endif // PATTERN_THUNDER_H
