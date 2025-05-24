@@ -15,112 +15,65 @@ bool interface_active;                     // Whether game interface is currentl
 
 void show_or_hide_interface(bool visible)    // Toggle visibility of game's bottom interface
 {
-    if (interface_active==true) {
-        if (visible == true) {
-            // Draw the rod and pentagram images in the window plane
-            VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 22, false, true);
-            tile_ind+=int_screen_limit.tileset->numTile;
-            VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 23, false, true);
-            tile_ind+=int_rod_image.tileset->numTile;
-            VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
-            tile_ind+=int_pentagram_image.tileset->numTile;
-        } 
-        else {
-            // Clear the window plane and hide rod and pentagram icons
-            tile_ind-=int_rod_image.tileset->numTile;
-            tile_ind-=int_pentagram_image.tileset->numTile;
-            VDP_clearPlane(WINDOW, true);
-            hide_rod_icons();
-            hide_pentagram_icons();
-        }
+    if (!interface_active) return; // If interface is not active, do nothing
+
+    if (visible == true) {
+        // Draw the rod and pentagram images in the window plane
+        VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 22, false, true);
+        tile_ind+=int_screen_limit.tileset->numTile;
+        VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 23, false, true);
+        tile_ind+=int_rod_image.tileset->numTile;
+        VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
+        tile_ind+=int_pentagram_image.tileset->numTile;
+    } 
+    else {
+        // Clear the window plane and hide rod and pentagram icons
+        tile_ind-=int_rod_image.tileset->numTile;
+        tile_ind-=int_pentagram_image.tileset->numTile;
+        VDP_clearPlane(WINDOW, true);
+        hide_rod_icons();
+        hide_pentagram_icons();
     }
 }
 
 void show_note(u8 nnote, bool visible)    // Display or hide a musical note (1-6:MI-DO) with its rod and pentagram sprites
 {
-    Sprite **pentsprite;
-    Sprite **rodsprite;
-    SpriteDefinition *pentsritedef;
-    SpriteDefinition *rodspritedef;
-    u8 *notesong;
-    u16 pent_x,rod_x;
+    Sprite **pentSpr, **rodSpr;
+    SpriteDefinition *pentDef, *rodDef;
+    u16 pentX, rodX;
 
-    // Determine the appropriate sprites, sounds, and positions for the given note
-    switch (nnote) 
+    switch (nnote)
     {
-    case NOTE_MI:
-        pentsprite=&spr_int_pentagram_1;
-        rodsprite=&spr_int_rod_1;
-        pentsritedef=(SpriteDefinition*) &int_pentagram_1_sprite;
-        rodspritedef=(SpriteDefinition*) &int_rod_1_sprite;
-        notesong=(u8*)snd_note_mi;
-        pent_x=219;
-        rod_x=24;
-        break;
-    case NOTE_FA:
-        pentsprite=&spr_int_pentagram_2;
-        rodsprite=&spr_int_rod_2;
-        pentsritedef=(SpriteDefinition*) &int_pentagram_2_sprite;
-        rodspritedef=(SpriteDefinition*) &int_rod_2_sprite;
-        notesong=(u8*)snd_note_fa;
-        pent_x=219+16;
-        rod_x=24+32;
-        break;
-    case NOTE_SOL:
-        pentsprite=&spr_int_pentagram_3;
-        rodsprite=&spr_int_rod_3;
-        pentsritedef=(SpriteDefinition*) &int_pentagram_3_sprite;
-        rodspritedef=(SpriteDefinition*) &int_rod_3_sprite;
-        notesong=(u8*)snd_note_sol;
-        pent_x=219+32;
-        rod_x=24+64;
-        break;
-    case NOTE_LA:
-        pentsprite=&spr_int_pentagram_4;
-        rodsprite=&spr_int_rod_4;
-        pentsritedef=(SpriteDefinition*) &int_pentagram_4_sprite;
-        rodspritedef=(SpriteDefinition*) &int_rod_4_sprite;
-        notesong=(u8*)snd_note_la;
-        pent_x=219+48;
-        rod_x=24+96;
-        break;
-    case NOTE_SI:
-        pentsprite=&spr_int_pentagram_5;
-        rodsprite=&spr_int_rod_5;
-        pentsritedef=(SpriteDefinition*) &int_pentagram_5_sprite;
-        rodspritedef=(SpriteDefinition*) &int_rod_5_sprite;
-        notesong=(u8*)snd_note_si;
-        pent_x=219+64;
-        rod_x=24+128;
-        break;
-    default: // NOTE_DO
-        pentsprite=&spr_int_pentagram_6;
-        rodsprite=&spr_int_rod_6;
-        pentsritedef=(SpriteDefinition*) &int_pentagram_6_sprite;
-        rodspritedef=(SpriteDefinition*) &int_rod_6_sprite;
-        notesong=(u8*)snd_note_do;
-        pent_x=219+80;
-        rod_x=24+160;
-        break;
+        case NOTE_MI:  pentSpr=&spr_int_pentagram_1; rodSpr=&spr_int_rod_1;
+                       pentDef=&int_pentagram_1_sprite; rodDef=&int_rod_1_sprite;
+                       pentX=219;        rodX=24;        break;
+        case NOTE_FA:  pentSpr=&spr_int_pentagram_2; rodSpr=&spr_int_rod_2;
+                       pentDef=&int_pentagram_2_sprite; rodDef=&int_rod_2_sprite;
+                       pentX=235;        rodX=56;        break;
+        case NOTE_SOL: pentSpr=&spr_int_pentagram_3; rodSpr=&spr_int_rod_3;
+                       pentDef=&int_pentagram_3_sprite; rodDef=&int_rod_3_sprite;
+                       pentX=251;        rodX=88;        break;
+        case NOTE_LA:  pentSpr=&spr_int_pentagram_4; rodSpr=&spr_int_rod_4;
+                       pentDef=&int_pentagram_4_sprite; rodDef=&int_rod_4_sprite;
+                       pentX=267;        rodX=120;       break;
+        case NOTE_SI:  pentSpr=&spr_int_pentagram_5; rodSpr=&spr_int_rod_5;
+                       pentDef=&int_pentagram_5_sprite; rodDef=&int_rod_5_sprite;
+                       pentX=283;        rodX=152;       break;
+        default:       pentSpr=&spr_int_pentagram_6; rodSpr=&spr_int_rod_6;
+                       pentDef=&int_pentagram_6_sprite; rodDef=&int_rod_6_sprite;
+                       pentX=299;        rodX=184;       break;
     }
 
-    if (visible == true) {
-        // Add rod and pentagram sprites if they don't exist
-        if (*rodsprite==NULL) *rodsprite = SPR_addSpriteSafe (rodspritedef, rod_x, 212, TILE_ATTR(PAL2, false, false, false));
-        if (*pentsprite==NULL && player_patterns_enabled) *pentsprite = SPR_addSpriteSafe (pentsritedef, pent_x, 180, TILE_ATTR(PAL2, false, false, false));
-        play_music(notesong); // Play the note sound
+    if (visible) // Show the note and its rod/pentagram sprites
+    {
+        if (*rodSpr == NULL) *rodSpr = SPR_addSpriteSafe(rodDef, rodX, 212, TILE_ATTR(PAL2,false,false,false));
+        if (*pentSpr == NULL && player_patterns_enabled) *pentSpr = SPR_addSpriteSafe(pentDef, pentX, 180, TILE_ATTR(PAL2,false,false,false));
     }
-    else {
-        // Release both pentagram and rod sprites if they exist
-        if (*rodsprite!=NULL) {
-            SPR_releaseSprite(*rodsprite);
-            *rodsprite=NULL;
-        if (*pentsprite!=NULL && player_patterns_enabled) {
-            SPR_releaseSprite(*pentsprite);
-            *pentsprite=NULL;
-        }
-        }
+    else { // Hide the note and its rod/pentagram sprites
+        if (*rodSpr) SPR_releaseSprite(*rodSpr);  *rodSpr  = NULL;
+        if (*pentSpr && player_patterns_enabled) SPR_releaseSprite(*pentSpr); *pentSpr = NULL;
     }
+
     SPR_update();
 }
 
@@ -426,6 +379,34 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
         if (spr_pause_icon[nicon] != NULL) {
             SPR_releaseSprite(spr_pause_icon[nicon]);
             spr_pause_icon[nicon]=NULL;
+        }
+    }
+}
+
+// Check the status of the current pattern, including note playing and expiration
+void check_pattern_status(void)
+{
+    combatContext.noteTimer++;
+
+    // Check if the current pattern is expired
+    if (combatContext.playerNotes && combatContext.noteTimer > calc_ticks(MAX_PATTERN_WAIT_TIME))
+    {
+        dprintf(1, "Pattern aborted after %u ticks of silence\n", combatContext.noteTimer);
+
+        combatContext.playerNotes = 0;
+        combatContext.noteTimer   = 0;
+        hide_rod_icons();
+        hide_pentagram_icons();
+    }
+
+    // HUD-note lifetime
+    if (current_note != NOTE_NONE)
+    {
+        if (++current_note_ticks > calc_ticks(MAX_NOTE_PLAYING_TIME))
+        {
+            dprintf(3, "HUD note %u auto-hidden\n", current_note);
+            show_note(current_note, false);
+            current_note = NOTE_NONE;
         }
     }
 }
