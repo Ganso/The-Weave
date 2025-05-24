@@ -132,26 +132,26 @@ u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)    // Check for collision
     char_right = char_left + obj_character[nchar].collision_width;
     char_top = y + obj_character[nchar].collision_y_offset;
     char_bottom = char_top + obj_character[nchar].collision_height;
-    //kprintf("CAJA PERSONAJE: (%d,%d)-(%d,%d)",char_left,char_top,char_right,char_bottom);
+    //dprintf(2,"CAJA PERSONAJE: (%d,%d)-(%d,%d)",char_left,char_top,char_right,char_bottom);
 
     for (nitem = 0; nitem < MAX_ITEMS; nitem++)
     {
         if (obj_item[nitem].entity.active && obj_item[nitem].entity.visible)
         {
-            //kprintf("Detectando colisión con %d", nitem);
+            //dprintf(2,"Detectando colisión con %d", nitem);
             // Calculate item's bounding box
             item_left = obj_item[nitem].entity.x + obj_item[nitem].entity.collision_x_offset;
             item_right = item_left + obj_item[nitem].entity.collision_width;
             item_top = obj_item[nitem].entity.y + obj_item[nitem].entity.collision_y_offset;
             item_bottom = item_top + obj_item[nitem].entity.collision_height;
-            //kprintf("DATOS OBJETO: (x,y)=(%d,%d), offset(x,y)=(%d,%d), tam(x,y)=(%d,%d)",obj_item[nitem].entity.x,obj_item[nitem].entity.y,obj_item[nitem].entity.collision_x_offset,obj_item[nitem].entity.collision_y_offset,obj_item[nitem].entity.collision_width,obj_item[nitem].entity.collision_height);
-            //kprintf("CAJA OBJETO: (%d,%d)-(%d,%d)",item_left,item_top,item_right,item_bottom);
+            //dprintf(2,"DATOS OBJETO: (x,y)=(%d,%d), offset(x,y)=(%d,%d), tam(x,y)=(%d,%d)",obj_item[nitem].entity.x,obj_item[nitem].entity.y,obj_item[nitem].entity.collision_x_offset,obj_item[nitem].entity.collision_y_offset,obj_item[nitem].entity.collision_width,obj_item[nitem].entity.collision_height);
+            //dprintf(2,"CAJA OBJETO: (%d,%d)-(%d,%d)",item_left,item_top,item_right,item_bottom);
 
             // Check for collision
             if (char_left < item_right && char_right > item_left &&
                 char_top < item_bottom && char_bottom > item_top)
             {
-                //kprintf(" *** COLISION ***");
+                //dprintf(2," *** COLISION ***");
                 return nitem; // Return the index of the collided item
             }
         }

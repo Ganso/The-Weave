@@ -4,19 +4,19 @@
 int main(bool hard)    // Main game loop - handles initialization and scene transitions
 {
     #ifdef DEBUG_ON
-     kprintf("The Weave - %s",GAMEVERSION);
-     kprintf("https://geese-bumps.itch.io/\n\n");
+     dprintf(2,"The Weave - %s",GAMEVERSION);
+     dprintf(2,"https://geese-bumps.itch.io/\n\n");
     #endif
 
-    // geesebumps_logo(); // GeeseBumps Logo
-    // theweave_intro();  // Game intro
+    //geesebumps_logo(); // GeeseBumps Logo
+    //theweave_intro();  // Game intro
 
     initialize(true);
 
     current_act=1;
-    current_scene=1;
+    current_scene=5;
 
-    kprintf("Loading Act %d, Scene %d\n", current_act, current_scene);
+    dprintf(2,"Loading Act %d, Scene %d\n", current_act, current_scene);
     while (true) { // MAIN LOOP
         switch (current_act)
         {

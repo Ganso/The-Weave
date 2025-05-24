@@ -27,25 +27,41 @@ void play_sample(const u8 *sample, u32 len)    // Play sound effect sample using
 // ------------------------------------------------------------------
 void playPlayerNote(u8 noteCode)
 {
+    const u8 *sample = NULL;
+
     switch (noteCode)
     {
-        case NOTE_MI:  /* PENDING - play sample */ break;
-        case NOTE_FA:  /* PENDING */ break;
-        case NOTE_SOL: /* PENDING */ break;
-        case NOTE_LA:  /* PENDING */ break;
-        case NOTE_SI:  /* PENDING */ break;
-        case NOTE_DO:  /* PENDING */ break;
-        default: break;
+        case NOTE_MI:  sample = snd_note_mi;  break;
+        case NOTE_FA:  sample = snd_note_fa;  break;
+        case NOTE_SOL: sample = snd_note_sol; break;
+        case NOTE_LA:  sample = snd_note_la;  break;
+        case NOTE_SI:  sample = snd_note_si;  break;
+        case NOTE_DO:  sample = snd_note_do;  break;
+        default: return;
     }
+
+    play_music(sample);
 }
 
 // ------------------------------------------------------------------
-// Enemy note (pitch slightly different / lower volume)
+// Enemy note
 // ------------------------------------------------------------------
 void playEnemyNote(u8 noteCode)
 {
-    // For now reuse the same samples
-    playPlayerNote(noteCode);
+    const u8 *sample = NULL;
+
+    switch (noteCode)
+    {
+        case NOTE_MI:  sample = snd_enemy_note_mi;  break;
+        case NOTE_FA:  sample = snd_enemy_note_fa;  break;
+        case NOTE_SOL: sample = snd_enemy_note_sol; break;
+        case NOTE_LA:  sample = snd_enemy_note_la;  break;
+        case NOTE_SI:  sample = snd_enemy_note_si;  break;
+        case NOTE_DO:  sample = snd_enemy_note_do;  break;
+        default: return;
+    }
+
+    play_music(sample);
 }
 
 

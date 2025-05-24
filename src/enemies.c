@@ -171,7 +171,7 @@ void show_enemy(u16 nenemy, bool show)    // Toggle visibility of enemy and its 
 
 void anim_enemy(u16 nenemy, u8 newanimation)    // Set enemy animation if different from current
 {
-    kprintf("Enemy %d animation %d\n", nenemy, newanimation);
+    dprintf(2,"Enemy %d animation %d\n", nenemy, newanimation);
     if (obj_enemy[nenemy].obj_character.animation != newanimation) {
         obj_enemy[nenemy].obj_character.animation = newanimation;
         SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);

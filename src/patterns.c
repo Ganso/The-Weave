@@ -50,7 +50,7 @@ static inline bool enemyPatternReady(u8 slot, u8 pslot)
 // ---------------------------------------------------------------------
 void initPlayerPatterns(void)
 {
-    kprintf("Initializing player patterns");
+    dprintf(2,"Initializing player patterns");
 
     // 0) Limpia todos los slots
     for (u8 i = 0; i < MAX_PLAYER_PATTERNS; ++i)
@@ -115,7 +115,7 @@ void initPlayerPatterns(void)
         .icon     = NULL // Will load on demand
     };
 
-    kprintf("Player patterns ready: E=%d H=%d O=%d S=%d",
+    dprintf(2,"Player patterns ready: E=%d H=%d O=%d S=%d",
             playerPatterns[PATTERN_THUNDER].enabled,
             playerPatterns[PATTERN_HIDE].enabled,
             playerPatterns[PATTERN_OPEN].enabled,
@@ -184,6 +184,8 @@ void patternPlayerAddNote(u8 noteCode)
 {
     if (noteCode < NOTE_MI || noteCode > NOTE_DO) return;
 
+    dprintf(2,"Player pressed note %d", noteCode);
+
     // reset and increment context counters
     combatContext.noteTimer   = 0;
     combatContext.playerNotes = (combatContext.playerNotes < 4)
@@ -191,9 +193,7 @@ void patternPlayerAddNote(u8 noteCode)
                               : 4;
 
     // play SFX
-    playPlayerNote(noteCode);
-
-    // PENDING - display HUD icon for player's note
+    playPlayerNote(noteCode); // play the sound
 }
 
 

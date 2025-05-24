@@ -2,8 +2,6 @@
 #define _GLOBALS_H_
 
 
-#define DEBUG_ON
-
 // Create version using compile date
 #define GAMEVERSION ({ static char version[20]; sprintf(version, "v%c%c%c%c%c%c%c", (__DATE__[4] == ' ' ? '0' : __DATE__[4]), __DATE__[5], __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[9], __DATE__[10]); version; })
 
@@ -11,10 +9,15 @@
 #include <genesis.h>
 
 // Debug
-#ifdef DEBUG_ON
-#include "KDebug.h"
-#include "tools.h"
-#include "timer.h"
+#define DEBUG_LEVEL 3  // 0: no debug, 1: only errors, 2: debug messages, 3: verbose debug messages
+
+#define dprintf(level, ...) ((void)0)
+#if DEBUG_LEVEL > 0
+  #undef dprintf
+  #include "KDebug.h"
+  #include "tools.h"
+  #include "timer.h"
+  #define dprintf(level, ...) do { if ((level) <= DEBUG_LEVEL) kprintf(__VA_ARGS__); } while (0)
 #endif
 
 // Resources

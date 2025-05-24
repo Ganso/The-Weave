@@ -34,12 +34,14 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
     const SpriteDefinition *nsprite = NULL;
     const SpriteDefinition *nsprite_shadow = NULL;
 
+    dprintf(2,"Initializing character %d\n", nchar);
+
     if (obj_character[nchar].sd == NULL) {
         switch (nchar)
         {
         case CHR_linus:
-            // if (player_has_rod) nsprite = &linus_sprite;
-            // else nsprite = &linus_norod_sprite;
+            if (player_has_rod) nsprite = &linus_sprite;
+            else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
             break;
         case CHR_clio:
@@ -75,6 +77,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         obj_character[nchar].active=true;
     }
 
+    dprintf(2,"Adding sprite for character %d at (%d, %d)\n", nchar, obj_character[nchar].x, obj_character[nchar].y);
     spr_chr[nchar] = SPR_addSpriteSafe(nsprite, obj_character[nchar].x, obj_character[nchar].y, 
                                        TILE_ATTR(npal, obj_character[nchar].priority, false, obj_character[nchar].flipH));
 
@@ -84,6 +87,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
 
     // Initialize shadow if character drops one
     if (obj_character[nchar].drops_shadow) {
+        dprintf(2,"Adding shadow sprite for character %d\n", nchar);
         spr_chr_shadow[nchar] = SPR_addSpriteSafe(nsprite_shadow, 0, 0, TILE_ATTR(PAL1, TRUE, FALSE, FALSE));
         
         if (spr_chr_shadow[nchar] != NULL) {

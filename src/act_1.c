@@ -5,7 +5,6 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     u16 paltmp[64];
 
     // Initialize level
-//    new_level(&bedroom_bg_tile, &bedroom_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
     new_level(&bedroom_bg_tile, &bedroom_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
     set_limits(20,145,278,176);
 
@@ -213,7 +212,7 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     talk_dialog(&dialogs[ACT1_DIALOG2][10]); // (ES) "He leído sus historias|mil veces|¿De cuál hablamos?" - (EN) "I've read his stories|a thousand times|Which one is this?"
     talk_dialog(&dialogs[ACT1_DIALOG2][11]); // (ES) "Una que no encontrarás en|un libro. La de la isla|del gremio de los Tejedores" - (EN) "One you won't find in a book|The one about Weavers|guild island"
     u8 response = choice_dialog(&choices[ACT1_CHOICE1][0]); // (ES) "¿Los Tejedores?" - (EN) "The Weavers?", (ES) "Era mi leyenda favorita" - (EN) "It was my favourite legend", (ES) "¿Qué pasó con ellos?" - (EN) "What happened to them?"
-    kprintf("Response: %d\n",response);
+    dprintf(2,"Response: %d\n",response);
     talk_dialog(&dialogs[ACT1_DIALOG2][12+response]); // Response texts:
     // If response=0: (ES) "Según la leyenda Fueron un gremio capaz de tejer hechizos" - (EN) "According to the legend They were a guild able to weave spells"
     // If response=1: (ES) "Para él no era una leyenda Los Pastores la cantaban como cierta" - (EN) "That was no legend for him Shepherds sang it as a fact"
@@ -252,7 +251,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
     
     // Initialize characters
-    // player_has_rod=true; // Give player the rod
+    player_has_rod=true; // Give player the rod
     init_character(CHR_linus);
     init_character(CHR_clio);
     active_character=CHR_linus;
@@ -281,7 +280,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     player_scroll_active=true;
     movement_active=true;
     interface_active=true;
-    // player_patterns_enabled=true;
+    player_patterns_enabled=true;
     show_or_hide_interface(true);
 
     while (offset_BGA<230) {

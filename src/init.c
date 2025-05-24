@@ -2,7 +2,7 @@
 
 void initialize(bool first_time)    // Initialize system hardware, sprites, controllers and global game state
 {
-    kprintf("Initializing system, first_time=%d\n", first_time);
+    dprintf(2,"Initializing system, first_time=%d\n", first_time);
     u8 i;
 
     // Initialize VPD
@@ -12,11 +12,11 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     Z80_init();
     if (XGM_VERSION==2) {
         Z80_loadDriver(Z80_DRIVER_XGM2, 1);
-        kprintf("XGM2 driver loaded\n");
+        dprintf(2,"XGM2 driver loaded\n");
     }
     else {
         Z80_loadDriver(Z80_DRIVER_XGM, 1);
-        kprintf("XGM driver loaded\n");
+        dprintf(2,"XGM driver loaded\n");
     }
 
     // Initialize sprite Engine
@@ -45,14 +45,14 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     VDP_setWindowVPos(TRUE, 22);
 
     // Initialize palettes
-    kprintf("Loading palettes\n");
+    dprintf(2,"Loading palettes (initialize)\n");
     // PAL0 is the background palette. It's initialized with the background
     PAL_setPalette(PAL1, characters_pal.data, DMA); // Characters palette
     PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
     // PAL2 is the enemies palette. It's initialized with the enemies
 
     // Interface: Face backgrounds
-    kprintf("Loading face backgrounds\n");
+    dprintf(2,"Loading face backgrounds\n");
     spr_face_left = SPR_addSpriteSafe ( &face_left_sprite, 0, 160, TILE_ATTR(PAL1, false, false, true));
     SPR_setVisibility (spr_face_left, HIDDEN);
     spr_face_right = SPR_addSpriteSafe ( &face_right_sprite, 256, 160, TILE_ATTR(PAL1, false, false, true));
@@ -66,12 +66,12 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Patterns & combat context
     if (first_time) {
-        kprintf("Initializing patterns\n");
+        dprintf(2,"Initializing patterns\n");
         initPlayerPatterns();
-        kprintf("Initializing enemy classes\n");
+        dprintf(2,"Initializing enemy classes\n");
         init_enemy_classes();
     }
-    kprintf("Initializing combat context\n");
+    dprintf(2,"Initializing combat context\n");
     combatContext.state          = COMBAT_NO;
     combatContext.frameInState   = 0;
     combatContext.activePattern  = PATTERN_PLAYER_NONE;
@@ -103,7 +103,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 // initialize level and load background
 void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSet *tile_front, const MapDefinition *map_front, Palette new_pal, u16 new_background_width, u8 new_scroll_mode, u8 new_scroll_speed)    // Load and setup a new game level with background layers and scroll settings
 {
-    kprintf("Loading new level: bg_width=%d scroll_mode=%d\n", new_background_width, new_scroll_mode);
+    dprintf(2,"Loading new level: bg_width=%d scroll_mode=%d\n", new_background_width, new_scroll_mode);
     
     initialize(false); // Reset hardware when starting each level, but don't change only first-time options
     
@@ -112,7 +112,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     
     // Tile_bg and Map_bg are the background layer. They can be NULL
     if ((tile_bg!=NULL) && (map_bg!=NULL)) {
-        kprintf("Loading background tileset, tiles=%d\n", tile_bg->numTile);
+        dprintf(2,"Loading background tileset, tiles=%d\n", tile_bg->numTile);
         VDP_loadTileSet(tile_bg, tile_ind, CPU);
         background_BGB = MAP_create(map_bg, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
         tile_ind += tile_bg->numTile;
@@ -120,13 +120,13 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     else background_BGB=NULL;
 
     // Tile_front and Map_front are the foreground layer. Thay can't be NULL.
-    kprintf("Loading foreground tileset, tiles=%d\n", tile_front->numTile);
+    dprintf(2,"Loading foreground tileset, tiles=%d\n", tile_front->numTile);
     VDP_loadTileSet(tile_front, tile_ind, CPU);
     background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
     tile_ind += tile_front->numTile;
 
     // Set palettes after loading all tiles to avoid flicker
-    kprintf("Loading palettes\n");
+    dprintf(2,"Loading palettes (new level)\n");
     PAL_setPalette(PAL0, new_pal.data, DMA);
     PAL_setPalette(PAL1, characters_pal.data, DMA);
     PAL_setPalette(PAL2, interface_pal.data, DMA);
@@ -146,12 +146,13 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     player_scroll_active=false; // You can't scroll the screen by default
     movement_active=false; // You can't move by default
 
+    dprintf(2,"everthing initialized, background scroll mode=%d, scroll speed=%d\n", background_scroll_mode, scroll_speed);
     update_bg(false);
 }
 
 // Free all resources used by the level
 void end_level() {    // Clean up level resources and reset game state
-    kprintf("Ending level, freeing resources\n");
+    dprintf(2,"Ending level, freeing resources\n");
     
     // Fade out music and screen
     fade_music(SCREEN_FPS);
@@ -168,7 +169,7 @@ void end_level() {    // Clean up level resources and reset game state
     }
 
     // Release active characters
-    kprintf("Releasing active characters\n");
+    dprintf(2,"Releasing active characters\n");
     for (u16 i = 0; i < MAX_CHR; i++) {
         if (obj_character[i].active) {
             release_character(i);
@@ -243,5 +244,5 @@ void end_level() {    // Clean up level resources and reset game state
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x000000));
     VDP_setWindowVPos(TRUE, 22);
 
-    kprintf("Level cleanup complete\n");
+    dprintf(2,"Level cleanup complete\n");
 }
