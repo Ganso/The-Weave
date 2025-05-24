@@ -4,6 +4,8 @@
 
 bool player_has_rod;          /* can physically use patterns?      */
 bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
+u16 current_note_ticks;   /* lifetime of the single note sprite  */
+u8  current_note;         /* NOTE_MI … NOTE_DO or NOTE_NONE      */
 
 // --------------------------------------------------------------------
 // Static player-pattern table
@@ -182,18 +184,29 @@ bool updatePlayerPattern(void)
 // Player presses a note (called from input layer)
 void patternPlayerAddNote(u8 noteCode)
 {
-    if (noteCode < NOTE_MI || noteCode > NOTE_DO) return;
+    if (noteCode < NOTE_MI || noteCode > NOTE_DO) return false;
 
-    dprintf(2,"Player pressed note %d", noteCode);
+    // Reject if the last note was too recent
+    if (combatContext.noteTimer < MIN_TIME_BETWEEN_NOTES) {
+        dprintf(3, "Note %d ignored (debounce)\n", noteCode);
+        return;
+    }
 
-    // reset and increment context counters
-    combatContext.noteTimer   = 0;
-    combatContext.playerNotes = (combatContext.playerNotes < 4)
-                              ? combatContext.playerNotes + 1
-                              : 4;
+    combatContext.noteTimer   = 0; // restart gap timer
+    combatContext.playerNotes = min(combatContext.playerNotes + 1, 4);
 
-    // play SFX
-    playPlayerNote(noteCode); // play the sound
+    // Hide previous HUD note (if any)
+    if (current_note != NOTE_NONE) show_note(current_note, false);
+
+    // Show new HUD note & reset its lifetime
+    show_note(noteCode, true);
+    current_note       = noteCode;
+    current_note_ticks = 0;
+
+    // Play the note sound
+    playPlayerNote(noteCode); 
+
+    dprintf(2, "Note %d accepted (count=%d)\n", noteCode, combatContext.playerNotes);
 }
 
 

@@ -21,7 +21,10 @@ void next_frame(bool interactive)    // Process next frame with optional interac
 {
     if (interactive==true) {
         // Check controller
-        if (movement_active==true) joy_check();
+        if (movement_active==true) {
+            joy_check();
+            if (player_patterns_enabled) check_pattern_status();
+        }
 
         // Active haracter state related actions 
         // check_active_character_state();
@@ -53,7 +56,8 @@ void next_frame(bool interactive)    // Process next frame with optional interac
     SYS_doVBlankProcess();
 }
 
-u16 calc_ticks(u16 milliseconds)    // Convert milliseconds to system ticks based on screen refresh rate
+// Convert milliseconds to system ticks based on screen refresh rate
+u16 calc_ticks(u16 milliseconds)    
 {
     if (SCREEN_FPS == 50) {
         // 50 FPS: 1 tick ≈ 20 ms
