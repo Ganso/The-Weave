@@ -8,6 +8,8 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
 {
     u8 x_size, y_size;
 
+    dprintf(2,"Initializing item %d\n", nitem);
+
     if (spritedef == NULL) {
         return;
     }
@@ -68,7 +70,7 @@ void display_item_if_visible(u16 nitem)    // Show/hide item based on screen vis
     if (should_be_visible) {
         // Item should be visible
         if (spr_item[nitem] == NULL) {
-            kprintf("Item %d now visible. LOADING.", nitem);
+            dprintf(2,"Item %d now visible. LOADING.", nitem);
             spr_item[nitem] = SPR_addSpriteSafe(obj_item[nitem].entity.sd, 
                                                x, 
                                                obj_item[nitem].entity.y, 
@@ -91,7 +93,7 @@ void display_item_if_visible(u16 nitem)    // Show/hide item based on screen vis
     } else {
         // Item should be invisible
         if (spr_item[nitem] != NULL) {
-            kprintf("Item %d now invisible. UNLOADING.", nitem);
+            dprintf(2,"Item %d now invisible. UNLOADING.", nitem);
             SPR_setPosition(spr_item[nitem], -128, -128);
             SPR_setVisibility(spr_item[nitem], HIDDEN);
             SPR_update();  // Ensure sprite is moved before release

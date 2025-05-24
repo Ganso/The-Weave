@@ -327,7 +327,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
 
     next_frame(false);
 
-    kprintf("Choice: %d\n", current_option);
+    dprintf(2,"Choice: %d\n", current_option);
     return current_option;
 }
 

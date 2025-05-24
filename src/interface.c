@@ -265,7 +265,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
     for (npattern=0;npattern<MAX_PLAYER_PATTERNS;npattern++) {
         if (playerPatterns[npattern].enabled==true) {
             #ifdef DEBUG_ON
-             kprintf("Patron %d activo", npattern);
+             dprintf(2,"Patron %d activo", npattern);
             #endif
             num_active_patterns++;
             if (selected_pattern==254) selected_pattern=npattern;

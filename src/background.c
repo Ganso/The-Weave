@@ -17,7 +17,7 @@ void update_bg(bool player_moved)    // Update background scroll positions based
 {
     // Front background layer
     if (player_moved) MAP_scrollTo(background_BGA, offset_BGA, 0); // Scroll background A
-
+    
     // Back background layer
     if (background_BGB!=NULL) {
         if (background_scroll_mode==BG_SCRL_USER_LEFT || background_scroll_mode==BG_SCRL_USER_RIGHT) {
