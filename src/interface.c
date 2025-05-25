@@ -39,7 +39,7 @@ void show_or_hide_interface(bool visible)    // Toggle visibility of game's bott
 void show_note(u8 nnote, bool visible)    // Display or hide a musical note (1-6:MI-DO) with its rod and pentagram sprites
 {
     Sprite **pentSpr, **rodSpr;
-    SpriteDefinition *pentDef, *rodDef;
+    const SpriteDefinition *pentDef, *rodDef;
     u16 pentX, rodX;
 
     switch (nnote)
@@ -66,12 +66,24 @@ void show_note(u8 nnote, bool visible)    // Display or hide a musical note (1-6
 
     if (visible) // Show the note and its rod/pentagram sprites
     {
-        if (*rodSpr == NULL) *rodSpr = SPR_addSpriteSafe(rodDef, rodX, 212, TILE_ATTR(PAL2,false,false,false));
-        if (*pentSpr == NULL && player_patterns_enabled) *pentSpr = SPR_addSpriteSafe(pentDef, pentX, 180, TILE_ATTR(PAL2,false,false,false));
+        if (*rodSpr == NULL)
+            *rodSpr = SPR_addSpriteSafe(rodDef, rodX, 212,
+                                         TILE_ATTR(PAL2,false,false,false));
+
+        if (*pentSpr == NULL && player_patterns_enabled)
+            *pentSpr = SPR_addSpriteSafe(pentDef, pentX, 180,
+                                         TILE_ATTR(PAL2,false,false,false));
     }
     else { // Hide the note and its rod/pentagram sprites
-        if (*rodSpr) SPR_releaseSprite(*rodSpr);  *rodSpr  = NULL;
-        if (*pentSpr && player_patterns_enabled) SPR_releaseSprite(*pentSpr); *pentSpr = NULL;
+        if (*rodSpr)
+        {   SPR_releaseSprite(*rodSpr);
+            *rodSpr = NULL;
+        }
+
+        if (*pentSpr && player_patterns_enabled)
+        {   SPR_releaseSprite(*pentSpr);
+            *pentSpr = NULL;
+        }
     }
 
     SPR_update();
@@ -388,25 +400,19 @@ void check_pattern_status(void)
 {
     combatContext.noteTimer++;
 
-    // Check if the current pattern is expired
-    if (combatContext.playerNotes && combatContext.noteTimer > calc_ticks(MAX_PATTERN_WAIT_TIME))
-    {
-        dprintf(1, "Pattern aborted after %u ticks of silence\n", combatContext.noteTimer);
+    // Abort the pattern if the player has not played any notes for too long
+    if (combatContext.playerNotes && combatContext.noteTimer > calc_ticks(MAX_PATTERN_WAIT_TIME)) {
+        dprintf(1,"Pattern aborted after %u ticks\n", combatContext.noteTimer);
 
-        combatContext.playerNotes = 0;
-        combatContext.noteTimer   = 0;
-        hide_rod_icons();
-        hide_pentagram_icons();
+        reset_note_queue();
+        if (current_note != NOTE_NONE)
+            show_note(current_note, false);
+        current_note = NOTE_NONE;
     }
 
-    // HUD-note lifetime
-    if (current_note != NOTE_NONE)
-    {
-        if (++current_note_ticks > calc_ticks(MAX_NOTE_PLAYING_TIME))
-        {
-            dprintf(3, "HUD note %u auto-hidden\n", current_note);
-            show_note(current_note, false);
-            current_note = NOTE_NONE;
-        }
+    // Lifetime of current HUD note
+    if (current_note != NOTE_NONE && ++current_note_ticks > calc_ticks(MAX_NOTE_PLAYING_TIME)) {
+        show_note(current_note, false);
+        current_note = NOTE_NONE;
     }
 }

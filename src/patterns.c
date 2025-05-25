@@ -6,6 +6,7 @@ bool player_has_rod;          /* can physically use patterns?      */
 bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
 u16 current_note_ticks;   /* lifetime of the single note sprite  */
 u8  current_note;         /* NOTE_MI … NOTE_DO or NOTE_NONE      */
+u8  noteQueue[4] = {NOTE_NONE,NOTE_NONE,NOTE_NONE,NOTE_NONE}; // Queue of notes played by the player (up to 4)
 
 // --------------------------------------------------------------------
 // Static player-pattern table
@@ -32,6 +33,7 @@ static inline EnemyPattern* getEnemyPattern(u8 slot, u8 pslot)
 static inline bool playerPatternEnabled(u16 id)
 {
     PlayerPattern* p = getPlayerPattern(id);
+    dprintf(2,"Checking player pattern %d: enabled=%d, canUse=%p", id, p ? p->enabled : 0, p ? p->canUse : NULL);
     return p && p->enabled && (!p->canUse || p->canUse());
 }
 
@@ -182,33 +184,70 @@ bool updatePlayerPattern(void)
 // ---------------------------------------------------------------------
 
 // Player presses a note (called from input layer)
-void patternPlayerAddNote(u8 noteCode)
+bool patternPlayerAddNote(u8 noteCode)
 {
     if (noteCode < NOTE_MI || noteCode > NOTE_DO) return false;
 
     // Reject if the last note was too recent
     if (combatContext.noteTimer < MIN_TIME_BETWEEN_NOTES) {
         dprintf(3, "Note %d ignored (debounce)\n", noteCode);
-        return;
+        return false;
     }
 
-    combatContext.noteTimer   = 0; // restart gap timer
-    combatContext.playerNotes = min(combatContext.playerNotes + 1, 4);
+    // Reject if the player is already playing a note
+    if (current_note != NOTE_NONE) {
+        dprintf(3,"Note %d ignored: previous still playing\n", noteCode);
+        return false;
+    }
 
-    // Hide previous HUD note (if any)
-    if (current_note != NOTE_NONE) show_note(current_note, false);
+    // Restart note timer
+    combatContext.noteTimer   = 0;
 
-    // Show new HUD note & reset its lifetime
+    // Store into queue
+    u8 idx = combatContext.playerNotes;
+    if (idx > 3) idx = 3;
+    noteQueue[idx] = noteCode;
+    combatContext.playerNotes = idx + 1;
+
+    // HUD + Sound
     show_note(noteCode, true);
     current_note       = noteCode;
     current_note_ticks = 0;
+    playPlayerNote(noteCode);
 
-    // Play the note sound
-    playPlayerNote(noteCode); 
+    dprintf(2,"Note %d queued at pos %d\n", noteCode, idx);
 
-    dprintf(2, "Note %d accepted (count=%d)\n", noteCode, combatContext.playerNotes);
+    // If 4 notes reached → validate pattern
+    if (combatContext.playerNotes == 4) {
+            bool rev;
+            u16 id = validatePattern(noteQueue, &rev);
+
+            dprintf(2,"Pattern validation: id=%d, rev=%d, enabled=%d", id, rev, playerPatternEnabled(id));
+
+            if (id != PATTERN_PLAYER_NONE && playerPatternEnabled(id))
+            {
+                dprintf(1,"Pattern %d recognised (rev=%d)\n", id, rev);
+                reset_note_queue(); // Clear queue
+                combatContext.patternReversed = rev;
+                launchPlayerPattern(id); // Launch the pattern
+            }
+            else
+            {
+                dprintf(1,"Invalid pattern, queue cleared\n");
+                reset_note_queue(); // Just flush notes
+                play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // play invalid sound
+            }
+        }
+
+    return true;
 }
 
+// Reset the note queue and player notes count
+void reset_note_queue(void)
+{
+    for (u8 i=0;i<4;i++) noteQueue[i] = NOTE_NONE;
+    combatContext.playerNotes = 0;
+}
 
 // ---------------------------------------------------------------------
 // Enemy-side: Initialisation
@@ -319,11 +358,13 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
     for (u8 i = 0; i < PATTERN_PLAYER_COUNT; ++i)
     {
         PlayerPattern* p = &playerPatterns[i];
+        dprintf(2,"Validating pattern %d. Queue: %d %d %d %d - Pattern: %d %d %d %d", i, notes[0], notes[1], notes[2], notes[3], p->notes[0], p->notes[1], p->notes[2], p->notes[3]);
 
         // direct order
         if (notes[0]==p->notes[0] && notes[1]==p->notes[1] &&
             notes[2]==p->notes[2] && notes[3]==p->notes[3])
         {
+            dprintf(2,"Pattern %d recognised (direct order)", p->id);
             if (reversed) *reversed = false;
             return p->id;
         }
@@ -332,6 +373,7 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
         if (notes[0]==p->notes[3] && notes[1]==p->notes[2] &&
             notes[2]==p->notes[1] && notes[3]==p->notes[0])
         {
+            dprintf(2,"Pattern %d recognised (reversed order)", p->id);
             if (reversed) *reversed = true;
             return p->id;
         }
