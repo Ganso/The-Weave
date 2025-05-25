@@ -42,14 +42,14 @@
 // Timing and delays
 #define MAX_NOTE_PLAYING_TIME  500  // Note playing time in milliseconds
 #define MAX_PATTERN_WAIT_TIME 2000   // Time to wait for a next note before cancelling the pattern in milliseconds
-#define MIN_TIME_BETWEEN_NOTES 5     // Minimum ticks between consecutive notes to prevent too rapid input
+#define MIN_TIME_BETWEEN_NOTES 10     // Minimum ticks between consecutive notes to prevent too rapid input
 
 // Globals
 extern bool player_has_rod;          /* can physically use patterns?      */
 extern bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
 extern u16 current_note_ticks;   /* lifetime of the single note sprite  */
 extern u8  current_note;         /* NOTE_MI … NOTE_DO or NOTE_NONE      */
-
+extern u8  noteQueue[4];    // Queue of notes played by the player (up to 4)
 
 typedef struct
 {
@@ -100,7 +100,8 @@ void initPlayerPatterns(void);              // Initialize graphics, sounds and p
 void launchPlayerPattern(u16 patternId);    // Activate pattern
 bool updatePlayerPattern(void);             // Called every frame (true = finished)
 void activate_spell(u16 npattern);          // Play spell animation and sound
-void patternPlayerAddNote(u8 noteCode);     // player presses a note
+bool patternPlayerAddNote(u8 noteCode);     // player presses a note
+void reset_note_queue(void);                // Reset the note queue and player notes count
 
 
 // Enemy side
