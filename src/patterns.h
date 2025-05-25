@@ -103,7 +103,6 @@ void activate_spell(u16 npattern);          // Play spell animation and sound
 bool patternPlayerAddNote(u8 noteCode);     // player presses a note
 void reset_note_queue(void);                // Reset the note queue and player notes count
 
-
 // Enemy side
 void launchEnemyPattern(u8 enemySlot, u16 patternSlot);
 bool updateEnemyPattern(u8 enemySlot);      // Called every frame (true = finished)
