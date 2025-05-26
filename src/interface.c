@@ -408,12 +408,15 @@ void check_pattern_status(void)
         if (current_note != NOTE_NONE)
             show_note(current_note, false);
         current_note = NOTE_NONE;
+        obj_character[active_character].state = STATE_IDLE; 
+        play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // play invalid sound
     }
 
     // Lifetime of current HUD note
     if (current_note != NOTE_NONE && ++current_note_ticks > calc_ticks(MAX_NOTE_PLAYING_TIME)) {
         show_note(current_note, false);
         current_note = NOTE_NONE;
+        obj_character[active_character].state = STATE_IDLE; 
     }
 
     // Update combat / pattern effects

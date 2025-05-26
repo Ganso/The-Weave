@@ -76,7 +76,8 @@ void initPlayerPatterns(void)
         .id       = PATTERN_THUNDER,
         .enabled  = true,
         .notes    = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
-        .baseDuration = 60,
+        .baseDuration = SCREEN_FPS * 4, // 4 seconds
+        // .baseDuration = 120, // 2 seconds (for testing)
         .canUse   = playerThunderCanUse,
         .launch   = playerThunderLaunch,
         .update   = playerThunderUpdate,
@@ -88,7 +89,7 @@ void initPlayerPatterns(void)
         .id       = PATTERN_HIDE,
         .enabled  = true,
         .notes    = { NOTE_FA, NOTE_SI, NOTE_SOL, NOTE_DO }, // 2-5-3-6
-        .baseDuration = 90,
+        .baseDuration = SCREEN_FPS * 4, // 4 seconds
         .canUse   = playerHideCanUse,
         .launch   = playerHideLaunch,
         .update   = playerHideUpdate,
@@ -152,9 +153,11 @@ void launchPlayerPattern(u16 patternId)
     if (!p || !p->enabled || (p->canUse && !p->canUse()))
         return;
 
+    // We are lanuching a pettern: Set combat and player context
     combatContext.activePattern = patternId;
-    combatContext.effectTimer   = 0;
-    combat_state                = COMBAT_STATE_PLAYER_EFFECT;
+    combatContext.effectTimer  = 0;
+    combat_state = COMBAT_STATE_PLAYER_EFFECT;
+    obj_character[active_character].state = STATE_PATTERN_EFFECT;
 
     if (p->launch) p->launch();
 }
@@ -173,7 +176,9 @@ bool updatePlayerPattern(void)
                   : true;
 
     if (finished) {
-        combat_state = COMBAT_STATE_ENEMY_PLAYING;  // or next phase
+        // Pattern finished, reset state
+        combat_state = COMBAT_STATE_ENEMY_PLAYING;
+        obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
         return true;
     }
     return false;
@@ -224,21 +229,31 @@ bool patternPlayerAddNote(u8 noteCode)
 
             dprintf(2,"Pattern validation: id=%d, rev=%d, enabled=%d", id, rev, playerPatternEnabled(id));
 
-            if (id != PATTERN_PLAYER_NONE && playerPatternEnabled(id))
-            {
-                dprintf(1,"Pattern %d recognised (rev=%d)\n", id, rev);
-                reset_note_queue(); // Clear queue
-                combatContext.patternReversed = rev;
-                launchPlayerPattern(id); // Launch the pattern
+            if (id != PATTERN_PLAYER_NONE) {
+                if (playerPatternEnabled(id)) {
+                    dprintf(1,"Pattern %d recognised (rev=%d)\n", id, rev);
+                    reset_note_queue(); // Clear queue
+                    combatContext.patternReversed = rev;
+                    launchPlayerPattern(id); // Launch the pattern
+                }
+                else { // Valid pattern, but not enabled
+                    dprintf(1,"Pattern %d recognised but not enabled\n", id);
+                    reset_note_queue(); // Clear queue
+                    play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // Play invalid sound
+                    show_or_hide_interface(false); // Hide interface
+                    talk_dialog(&dialogs[SYSTEM_DIALOG][0]);
+                    show_or_hide_interface(true); // Show interface again
+                }
             }
             else
             {
                 dprintf(1,"Invalid pattern, queue cleared\n");
-                reset_note_queue(); // Just flush notes
-                play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // play invalid sound
+                reset_note_queue(); // Clear queue
+                play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // Play invalid sound
             }
         }
 
+    obj_character[active_character].state = STATE_PLAYING_NOTE; // Set character state to playing note
     return true;
 }
 
@@ -247,6 +262,10 @@ void reset_note_queue(void)
 {
     for (u8 i=0;i<4;i++) noteQueue[i] = NOTE_NONE;
     combatContext.playerNotes = 0;
+
+    // If  we were in PLAYING_NOTE, return to IDLE
+    if (obj_character[active_character].state == STATE_PLAYING_NOTE)
+        obj_character[active_character].state = STATE_IDLE;
 }
 
 // ---------------------------------------------------------------------
