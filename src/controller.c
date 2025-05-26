@@ -153,8 +153,12 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
 
 void update_character_animation(void)    // Set appropriate animation based on character state
 {
-    // Don't change animation if we're in PATTERN_EFFECT with HIDE
-    if (obj_character[active_character].state == STATE_PATTERN_EFFECT && combatContext.activePattern == PATTERN_HIDE) {
+
+    // If there's an active pattern in combat state, play magic animation even if the character is not in PATTERN_EFFECT state
+    if (combat_state == COMBAT_STATE_PLAYER_EFFECT) {
+        if (obj_character[active_character].animation != ANIM_MAGIC) {
+            anim_character(active_character, ANIM_MAGIC);
+        }
         return;
     }
 

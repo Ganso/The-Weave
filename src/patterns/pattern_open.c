@@ -10,7 +10,7 @@ bool playerOpenUpdate(void)
 {
     const u16 duration = playerPatterns[PATTERN_OPEN].baseDuration;
 
-    if (++combatContext.effectTimer >= duration)
+    if (combatContext.effectTimer >= duration)
         return true;        // finished
     return false;           // keep running
 }

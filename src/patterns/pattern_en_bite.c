@@ -11,7 +11,7 @@ bool enemyBiteUpdate(u8 enemyId)
 {
     const u16 duration = enemyPatterns[enemyId][0].baseDuration;
 
-    if (++combatContext.effectTimer >= duration)
+    if (combatContext.effectTimer >= duration)
         return true;     // finished
     return false;        // keep running
 }
