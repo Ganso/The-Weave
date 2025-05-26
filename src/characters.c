@@ -377,3 +377,58 @@ void reset_character_animations()
         }
     }
 }
+
+// Update the character's animation based on its current state
+void update_character_animations(void) {
+
+    for (u16 chr = 0; chr < MAX_CHR; chr++) {
+        if (!obj_character[chr].active) continue;
+
+        // If there's an active pattern in combat state, play magic animation
+        // even if the character is not in PATTERN_EFFECT state (solo protagonista)
+        if (chr == active_character &&
+            combat_state == COMBAT_STATE_PLAYER_EFFECT)
+        {
+            if (obj_character[chr].animation != ANIM_MAGIC) {
+                anim_character(chr, ANIM_MAGIC);
+            }
+            continue;   // Skip further checks for this character
+        }
+
+        switch (obj_character[chr].state) {
+            case STATE_WALKING:
+                if (obj_character[chr].animation != ANIM_WALK) {
+                    obj_character[chr].animation = ANIM_WALK;
+                    update_character(chr);
+                }
+                break;
+            case STATE_IDLE:
+                if (obj_character[chr].animation != ANIM_IDLE &&
+                    (
+                        SPR_isAnimationDone(spr_chr[chr]) ||
+                        obj_character[chr].animation == ANIM_WALK
+                    )) {
+                    anim_character(chr, ANIM_IDLE); // Let any animation finish before setting to idle (except WALKING)
+                }
+                break;
+            case STATE_PLAYING_NOTE:
+                if (obj_character[chr].animation != ANIM_ACTION) {
+                    anim_character(chr, ANIM_ACTION);
+                }
+                break;
+            case STATE_PATTERN_EFFECT:
+                if (obj_character[chr].animation != ANIM_MAGIC) {
+                    anim_character(chr, ANIM_MAGIC);
+                }
+                break;
+            case STATE_PATTERN_EFFECT_FINISH:
+                if (obj_character[chr].animation != ANIM_IDLE) {
+                    anim_character(chr, ANIM_IDLE);
+                }
+                obj_character[chr].state = STATE_IDLE;
+                break;
+            default:
+                break;
+        }
+    }
+}

@@ -85,11 +85,11 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
         case 3: // Cabinet
             talk_dialog(&dialogs[ACT1_DIALOG4][6]); // (ES) "Esta es la nana que me|cantaban cada noche" - (EN) "That's the lullaby they used|to sing to me every night"
             pending_item_interaction=ITEM_NONE;
-            // if (obj_pattern[PTRN_SLEEP].active==false) {
-            //     activate_spell(PTRN_SLEEP);
-            //     talk_dialog(&dialogs[ACT1_DIALOG4][7]); // (ES) "Has aprendido|tu primer patrón" - (EN) "You have learned|your first pattern"
-            //     talk_dialog(&dialogs[ACT1_DIALOG4][8]); // (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
-            // }
+            if (item_interacted[3]==false) { // If not already interacted
+                activate_spell(PATTERN_SLEEP); // Activate sleep pattern
+                talk_dialog(&dialogs[ACT1_DIALOG4][7]); // (ES) "Has aprendido|tu primer patrón" - (EN) "You have learned|your first pattern"
+                talk_dialog(&dialogs[ACT1_DIALOG4][8]); // (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
+             }
             item_interacted[3]=true;
             break;
         default:
@@ -260,18 +260,18 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     follow_active_character(CHR_clio, true, 2);
 
     // Initialize spells
-    // obj_pattern[PTRN_ELECTRIC].active=true;
-    // obj_pattern[PTRN_HIDE].active=true;
-    // obj_pattern[PTRN_OPEN].active=true;
-    // obj_pattern[PTRN_SLEEP].active=true;
+    playerPatterns[PATTERN_THUNDER].enabled = true;
+    playerPatterns[PATTERN_HIDE   ].enabled = true;
+    playerPatterns[PATTERN_OPEN   ].enabled = true;
+    playerPatterns[PATTERN_SLEEP  ].enabled = true;
 
     // Dialog
     move_character(CHR_linus, 30, 154);
-    //talk_dialog(&dialogs[ACT1_DIALOG3][0]); // (ES) "Algún tiempo después" - (EN) "Some time later"
-    //talk_dialog(&dialogs[ACT1_DIALOG3][1]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
-    ////talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
-    ////talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
-    //talk_dialog(&dialogs[ACT1_DIALOG3][13]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
+    talk_dialog(&dialogs[ACT1_DIALOG3][0]); // (ES) "Algún tiempo después" - (EN) "Some time later"
+    talk_dialog(&dialogs[ACT1_DIALOG3][1]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
+    talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
+    talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
+    talk_dialog(&dialogs[ACT1_DIALOG3][13]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
 
     // Fade to day palette
     PAL_fadeTo(0, 15, forest_pal.data, SCREEN_FPS, false);

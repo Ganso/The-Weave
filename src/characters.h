@@ -52,5 +52,6 @@ void update_character_shadow(u16 nchar); // Update shadow position for a charact
 void follow_active_character(u16 nchar, bool follow, u8 follow_speed); // Follow (or unfollow active character)
 void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
 void reset_character_animations(void); // Reset all character animations to idle
+void update_character_animations(void); //Update the character's animation based on its current state
 
 #endif

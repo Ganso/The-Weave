@@ -62,7 +62,7 @@ void handle_movement(u16 joy_value)    // Process directional inputs and update 
     } else if (obj_character[active_character].state == STATE_WALKING) {
         obj_character[active_character].state = STATE_IDLE;
     }
-    update_character_animation();
+    update_character_animations();
 }
 
 void handle_character_movement(s16 dx, s16 dy)    // Update character position with collision and screen boundary checks
@@ -148,54 +148,6 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     // Update character sprite position if any movement occurred
     if (position_updated) {
         update_character(active_character);
-    }
-}
-
-void update_character_animation(void)    // Set appropriate animation based on character state
-{
-
-    // If there's an active pattern in combat state, play magic animation even if the character is not in PATTERN_EFFECT state
-    if (combat_state == COMBAT_STATE_PLAYER_EFFECT) {
-        if (obj_character[active_character].animation != ANIM_MAGIC) {
-            anim_character(active_character, ANIM_MAGIC);
-        }
-        return;
-    }
-
-    switch (obj_character[active_character].state) {
-        case STATE_WALKING:
-            if (obj_character[active_character].animation != ANIM_WALK) {
-                obj_character[active_character].animation = ANIM_WALK;
-                update_character(active_character);
-            }
-            break;
-        case STATE_IDLE:
-            if (obj_character[active_character].animation != ANIM_IDLE &&
-                (
-                    SPR_isAnimationDone(spr_chr[active_character]) ||
-                    obj_character[active_character].animation == ANIM_WALK
-                )) {
-                anim_character(active_character, ANIM_IDLE); // Let any animation finish before setting to idle (except WALKING)
-            }
-            break;
-        case STATE_PLAYING_NOTE:
-            if (obj_character[active_character].animation != ANIM_ACTION) {
-                anim_character(active_character, ANIM_ACTION);
-            }
-            break;
-        case STATE_PATTERN_EFFECT:
-            if (obj_character[active_character].animation != ANIM_MAGIC) {
-                anim_character(active_character, ANIM_MAGIC);
-            }
-            break;
-        case STATE_PATTERN_EFFECT_FINISH:
-            if (obj_character[active_character].animation != ANIM_IDLE) {
-                anim_character(active_character, ANIM_IDLE);
-            }
-            obj_character[active_character].state = STATE_IDLE;
-            break;
-        default:
-            break;
     }
 }
 
