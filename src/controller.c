@@ -166,8 +166,12 @@ void update_character_animation(void)    // Set appropriate animation based on c
             }
             break;
         case STATE_IDLE:
-            if (obj_character[active_character].animation != ANIM_IDLE) {
-                anim_character(active_character, ANIM_IDLE);
+            if (obj_character[active_character].animation != ANIM_IDLE &&
+                (
+                    SPR_isAnimationDone(spr_chr[active_character]) ||
+                    obj_character[active_character].animation == ANIM_WALK
+                )) {
+                anim_character(active_character, ANIM_IDLE); // Let any animation finish before setting to idle (except WALKING)
             }
             break;
         case STATE_PLAYING_NOTE:
@@ -193,9 +197,10 @@ void update_character_animation(void)    // Set appropriate animation based on c
 
 void handle_action_buttons(u16 joy_value)    // Process action buttons for item interaction and musical notes
 {
-    // Only allow item interaction and note playing in IDLE or WALKING states
+    // Only allow item interaction and note playing in IDLE, WALKING or PLAYING_NOTE states
     if (obj_character[active_character].state != STATE_IDLE &&
-        obj_character[active_character].state != STATE_WALKING) {
+        obj_character[active_character].state != STATE_WALKING &&
+        obj_character[active_character].state != STATE_PLAYING_NOTE) {
             dprintf(2,"  - Skipping action buttons: character state is %d", obj_character[active_character].state);
         return;
     }

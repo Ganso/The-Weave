@@ -210,7 +210,7 @@ void look_left(u16 nchar, bool direction_right)    // Set character sprite horiz
 void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with walking animation and direction update
 {
     show_character(nchar, true);
-    anim_character(nchar, ANIM_WALK);
+    obj_character[nchar].state=STATE_WALKING;
 
     // Look in the appropriate direction
     s16 dx = newx - obj_character[nchar].x;
@@ -221,7 +221,7 @@ void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with wal
     }
 
     move_entity(&obj_character[nchar], spr_chr[nchar], newx, newy);
-    anim_character(nchar, ANIM_IDLE);
+    obj_character[nchar].state=STATE_IDLE; // Set state to idle after moving
 }
 
 void move_character_instant(u16 nchar,s16 x,s16 y)    // Set character position immediately without animation
