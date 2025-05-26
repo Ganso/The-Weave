@@ -153,11 +153,12 @@ void launchPlayerPattern(u16 patternId)
     if (!p || !p->enabled || (p->canUse && !p->canUse()))
         return;
 
-    // We are lanuching a pettern: Set combat and player context
+    // We are lanuching a pattern: Set combat and player context
     combatContext.activePattern = patternId;
     combatContext.effectTimer  = 0;
     combat_state = COMBAT_STATE_PLAYER_EFFECT;
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
+    dprintf(2,"Launching player pattern %d", patternId);
 
     if (p->launch) p->launch();
 }
@@ -169,6 +170,8 @@ bool updatePlayerPattern(void)
 
     PlayerPattern* p = getPlayerPattern(combatContext.activePattern);
     if (!p) return true;                   // safety
+
+    combatContext.effectTimer++;
 
     // If there's no update callback, we finish immediately
     bool finished = (p->update)
@@ -253,7 +256,11 @@ bool patternPlayerAddNote(u8 noteCode)
             }
         }
 
-    obj_character[active_character].state = STATE_PLAYING_NOTE; // Set character state to playing note
+    if (obj_character[active_character].state != STATE_PATTERN_EFFECT &&
+        obj_character[active_character].state != STATE_PATTERN_EFFECT_FINISH) {
+            obj_character[active_character].state = STATE_PLAYING_NOTE; // Set character state to playing note
+    }
+        
     return true;
 }
 

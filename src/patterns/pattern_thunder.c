@@ -32,7 +32,7 @@ bool playerThunderUpdate(void)
     PAL_setColor(PAL0_COL4, flashColor);
 
     // Advance timer and test end-of-effect                          
-    if (++combatContext.effectTimer >= duration)
+    if (combatContext.effectTimer >= duration)
     {
         // Restore CRAM entry exactly as it was before the spell     
         PAL_setColor(PAL0_COL4, savedColor); 
