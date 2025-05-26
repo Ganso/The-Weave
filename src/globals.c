@@ -46,7 +46,7 @@ void next_frame(bool interactive)    // Process next frame with optional interac
     check_items_visibility();
 
     // Sprites related actions
-    update_character_animation();
+    update_character_animations();
     update_sprites_depth();
     SPR_update();
 

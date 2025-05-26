@@ -74,7 +74,7 @@ void initPlayerPatterns(void)
     // 1) Electric
     playerPatterns[PATTERN_THUNDER] = (PlayerPattern){
         .id       = PATTERN_THUNDER,
-        .enabled  = true,
+        .enabled  = false,
         .notes    = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
         .baseDuration = SCREEN_FPS * 4, // 4 seconds
         // .baseDuration = 120, // 2 seconds (for testing)
@@ -87,7 +87,7 @@ void initPlayerPatterns(void)
     // 2) Hide
     playerPatterns[PATTERN_HIDE] = (PlayerPattern){
         .id       = PATTERN_HIDE,
-        .enabled  = true,
+        .enabled  = false,
         .notes    = { NOTE_FA, NOTE_SI, NOTE_SOL, NOTE_DO }, // 2-5-3-6
         .baseDuration = SCREEN_FPS * 4, // 4 seconds
         .canUse   = playerHideCanUse,
@@ -99,7 +99,7 @@ void initPlayerPatterns(void)
     // 3) Open
     playerPatterns[PATTERN_OPEN] = (PlayerPattern){
         .id       = PATTERN_OPEN,
-        .enabled  = true,
+        .enabled  = false,
         .notes    = { NOTE_FA, NOTE_SOL, NOTE_SOL, NOTE_FA }, // 2-3-3-2
         .baseDuration = 45,
         .canUse   = playerOpenCanUse,
@@ -111,7 +111,7 @@ void initPlayerPatterns(void)
     // 4) Sleep
     playerPatterns[PATTERN_SLEEP] = (PlayerPattern){
         .id       = PATTERN_SLEEP,
-        .enabled  = true,
+        .enabled  = false,
         .notes    = { NOTE_FA, NOTE_MI, NOTE_DO, NOTE_LA }, // 2-1-6-4
         .baseDuration = 75,
         .canUse   = playerSleepCanUse,
@@ -137,11 +137,19 @@ void activate_spell(u16 patternId)
     if (!p || p->enabled) return;            // already unlocked
 
     // simple feedback: play jingle & flash icon
-    playPlayerPatternSound(patternId);       // sound layer only
-
-    // PENDING - showPatternUnlockIcon(patternId);
-
+    playPlayerPatternSound(patternId);
+    show_pattern_icon(patternId, true, true);
+    for (u8 i=0; i<4; i++) {
+        show_note(p->notes[i], true);
+        playPlayerNote(p->notes[i]);
+        wait_seconds(1);
+        show_note(p->notes[i], false);
+    }
+    show_pattern_icon(patternId, false, false);
+    
     p->enabled = true;
+
+    dprintf(2, "Pattern %d activated", patternId);
 }
 
 // ---------------------------------------------------------------------
