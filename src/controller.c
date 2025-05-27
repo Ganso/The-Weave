@@ -174,8 +174,8 @@ void handle_action_buttons(u16 joy_value)    // Process action buttons for item 
 
     // Process musical notes if player patterns are enabled and ther's not an active pattern launched
     if (player_patterns_enabled &&
-        combatContext.state != COMBAT_STATE_PLAYER_PLAYING &&
-        combatContext.state != COMBAT_STATE_PLAYER_EFFECT)
+        combat_state != COMBAT_STATE_PLAYER_PLAYING &&
+        combat_state != COMBAT_STATE_PLAYER_EFFECT)
     {
         dprintf(3,"  - Checking buttons. Player pressed action button(s): joy_value=0x%04X", joy_value);
         if (joy_value & BUTTON_A) { patternPlayerAddNote(NOTE_MI);  }

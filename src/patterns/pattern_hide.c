@@ -15,8 +15,9 @@ bool playerHideUpdate(void)
     return false;           // keep running
 }
 
-// C
+// Check if the pattern can be used
 bool playerHideCanUse(void)
 {
-    return false;           // never available
+    if (combatContext.patternReversed) return false; // Not allowed in reverse mode
+    return false; // Not available in normal mode anyway by now
 }

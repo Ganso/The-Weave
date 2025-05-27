@@ -15,7 +15,9 @@ bool playerSleepUpdate(void)
     return false;           // keep running
 }
 
+// Check if the pattern can be used
 bool playerSleepCanUse(void)
 {
-    return false;           // never available
+    if (combatContext.patternReversed) return false; // Not allowed in reverse mode
+    return false; // Not available in normal mode anyway by now
 }

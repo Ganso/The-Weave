@@ -9,6 +9,16 @@ static u16 savedColor; // original colour in CRAM before the flash
 // Launch callback
 void playerThunderLaunch(void)
 {
+    // If the player is trying to attack a Ghost, give him a clue and return false
+    if (obj_enemy[combatContext.activeEnemy].class_id == ENEMY_CLS_WEAVERGHOST)
+    {
+        show_or_hide_interface(false); // Hide interface
+        talk_dialog(&dialogs[ACT1_DIALOG3][3]);
+        show_or_hide_interface(true);  // Show interface again
+        cancelPlayerPattern(); // Cancel the pattern
+        return;
+    }
+
     // Save current CRAM entry so we can restore it later            */
     savedColor = PAL_getColor(PAL0_COL4); 
     dprintf(2, "Thunder: initial CRAM colour 0-4 = 0x%04X\n", savedColor);
@@ -42,7 +52,13 @@ bool playerThunderUpdate(void)
     return false;
 }
 
+// Check if the pattern can be used
 bool playerThunderCanUse(void)
 {
-    return true;           // always available
+    // If reversed, only allowed to counter the active enemy thunder
+    if (combatContext.patternReversed)
+        return (combat_state == COMBAT_STATE_ENEMY_EFFECT) &&
+               (combatContext.activePattern == PATTERN_EN_THUNDER);
+
+    return true;   // Normal order is always allowed
 }

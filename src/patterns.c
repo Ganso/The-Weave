@@ -44,6 +44,10 @@ static inline bool enemyPatternReady(u8 slot, u8 pslot)
     return p && p->enabled && (p->rechargeFrames == 0);
 }
 
+// Return true if the 4 notes in the array form a palindrome (so it can be reversed)
+static bool isPalindrome(const u8 n[4])
+{ return (n[0]==n[3]) && (n[1]==n[2]); }
+
 
 // ---------------------------------------------------------------------
 // Player-side: Initialisation
@@ -161,7 +165,9 @@ void launchPlayerPattern(u16 patternId)
     if (!p || !p->enabled || (p->canUse && !p->canUse()))
         return;
 
-    // We are lanuching a pattern: Set combat and player context
+    if (tryCounterSpell()) { reset_note_queue(); return; }
+
+    // We are launching a pattern: Set combat and player context
     combatContext.activePattern = patternId;
     combatContext.effectTimer  = 0;
     combat_state = COMBAT_STATE_PLAYER_EFFECT;
@@ -284,11 +290,24 @@ void reset_note_queue(void)
 }
 
 // ---------------------------------------------------------------------
+// Player-side: Cancel an active pattern
+// ---------------------------------------------------------------------
+
+// Cancel the current player pattern (e.g. if the player wants to stop playing)
+void cancelPlayerPattern(void)
+{
+    combatContext.activePattern = PATTERN_PLAYER_NONE;
+    combat_state = COMBAT_STATE_PLAYER_PLAYING;
+    combatContext.playerNotes = 0;
+    combatContext.patternReversed  = false;
+    reset_note_queue();
+}
+
+// ---------------------------------------------------------------------
 // Enemy-side: Initialisation
 // ---------------------------------------------------------------------
-/*  Rellena la tabla de un enemigo concreto.
- *  Llama a esta función justo al entrar en combate
- *  para cada enemigo activo.                                       */
+
+// Initialize enemy patterns for a specific enemy slot
 void initEnemyPatterns(u8 enemyId)
 {
     /* --- THUNDER / ELECTRIC  (slot 0) --------------------------- */
@@ -407,8 +426,10 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
         if (notes[0]==p->notes[3] && notes[1]==p->notes[2] &&
             notes[2]==p->notes[1] && notes[3]==p->notes[0])
         {
-            dprintf(2,"Pattern %d recognised (reversed order)", p->id);
-            if (reversed) *reversed = true;
+            if (reversed && isPalindrome(p->notes)) {
+                *reversed = true;
+                dprintf(2,"Pattern %d recognised (reversed order)", p->id);
+            }
             return p->id;
         }
     }

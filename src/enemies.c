@@ -118,7 +118,7 @@ void release_enemy(u16 nenemy)    // Free enemy resources and reset related comb
     /* If this enemy was the active one in combat, reset the state */
     if (combatContext.activeEnemy == nenemy) {
         combatContext.activeEnemy = ENEMY_NONE;
-        combatContext.state       = COMBAT_STATE_IDLE;
+        combat_state       = COMBAT_STATE_IDLE;
         combatContext.effectTimer = 0;
     }
 
@@ -224,7 +224,7 @@ void approach_enemies(void)    // Update enemy positions to follow player during
     u16 collision_result;
     bool has_moved;
 
-    if (combatContext.state == COMBAT_STATE_IDLE && combatContext.activePattern != PATTERN_HIDE) { // Only move enemies during combat when the player is not hidden
+    if (combat_state == COMBAT_STATE_IDLE && combatContext.activePattern != PATTERN_HIDE) { // Only move enemies during combat when the player is not hidden
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
             has_moved=false;
             if (obj_enemy[nenemy].obj_character.follows_character == true) { // Check if this enemy type follows characters

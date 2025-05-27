@@ -15,7 +15,9 @@ bool playerOpenUpdate(void)
     return false;           // keep running
 }
 
+// Check if the pattern can be used
 bool playerOpenCanUse(void)
 {
-    return false;           // never available
+    if (combatContext.patternReversed) return false; // Not allowed in reverse mode
+    return false; // Not available in normal mode anyway by now
 }
