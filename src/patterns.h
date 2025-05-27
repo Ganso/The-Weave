@@ -102,11 +102,13 @@ bool updatePlayerPattern(void);             // Called every frame (true = finish
 void activate_spell(u16 npattern);          // Play spell animation and sound
 bool patternPlayerAddNote(u8 noteCode);     // player presses a note
 void reset_note_queue(void);                // Reset the note queue and player notes count
+void cancelPlayerPattern(void); // Cancel the current player pattern (e.g. if the player wants to stop playing)
 
 // Enemy side
 void launchEnemyPattern(u8 enemySlot, u16 patternSlot);
 bool updateEnemyPattern(u8 enemySlot);      // Called every frame (true = finished)
 void patternEnemyAddNote(u8 enemySlot, u8 noteCode); // enemy plays a note
+void initEnemyPatterns(u8 enemyId); // Initialize enemy patterns for a specific enemy slot
 
 // Note validation
 u16 validatePattern(const u8 notes[4], bool* reversed); // Returns PATTERN_PLAYER_NONE if invalid

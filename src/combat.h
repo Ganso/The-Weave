@@ -22,7 +22,6 @@ typedef enum
 extern CombatState combat_state; // Current combat state
 
 typedef struct {
-    CombatState state;        // current combat phase                      
     u16         frameInState; // ++ every frame, reset on state change     
     /* active pattern (either side) -------------------------------------- */
     u16         activePattern;
@@ -36,5 +35,13 @@ typedef struct {
     u8          activeEnemy;  // ENEMY_NONE = none                         
 } CombatContext;
 extern CombatContext combatContext; // Combat context
+
+// Combat functions
+
+bool tryCounterSpell(void); // Try to counter an enemy spell
+void combatInit(void); // Start combat phase
+void combatFinish(void); // Finish combat phase
+void hit_enemy(u8 enemyId, u8 damage); // Hit an enemy
+void hit_player(u8 damage); // Hit the player
 
 #endif

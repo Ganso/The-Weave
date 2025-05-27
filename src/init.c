@@ -72,7 +72,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
         init_enemy_classes();
     }
     dprintf(2,"Initializing combat context\n");
-    combatContext.state          = COMBAT_NO;
+    combat_state          = COMBAT_NO;
     combatContext.frameInState   = 0;
     combatContext.activePattern  = PATTERN_PLAYER_NONE;
     combatContext.effectTimer    = 0;
@@ -199,7 +199,6 @@ void end_level() {    // Clean up level resources and reset game state
 
     // Reset combat context
     combatContext = (CombatContext){
-        .state           = COMBAT_NO,
         .frameInState    = 0,
         .activePattern   = PATTERN_PLAYER_NONE,
         .effectTimer     = 0,
@@ -209,6 +208,7 @@ void end_level() {    // Clean up level resources and reset game state
         .enemyNotes      = 0,
         .activeEnemy     = ENEMY_NONE
     };
+    combat_state = COMBAT_NO;
 
     // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos
 
