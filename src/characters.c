@@ -271,7 +271,7 @@ void follow_active_character(u16 nchar, bool follow, u8 follow_speed)    // Set 
 {
     obj_character[nchar].follows_character=follow;
     obj_character[nchar].follow_speed=follow_speed;
-    obj_character[nchar].state=STATE_FOLLOWING;
+    obj_character[nchar].state=STATE_IDLE;
     show_character(nchar, true);
 }
 
@@ -283,8 +283,12 @@ void approach_characters(void)    // Move NPCs that follow the hero
     bool has_moved;
     u16 distance;
 
+    dprintf(3,"Approaching characters\n");
+
     for (nchar = 0; nchar < MAX_CHR; nchar++)
     {
+        dprintf(3,"Approaching character %d\n", nchar);
+
         // Skip the active character
         if (nchar == active_character) continue;
 
@@ -294,6 +298,10 @@ void approach_characters(void)    // Move NPCs that follow the hero
 
         // Throttle by follow_speed
         if (frame_counter % obj_character[nchar].follow_speed)     continue;
+
+        dprintf(3,"Character %d is following\n", nchar);
+
+        has_moved=false;
 
         // Calculate new position towards the active character (1 px step)
         dx = obj_character[active_character].x -
@@ -311,6 +319,8 @@ void approach_characters(void)    // Move NPCs that follow the hero
         // Distance to the active character if we accept the new position
         distance = char_distance(nchar, newx, newy, active_character);
 
+        dprintf(3,"Character %d distance to active character: %d\n", nchar, distance);
+
         // Should we move?
         // If idle and too far, start walking. If walking, continue until close enough.
         if (  (obj_character[nchar].state == STATE_IDLE   &&
@@ -318,22 +328,15 @@ void approach_characters(void)    // Move NPCs that follow the hero
               (obj_character[nchar].state == STATE_WALKING &&
                distance > MIN_FOLLOW_DISTANCE) )
         {
+            dprintf(3,"Character %d moving to (%d, %d)\n", nchar, newx, newy);
+
             // Update entity position
             obj_character[nchar].x     = newx;
             obj_character[nchar].y     = newy;
             obj_character[nchar].flipH = (dx < 0);
 
-            // Main sprite
-            SPR_setPosition(spr_chr[nchar], newx, newy);
-            SPR_setHFlip   (spr_chr[nchar], dx < 0);
-
-            // Shadow sprite
-            if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar])
-            {
-                s16 sy = newy + obj_character[nchar].collision_y_offset - 4;
-                SPR_setPosition(spr_chr_shadow[nchar], newx, sy);
-                SPR_setHFlip   (spr_chr_shadow[nchar], dx < 0);
-            }
+            // Update sprite position and properties
+            update_character(nchar);
 
             // If we are not already walking, set state to WALKING
             if (obj_character[nchar].state == STATE_IDLE)
