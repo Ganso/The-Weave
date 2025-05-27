@@ -275,87 +275,84 @@ void follow_active_character(u16 nchar, bool follow, u8 follow_speed)    // Set 
     show_character(nchar, true);
 }
 
-void approach_characters(void)    // Update positions of following characters to move toward active character
+void approach_characters(void)    // Move NPCs that follow the hero
 {
     u16 nchar;
     s16 newx, newy;
-    s16 dx, dy;
+    s16 dx,  dy;
     bool has_moved;
     u16 distance;
 
     for (nchar = 0; nchar < MAX_CHR; nchar++)
     {
-        // Skip if this is the active character
-        if (nchar == active_character)
+        // Skip the active character
+        if (nchar == active_character) continue;
+
+        // Only NPCs flagged as followers
+        if (!obj_character[nchar].active ||
+            !obj_character[nchar].follows_character)               continue;
+
+        // Throttle by follow_speed
+        if (frame_counter % obj_character[nchar].follow_speed)     continue;
+
+        // Calculate new position towards the active character (1 px step)
+        dx = obj_character[active_character].x -
+             obj_character[nchar].x;
+        dy = (obj_character[active_character].y +
+              obj_character[active_character].y_size) -
+             (obj_character[nchar].y +
+              obj_character[nchar].y_size);
+
+        newx = obj_character[nchar].x +
+               (dx ? (dx > 0 ? 1 : -1) : 0);
+        newy = obj_character[nchar].y +
+               (dy ? (dy > 0 ? 1 : -1) : 0);
+
+        // Distance to the active character if we accept the new position
+        distance = char_distance(nchar, newx, newy, active_character);
+
+        // Should we move?
+        // If idle and too far, start walking. If walking, continue until close enough.
+        if (  (obj_character[nchar].state == STATE_IDLE   &&
+               distance > MAX_FOLLOW_DISTANCE)            ||
+              (obj_character[nchar].state == STATE_WALKING &&
+               distance > MIN_FOLLOW_DISTANCE) )
         {
-            continue;
+            // Update entity position
+            obj_character[nchar].x     = newx;
+            obj_character[nchar].y     = newy;
+            obj_character[nchar].flipH = (dx < 0);
+
+            // Main sprite
+            SPR_setPosition(spr_chr[nchar], newx, newy);
+            SPR_setHFlip   (spr_chr[nchar], dx < 0);
+
+            // Shadow sprite
+            if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar])
+            {
+                s16 sy = newy + obj_character[nchar].collision_y_offset - 4;
+                SPR_setPosition(spr_chr_shadow[nchar], newx, sy);
+                SPR_setHFlip   (spr_chr_shadow[nchar], dx < 0);
+            }
+
+            // If we are not already walking, set state to WALKING
+            if (obj_character[nchar].state == STATE_IDLE)
+                obj_character[nchar].state = STATE_WALKING;
+
+            has_moved = true;
         }
 
-        has_moved = false;
-        // Check if character is active and in following state
-        if (obj_character[nchar].active && obj_character[nchar].follows_character == true)
+        // If we are close enough or didn't move, set state to IDLE
+        if (distance <= MIN_FOLLOW_DISTANCE || !has_moved)
         {
-            // Delay movement by follow_speed
-            if (frame_counter % obj_character[nchar].follow_speed == 0)
-            {
-                // Calculate direction towards active character
-                dx = obj_character[active_character].x - obj_character[nchar].x;
-                dy = (obj_character[active_character].y + obj_character[active_character].y_size) -
-                     (obj_character[nchar].y + obj_character[nchar].y_size);
-
-                // Move by 1 pixel in the calculated direction
-                newx = obj_character[nchar].x + (dx != 0 ? (dx > 0 ? 1 : -1) : 0);
-                newy = obj_character[nchar].y + (dy != 0 ? (dy > 0 ? 1 : -1) : 0);
-
-                // Check distance to active character at new position
-                distance = char_distance(nchar, newx, newy, active_character);
-
-                // Start moving when distance >MAX_FOLLOW_DISTANCE, keep moving until distance >MIN_FOLLOW_DISTANCE
-                if ((obj_character[nchar].animation == ANIM_IDLE && distance > MAX_FOLLOW_DISTANCE) || (obj_character[nchar].animation == ANIM_WALK && distance > MIN_FOLLOW_DISTANCE))
-                {
-                    // Update character position and animation
-                    // Update entity properties
-                    obj_character[nchar].x = newx;
-                    obj_character[nchar].y = newy;
-                    obj_character[nchar].flipH = (dx < 0);
-
-                    // Update sprite properties directly
-                    SPR_setPosition(spr_chr[nchar], newx, newy);
-                    SPR_setHFlip(spr_chr[nchar], dx < 0);
-
-                    // Update shadow position
-                    if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar] != NULL)
-                    {
-                        s16 shadow_y = newy + obj_character[nchar].collision_y_offset - 4;
-                        SPR_setPosition(spr_chr_shadow[nchar], newx, shadow_y);
-                        SPR_setHFlip(spr_chr_shadow[nchar], dx < 0);
-                    }
-
-                    // Update animation if needed
-                    if (obj_character[nchar].animation == ANIM_IDLE)
-                    {
-                        obj_character[nchar].animation = ANIM_WALK;
-                        SPR_setAnim(spr_chr[nchar], ANIM_WALK);
-                    }
-                    has_moved = true;
-                }
-
-                // Set to idle if close enough or not moved
-                if (distance <= MIN_FOLLOW_DISTANCE)
-                {
-                    anim_character(nchar, ANIM_IDLE);
-                }
-                else if (!has_moved && obj_character[nchar].state == STATE_FOLLOWING)
-                {
-                    anim_character(nchar, ANIM_IDLE);
-                }
-            }
+            obj_character[nchar].state = STATE_IDLE;
         }
     }
 
-    // Update sprite depths after movement
+    // Update all sprites depth after moving characters, so they are drawn in the correct order
     update_sprites_depth();
 }
+
 
 void reset_character_animations()
 {
@@ -363,7 +360,6 @@ void reset_character_animations()
     {
         if (obj_character[i].active && i != active_character)
         {
-            anim_character(i, ANIM_IDLE);
             obj_character[i].state = STATE_IDLE;
         }
     }
