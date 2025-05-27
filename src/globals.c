@@ -26,17 +26,11 @@ void next_frame(bool interactive)    // Process next frame with optional interac
             if (player_patterns_enabled) check_pattern_status();
         }
 
-        // Active haracter state related actions 
-        // check_active_character_state();
-
         // Approach other characters
         approach_characters();
 
         // Combat related actions
-        // if (is_combat_active==true) {
-            // check_enemy_state();
-            // approach_enemies();
-        // }
+        // PENDING
     }
 
     // Screen related actions
