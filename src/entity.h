@@ -6,6 +6,7 @@
 #define ANIM_WALK       1
 #define ANIM_ACTION     2
 #define ANIM_MAGIC      3
+#define ANIM_HURT   2          // alias of ACTION until graphics are ready
 
 // Global variables
 extern bool movement_active;
@@ -20,7 +21,8 @@ typedef enum {
     STATE_PATTERN_EFFECT,
     STATE_PATTERN_EFFECT_FINISH,
     STATE_ATTACK_FINISHED,
-    STATE_FOLLOWING
+    STATE_FOLLOWING,
+    STATE_HIT,
 } GameState;
 
 // Game entity definition

@@ -102,11 +102,7 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
     SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
     
-    // Reset last pattern times
-    //for (i=0;i<MAX_PATTERN_ENEMY;i++) obj_enemy[numenemy].last_pattern_time[i]=0;
-
-    // Patterns and cooldowns
-    // ****************** initEnemyPatterns(numenemy);
+    initEnemyPatterns(numenemy); // Initialize enemy patterns
 
     for (i = 0; i < MAX_PATTERN_ENEMY; i++)
         obj_enemy[numenemy].last_pattern_time[i] = 0;

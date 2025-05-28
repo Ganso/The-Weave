@@ -274,6 +274,10 @@ bool patternPlayerAddNote(u8 noteCode)
         obj_character[active_character].state != STATE_PATTERN_EFFECT_FINISH) {
             obj_character[active_character].state = STATE_PLAYING_NOTE; // Set character state to playing note
     }
+
+    if (combat_state != COMBAT_STATE_ENEMY_PLAYING) { // If we are not in enemy playing state, set player state
+        combat_state = COMBAT_STATE_PLAYER_PLAYING;
+    }
         
     return true;
 }
@@ -297,7 +301,7 @@ void reset_note_queue(void)
 void cancelPlayerPattern(void)
 {
     combatContext.activePattern = PATTERN_PLAYER_NONE;
-    combat_state = COMBAT_STATE_PLAYER_PLAYING;
+    combat_state = COMBAT_STATE_IDLE;
     combatContext.playerNotes = 0;
     combatContext.patternReversed  = false;
     reset_note_queue();
@@ -316,7 +320,7 @@ void initEnemyPatterns(u8 enemyId)
         .noteCount      = 0,
         .baseDuration   = SCREEN_FPS, 
         .rechargeFrames = SCREEN_FPS*3,
-        .enabled        = TRUE,
+        .enabled        = (obj_enemy[enemyId].class.has_pattern[PATTERN_EN_THUNDER]),
         .launch         = enemyThunderLaunch,
         .update         = enemyThunderUpdate,
         .counterable    = TRUE,
@@ -329,7 +333,7 @@ void initEnemyPatterns(u8 enemyId)
         .noteCount      = 0,
         .baseDuration   = SCREEN_FPS,
         .rechargeFrames = SCREEN_FPS*2,
-        .enabled        = TRUE,
+        .enabled        = (obj_enemy[enemyId].class.has_pattern[PATTERN_EN_BITE]),
         .launch         = enemyBiteLaunch,
         .update         = enemyBiteUpdate,
         .counterable    = FALSE,
@@ -351,7 +355,10 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
     combatContext.activeEnemy   = enemySlot;
     combat_state                = COMBAT_STATE_ENEMY_EFFECT;
 
-    if (pat->launch) pat->launch(enemySlot);
+    if (pat->launch) {
+        dprintf(2,"Launching enemy pattern %d for enemy %d", pat->id, enemySlot);
+        pat->launch(enemySlot);
+    }
 
     // start cooldown
     pat->rechargeFrames = pat->baseDuration;   // or any value you prefer
@@ -377,7 +384,7 @@ bool updateEnemyPattern(u8 enemySlot)
                           : true;
 
             if (finished) {
-                combat_state = COMBAT_STATE_PLAYER_PLAYING;
+                combat_state = COMBAT_STATE_IDLE;
                 return true;
             }
             return false;
@@ -400,7 +407,7 @@ void patternEnemyAddNote(u8 enemySlot, u8 noteCode)
 
     playEnemyNote(noteCode);
 
-    // PENDING - display HUD icon for enemy's note
+    // TODO - display HUD icon for enemy's note
 }
 
 // ---------------------------------------------------------------------

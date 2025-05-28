@@ -418,16 +418,4 @@ void check_pattern_status(void)
         current_note = NOTE_NONE;
         obj_character[active_character].state = STATE_IDLE; 
     }
-
-    // Update combat / pattern effects
-    if (combat_state == COMBAT_STATE_PLAYER_EFFECT)
-    {
-        if (updatePlayerPattern())
-            dprintf(2,"Player pattern finished → state=%d\n", combat_state);
-    }
-    else if (combat_state == COMBAT_STATE_ENEMY_EFFECT &&
-             combatContext.activeEnemy != ENEMY_NONE)
-    {
-        updateEnemyPattern(combatContext.activeEnemy);
-    }
 }

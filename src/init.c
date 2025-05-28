@@ -83,7 +83,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     combatContext.activeEnemy    = ENEMY_NONE;
 
     // Items
-    pending_item_interaction=ITEM_NONE;
+    TODO_item_interaction=ITEM_NONE;
 
     // Release active character, faces, enemies and items
     for (i=0;i<MAX_CHR;i++) {
@@ -212,7 +212,7 @@ void end_level() {    // Clean up level resources and reset game state
 
     // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos
 
-    pending_item_interaction = ITEM_NONE;
+    TODO_item_interaction = ITEM_NONE;
 
     // Reset scroll values
     offset_BGA = 0;

@@ -30,7 +30,7 @@ void next_frame(bool interactive)    // Process next frame with optional interac
         approach_characters();
 
         // Combat related actions
-        // PENDING
+        if (combat_state!=COMBAT_NO) update_combat();
     }
 
     // Screen related actions
@@ -44,7 +44,7 @@ void next_frame(bool interactive)    // Process next frame with optional interac
     update_sprites_depth();
     SPR_update();
 
-    // Create an RNG seed depending of the number of frames
+    // Create an RNG seed deTODO of the number of frames
     frame_counter++;
     
     // Wait for next frame
