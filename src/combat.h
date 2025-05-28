@@ -14,10 +14,7 @@ typedef enum
     COMBAT_STATE_PLAYER_COUNTER,       /* player is attempting a counter-spell  */
     /* --- enemy turn ------------------------------------------------------ */
     COMBAT_STATE_ENEMY_PLAYING,        /* enemy is playing its notes            */
-    COMBAT_STATE_ENEMY_EFFECT,         /* enemy spell effect is active          */
-    /* --- hit / impact feedback ------------------------------------------ */
-    COMBAT_STATE_PLAYER_HIT,           /* player receives damage – show flash   */
-    COMBAT_STATE_ENEMY_HIT             /* enemy receives damage – show flash    */
+    COMBAT_STATE_ENEMY_EFFECT         /* enemy spell effect is active          */
 } CombatState;
 extern CombatState combat_state; // Current combat state
 
@@ -43,5 +40,6 @@ void combatInit(void); // Start combat phase
 void combatFinish(void); // Finish combat phase
 void hit_enemy(u8 enemyId, u8 damage); // Hit an enemy
 void hit_player(u8 damage); // Hit the player
+void update_combat(void); // Update combat state, 
 
 #endif

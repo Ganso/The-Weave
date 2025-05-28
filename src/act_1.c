@@ -65,26 +65,26 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     bool scene_timeout=0;
     while (scene_timeout<(SCREEN_FPS*3)) // Scene ends 3 seconds after interacting every object
     {
-        switch (pending_item_interaction) // Process item interactions
+        switch (TODO_item_interaction) // Process item interactions
         {
         case 0: // Bed
             talk_dialog(&dialogs[ACT1_DIALOG4][3]); // (ES) "He dormido regular esta noche|Tuve horribles pesadillas" - (EN) "I've not slept well last night|I had terrible nightmares"
-            pending_item_interaction=ITEM_NONE;
+            TODO_item_interaction=ITEM_NONE;
             item_interacted[0]=true;
             break;
         case 1: // Chair
             talk_dialog(&dialogs[ACT1_DIALOG4][5]); // (ES) "No tengo tiempo de sentarme|Madre me espera" - (EN) "I don't have time to sit down|Mother wating for me"
-            pending_item_interaction=ITEM_NONE;
+            TODO_item_interaction=ITEM_NONE;
             item_interacted[1]=true;
             break;
         case 2: // Windowsill
             talk_dialog(&dialogs[ACT1_DIALOG4][4]); // (ES) "No ha podido ser real|La ventana está cerrada" - (EN) "It couldn't be real|The windows is closed"
-            pending_item_interaction=ITEM_NONE;
+            TODO_item_interaction=ITEM_NONE;
             item_interacted[2]=true;
             break;
         case 3: // Cabinet
             talk_dialog(&dialogs[ACT1_DIALOG4][6]); // (ES) "Esta es la nana que me|cantaban cada noche" - (EN) "That's the lullaby they used|to sing to me every night"
-            pending_item_interaction=ITEM_NONE;
+            TODO_item_interaction=ITEM_NONE;
             if (item_interacted[3]==false) { // If not already interacted
                 activate_spell(PATTERN_SLEEP); // Activate sleep pattern
                 talk_dialog(&dialogs[ACT1_DIALOG4][7]); // (ES) "Has aprendido|tu primer patrón" - (EN) "You have learned|your first pattern"
@@ -136,20 +136,20 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
 
     bool item_interacted[2]={false, false};
     while (true) {
-        switch (pending_item_interaction) // Process item interactions
+        switch (TODO_item_interaction) // Process item interactions
         {
         case 0: // Guild history book
             talk_dialog(&dialogs[ACT1_DIALOG1][3]); // (ES) "Este tomo narra la historia|de nuestro gremio|desde la Gran Separación" - (EN) "This volume narrates the history|of our guild|since the Great Split"
             talk_dialog(&dialogs[ACT1_DIALOG1][4]); // (ES) "El último capítulo|termina con el fallecimiento|de mi padre" - (EN) "The last chapter|ends with the passing|of my father"
             talk_dialog(&dialogs[ACT1_DIALOG1][5]); // (ES) "Madre dice que seré yo|el que deba escribir|el siguiente" - (EN) "Mother says it will be me|who has to write|the next one"
             item_interacted[0]=true;
-            pending_item_interaction=ITEM_NONE;
+            TODO_item_interaction=ITEM_NONE;
             break;
         case 1: // Myths and legends
             talk_dialog(&dialogs[ACT1_DIALOG1][6]); // (ES) "Una colección de|mitos y leyendas|de los distintos gremios" - (EN) "A collection of|myths and legends|from the different guilds"
             talk_dialog(&dialogs[ACT1_DIALOG1][7]); // (ES) "Gracias a mi padre|tenemos documentadas|las que cantaban los Pastores" - (EN) "Thanks to my father|we have documented|those the Shepherds sang"
             item_interacted[1]=true;
-            pending_item_interaction=ITEM_NONE;
+            TODO_item_interaction=ITEM_NONE;
             break;
         default:
             break;

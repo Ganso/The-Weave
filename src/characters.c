@@ -426,6 +426,18 @@ void update_character_animations(void) {
                 }
                 obj_character[chr].state = STATE_IDLE;
                 break;
+            case STATE_HIT:
+                if (obj_character[chr].animation != ANIM_HURT) {
+                    anim_character(chr, ANIM_HURT);
+                }
+                // If the animation is done, set to IDLE
+                if (SPR_isAnimationDone(spr_chr[chr])) {
+                    show_or_hide_interface(false);
+                    talk_dialog(&dialogs[ACT1_DIALOG3][2]);   // "That hurts"
+                    show_or_hide_interface(true);
+                    obj_character[chr].state = STATE_IDLE;
+                }
+                break;
             default:
                 break;
         }

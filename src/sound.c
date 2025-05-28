@@ -73,19 +73,19 @@ void playPlayerPatternSound(u16 patternId)
     switch (patternId)
     {
         case PATTERN_THUNDER:
-            // PENDING - playSample(snd_pattern_electric, sizeof(...));
+            // TODO - playSample(snd_pattern_electric, sizeof(...));
             break;
         case PATTERN_HIDE:
-            // PENDING
+            // TODO
             break;
         case PATTERN_OPEN:
-            // PENDING
+            // TODO
             break;
         case PATTERN_SLEEP:
-            // PENDING
+            // TODO
             break;           
         default:
-            // PENDING - play error jingle
+            // TODO - play error jingle
             break;
     }
 }
@@ -98,13 +98,13 @@ void playEnemyPatternSound(u16 patternId)
     switch (patternId)
     {
         case PATTERN_EN_THUNDER:
-            // PENDING
+            // TODO
             break;
         case PATTERN_EN_BITE:
-            // PENDING
+            // TODO
             break;
         default:
-            // PENDING
+            // TODO
             break;
     }
 }
