@@ -275,9 +275,8 @@ bool patternPlayerAddNote(u8 noteCode)
             obj_character[active_character].state = STATE_PLAYING_NOTE; // Set character state to playing note
     }
 
-    if (combat_state != COMBAT_STATE_ENEMY_PLAYING) { // If we are not in enemy playing state, set player state
-        combat_state = COMBAT_STATE_PLAYER_PLAYING;
-    }
+    if (combat_state == COMBAT_STATE_IDLE)
+        combat_state = COMBAT_STATE_PLAYER_PLAYING; // Set combat state to player playing, but only if nothing else is active
         
     return true;
 }
@@ -353,15 +352,12 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
     combatContext.activePattern = pat->id;
     combatContext.effectTimer   = 0;
     combatContext.activeEnemy   = enemySlot;
-    combat_state                = COMBAT_STATE_ENEMY_EFFECT;
+    combat_state                = COMBAT_STATE_ENEMY_PLAYING;
 
     if (pat->launch) {
         dprintf(2,"Launching enemy pattern %d for enemy %d", pat->id, enemySlot);
         pat->launch(enemySlot);
     }
-
-    // start cooldown
-    pat->rechargeFrames = pat->baseDuration;   // or any value you prefer
 }
 
 bool updateEnemyPattern(u8 enemySlot)
@@ -376,19 +372,16 @@ bool updateEnemyPattern(u8 enemySlot)
         EnemyPattern* pat = &enemyPatterns[enemySlot][pslot];
         if (pat->id == combatContext.activePattern)
         {
-            // Tick cooldown if >0
-            if (pat->rechargeFrames) --pat->rechargeFrames;
-
             bool finished = (pat->update)
                           ? pat->update(enemySlot)
                           : true;
 
-            if (finished) {
-                combat_state = COMBAT_STATE_IDLE;
+            if (finished) {                           /* effect expired */
+                pat->rechargeFrames = SCREEN_FPS * 3; /* start cooldown */
+                combat_state        = COMBAT_STATE_IDLE;
                 return true;
             }
-            return false;
-        }
+            return false;                             /* still active */        }
     }
     return true; // pattern not found → treat as finished
 }
@@ -433,7 +426,7 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
         if (notes[0]==p->notes[3] && notes[1]==p->notes[2] &&
             notes[2]==p->notes[1] && notes[3]==p->notes[0])
         {
-            if (reversed && isPalindrome(p->notes)) {
+            if (reversed && !isPalindrome(p->notes)) {
                 *reversed = true;
                 dprintf(2,"Pattern %d recognised (reversed order)", p->id);
             }

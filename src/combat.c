@@ -20,6 +20,8 @@ static inline bool enemyPatternReady(u8 eid, u8 pslot)
 // Returns TRUE when a launch happened this frame.
 static bool enemyChooseAndLaunch(void)
 {
+    dprintf(2, "Checking enemy patterns to launch");
+
     // Tick all cooldowns ------------------------------------------------
     for (u8 e = 0; e < MAX_ENEMIES; ++e)
         if (obj_enemy[e].obj_character.active)
@@ -57,10 +59,9 @@ bool tryCounterSpell(void)
 
     if (!ep->counterable || !ep->onCounter) return false;
 
-    // Cancela el efecto enemigo
+    // Cancel enemy effect
     ep->onCounter(combatContext.activeEnemy);
     combatContext.effectTimer = 0;
-    hit_enemy(combatContext.activeEnemy, 1); // -1 HP to the enemy
     return true;
 }
 
@@ -69,7 +70,7 @@ void combatInit(void)
 {
     dprintf(2,"Starting combat phase");
 
-    combat_state = COMBAT_STATE_ENEMY_PLAYING;
+    combat_state = COMBAT_STATE_IDLE; // Set initial state;
     combatContext.effectTimer = 0;
     combatContext.patternReversed = false;
     combatContext.playerNotes = 0;
@@ -124,30 +125,54 @@ void update_combat(void)
 {
     dprintf(2,"Checking combat state: %d", combat_state);
 
+    // -----------------------------------------------------------------
+    //  A) ALWAYS advance the active enemy pattern.
+    //     • Durante ENEMY_PLAYING cuenta sus notas.
+    //     • Durante ENEMY_EFFECT gestiona el flash / daño / timeout.
+    // -----------------------------------------------------------------
+    if ((combat_state == COMBAT_STATE_ENEMY_PLAYING ||
+         combat_state == COMBAT_STATE_ENEMY_EFFECT) &&
+        combatContext.activeEnemy != ENEMY_NONE)
+    {
+        updateEnemyPattern(combatContext.activeEnemy);
+    }
+
+
+    // -----------------------------------------------------------------
+    //  B) Global finite-state machine
+    // -----------------------------------------------------------------
     switch (combat_state)
     {
-    // ------------------------ player turn -----------------------------
-    case COMBAT_STATE_PLAYER_PLAYING:
-        // Note input & validation handled in the main loop.
+    // ------------------------------------------------------------------ IDLE
+    case COMBAT_STATE_IDLE:
+        // If the hero sprite is still in its HIT pose, wait.
         if (obj_character[active_character].state == STATE_HIT)
-            break; // Player is hurt, wait for animation to finish
+            break;
+
+        // Enemy AI: try to cast a new pattern (sets ENEMY_PLAYING if ready).
+        enemyChooseAndLaunch();
+        break;
+
+    // --------------------------------------------------------- PLAYER lanes
+    case COMBAT_STATE_PLAYER_PLAYING:
+        // Note input is handled elsewhere; nothing to update here.
         break;
 
     case COMBAT_STATE_PLAYER_EFFECT:
-        if (updatePlayerPattern())                     // finished → enemy turn
-            combat_state = COMBAT_STATE_ENEMY_PLAYING;
-        break;
-
-    // ------------------------ enemy turn ------------------------------
-    case COMBAT_STATE_ENEMY_PLAYING:
-        enemyChooseAndLaunch();                        // may switch to ENEMY_EFFECT
-        break;
-
-    case COMBAT_STATE_ENEMY_EFFECT:
-        if (updateEnemyPattern(combatContext.activeEnemy))                      // finished → player turn
+        // When the player spell animation/effect finishes, return to IDLE.
+        if (updatePlayerPattern())
             combat_state = COMBAT_STATE_IDLE;
         break;
 
-    default: break;    // COMBAT_STATE_NO or undefined
+    // ---------------------------------------------------------- ENEMY lanes
+    case COMBAT_STATE_ENEMY_PLAYING:
+        // Nothing extra: enemy notes advance in updateEnemyPattern() above.
+        break;
+
+    case COMBAT_STATE_ENEMY_EFFECT:
+        // All timing & end-of-effect logic also live in updateEnemyPattern().
+        break;
+
+    default: break;           // COMBAT_STATE_NO or undefined
     }
 }
