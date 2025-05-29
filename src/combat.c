@@ -74,6 +74,8 @@ void combatInit(void)
     combatContext.effectTimer = 0;
     combatContext.patternReversed = false;
     combatContext.playerNotes = 0;
+    combatContext.enemyNoteIndex  = 0;
+    combatContext.enemyNoteTimer  = 0;
 
     // Initialize every active enemy's patterns
     for (u8 id = 0; id < MAX_ENEMIES; id++)
@@ -130,13 +132,14 @@ void update_combat(void)
     //     • Durante ENEMY_PLAYING cuenta sus notas.
     //     • Durante ENEMY_EFFECT gestiona el flash / daño / timeout.
     // -----------------------------------------------------------------
-    if ((combat_state == COMBAT_STATE_ENEMY_PLAYING ||
-         combat_state == COMBAT_STATE_ENEMY_EFFECT) &&
-        combatContext.activeEnemy != ENEMY_NONE)
+    if (combatContext.activeEnemy != ENEMY_NONE)
     {
         updateEnemyPattern(combatContext.activeEnemy);
     }
 
+    // Count down the global lock between patterns
+    if (combatContext.patternLockTimer)
+        --combatContext.patternLockTimer;
 
     // -----------------------------------------------------------------
     //  B) Global finite-state machine

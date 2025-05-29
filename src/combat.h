@@ -25,9 +25,11 @@ typedef struct {
     /* note–playing phase ------------------------------------------------ */
     u16         noteTimer;    // frames since current note started         
     u8          playerNotes;  // how many notes the player has played (0-4)
-    u8          enemyNotes;   // how many notes the enemy has played  (0-4)
+    u8  enemyNoteIndex;       // 0-3 while the foe is playing its notes
+    u16 enemyNoteTimer;       // frames since last enemy note
+    u16 patternLockTimer; // frames until the next pattern can be played
     /* attacker id (relevant only during enemy phases) ------------------- */
-    u8          activeEnemy;  // ENEMY_NONE = none                         
+    u8          activeEnemy;  // ENEMY_NONE = none
 } CombatContext;
 extern CombatContext combatContext; // Combat context
 

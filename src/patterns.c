@@ -4,7 +4,6 @@
 
 bool player_has_rod;          /* can physically use patterns?      */
 bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
-u16 current_note_ticks;   /* lifetime of the single note sprite  */
 u8  current_note;         /* NOTE_MI … NOTE_DO or NOTE_NONE      */
 u8  noteQueue[4] = {NOTE_NONE,NOTE_NONE,NOTE_NONE,NOTE_NONE}; // Queue of notes played by the player (up to 4)
 
@@ -165,6 +164,15 @@ void launchPlayerPattern(u16 patternId)
     if (!p || !p->enabled || (p->canUse && !p->canUse()))
         return;
 
+    // Spell recognised but not usable right now → abort cleanly
+    if (p->canUse && !p->canUse())
+    {
+        obj_character[active_character].state = STATE_IDLE;
+        combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;   // 20 frames lock
+        combat_state = COMBAT_STATE_IDLE;
+        return;
+    }
+
     if (tryCounterSpell()) { reset_note_queue(); return; }
 
     // We are launching a pattern: Set combat and player context
@@ -208,33 +216,43 @@ bool updatePlayerPattern(void)
 // Player presses a note (called from input layer)
 bool patternPlayerAddNote(u8 noteCode)
 {
-    if (noteCode < NOTE_MI || noteCode > NOTE_DO) return false;
+    // Reject illegal note codes
+    if (noteCode < NOTE_MI || noteCode > NOTE_DO) {
+        dprintf(2,"Reject %d: out-of-range", noteCode);
+        return false;
+    }
 
-    // Reject if the last note was too recent
+    // Do not accept any note while the lock timer is running
+    if (combatContext.patternLockTimer) {
+        dprintf(2,"Reject %d: pattern lock (%u frames left)",
+                noteCode, combatContext.patternLockTimer);
+        return false;
+    }
+        // Debounce check
     if (combatContext.noteTimer < MIN_TIME_BETWEEN_NOTES) {
-        dprintf(3, "Note %d ignored (debounce)\n", noteCode);
+        dprintf(2,"Reject %d: debounce (timer=%u < %u)",
+                noteCode, combatContext.noteTimer, MIN_TIME_BETWEEN_NOTES);
         return false;
     }
 
-    // Reject if the player is already playing a note
-    if (current_note != NOTE_NONE) {
-        dprintf(3,"Note %d ignored: previous still playing\n", noteCode);
+    // Queue full?  (should never happen now that we abort/clear)
+    if (combatContext.playerNotes >= 4) {
+        dprintf(2,"Reject %d: queue already full (playerNotes=%u)",
+                noteCode, combatContext.playerNotes);
         return false;
     }
 
-    // Restart note timer
-    combatContext.noteTimer   = 0;
-
-    // Store into queue
-    u8 idx = combatContext.playerNotes;
-    if (idx > 3) idx = 3;
-    noteQueue[idx] = noteCode;
+    // Passed all gates – enqueue note
+    combatContext.noteTimer = 0;                   // reset debounce
+    u8 idx = combatContext.playerNotes;            // 0..3
+    noteQueue[idx]          = noteCode;
     combatContext.playerNotes = idx + 1;
+
+    dprintf(2,"NOTE OK %d -> slot %d  (playerNotes=%u)", noteCode, idx, combatContext.playerNotes);
 
     // HUD + Sound
     show_note(noteCode, true);
-    current_note       = noteCode;
-    current_note_ticks = 0;
+    current_note       = NOTE_NONE; // Reset current note
     playPlayerNote(noteCode);
 
     dprintf(2,"Note %d queued at pos %d\n", noteCode, idx);
@@ -251,11 +269,13 @@ bool patternPlayerAddNote(u8 noteCode)
                     dprintf(1,"Pattern %d recognised (rev=%d)\n", id, rev);
                     reset_note_queue(); // Clear queue
                     combatContext.patternReversed = rev;
+                    combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
                     launchPlayerPattern(id); // Launch the pattern
                 }
                 else { // Valid pattern, but not enabled
                     dprintf(1,"Pattern %d recognised but not enabled\n", id);
                     reset_note_queue(); // Clear queue
+                    combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
                     play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // Play invalid sound
                     show_or_hide_interface(false); // Hide interface
                     talk_dialog(&dialogs[SYSTEM_DIALOG][0]);
@@ -266,6 +286,7 @@ bool patternPlayerAddNote(u8 noteCode)
             {
                 dprintf(1,"Invalid pattern, queue cleared\n");
                 reset_note_queue(); // Clear queue
+                combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
                 play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // Play invalid sound
             }
         }
@@ -284,12 +305,14 @@ bool patternPlayerAddNote(u8 noteCode)
 // Reset the note queue and player notes count
 void reset_note_queue(void)
 {
-    for (u8 i=0;i<4;i++) noteQueue[i] = NOTE_NONE;
+    for (u8 i = 0; i < 4; i++)
+    {
+        if (noteQueue[i] != NOTE_NONE)
+            show_note(noteQueue[i], false);   // hide sprite
+        noteQueue[i] = NOTE_NONE;
+    }
     combatContext.playerNotes = 0;
-
-    // If  we were in PLAYING_NOTE, return to IDLE
-    if (obj_character[active_character].state == STATE_PLAYING_NOTE)
-        obj_character[active_character].state = STATE_IDLE;
+    current_note = NOTE_NONE;   // allow fresh input
 }
 
 // ---------------------------------------------------------------------
@@ -303,6 +326,7 @@ void cancelPlayerPattern(void)
     combat_state = COMBAT_STATE_IDLE;
     combatContext.playerNotes = 0;
     combatContext.patternReversed  = false;
+    combatContext.patternLockTimer = 0;   // allow immediate re-input
     reset_note_queue();
 }
 
@@ -316,7 +340,8 @@ void initEnemyPatterns(u8 enemyId)
     /* --- THUNDER / ELECTRIC  (slot 0) --------------------------- */
     enemyPatterns[enemyId][0] = (EnemyPattern){
         .id             = PATTERN_EN_THUNDER,
-        .noteCount      = 0,
+        .notes         = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
+        .noteCount      = 4,
         .baseDuration   = SCREEN_FPS, 
         .rechargeFrames = SCREEN_FPS*3,
         .enabled        = (obj_enemy[enemyId].class.has_pattern[PATTERN_EN_THUNDER]),
@@ -329,7 +354,8 @@ void initEnemyPatterns(u8 enemyId)
     /* --- BITE  (slot 1) ----------------------------------------- */
     enemyPatterns[enemyId][1] = (EnemyPattern){
         .id             = PATTERN_EN_BITE,
-        .noteCount      = 0,
+        .notes         = { NOTE_MI, NOTE_SOL, NOTE_DO }, // 1-3-6
+        .noteCount      = 3,
         .baseDuration   = SCREEN_FPS,
         .rechargeFrames = SCREEN_FPS*2,
         .enabled        = (obj_enemy[enemyId].class.has_pattern[PATTERN_EN_BITE]),
@@ -352,7 +378,15 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
     combatContext.activePattern = pat->id;
     combatContext.effectTimer   = 0;
     combatContext.activeEnemy   = enemySlot;
+    combatContext.enemyNoteIndex = 0;
+    combatContext.enemyNoteTimer = 0;
     combat_state                = COMBAT_STATE_ENEMY_PLAYING;
+
+    // first note immediately
+    playEnemyNote(pat->notes[0]);
+
+    // "playing" animation
+    SPR_setAnim(spr_enemy[enemySlot], ANIM_ACTION);
 
     if (pat->launch) {
         dprintf(2,"Launching enemy pattern %d for enemy %d", pat->id, enemySlot);
@@ -362,46 +396,55 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
 
 bool updateEnemyPattern(u8 enemySlot)
 {
-    if (combat_state != COMBAT_STATE_ENEMY_EFFECT ||
-        combatContext.activeEnemy != enemySlot)
-        return true;
+    EnemyPattern *pat = &enemyPatterns[enemySlot][0];        // slot 0 = active
+    if (!pat->enabled) return true;
 
-    // Locate the pattern inside the enemy slot
-    for (u8 pslot = 0; pslot < MAX_PATTERN_ENEMY; ++pslot)
+    // ------------------------------------------------ note phase
+    if (combat_state == COMBAT_STATE_ENEMY_PLAYING)
     {
-        EnemyPattern* pat = &enemyPatterns[enemySlot][pslot];
-        if (pat->id == combatContext.activePattern)
+        // pause while player is mid-pattern
+        if (combatContext.playerNotes > 0 && combatContext.playerNotes < 4)
+            return false;
+
+        ++combatContext.enemyNoteTimer;
+        const u16 FRAMES_PER_NOTE = 8;                       // global tempo
+
+        if (combatContext.enemyNoteTimer >= FRAMES_PER_NOTE)
         {
-            bool finished = (pat->update)
-                          ? pat->update(enemySlot)
-                          : true;
+            combatContext.enemyNoteTimer = 0;
+            ++combatContext.enemyNoteIndex;
 
-            if (finished) {                           /* effect expired */
-                pat->rechargeFrames = SCREEN_FPS * 3; /* start cooldown */
-                combat_state        = COMBAT_STATE_IDLE;
-                return true;
+            if (combatContext.enemyNoteIndex < pat->noteCount)
+            {
+                playEnemyNote(pat->notes[combatContext.enemyNoteIndex]);
             }
-            return false;                             /* still active */        }
+            else            // all notes played → switch to EFFECT phase
+            {
+                combatContext.effectTimer = 0;
+                combat_state              = COMBAT_STATE_ENEMY_EFFECT;
+                if (pat->launch) pat->launch(enemySlot);     // e.g. start flash
+            }
+        }
+        return false;
     }
-    return true; // pattern not found → treat as finished
+
+    // -------------------------------------------- effect phase (flash, etc.)
+    if (combat_state == COMBAT_STATE_ENEMY_EFFECT)
+    {
+        bool finished = pat->update ? pat->update(enemySlot) : true;
+
+        if (finished)
+        {
+            pat->rechargeFrames = SCREEN_FPS * 3;            // standard CD
+            combat_state        = COMBAT_STATE_IDLE;
+            return true;                                     // done
+        }
+        return false;                                        // still running
+    }
+
+    return true; // not our turn
 }
 
-// ---------------------------------------------------------------------
-// Enemy-side: note input
-// ---------------------------------------------------------------------
-void patternEnemyAddNote(u8 enemySlot, u8 noteCode)
-{
-    if (noteCode < NOTE_MI || noteCode > NOTE_DO) return;
-
-    combatContext.noteTimer  = 0;
-    combatContext.enemyNotes = (combatContext.enemyNotes < 4)
-                             ? combatContext.enemyNotes + 1
-                             : 4;
-
-    playEnemyNote(noteCode);
-
-    // TODO - display HUD icon for enemy's note
-}
 
 // ---------------------------------------------------------------------
 // Validate 4-note sequence (returns PATTERN_PLAYER_NONE if invalid)
