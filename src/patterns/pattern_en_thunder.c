@@ -30,39 +30,59 @@ void enemyThunderLaunch(u8 enemyId)
 // Update callback — returns true when finished
 bool enemyThunderUpdate(u8 enemyId)
 {
-   const u16 duration = enemyPatterns[enemyId][0].baseDuration;   // slot 0
+    const u16 noteDuration  = 20;                          // 4 ghost notes
+    const u16 effectDuration = enemyPatterns[enemyId][0].baseDuration;
 
+    // 1) --- NOTE PHASE ---------------------------------------------------
+    if (combat_state == COMBAT_STATE_ENEMY_PLAYING)
+    {
+        // Pausa el contador sólo mientras el jugador está A MEDIAS
+        if (combatContext.playerNotes > 0 && combatContext.playerNotes < 4)
+            return false;                           // sigue tocando sus 4 notas
+
+        // Avanza el cronómetro de las 4 notas del fantasma
+        combatContext.effectTimer++;
+
+        const u16 noteDuration = 20;                // frames que duran sus notas
+        if (combatContext.effectTimer >= noteDuration)
+        {
+            // Notas terminadas ⇒ pasa a fase de efecto (flash)
+            savedColor = PAL_getColor(PAL0_COL4);
+            PAL_setColor(PAL0_COL4, COLOR_WHITE_VDP);
+            flashOn = true;
+
+            combatContext.effectTimer = 0;          // reinicia para el flash
+            combat_state = COMBAT_STATE_ENEMY_EFFECT;
+        }
+        return false;                               // todavía en fase de notas
+    }
+
+    // ----------------------------------------------------- 2) FLASH EFFECT
     // Toggle flash every 2 frames
-    if (frame_counter % 2 == 0)  
+    if (frame_counter % 2 == 0)
     {
         PAL_setColor(PAL0_COL4, flashOn ? savedColor : COLOR_WHITE_VDP);
         flashOn = !flashOn;
     }
 
-    // (B) Freeze the timer if the player is currently entering a pattern
-    if (combat_state == COMBAT_STATE_PLAYER_PLAYING) {
-        dprintf(2, "Enemy %d: Thunder effect paused (player playing)", enemyId);
-        return false;                   // Still active but not counting
-    }
+    // Freeze the timer if the player is currently entering a pattern
+    if (combat_state == COMBAT_STATE_PLAYER_PLAYING)
+        return false;                               // still active
 
-    // (C) Otherwise advance timer
+    // Advance effect timer
     combatContext.effectTimer++;
 
-    // (D) Timer expired → deal damage (unless already countered)
-    if (combatContext.effectTimer >= duration)
+    // Timeout -> deal damage (unless countered)
+    if (combatContext.effectTimer >= effectDuration)
     {
-        // Restore palette
-        PAL_setColor(PAL0_COL4, savedColor);
+        PAL_setColor(PAL0_COL4, savedColor);        // restore palette
         flashOn = false;
-
-        // Hurt the player (SFX + dialogue); you can replace hit_player()
-        hit_player(1);                            // -1 HP or just SFX
-
-        return true;      // Finished, state machine will switch back
+        hit_player(1);                              // -1 HP
+        return true;                                // effect finished
     }
-
-    return false;         // Effect still running
+    return false;                                   // still running
 }
+
 
 // Called when the pattern is countered — currently does nothing
 void enemyThunderOnCounter(u8 enemyId)

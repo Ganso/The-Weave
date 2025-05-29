@@ -10,8 +10,6 @@ typedef enum
     /* we can use these states with no active enemies */
     COMBAT_STATE_PLAYER_PLAYING,       /* player is playing invocation notes    */
     COMBAT_STATE_PLAYER_EFFECT,        /* player spell effect is active         */
-    /* --- enemy counter-window (optional) --------------------------------- */
-    COMBAT_STATE_PLAYER_COUNTER,       /* player is attempting a counter-spell  */
     /* --- enemy turn ------------------------------------------------------ */
     COMBAT_STATE_ENEMY_PLAYING,        /* enemy is playing its notes            */
     COMBAT_STATE_ENEMY_EFFECT         /* enemy spell effect is active          */
