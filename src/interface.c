@@ -36,8 +36,10 @@ void show_or_hide_interface(bool visible)    // Toggle visibility of game's bott
     }
 }
 
-void show_note(u8 nnote, bool visible)    // Display or hide a musical note (1-6:MI-DO) with its rod and pentagram sprites
+// Display or hide one musical note (rod + pentagram)
+void show_note(u8 nnote, bool visible)
 {
+    // Map each note-code to its sprite pointers / definitions / X offsets
     Sprite **pentSpr, **rodSpr;
     const SpriteDefinition *pentDef, *rodDef;
     u16 pentX, rodX;
@@ -46,46 +48,41 @@ void show_note(u8 nnote, bool visible)    // Display or hide a musical note (1-6
     {
         case NOTE_MI:  pentSpr=&spr_int_pentagram_1; rodSpr=&spr_int_rod_1;
                        pentDef=&int_pentagram_1_sprite; rodDef=&int_rod_1_sprite;
-                       pentX=219;        rodX=24;        break;
+                       pentX=219; rodX=24;  break;
         case NOTE_FA:  pentSpr=&spr_int_pentagram_2; rodSpr=&spr_int_rod_2;
                        pentDef=&int_pentagram_2_sprite; rodDef=&int_rod_2_sprite;
-                       pentX=235;        rodX=56;        break;
+                       pentX=235; rodX=56;  break;
         case NOTE_SOL: pentSpr=&spr_int_pentagram_3; rodSpr=&spr_int_rod_3;
                        pentDef=&int_pentagram_3_sprite; rodDef=&int_rod_3_sprite;
-                       pentX=251;        rodX=88;        break;
+                       pentX=251; rodX=88;  break;
         case NOTE_LA:  pentSpr=&spr_int_pentagram_4; rodSpr=&spr_int_rod_4;
                        pentDef=&int_pentagram_4_sprite; rodDef=&int_rod_4_sprite;
-                       pentX=267;        rodX=120;       break;
+                       pentX=267; rodX=120; break;
         case NOTE_SI:  pentSpr=&spr_int_pentagram_5; rodSpr=&spr_int_rod_5;
                        pentDef=&int_pentagram_5_sprite; rodDef=&int_rod_5_sprite;
-                       pentX=283;        rodX=152;       break;
+                       pentX=283; rodX=152; break;
         default:       pentSpr=&spr_int_pentagram_6; rodSpr=&spr_int_rod_6;
                        pentDef=&int_pentagram_6_sprite; rodDef=&int_rod_6_sprite;
-                       pentX=299;        rodX=184;       break;
+                       pentX=299; rodX=184; break;
     }
 
-    if (visible) // Show the note and its rod/pentagram sprites
-    {
+    if (visible) {
+        // Create sprite if it does not yet exist
         if (*rodSpr == NULL)
             *rodSpr = SPR_addSpriteSafe(rodDef, rodX, 212,
-                                         TILE_ATTR(PAL2,false,false,false));
-
+                                        TILE_ATTR(PAL2,false,false,false));
         if (*pentSpr == NULL && player_patterns_enabled)
             *pentSpr = SPR_addSpriteSafe(pentDef, pentX, 180,
-                                         TILE_ATTR(PAL2,false,false,false));
-    }
-    else { // Hide the note and its rod/pentagram sprites
-        if (*rodSpr)
-        {   SPR_releaseSprite(*rodSpr);
-            *rodSpr = NULL;
-        }
-
-        if (*pentSpr && player_patterns_enabled)
-        {   SPR_releaseSprite(*pentSpr);
-            *pentSpr = NULL;
-        }
+                                        TILE_ATTR(PAL2,false,false,false));
+    } else {
+        // Destroy sprite if present
+        if (*rodSpr)  { SPR_releaseSprite(*rodSpr);  *rodSpr = NULL; }
+        if (*pentSpr) { SPR_releaseSprite(*pentSpr); *pentSpr = NULL; }
     }
 
+    // Leave the global engine (next_frame) to call SPR_update().
+    // Doing it here is safe but costs CPU if you call show_note()
+    // several times in a single frame. Remove if you prefer.
     SPR_update();
 }
 
@@ -398,24 +395,17 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
 // Check the status of the current pattern, including note playing and expiration
 void check_pattern_status(void)
 {
-    combatContext.noteTimer++;
+    // Count frames since the last player note
+    ++combatContext.noteTimer;
 
-    // Abort the pattern if the player has not played any notes for too long
-    if (combatContext.playerNotes && combatContext.noteTimer > calc_ticks(MAX_PATTERN_WAIT_TIME)) {
-        dprintf(1,"Pattern aborted after %u ticks\n", combatContext.noteTimer);
+    // Abort if the player stopped in the middle of a pattern
+    if (combatContext.playerNotes &&
+        combatContext.noteTimer > calc_ticks(MAX_PATTERN_WAIT_TIME))
+    {
+        dprintf(2,"Abort: playerNotes=%u  noteTimer=%u", combatContext.playerNotes, combatContext.noteTimer);
 
-        reset_note_queue();
-        if (current_note != NOTE_NONE)
-            show_note(current_note, false);
-        current_note = NOTE_NONE;
-        obj_character[active_character].state = STATE_IDLE; 
-        play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // play invalid sound
-    }
-
-    // Lifetime of current HUD note
-    if (current_note != NOTE_NONE && ++current_note_ticks > calc_ticks(MAX_NOTE_PLAYING_TIME)) {
-        show_note(current_note, false);
-        current_note = NOTE_NONE;
-        obj_character[active_character].state = STATE_IDLE; 
+        reset_note_queue();                         // hides all four icons
+        obj_character[active_character].state = STATE_IDLE;
+        play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
     }
 }

@@ -79,7 +79,6 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     combatContext.patternReversed= FALSE;
     combatContext.noteTimer      = 0;
     combatContext.playerNotes    = 0;
-    combatContext.enemyNotes     = 0;
     combatContext.activeEnemy    = ENEMY_NONE;
 
     // Items
@@ -205,7 +204,6 @@ void end_level() {    // Clean up level resources and reset game state
         .patternReversed = FALSE,
         .noteTimer       = 0,
         .playerNotes     = 0,
-        .enemyNotes      = 0,
         .activeEnemy     = ENEMY_NONE
     };
     combat_state = COMBAT_NO;

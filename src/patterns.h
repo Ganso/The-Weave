@@ -42,12 +42,12 @@
 // Timing and delays
 #define MAX_NOTE_PLAYING_TIME  500  // Note playing time in milliseconds
 #define MAX_PATTERN_WAIT_TIME 2000   // Time to wait for a next note before cancelling the pattern in milliseconds
-#define MIN_TIME_BETWEEN_NOTES 10     // Minimum ticks between consecutive notes to prevent too rapid input
+#define MIN_TIME_BETWEEN_NOTES SCREEN_FPS/4    // Minimum ticks between consecutive notes to prevent too rapid input
+#define MIN_TIME_BETWEEN_PATTERNS SCREEN_FPS/4 // Minimum ticks between consecutive patterns
 
 // Globals
 extern bool player_has_rod;          /* can physically use patterns?      */
 extern bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
-extern u16 current_note_ticks;   /* lifetime of the single note sprite  */
 extern u8  current_note;         /* NOTE_MI … NOTE_DO or NOTE_NONE      */
 extern u8  noteQueue[4];    // Queue of notes played by the player (up to 4)
 
@@ -70,6 +70,7 @@ typedef struct
 typedef struct
 {
     u16  id;  // PATTERN_EN_...
+    u8   notes[4]; // notes in the pattern (max 4)
     u8   noteCount; // number of notes in the pattern
 
     /* timing */
