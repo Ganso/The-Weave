@@ -7,7 +7,7 @@ static bool flashOn;        // TRUE = CRAM entry is white, FALSE = original
 // Macro helpers
 #define PAL_ENTRY(pal,col)  (((pal)<<4)|(col))
 #define PAL0_COL4           PAL_ENTRY(0,4)
-#define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0xFF44FF)
+#define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0x4444FF)
 
 // Launch callback — currently does nothing
 void enemyThunderLaunch(u8 enemyId)
@@ -25,6 +25,7 @@ bool enemyThunderUpdate(u8 enemyId)
     // Flash phase only (notes handled by engine)
     if (!flashOn) {                           // first frame of flash
         PAL_setColor(PAL0_COL4, COLOR_ENEMY_FLASH);
+        playEnemyPatternSound(PATTERN_EN_THUNDER); // play thunder sound
         flashOn = true;
     } else if ((frame_counter & 1) == 0) {    // toggle every 2 frames
         u16 col = PAL_getColor(PAL0_COL4);

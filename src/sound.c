@@ -73,22 +73,23 @@ void playPlayerPatternSound(u16 patternId)
     switch (patternId)
     {
         case PATTERN_THUNDER:
-            // TODO - playSample(snd_pattern_electric, sizeof(...));
+            play_sample(snd_pattern_thunder, sizeof(snd_pattern_thunder));
             break;
         case PATTERN_HIDE:
-            // TODO
+            play_sample(snd_pattern_hide, sizeof(snd_pattern_hide));
             break;
         case PATTERN_OPEN:
-            // TODO
+            play_sample(snd_pattern_open, sizeof(snd_pattern_open));
             break;
         case PATTERN_SLEEP:
             // TODO
             break;           
         default:
-            // TODO - play error jingle
+            play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
             break;
     }
 }
+
 
 // ------------------------------------------------------------------
 // Spell jingle (enemy side)
@@ -98,13 +99,13 @@ void playEnemyPatternSound(u16 patternId)
     switch (patternId)
     {
         case PATTERN_EN_THUNDER:
-            // TODO
+            play_sample(snd_pattern_thunder, sizeof(snd_pattern_thunder));
             break;
         case PATTERN_EN_BITE:
             // TODO
             break;
         default:
-            // TODO
+            play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
             break;
     }
 }

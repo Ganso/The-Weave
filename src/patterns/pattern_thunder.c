@@ -29,7 +29,7 @@ void playerThunderLaunch(void)
     combatContext.effectTimer = 0;
 
     // Sound effect
-    play_sample(snd_pattern_thunder, sizeof(snd_pattern_thunder)); // play thunder sound
+    playPlayerPatternSound(PATTERN_THUNDER); // play thunder sound
 }
 
 // Update callback

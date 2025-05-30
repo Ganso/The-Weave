@@ -266,7 +266,7 @@ bool patternPlayerAddNote(u8 noteCode)
         {
             dprintf(2,"Pattern invalid: %d (reversed=%d)", id, rev);
             reset_note_queue();
-            play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+            playPlayerPatternSound(PATTERN_PLAYER_NONE); // play invalid sound
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
             obj_character[active_character].state = STATE_IDLE; // reset player state
             setIdle(); // reset combat state
@@ -370,9 +370,6 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
     combatContext.enemyNoteTimer = 0;
     combat_state                = COMBAT_STATE_ENEMY_PLAYING;
 
-    // first note immediately
-    playEnemyNote(pat->notes[0]);
-
     // "playing" animation
     SPR_setAnim(spr_enemy[enemySlot], ANIM_ACTION);
 
@@ -384,55 +381,67 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
 
 bool updateEnemyPattern(u8 enemySlot)
 {
-    EnemyPattern *pat = &enemyPatterns[enemySlot][0];        // slot 0 = active
+    EnemyPattern *pat = &enemyPatterns[enemySlot][0]; // Active pattern in slot 0
+
     if (!pat->enabled) return true;
 
-    // ------------------------------------------------ note phase
-    if (combat_state == COMBAT_STATE_ENEMY_PLAYING)
+    switch (combat_state)
     {
-        // pause while player is mid-pattern
-        if (combatContext.playerNotes > 0 && combatContext.playerNotes < 4)
-            return false;
+        case COMBAT_STATE_ENEMY_PLAYING:
+            // Wait if player is playing notes (give player priority)
+            if (combatContext.playerNotes > 0 && combatContext.playerNotes < 4)
+                return false;
 
-        ++combatContext.enemyNoteTimer;
-        const u16 FRAMES_PER_NOTE = 8;                       // global tempo
+            // Increment timer for enemy note
+            combatContext.enemyNoteTimer++;
 
-        if (combatContext.enemyNoteTimer >= FRAMES_PER_NOTE)
-        {
-            combatContext.enemyNoteTimer = 0;
-            ++combatContext.enemyNoteIndex;
-
-            if (combatContext.enemyNoteIndex < pat->noteCount)
+            // Check if it is time to play the next note
+            if (combatContext.enemyNoteTimer >= ENEMY_FRAMES_PER_NOTE)
             {
-                playEnemyNote(pat->notes[combatContext.enemyNoteIndex]);
+                combatContext.enemyNoteTimer = 0;
+
+                // Play next note if not finished yet
+                if (combatContext.enemyNoteIndex < pat->noteCount)
+                {
+                    dprintf(2,"Enemy %d playing note %d", enemySlot, combatContext.enemyNoteIndex);
+                    u8 note = pat->notes[combatContext.enemyNoteIndex++];
+                    playEnemyNote(note); // Sound & HUD (implement HUD separately if needed)
+                }
+                else // All notes have been played
+                {
+                    dprintf(2,"Enemy %d finished playing notes. Launching pattern.", enemySlot);
+
+                    // Switch state to effect (actual spell execution)
+                    combat_state = COMBAT_STATE_ENEMY_EFFECT;
+                    combatContext.effectTimer = 0;
+                    combatContext.enemyNoteIndex = 0;
+
+                    // Call pattern launch callback (to start visual effects, animations, etc.)
+                    if (pat->launch)
+                        pat->launch(enemySlot);
+                }
             }
-            else            // all notes played → switch to EFFECT phase
+            return false; // Pattern still playing notes
+
+        case COMBAT_STATE_ENEMY_EFFECT:
+            // Update ongoing pattern effect (visual/audio effect, damage)
+            if (pat->update && pat->update(enemySlot))
             {
-                combatContext.effectTimer = 0;
-                combat_state              = COMBAT_STATE_ENEMY_EFFECT;
-                if (pat->launch) pat->launch(enemySlot);     // e.g. start flash
+                // Pattern effect ended
+                pat->rechargeFrames = pat->baseDuration; // Reset cooldown to baseDuration
+                combat_state = COMBAT_STATE_IDLE;
+
+                // Restore enemy to idle animation
+                SPR_setAnim(spr_enemy[enemySlot], ANIM_IDLE);
+
+                return true;
             }
-        }
-        return false;
+            return false; // Pattern effect still running
+
+        default:
+            return true; // Idle or other states, nothing to update
     }
-
-    // -------------------------------------------- effect phase (flash, etc.)
-    if (combat_state == COMBAT_STATE_ENEMY_EFFECT)
-    {
-        bool finished = pat->update ? pat->update(enemySlot) : true;
-
-        if (finished)
-        {
-            pat->rechargeFrames = SCREEN_FPS * 3;     // 3-sec cooldown
-            SPR_setAnim(spr_enemy[enemySlot], ANIM_IDLE);
-            return true;                                     // done
-        }
-        return false;                                        // still running
-    }
-
-    return true; // not our turn
 }
-
 
 // ---------------------------------------------------------------------
 // Validate 4-note sequence (returns PATTERN_PLAYER_NONE if invalid)
