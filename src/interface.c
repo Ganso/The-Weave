@@ -406,7 +406,7 @@ void check_pattern_status(void)
 
         reset_note_queue();                            // hide all 4 icons
         obj_character[active_character].state = STATE_IDLE;
-        play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+        playPlayerPatternSound(PATTERN_PLAYER_NONE); // play invalid sound
 
         // Start global lock so the user cannot mash immediately
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
