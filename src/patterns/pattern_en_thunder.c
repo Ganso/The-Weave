@@ -7,7 +7,7 @@ static bool flashOn;        // TRUE = CRAM entry is white, FALSE = original
 // Macro helpers
 #define PAL_ENTRY(pal,col)  (((pal)<<4)|(col))
 #define PAL0_COL4           PAL_ENTRY(0,4)
-#define COLOR_WHITE_VDP     RGB24_TO_VDPCOLOR(0xFFFFFF)
+#define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0xFF44FF)
 
 // Launch callback — currently does nothing
 void enemyThunderLaunch(u8 enemyId)
@@ -24,12 +24,12 @@ bool enemyThunderUpdate(u8 enemyId)
 
     // Flash phase only (notes handled by engine)
     if (!flashOn) {                           // first frame of flash
-        PAL_setColor(PAL0_COL4, COLOR_WHITE_VDP);
+        PAL_setColor(PAL0_COL4, COLOR_ENEMY_FLASH);
         flashOn = true;
     } else if ((frame_counter & 1) == 0) {    // toggle every 2 frames
         u16 col = PAL_getColor(PAL0_COL4);
-        PAL_setColor(PAL0_COL4, (col == COLOR_WHITE_VDP) ? savedColor
-                                                         : COLOR_WHITE_VDP);
+        PAL_setColor(PAL0_COL4, (col == COLOR_ENEMY_FLASH) ? savedColor
+                                                         : COLOR_ENEMY_FLASH);
     }
 
     if (combatContext.playerNotes > 0 && combatContext.playerNotes < 4)

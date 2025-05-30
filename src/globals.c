@@ -30,7 +30,7 @@ void next_frame(bool interactive)    // Process next frame with optional interac
         approach_characters();
 
         // Combat related actions
-        if (combat_state!=COMBAT_NO) update_combat();
+        update_combat();
     }
 
     // Screen related actions

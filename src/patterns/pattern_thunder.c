@@ -10,7 +10,8 @@ static u16 savedColor; // original colour in CRAM before the flash
 void playerThunderLaunch(void)
 {
     // If the player is trying to attack a Ghost, give him a clue and return false
-    if (obj_enemy[combatContext.activeEnemy].class_id == ENEMY_CLS_WEAVERGHOST)
+    if (combatContext.activeEnemy != ENEMY_NONE &&
+        obj_enemy[combatContext.activeEnemy].class_id == ENEMY_CLS_WEAVERGHOST)
     {
         show_or_hide_interface(false); // Hide interface
         talk_dialog(&dialogs[ACT1_DIALOG3][3]);

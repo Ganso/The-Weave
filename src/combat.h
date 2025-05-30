@@ -41,5 +41,6 @@ void combatFinish(void); // Finish combat phase
 void hit_enemy(u8 enemyId, u8 damage); // Hit an enemy
 void hit_player(u8 damage); // Hit the player
 void update_combat(void); // Update combat state, 
+void setIdle(void); // Set combat state to idle or none, depending on the context
 
 #endif
