@@ -40,7 +40,10 @@ bool enemyThunderUpdate(u8 enemyId)
     {
         PAL_setColor(PAL0_COL4, savedColor);  // restore sky
         SPR_setAnim(spr_enemy[enemyId], ANIM_IDLE);
-        hit_player(1);
+        if (obj_character[active_character].state != STATE_HIT)
+        {
+            hit_player(1);                  // -1 HP + enter STATE_HIT
+        }
         return true;                          // effect finished
     }
     return false;
