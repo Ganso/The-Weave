@@ -55,10 +55,16 @@ bool playerThunderUpdate(void)
 // Check if the pattern can be used
 bool playerThunderCanUse(void)
 {
-    // If reversed, only allowed to counter the active enemy thunder
+    // If reversed, allowed only to counter enemy thunder
     if (combatContext.patternReversed)
         return (combat_state == COMBAT_STATE_ENEMY_EFFECT) &&
                (combatContext.activePattern == PATTERN_EN_THUNDER);
 
-    return true;   // Normal order is always allowed
+    // Normal order: reject if the current enemy is a ghost
+    if (combatContext.activeEnemy != ENEMY_NONE &&
+        obj_enemy[combatContext.activeEnemy].class_id == ENEMY_CLS_WEAVERGHOST)
+    {
+        return false;   // hint will be shown by launchPlayerPattern
+    }
+    return true;
 }

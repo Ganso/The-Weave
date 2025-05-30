@@ -12,46 +12,37 @@ static bool flashOn;        // TRUE = CRAM entry is white, FALSE = original
 // Launch callback — currently does nothing
 void enemyThunderLaunch(u8 enemyId)
 {
-    // 1) Save current colour and start flash immediately
     savedColor = PAL_getColor(PAL0_COL4);
-    PAL_setColor(PAL0_COL4, COLOR_WHITE_VDP);
-    flashOn = true;
-
-    // 2) Play the enemy's magic animation (re-using ANIM_MAGIC)
-    SPR_setAnim(spr_enemy[enemyId], ANIM_MAGIC);
-
-    // 3) Reset effect timer (also done by launchEnemyPattern, but safe)
-    combatContext.effectTimer = 0;
-
-    // 4) Play thunder sound
-    play_sample(snd_pattern_thunder, sizeof(snd_pattern_thunder));
+    flashOn    = false;
+    SPR_setAnim(spr_enemy[enemyId], ANIM_ACTION);   // playing
 }
 
 // Update callback — returns true when finished
 bool enemyThunderUpdate(u8 enemyId)
 {
-    const u16 duration = enemyPatterns[enemyId][0].baseDuration; // 1 s
+    const u16 duration = enemyPatterns[enemyId][0].baseDuration;
 
-    // toggle flash every 2 frames
-    if ((frame_counter & 1) == 0)
-    {
-        PAL_setColor(PAL0_COL4, flashOn ? savedColor : COLOR_WHITE_VDP);
-        flashOn = !flashOn;
+    // Flash phase only (notes handled by engine)
+    if (!flashOn) {                           // first frame of flash
+        PAL_setColor(PAL0_COL4, COLOR_WHITE_VDP);
+        flashOn = true;
+    } else if ((frame_counter & 1) == 0) {    // toggle every 2 frames
+        u16 col = PAL_getColor(PAL0_COL4);
+        PAL_setColor(PAL0_COL4, (col == COLOR_WHITE_VDP) ? savedColor
+                                                         : COLOR_WHITE_VDP);
     }
 
-    // freeze while player mid-pattern
     if (combatContext.playerNotes > 0 && combatContext.playerNotes < 4)
-        return false;
+        return false;                         // freeze while player typing
 
-    // advance timer
     if (++combatContext.effectTimer >= duration)
     {
-        PAL_setColor(PAL0_COL4, savedColor);
-        flashOn = false;
+        PAL_setColor(PAL0_COL4, savedColor);  // restore sky
+        SPR_setAnim(spr_enemy[enemyId], ANIM_IDLE);
         hit_player(1);
-        return true;            // effect finished
+        return true;                          // effect finished
     }
-    return false;               // still flashing
+    return false;
 }
 
 

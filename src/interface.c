@@ -395,17 +395,21 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
 // Check the status of the current pattern, including note playing and expiration
 void check_pattern_status(void)
 {
-    // Count frames since the last player note
+    // Increment “time since last key”
     ++combatContext.noteTimer;
 
-    // Abort if the player stopped in the middle of a pattern
+    // Abort if player started a pattern but then paused too long
     if (combatContext.playerNotes &&
         combatContext.noteTimer > calc_ticks(MAX_PATTERN_WAIT_TIME))
     {
-        dprintf(2,"Abort: playerNotes=%u  noteTimer=%u", combatContext.playerNotes, combatContext.noteTimer);
+        dprintf(1,"Pattern aborted after %u ticks", combatContext.noteTimer);
 
-        reset_note_queue();                         // hides all four icons
+        reset_note_queue();                            // hide all 4 icons
         obj_character[active_character].state = STATE_IDLE;
         play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+
+        // Start global lock so the user cannot mash immediately
+        combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
+        combat_state = COMBAT_STATE_IDLE;
     }
 }
