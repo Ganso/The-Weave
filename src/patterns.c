@@ -167,8 +167,8 @@ void launchPlayerPattern(u16 patternId)
     // Spell recognised but not usable right now → abort cleanly
     if (p->canUse && !p->canUse())
     {
-        obj_character[active_character].state = STATE_IDLE;
-        combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;   // 20 frames lock
+        talk_dialog(&dialogs[ACT1_DIALOG3][3]);          // hint text
+        combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
         combat_state = COMBAT_STATE_IDLE;
         return;
     }
@@ -216,103 +216,80 @@ bool updatePlayerPattern(void)
 // Player presses a note (called from input layer)
 bool patternPlayerAddNote(u8 noteCode)
 {
-    // Reject illegal note codes
-    if (noteCode < NOTE_MI || noteCode > NOTE_DO) {
-        dprintf(2,"Reject %d: out-of-range", noteCode);
-        return false;
-    }
+    // --- Guards ------------------------------------------------------
+    if (noteCode < NOTE_MI || noteCode > NOTE_DO)           return false;
 
-    // Do not accept any note while the lock timer is running
-    if (combatContext.patternLockTimer) {
+    if (combatContext.patternLockTimer) {                   // global lock
         dprintf(2,"Reject %d: pattern lock (%u frames left)",
                 noteCode, combatContext.patternLockTimer);
         return false;
     }
-        // Debounce check
-    if (combatContext.noteTimer < MIN_TIME_BETWEEN_NOTES) {
+
+    if (combatContext.noteTimer < MIN_TIME_BETWEEN_NOTES) { // debounce
         dprintf(2,"Reject %d: debounce (timer=%u < %u)",
                 noteCode, combatContext.noteTimer, MIN_TIME_BETWEEN_NOTES);
         return false;
     }
 
-    // Queue full?  (should never happen now that we abort/clear)
-    if (combatContext.playerNotes >= 4) {
-        dprintf(2,"Reject %d: queue already full (playerNotes=%u)",
-                noteCode, combatContext.playerNotes);
+    if (combatContext.playerNotes >= 4) {                   // should never hit
+        dprintf(2,"Reject %d: queue full", noteCode);
         return false;
     }
 
-    // Passed all gates – enqueue note
-    combatContext.noteTimer = 0;                   // reset debounce
-    u8 idx = combatContext.playerNotes;            // 0..3
-    noteQueue[idx]          = noteCode;
-    combatContext.playerNotes = idx + 1;
+    // --- Accept note -------------------------------------------------
+    combatContext.noteTimer = 0;
+    u8 slot = combatContext.playerNotes;
+    noteQueue[slot] = noteCode;
+    combatContext.playerNotes = slot + 1;
 
-    dprintf(2,"NOTE OK %d -> slot %d  (playerNotes=%u)", noteCode, idx, combatContext.playerNotes);
-
-    // HUD + Sound
     show_note(noteCode, true);
-    current_note       = NOTE_NONE; // Reset current note
     playPlayerNote(noteCode);
 
-    dprintf(2,"Note %d queued at pos %d\n", noteCode, idx);
+    dprintf(2,"NOTE OK %d -> slot %d (playerNotes=%u)",
+            noteCode, slot, combatContext.playerNotes);
 
-    // If 4 notes reached → validate pattern
-    if (combatContext.playerNotes == 4) {
-            bool rev;
-            u16 id = validatePattern(noteQueue, &rev);
+    // --- Validate when 4 notes reached -------------------------------
+    if (combatContext.playerNotes == 4)
+    {
+        bool rev;
+        u16 id = validatePattern(noteQueue, &rev);
 
-            dprintf(2,"Pattern validation: id=%d, rev=%d, enabled=%d", id, rev, playerPatternEnabled(id));
-
-            if (id != PATTERN_PLAYER_NONE) {
-                if (playerPatternEnabled(id)) {
-                    dprintf(1,"Pattern %d recognised (rev=%d)\n", id, rev);
-                    reset_note_queue(); // Clear queue
-                    combatContext.patternReversed = rev;
-                    combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-                    launchPlayerPattern(id); // Launch the pattern
-                }
-                else { // Valid pattern, but not enabled
-                    dprintf(1,"Pattern %d recognised but not enabled\n", id);
-                    reset_note_queue(); // Clear queue
-                    combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-                    play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // Play invalid sound
-                    show_or_hide_interface(false); // Hide interface
-                    talk_dialog(&dialogs[SYSTEM_DIALOG][0]);
-                    show_or_hide_interface(true); // Show interface again
-                }
-            }
-            else
-            {
-                dprintf(1,"Invalid pattern, queue cleared\n");
-                reset_note_queue(); // Clear queue
-                combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-                play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid)); // Play invalid sound
-            }
+        if (id != PATTERN_PLAYER_NONE && playerPatternEnabled(id))
+        {
+            reset_note_queue();
+            combatContext.patternReversed = rev;
+            launchPlayerPattern(id);                    // success
+            combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
         }
-
-    if (obj_character[active_character].state != STATE_PATTERN_EFFECT &&
-        obj_character[active_character].state != STATE_PATTERN_EFFECT_FINISH) {
-            obj_character[active_character].state = STATE_PLAYING_NOTE; // Set character state to playing note
+        else                                            // fail
+        {
+            reset_note_queue();
+            play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+            combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
+        }
     }
 
+    // --- Sprite state ------------------------------------------------
+    if (obj_character[active_character].state != STATE_PATTERN_EFFECT)
+        obj_character[active_character].state = STATE_PLAYING_NOTE;
+
     if (combat_state == COMBAT_STATE_IDLE)
-        combat_state = COMBAT_STATE_PLAYER_PLAYING; // Set combat state to player playing, but only if nothing else is active
-        
+        combat_state = COMBAT_STATE_PLAYER_PLAYING;
+
     return true;
 }
+
 
 // Reset the note queue and player notes count
 void reset_note_queue(void)
 {
-    for (u8 i = 0; i < 4; i++)
+    for (u8 i = 0; i < 4; ++i)
     {
         if (noteQueue[i] != NOTE_NONE)
-            show_note(noteQueue[i], false);   // hide sprite
+            show_note(noteQueue[i], false);         // hide icon
         noteQueue[i] = NOTE_NONE;
     }
     combatContext.playerNotes = 0;
-    current_note = NOTE_NONE;   // allow fresh input
 }
 
 // ---------------------------------------------------------------------
@@ -435,8 +412,8 @@ bool updateEnemyPattern(u8 enemySlot)
 
         if (finished)
         {
-            pat->rechargeFrames = SCREEN_FPS * 3;            // standard CD
-            combat_state        = COMBAT_STATE_IDLE;
+            pat->rechargeFrames = SCREEN_FPS * 3;     // 3-sec cooldown
+            SPR_setAnim(spr_enemy[enemySlot], ANIM_IDLE);
             return true;                                     // done
         }
         return false;                                        // still running

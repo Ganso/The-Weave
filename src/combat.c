@@ -123,59 +123,36 @@ void hit_player(u8 damage)
 }
 
 // Update combat state.  Call every frame while combat_state != COMBAT_STATE_NO
+// Call once per frame when combat_state != COMBAT_STATE_NO
 void update_combat(void)
 {
-    dprintf(2,"Checking combat state: %d", combat_state);
-
-    // -----------------------------------------------------------------
-    //  A) ALWAYS advance the active enemy pattern.
-    //     • Durante ENEMY_PLAYING cuenta sus notas.
-    //     • Durante ENEMY_EFFECT gestiona el flash / daño / timeout.
-    // -----------------------------------------------------------------
-    if (combatContext.activeEnemy != ENEMY_NONE)
-    {
-        updateEnemyPattern(combatContext.activeEnemy);
-    }
-
-    // Count down the global lock between patterns
+    // --- A) Count down global pattern lock --------------------------
     if (combatContext.patternLockTimer)
         --combatContext.patternLockTimer;
 
-    // -----------------------------------------------------------------
-    //  B) Global finite-state machine
-    // -----------------------------------------------------------------
+    // --- B) Always advance the enemy pattern (notes or flash) -------
+    if (combatContext.activeEnemy != ENEMY_NONE)
+        updateEnemyPattern(combatContext.activeEnemy);
+
+    // --- C) FSM ------------------------------------------------------
     switch (combat_state)
     {
-    // ------------------------------------------------------------------ IDLE
     case COMBAT_STATE_IDLE:
-        // If the hero sprite is still in its HIT pose, wait.
-        if (obj_character[active_character].state == STATE_HIT)
-            break;
-
-        // Enemy AI: try to cast a new pattern (sets ENEMY_PLAYING if ready).
-        enemyChooseAndLaunch();
+        if (obj_character[active_character].state == STATE_HIT) break;
+        enemyChooseAndLaunch();                      // sets ENEMY_PLAYING
         break;
 
-    // --------------------------------------------------------- PLAYER lanes
-    case COMBAT_STATE_PLAYER_PLAYING:
-        // Note input is handled elsewhere; nothing to update here.
-        break;
+    case COMBAT_STATE_PLAYER_PLAYING:  break;       // input handled elsewhere
 
     case COMBAT_STATE_PLAYER_EFFECT:
-        // When the player spell animation/effect finishes, return to IDLE.
-        if (updatePlayerPattern())
+        if (updatePlayerPattern())                   // pattern finished
             combat_state = COMBAT_STATE_IDLE;
         break;
 
-    // ---------------------------------------------------------- ENEMY lanes
-    case COMBAT_STATE_ENEMY_PLAYING:
-        // Nothing extra: enemy notes advance in updateEnemyPattern() above.
-        break;
+    case COMBAT_STATE_ENEMY_PLAYING:  break;        // logic runs in B
 
-    case COMBAT_STATE_ENEMY_EFFECT:
-        // All timing & end-of-effect logic also live in updateEnemyPattern().
-        break;
+    case COMBAT_STATE_ENEMY_EFFECT:   break;        // idem
 
-    default: break;           // COMBAT_STATE_NO or undefined
+    default: break;
     }
 }

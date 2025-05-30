@@ -42,8 +42,9 @@
 // Timing and delays
 #define MAX_NOTE_PLAYING_TIME  500  // Note playing time in milliseconds
 #define MAX_PATTERN_WAIT_TIME 2000   // Time to wait for a next note before cancelling the pattern in milliseconds
-#define MIN_TIME_BETWEEN_NOTES SCREEN_FPS/4    // Minimum ticks between consecutive notes to prevent too rapid input
-#define MIN_TIME_BETWEEN_PATTERNS SCREEN_FPS/4 // Minimum ticks between consecutive patterns
+#define MIN_TIME_BETWEEN_NOTES SCREEN_FPS/4    // Minimum ticks between consecutive notes to prevent too rapid input (0.25 seconds)
+#define MIN_TIME_BETWEEN_PATTERNS SCREEN_FPS/4 // Minimum ticks between consecutive patterns (0.25 seconds)
+#define ENEMY_FRAMES_PER_NOTE (SCREEN_FPS/2) // Enemy frames per note (0.5 seconds per note)
 
 // Globals
 extern bool player_has_rod;          /* can physically use patterns?      */
