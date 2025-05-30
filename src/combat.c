@@ -137,6 +137,9 @@ void update_combat(void)
     // --- C) FSM ------------------------------------------------------
     switch (combat_state)
     {
+    case COMBAT_NO:
+        break; // No combat active, nothing to do
+
     case COMBAT_STATE_IDLE:
         if (obj_character[active_character].state == STATE_HIT) break;
         enemyChooseAndLaunch();                      // sets ENEMY_PLAYING
@@ -155,4 +158,22 @@ void update_combat(void)
 
     default: break;
     }
+}
+
+// Set combat state to idle or none, depending on the context
+void setIdle(void) {
+    // Check if there's active enemies
+    bool hasActiveEnemies = false;
+    for (u8 i = 0; i < MAX_ENEMIES; i++) {
+        if (obj_enemy[i].obj_character.active) {
+            hasActiveEnemies = true;
+            break;
+        }
+    }
+    if (hasActiveEnemies) {
+        combat_state = COMBAT_STATE_IDLE; // Set to idle if there are active enemies
+    } else {
+        combat_state = COMBAT_NO; // No combat active
+    }
+    dprintf(2, "All is quiet. Combat state set to %d", combat_state);
 }

@@ -410,6 +410,6 @@ void check_pattern_status(void)
 
         // Start global lock so the user cannot mash immediately
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-        combat_state = COMBAT_STATE_IDLE;
+        setIdle(); // Reset combat state
     }
 }

@@ -169,7 +169,7 @@ void launchPlayerPattern(u16 patternId)
     {
         talk_dialog(&dialogs[ACT1_DIALOG3][3]);          // hint text
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-        combat_state = COMBAT_STATE_IDLE;
+        setIdle(); // reset combat state
         return;
     }
 
@@ -256,6 +256,7 @@ bool patternPlayerAddNote(u8 noteCode)
 
         if (id != PATTERN_PLAYER_NONE && playerPatternEnabled(id))
         {
+            dprintf(2,"Pattern %d recognised (reversed=%d)", id, rev);
             reset_note_queue();
             combatContext.patternReversed = rev;
             launchPlayerPattern(id);                    // success
@@ -263,18 +264,26 @@ bool patternPlayerAddNote(u8 noteCode)
         }
         else                                            // fail
         {
+            dprintf(2,"Pattern invalid: %d (reversed=%d)", id, rev);
             reset_note_queue();
             play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
+            obj_character[active_character].state = STATE_IDLE; // reset player state
+            setIdle(); // reset combat state
+            return false; // invalid pattern
         }
     }
 
     // --- Sprite state ------------------------------------------------
-    if (obj_character[active_character].state != STATE_PATTERN_EFFECT)
+    if (obj_character[active_character].state != STATE_PATTERN_EFFECT) {
+        dprintf(2,"Player state: %d --> playing note", obj_character[active_character].state);
         obj_character[active_character].state = STATE_PLAYING_NOTE;
+    }
 
-    if (combat_state == COMBAT_STATE_IDLE)
+    if (combat_state == COMBAT_STATE_IDLE) {
+        dprintf(2,"Combat state: idle --> player playing");
         combat_state = COMBAT_STATE_PLAYER_PLAYING;
+    }
 
     return true;
 }
@@ -283,6 +292,7 @@ bool patternPlayerAddNote(u8 noteCode)
 // Reset the note queue and player notes count
 void reset_note_queue(void)
 {
+    dprintf(2,"Resetting note queue");
     for (u8 i = 0; i < 4; ++i)
     {
         if (noteQueue[i] != NOTE_NONE)
@@ -299,12 +309,13 @@ void reset_note_queue(void)
 // Cancel the current player pattern (e.g. if the player wants to stop playing)
 void cancelPlayerPattern(void)
 {
+    dprintf(2,"Cancelling player pattern");
     combatContext.activePattern = PATTERN_PLAYER_NONE;
-    combat_state = COMBAT_STATE_IDLE;
     combatContext.playerNotes = 0;
     combatContext.patternReversed  = false;
     combatContext.patternLockTimer = 0;   // allow immediate re-input
     reset_note_queue();
+    setIdle(); // reset combat state
 }
 
 // ---------------------------------------------------------------------
