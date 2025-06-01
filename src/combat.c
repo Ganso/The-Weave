@@ -179,5 +179,9 @@ void setIdle(void) {
     } else {
         combat_state = COMBAT_NO; // No combat active
     }
+
+    // Set player state to idle
+    obj_character[active_character].state = STATE_IDLE;
+
     dprintf(2, "All is quiet. Combat state set to %d", combat_state);
 }
