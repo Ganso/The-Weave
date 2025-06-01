@@ -167,7 +167,10 @@ void launchPlayerPattern(u16 patternId)
     // Spell recognised but not usable right now → abort cleanly
     if (p->canUse && !p->canUse())
     {
-        talk_dialog(&dialogs[ACT1_DIALOG3][3]);          // hint text
+        dprintf(2,"Pattern %d not usable right now", patternId);
+        show_or_hide_interface(false); // hide interface
+        talk_dialog(&dialogs[SYSTEM_DIALOG][0]);          // hint text
+        if (interface_active==true) show_or_hide_interface(true); // show interface
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
         setIdle(); // reset combat state
         return;
@@ -265,6 +268,7 @@ bool patternPlayerAddNote(u8 noteCode)
             combatContext.patternReversed = rev;
             launchPlayerPattern(id);                    // success
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
+            return true; // valid pattern
         }
         else                                            // fail
         {
@@ -273,7 +277,10 @@ bool patternPlayerAddNote(u8 noteCode)
             playPlayerPatternSound(PATTERN_PLAYER_NONE); // play invalid sound
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
             obj_character[active_character].state = STATE_IDLE; // reset player state
-            setIdle(); // reset combat state
+            setIdle(); // reset combat state´
+            show_or_hide_interface(false); // hide interface
+            talk_dialog(&dialogs[SYSTEM_DIALOG][0]);          // invalid pattern
+            show_or_hide_interface(true); // show interface again
             return false; // invalid pattern
         }
     }
@@ -382,7 +389,9 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
         pat->launch(enemySlot);
     }
 }
-
+// ---------------------------------------------------------------------
+// Update enemy pattern (called every frame)
+// ---------------------------------------------------------------------
 bool updateEnemyPattern(u8 enemySlot)
 {
     EnemyPattern *pat = &enemyPatterns[enemySlot][0]; // Active pattern in slot 0
@@ -479,4 +488,25 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
     }
     if (reversed) *reversed = false;
     return PATTERN_PLAYER_NONE;
+}
+
+// ---------------------------------------------------------------------
+// Cancel an enemy pattern (e.g. if the player counters it)
+// ---------------------------------------------------------------------
+void cancelEnemyPattern(u8 enemyId)
+{
+    dprintf(2,"Finishing enemy pattern for enemy %d", enemyId);
+    combatContext.activePattern = PATTERN_PLAYER_NONE;
+    combatContext.activeEnemy = ENEMY_NONE;
+    combatContext.enemyNoteIndex = 0;
+    combatContext.enemyNoteTimer = 0;
+    combatContext.effectTimer = 0;
+
+    // Reset enemy state, if the enemy stil exists
+    if (enemyId >= MAX_ENEMIES || !obj_enemy[enemyId].obj_character.active) {
+        dprintf(2,"Enemy %d does not exist or is inactive", enemyId);
+        return;
+    }
+    obj_enemy[enemyId].obj_character.state = STATE_IDLE;
+    SPR_setAnim(spr_enemy[enemyId], ANIM_IDLE);
 }

@@ -51,9 +51,11 @@ bool enemyThunderUpdate(u8 enemyId)
 
 
 
-// Called when the pattern is countered — currently does nothing
+// Called when the pattern is countered
 void enemyThunderOnCounter(u8 enemyId)
 {
+    dprintf(2, "Enemy %d: Thunder pattern countered", enemyId);
+
     // Stop flashing immediately
     PAL_setColor(PAL0_COL4, savedColor);
     flashOn = false;
@@ -63,4 +65,7 @@ void enemyThunderOnCounter(u8 enemyId)
 
     // Cool-down so the ghost cannot spam thunder
     enemyPatterns[enemyId][0].rechargeFrames=enemyPatterns[enemyId][0].baseDuration; // Reset cooldown
+
+    cancelEnemyPattern(enemyId); // Reset enemy state
+    cancelPlayerPattern(); // Reset player state
 }

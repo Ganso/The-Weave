@@ -111,8 +111,9 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot);
 bool updateEnemyPattern(u8 enemySlot);      // Called every frame (true = finished)
 void patternEnemyAddNote(u8 enemySlot, u8 noteCode); // enemy plays a note
 void initEnemyPatterns(u8 enemyId); // Initialize enemy patterns for a specific enemy slot
+void cancelEnemyPattern(u8 enemyId); // Reset enemy state after a pattern is finished
 
 // Note validation
-u16 validatePattern(const u8 notes[4], bool* reversed); // Returns PATTERN_PLAYER_NONE if invalid
+u16 validatePattern(const u8 notes[4], bool* reversed); // Cancel an enemy pattern (e.g. if the player counters it)
 
 #endif // PATTERNS_H
