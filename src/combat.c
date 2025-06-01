@@ -77,6 +77,8 @@ void combatInit(void)
     combatContext.enemyNoteIndex  = 0;
     combatContext.enemyNoteTimer  = 0;
 
+    player_scroll_active = false; // Disable player scroll during combat
+
     // Initialize every active enemy's patterns
     for (u8 id = 0; id < MAX_ENEMIES; id++)
         if (obj_enemy[id].obj_character.active)   
@@ -92,6 +94,8 @@ void combatFinish(void)
 
     // Reset combat context
     combat_state = COMBAT_NO;
+
+    player_scroll_active = true; // Enable player scroll after combat
 }
 
 // Hit an enemy

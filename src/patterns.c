@@ -32,8 +32,8 @@ static inline EnemyPattern* getEnemyPattern(u8 slot, u8 pslot)
 static inline bool playerPatternEnabled(u16 id)
 {
     PlayerPattern* p = getPlayerPattern(id);
-    dprintf(2,"Checking player pattern %d: enabled=%d, canUse=%p", id, p ? p->enabled : 0, p ? p->canUse : NULL);
-    return p && p->enabled && (!p->canUse || p->canUse());
+    dprintf(2,"Checking player pattern %d: enabled=%d", id, p ? p->enabled : 0);
+    return p && p->enabled;
 }
 
 // Devuelve true si el patrón del enemigo está habilitado y sin cooldown
@@ -161,7 +161,7 @@ void activate_spell(u16 patternId)
 void launchPlayerPattern(u16 patternId)
 {
     PlayerPattern* p = getPlayerPattern(patternId);
-    if (!p || !p->enabled || (p->canUse && !p->canUse()))
+    if (!p || !p->enabled)
         return;
 
     // Spell recognised but not usable right now → abort cleanly
@@ -254,7 +254,11 @@ bool patternPlayerAddNote(u8 noteCode)
         bool rev;
         u16 id = validatePattern(noteQueue, &rev);
 
-        if (id != PATTERN_PLAYER_NONE && playerPatternEnabled(id))
+        combatContext.patternReversed = rev;
+        PlayerPattern* pat = getPlayerPattern(id);
+
+        if (id != PATTERN_PLAYER_NONE && pat && pat->enabled &&
+            (!pat->canUse || pat->canUse()))
         {
             dprintf(2,"Pattern %d recognised (reversed=%d)", id, rev);
             reset_note_queue();

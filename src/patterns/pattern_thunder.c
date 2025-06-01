@@ -56,6 +56,9 @@ bool playerThunderUpdate(void)
 // Check if the pattern can be used
 bool playerThunderCanUse(void)
 {
+    dprintf(2, "Checking if Thunder can be used. Combat state: %d, active enemy: %d, pattern reversed: %d",
+            combat_state, combatContext.activeEnemy, combatContext.patternReversed);
+ 
     // If reversed, allowed only to counter enemy thunder
     if (combatContext.patternReversed)
         return (combat_state == COMBAT_STATE_ENEMY_EFFECT) &&
