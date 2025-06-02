@@ -43,6 +43,14 @@ static bool enemyChooseAndLaunch(void)
     return FALSE;   // nobody ready yet
 }
 
+// Returns TRUE if at least one enemy entity is still active
+static bool anyEnemyActive(void)
+{
+    for (u8 i = 0; i < MAX_ENEMIES; ++i)
+        if (obj_enemy[i].obj_character.active)
+            return true;                    // Found a live enemy → keep combat
+    return false;                           // No enemies left → combat can end
+}
 
 // --------------------------------
 // Combat functions
@@ -145,9 +153,13 @@ void update_combat(void)
         break; // No combat active, nothing to do
 
     case COMBAT_STATE_IDLE:
-        if (obj_character[active_character].state == STATE_HIT) break;
-        enemyChooseAndLaunch();                      // sets ENEMY_PLAYING
-        break;
+        if (obj_character[active_character].state == STATE_HIT) break; //  If the player was just hit, stay here one frame
+        if (!anyEnemyActive()) { // If no enemy is alive any more, leave the combat loop
+            setIdle();
+            break;
+        }
+       enemyChooseAndLaunch(); // Otherwise let enemies try to launch a pattern
+       break;
 
     case COMBAT_STATE_PLAYER_PLAYING:  break;       // input handled elsewhere
 
