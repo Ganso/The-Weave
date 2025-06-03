@@ -41,6 +41,7 @@ void next_frame(bool interactive)    // Process next frame with optional interac
 
     // Sprites related actions
     update_character_animations();
+    update_enemy_animations();
     update_sprites_depth();
     SPR_update();
 

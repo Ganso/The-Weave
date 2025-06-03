@@ -252,3 +252,62 @@ void approach_enemies(void)    // Update enemy positions to follow player during
         }
     }
 }
+
+// Update enemy animations based on their current state
+void update_enemy_animations(void)
+{
+    for (u16 e = 0; e < MAX_ENEMIES; ++e)
+    {
+        if (!obj_enemy[e].obj_character.active)          // empty slot
+            continue;
+
+        Entity *en = &obj_enemy[e].obj_character;        // shorthand
+
+        switch (en->state)
+        {
+            /* ---------------------------------------------------------- */
+            case STATE_HIT:
+                dprintf(2, "Enemy %d: HURT state", e);
+
+                // Start — or keep — the HURT animation
+                if (en->animation != ANIM_HURT) {
+                    anim_enemy(e, ANIM_HURT);
+                    break;
+                }
+
+                // When the animation finishes, go back to idle
+                if (SPR_isAnimationDone(spr_enemy[e]))
+                {
+                    dprintf(2, "Enemy %d: HURT animation finished", e);
+                    en->state     = STATE_IDLE;
+                    anim_enemy(e, ANIM_IDLE);
+                }
+                break;
+
+            /* ---------------------------------------------------------- */
+            case STATE_PATTERN_EFFECT:
+                if (en->animation != ANIM_MAGIC)
+                    anim_enemy(e, ANIM_MAGIC);
+                break;
+
+            case STATE_PATTERN_EFFECT_FINISH:
+                // Ensure we exit the magic pose cleanly
+                anim_enemy(e, ANIM_IDLE);
+                en->state = STATE_IDLE;
+                break;
+
+            /* ---------------------------------------------------------- */
+            case STATE_IDLE:
+            default:
+                // If the current animation has ended, enforce the idle pose
+                if (en->animation != ANIM_IDLE &&
+                    SPR_isAnimationDone(spr_enemy[e]))
+                {
+                    anim_enemy(e, ANIM_IDLE);
+                }
+                break;
+        }
+    }
+
+    update_life_counter();    // Update life counter sprite if needed
+}

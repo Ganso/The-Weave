@@ -109,6 +109,8 @@ void combatFinish(void)
 // Hit an enemy
 void hit_enemy(u8 enemyId, u8 damage)
 {
+    dprintf(2, "Hit enemy %d for %d damage", enemyId, damage);
+
     if (enemyId >= MAX_ENEMIES || !obj_enemy[enemyId].obj_character.active) return;
   
     // Reduce enemy HP
@@ -123,6 +125,7 @@ void hit_enemy(u8 enemyId, u8 damage)
         SPR_setAnim(spr_enemy[enemyId], ANIM_HURT); // Show hurt animation
         play_sample(snd_player_hit_enemy, sizeof(snd_player_hit_enemy));
         obj_enemy[enemyId].obj_character.state = STATE_HIT; // Set enemy state to HURT
+        dprintf(2, "Enemy %d state set to HURT", enemyId);
     }
 }
 
