@@ -1,6 +1,7 @@
 #ifndef _RES_RES_CHARACTERS_H_
 #define _RES_RES_CHARACTERS_H_
 
+extern const u8 linus_sprite_animation4_frame3_tileset_data[0];
 extern const SpriteDefinition linus_sprite;
 extern const SpriteDefinition linus_norod_sprite;
 extern const SpriteDefinition linus_shadow_sprite;

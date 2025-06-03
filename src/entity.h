@@ -6,7 +6,7 @@
 #define ANIM_WALK       1
 #define ANIM_ACTION     2
 #define ANIM_MAGIC      3
-#define ANIM_HURT   2          // alias of ACTION until graphics are ready
+#define ANIM_HURT       4
 
 // Global variables
 extern bool movement_active;
