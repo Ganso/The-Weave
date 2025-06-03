@@ -432,10 +432,12 @@ void update_character_animations(void) {
                 }
                 // If the animation is done, set to IDLE
                 if (SPR_isAnimationDone(spr_chr[chr])) {
+                    obj_character[chr].state = STATE_IDLE;
+                    anim_character(chr, ANIM_IDLE);
+                    next_frame(false);
                     show_or_hide_interface(false);
                     talk_dialog(&dialogs[ACT1_DIALOG3][2]);   // "That hurts"
-                    show_or_hide_interface(true);
-                    obj_character[chr].state = STATE_IDLE;
+                    show_or_hide_interface(true);                    
                 }
                 break;
             default:
