@@ -507,6 +507,12 @@ void cancelEnemyPattern(u8 enemyId)
         dprintf(2,"Enemy %d does not exist or is inactive", enemyId);
         return;
     }
-    obj_enemy[enemyId].obj_character.state = STATE_IDLE;
-    SPR_setAnim(spr_enemy[enemyId], ANIM_IDLE);
+    // Change to idle state except if the enemy is already hit
+    if (obj_enemy[enemyId].obj_character.state == STATE_HIT) {
+        dprintf(2,"Enemy %d is hit, keeping hit state", enemyId);
+    } else {
+        dprintf(2,"Enemy %d is idle, resetting state to idle", enemyId);
+        obj_enemy[enemyId].obj_character.state = STATE_IDLE;
+        SPR_setAnim(spr_enemy[enemyId], ANIM_IDLE);
+    }
 }

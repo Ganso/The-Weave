@@ -64,6 +64,7 @@ void anim_enemy(u16 nenemy, u8 newanimation);
 void look_enemy_left(u16 nenemy, bool direction_right);
 void move_enemy(u16 nenemy, s16 newx, s16 newy);
 void move_enemy_instant(u16 nenemy, s16 x, s16 y);
+void update_enemy_animations(void); // Update enemy animations based on their current state
 
 /* --- AI movement --- */
 void approach_enemies(void);
