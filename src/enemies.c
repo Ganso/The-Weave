@@ -2,7 +2,6 @@
 
 Enemy obj_enemy[MAX_ENEMIES];                    // Array of enemy instances with their properties
 Sprite *spr_enemy[MAX_ENEMIES];                  // Array of enemy sprites
-Sprite *spr_enemy_face[MAX_ENEMIES];             // Array of enemy face sprites for dialogs
 Sprite *spr_enemy_shadow[MAX_ENEMIES];           // Array of enemy shadow sprites
 Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES];  // Array of enemy class definitions
 
@@ -48,13 +47,11 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     {
     case ENEMY_CLS_WEAVERGHOST:
         nsprite = &weaver_ghost_sprite;
-        nsprite_face = &weaver_ghost_sprite_face;
         nsprite_shadow = NULL;
         drops_shadow=false;
         break;
     case ENEMY_CLS_3HEADMONKEY:
         nsprite = &three_head_monkey_sprite;
-        nsprite_face = &three_head_monkey_sprite_face;
         nsprite_shadow = &three_head_monkey_sprite_shadow;
         break;
     default:
@@ -83,9 +80,6 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     if (spr_enemy[numenemy]==NULL) spr_enemy[numenemy] = SPR_addSpriteSafe(nsprite, obj_enemy[numenemy].obj_character.x, obj_enemy[numenemy].obj_character.y, 
                                        TILE_ATTR(npal, obj_enemy[numenemy].obj_character.priority, false, obj_enemy[numenemy].obj_character.flipH));
     
-    // Add enemy face sprite if not already present
-    if (spr_enemy_face[numenemy]==NULL) spr_enemy_face[numenemy] = SPR_addSpriteSafe(nsprite_face, 198, 178, TILE_ATTR(npal, false, false, false));
-
     // Initialize shadow if enemy drops one
     if (obj_enemy[numenemy].obj_character.drops_shadow) {
         if (spr_enemy_shadow[numenemy] == NULL) {
@@ -100,7 +94,6 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
 
     // Initially hide enemy sprites
     SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
-    SPR_setVisibility(spr_enemy_face[numenemy], HIDDEN);
     
     initEnemyPatterns(numenemy); // Initialize enemy patterns
 
@@ -130,10 +123,6 @@ void release_enemy(u16 nenemy)    // Free enemy resources and reset related comb
     if (spr_enemy[nenemy] != NULL) {
         SPR_releaseSprite(spr_enemy[nenemy]);
         spr_enemy[nenemy] = NULL;
-    }
-    if (spr_enemy_face[nenemy] != NULL) {
-        SPR_releaseSprite(spr_enemy_face[nenemy]);
-        spr_enemy_face[nenemy] = NULL;
     }
     if (spr_enemy_shadow[nenemy] != NULL) {
         SPR_releaseSprite(spr_enemy_shadow[nenemy]);
@@ -265,7 +254,6 @@ void update_enemy_animations(void)
 
         switch (en->state)
         {
-            /* ---------------------------------------------------------- */
             case STATE_HIT:
                 dprintf(2, "Enemy %d: HURT state", e);
 
@@ -284,7 +272,6 @@ void update_enemy_animations(void)
                 }
                 break;
 
-            /* ---------------------------------------------------------- */
             case STATE_PATTERN_EFFECT:
                 if (en->animation != ANIM_MAGIC)
                     anim_enemy(e, ANIM_MAGIC);

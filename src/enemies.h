@@ -47,7 +47,6 @@ typedef struct
 
 extern Enemy obj_enemy[MAX_ENEMIES]; // Enemy object
 extern Sprite *spr_enemy[MAX_ENEMIES]; // Enemy sprites
-extern Sprite *spr_enemy_face[MAX_ENEMIES]; // Enemy faces sprites
 extern Sprite *spr_enemy_shadow[MAX_ENEMIES]; // Enemy shadows sprites
 
 
