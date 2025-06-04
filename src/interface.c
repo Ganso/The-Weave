@@ -418,26 +418,47 @@ void check_pattern_status(void)
 void update_life_counter(void) {
     u16 life_counter = 0;
 
+    // Check if there's a hurt enemy
+    u8 nenemy = ENEMY_NONE;
+    for (u8 i = 0; i < MAX_ENEMIES; i++) {
+        if (obj_enemy[i].obj_character.state == STATE_HIT) {
+            nenemy = i; // Found an enemy that is hit
+            break;
+        }
+    }
+    if (nenemy == ENEMY_NONE) {
+        // If no enemy is hit, use the active enemy from combat context
+        nenemy = combatContext.activeEnemy;
+    }
+    
     // If there's no attackers, release the sprites if it exists and return
-    if (combatContext.activeEnemy == ENEMY_NONE) {
+    if (nenemy == ENEMY_NONE) {
         if (spr_int_life_counter != NULL) {
             SPR_releaseSprite(spr_int_life_counter);
             spr_int_life_counter = NULL;
         }
         return;
     }
+    dprintf(2,"Updating life counter for enemy %d", nenemy);
+
+    // Calculate X and Y position for the life counter, just above the enemy
+    u16 x = obj_enemy[nenemy].obj_character.x + (obj_enemy[nenemy].obj_character.x_size / 2) - 16; // Centered on the enemy. 16 is half the life counter width.
+    u16 y = obj_enemy[nenemy].obj_character.y - 8; // 16 pixels above the enemy
 
     // Get the life counter animation (hitpoints - 1)
-    life_counter = obj_enemy[combatContext.activeEnemy].hitpoints - 1;
+    life_counter = obj_enemy[nenemy].hitpoints - 1;
        
     // Load the life counter sprite if it's null
     if (spr_int_life_counter == NULL) {
-        spr_int_life_counter  = SPR_addSprite(&int_life_counter_sprite, 164, 180, TILE_ATTR(PAL2, false, false, false));
+        spr_int_life_counter  = SPR_addSprite(&int_life_counter_sprite, x, y, TILE_ATTR(PAL2, false, false, false));
+    } else {
+        SPR_setPosition(spr_int_life_counter, x, y); // Update position if it already exists
     }
 
     // If enemy is hit, flash the life counter every odd frame
-    if (obj_enemy[combatContext.activeEnemy].obj_character.state == STATE_HIT) {
-        dprintf(2,"Enemy %d hit while checking life counter", combatContext.activeEnemy);
+    SPR_setVisibility(spr_int_life_counter, VISIBLE); // Ensure life counter is visible
+    if (obj_enemy[nenemy].obj_character.state == STATE_HIT) {
+        dprintf(2,"Enemy %d hit while checking life counter", nenemy);
         if (frame_counter% 2 == 0) {
             dprintf(2,"Flashing life counter");
             SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter
@@ -450,13 +471,6 @@ void update_life_counter(void) {
     if (spr_int_life_counter->animInd != life_counter) {
         SPR_setAnim(spr_int_life_counter, life_counter);
     }
-
-    // Load the enemy face sprite if it's null
-    if (spr_enemy_face[combatContext.activeEnemy] != NULL) {
-        SPR_setVisibility(spr_enemy_face[combatContext.activeEnemy], VISIBLE);
-    }
-    // Ensure the enemy face is always on top
-    SPR_setAlwaysOnTop(spr_enemy_face[combatContext.activeEnemy]);
 
     SPR_update(); // Update the sprite engine to reflect changes
 }
