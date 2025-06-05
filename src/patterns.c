@@ -388,6 +388,14 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
     // "playing" animation
     SPR_setAnim(spr_enemy[enemySlot], ANIM_ACTION);
 
+    // Play first note
+    if (pat->noteCount > 0) {
+        playEnemyNote(pat->notes[0]); // Sound & HUD
+        combatContext.enemyNoteIndex = 1; // First note is already played
+        combatContext.enemyNoteTimer = 0; // Reset timer for next note
+    }
+
+    // Pattern specific launch callback
     if (pat->launch) {
         dprintf(2,"Launching enemy pattern %d for enemy %d", pat->id, enemySlot);
         pat->launch(enemySlot);
