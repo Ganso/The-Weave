@@ -107,9 +107,10 @@ void reset_note_queue(void);                // Reset the note queue and player n
 void cancelPlayerPattern(void); // Cancel the current player pattern (e.g. if the player wants to stop playing)
 
 // Enemy side
-void launchEnemyPattern(u8 enemySlot, u16 patternSlot);
+void launchEnemyPattern(u8 enemySlot, u16 patternSlot); // Launch an enemy pattern
 bool updateEnemyPattern(u8 enemySlot);      // Called every frame (true = finished)
-void patternEnemyAddNote(u8 enemySlot, u8 noteCode); // enemy plays a note
+void patternEnemyAddNote(u8 enemySlot, u8 noteCode); // Add a note to the enemy pattern
+void patternEnemyClearNotes(void); // Clear all enemy notes
 void initEnemyPatterns(u8 enemyId); // Initialize enemy patterns for a specific enemy slot
 void cancelEnemyPattern(u8 enemyId); // Reset enemy state after a pattern is finished
 

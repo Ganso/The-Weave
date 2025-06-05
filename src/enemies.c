@@ -72,7 +72,7 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
         ANIM_IDLE, false, collision_x_offset, collision_y_offset, 
         collision_width, collision_height, STATE_IDLE, 
         obj_enemy_class[class].follows_character, obj_enemy_class[class].follow_speed,
-        drops_shadow
+        drops_shadow, 0
     };
 
     // Add enemy sprite if not already present
@@ -111,9 +111,7 @@ void release_enemy(u16 nenemy)    // Free enemy resources and reset related comb
     }
 
     /* Hide any note indicators (through interface) */
-    for (u8 note = 0; note < 6; note++) {
-        // ******************** show_enemy_note(note + 1, false, false);
-    }
+    patternEnemyClearNotes();
 
     /* Deactivate entity */
     obj_enemy[nenemy].obj_character.active = false;

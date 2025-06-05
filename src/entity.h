@@ -48,6 +48,7 @@ typedef struct
     bool                    follows_character;
     u8                      follow_speed;
     bool                    drops_shadow;
+    u16                     modeTimer;
 } Entity;
 
 void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Move an entity
