@@ -262,9 +262,10 @@ void update_enemy_animations(void)
                     break;
                 }
 
-                // When the animation finishes, go back to idle
-                if (SPR_isAnimationDone(spr_enemy[e]))
-                {
+                if (obj_enemy[e].modeTimer > 0) {
+                    --obj_enemy[e].modeTimer; // Decrease the hurt timer
+                }
+                else {
                     dprintf(2, "Enemy %d: HURT animation finished", e);
                     en->state     = STATE_IDLE;
                     anim_enemy(e, ANIM_IDLE);

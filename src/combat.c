@@ -22,6 +22,12 @@ static bool enemyChooseAndLaunch(void)
 {
     dprintf(3, "Checking enemy patterns to launch");
 
+    // If any enemy is hit, we cannot launch a patterns -------------------
+    for (u8 e = 0; e < MAX_ENEMIES; ++e)
+        if (obj_enemy[e].obj_character.active &&
+            obj_enemy[e].obj_character.state == STATE_HIT)
+            return false; 
+
     // Tick all cooldowns ------------------------------------------------
     for (u8 e = 0; e < MAX_ENEMIES; ++e)
         if (obj_enemy[e].obj_character.active)
@@ -109,10 +115,11 @@ void combatFinish(void)
 // Hit an enemy
 void hit_enemy(u8 enemyId, u8 damage)
 {
+    if (enemyId >= MAX_ENEMIES || !obj_enemy[enemyId].obj_character.active) return; // If enemy does not exist or is inactive, do nothing
+    if (obj_enemy[enemyId].obj_character.state == STATE_HIT) return; // If enemy is already hit, do nothing
+
     dprintf(2, "Hit enemy %d for %d damage", enemyId, damage);
 
-    if (enemyId >= MAX_ENEMIES || !obj_enemy[enemyId].obj_character.active) return;
-  
     // Reduce enemy HP
     obj_enemy[enemyId].hitpoints -= damage;
     if (obj_enemy[enemyId].hitpoints <= 0) { // If enemy is defeated
@@ -132,6 +139,7 @@ void hit_enemy(u8 enemyId, u8 damage)
         SPR_setAnim(spr_enemy[enemyId], ANIM_HURT); // Show hurt animation
         play_sample(snd_player_hit_enemy, sizeof(snd_player_hit_enemy));
         obj_enemy[enemyId].obj_character.state = STATE_HIT; // Set enemy state to HURT
+        obj_enemy[enemyId].modeTimer = ENEMY_HURT_DURATION; // Set a timer for the hurt state
         dprintf(2, "Enemy %d state set to HURT", enemyId);
     }
 }
