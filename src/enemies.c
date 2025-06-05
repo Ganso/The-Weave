@@ -35,7 +35,6 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     u8 collision_x_offset=0,collision_y_offset=0,collision_width=0,collision_height=0;
     bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
-    const SpriteDefinition *nsprite_face = NULL;
     const SpriteDefinition *nsprite_shadow = NULL;
 
     obj_enemy[numenemy].class_id=class;

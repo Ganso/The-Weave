@@ -169,7 +169,7 @@ void launchPlayerPattern(u16 patternId)
     {
         dprintf(2,"Pattern %d not usable right now", patternId);
         show_or_hide_interface(false); // hide interface
-        talk_dialog(&dialogs[SYSTEM_DIALOG][0]);          // hint text
+        talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
         if (interface_active==true) show_or_hide_interface(true); // show interface
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
         setIdle(); // reset combat state
@@ -277,10 +277,14 @@ bool patternPlayerAddNote(u8 noteCode)
             playPlayerPatternSound(PATTERN_PLAYER_NONE); // play invalid sound
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
             obj_character[active_character].state = STATE_IDLE; // reset player state
-            setIdle(); // reset combat state´
-            show_or_hide_interface(false); // hide interface
-            talk_dialog(&dialogs[SYSTEM_DIALOG][0]);          // invalid pattern
-            show_or_hide_interface(true); // show interface again
+            if (id != PATTERN_PLAYER_NONE) {
+                // If the pattern was valid but not usable right now
+                dprintf(2,"Pattern %d not usable right now", id);
+                setIdle(); // reset combat state´
+                show_or_hide_interface(false); // hide interface
+                talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+                show_or_hide_interface(true); // show interface again
+            }
             return false; // invalid pattern
         }
     }

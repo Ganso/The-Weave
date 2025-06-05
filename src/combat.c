@@ -20,7 +20,7 @@ static inline bool enemyPatternReady(u8 eid, u8 pslot)
 // Returns TRUE when a launch happened this frame.
 static bool enemyChooseAndLaunch(void)
 {
-    dprintf(2, "Checking enemy patterns to launch");
+    dprintf(3, "Checking enemy patterns to launch");
 
     // Tick all cooldowns ------------------------------------------------
     for (u8 e = 0; e < MAX_ENEMIES; ++e)
@@ -115,9 +115,16 @@ void hit_enemy(u8 enemyId, u8 damage)
   
     // Reduce enemy HP
     obj_enemy[enemyId].hitpoints -= damage;
-    if (obj_enemy[enemyId].hitpoints <= 0) {
-        // TODO: Show enemy defeated animation
+    if (obj_enemy[enemyId].hitpoints <= 0) { // If enemy is defeated
+        // TODO: Better enemy defeat handling
         dprintf(2, "Enemy %d defeated", enemyId);
+        SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter sprite
+        SPR_setAnim(spr_enemy[enemyId], ANIM_HURT); // Show hurt animation
+        play_sample(snd_effect_magic_disappear, sizeof(snd_effect_magic_disappear)); // Play hit sound
+        while (!SPR_isAnimationDone(spr_enemy[enemyId])) {
+            SPR_update(); // Update sprite animations
+            SYS_doVBlankProcess(); // Wait for animation to finish
+        }
         release_enemy(enemyId); // Enemy defeated
     }
     else {
@@ -152,7 +159,7 @@ void update_combat(void)
     // --- C) FSM ------------------------------------------------------
     switch (combat_state)
     {
-    case COMBAT_NO:
+    case COMBAT_NO: 
         break; // No combat active, nothing to do
 
     case COMBAT_STATE_IDLE:
