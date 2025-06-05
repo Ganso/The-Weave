@@ -6,6 +6,8 @@ bool player_has_rod;          /* can physically use patterns?      */
 bool player_patterns_enabled; /* not silenced by a cut-scene, etc. */
 u8  current_note;         /* NOTE_MI … NOTE_DO or NOTE_NONE      */
 u8  noteQueue[4] = {NOTE_NONE,NOTE_NONE,NOTE_NONE,NOTE_NONE}; // Queue of notes played by the player (up to 4)
+static Sprite* spr_enemy_rod[6] = { NULL };   // Enemy rod sprites (1-6: MI-DO)
+static bool    enemy_note_active[6] = { false }; // Active enemy notes (1-6: MI-DO)
 
 // --------------------------------------------------------------------
 // Static player-pattern table
@@ -369,6 +371,56 @@ void initEnemyPatterns(u8 enemyId)
     };
 }
 
+// -----------------------------------------------------------------------
+// Enemy-side: Add a note to the enemy pattern
+// ------------------------------------------------------------------------
+void patternEnemyAddNote(u8 enemySlot, u8 noteCode)
+{
+    if (noteCode < NOTE_MI || noteCode > NOTE_DO) return;
+
+    u8 idx = noteCode - NOTE_MI;       // 0-based 0‥5
+    const SpriteDefinition* def = NULL;
+    const u8*               sfx = NULL;
+    u16 x = 24 + 32 * idx;             // Same spacing you used
+    switch (noteCode)
+    {
+        case NOTE_MI: def = &int_enemy_rod_1_sprite; sfx = snd_enemy_note_mi;  break;
+        case NOTE_FA: def = &int_enemy_rod_2_sprite; sfx = snd_enemy_note_fa;  break;
+        case NOTE_SOL:def = &int_enemy_rod_3_sprite; sfx = snd_enemy_note_sol; break;
+        case NOTE_LA: def = &int_enemy_rod_4_sprite; sfx = snd_enemy_note_la;  break;
+        case NOTE_SI: def = &int_enemy_rod_5_sprite; sfx = snd_enemy_note_si;  break;
+        default:      def = &int_enemy_rod_6_sprite; sfx = snd_enemy_note_do;  break;
+    }
+
+    if (!spr_enemy_rod[idx]) { // create once
+        dprintf(2,"Adding sprite for enemy note %d at %d", noteCode, x);
+        spr_enemy_rod[idx] =
+            SPR_addSpriteSafe(def, x, 184, TILE_ATTR(PAL2, false, false, false));
+        if (!spr_enemy_rod[idx]) return;        // VRAM full
+    } else {
+        dprintf(2,"Revealing sprite for enemy note %d at %d", noteCode, x);
+        SPR_setVisibility(spr_enemy_rod[idx], VISIBLE);
+    }
+    enemy_note_active[idx] = true;
+    play_music(sfx);
+    dprintf(2, "Enemy %u playing note %u", enemySlot, noteCode);
+}
+
+// -------------------------------------------------------------------------
+// Enemy-side: Remove every enemy-note sprite (called when the pattern ends)
+// --------------------------------------------------------------------------
+void patternEnemyClearNotes(void)
+{
+    for (u8 i = 0; i < 6; ++i)
+    {
+        if (spr_enemy_rod[i])
+        {
+            SPR_releaseSprite(spr_enemy_rod[i]);
+            spr_enemy_rod[i] = NULL;
+        }
+        enemy_note_active[i] = false;
+    }
+}
 
 // ---------------------------------------------------------------------
 // Enemy-side: launch / update
@@ -378,6 +430,10 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
     EnemyPattern* pat = getEnemyPattern(enemySlot, patternSlot);
     if (!pat || !pat->enabled) return;
 
+    // clear any HUD leftovers from a previous pattern
+    patternEnemyClearNotes();
+
+    // Set combat context
     combatContext.activePattern = pat->id;
     combatContext.effectTimer   = 0;
     combatContext.activeEnemy   = enemySlot;
@@ -390,7 +446,8 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
 
     // Play first note
     if (pat->noteCount > 0) {
-        playEnemyNote(pat->notes[0]); // Sound & HUD
+        patternEnemyAddNote(enemySlot, pat->notes[0]); // Sound & HUD
+        dprintf(2,"Enemy %d playing note %d", enemySlot, pat->notes[0]);
         combatContext.enemyNoteIndex = 1; // First note is already played
         combatContext.enemyNoteTimer = 0; // Reset timer for next note
     }
@@ -401,6 +458,7 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
         pat->launch(enemySlot);
     }
 }
+
 // ---------------------------------------------------------------------
 // Update enemy pattern (called every frame)
 // ---------------------------------------------------------------------
@@ -428,19 +486,22 @@ bool updateEnemyPattern(u8 enemySlot)
                 // Play next note if not finished yet
                 if (combatContext.enemyNoteIndex < pat->noteCount)
                 {
-                    dprintf(2,"Enemy %d playing note %d", enemySlot, combatContext.enemyNoteIndex);
                     u8 note = pat->notes[combatContext.enemyNoteIndex++];
-                    playEnemyNote(note); // Sound & HUD (implement HUD separately if needed)
+                    dprintf(2,"Enemy %d playing note %d", enemySlot, note);
+                    patternEnemyAddNote(combatContext.activeEnemy, note); // Sound & HUD (implement HUD separately if needed)
                 }
                 else // All notes have been played
                 {
                     dprintf(2,"Enemy %d finished playing notes. Launching pattern.", enemySlot);
 
+                    // hide HUD before the effect
+                    patternEnemyClearNotes();
+
                     // Switch state to effect (actual spell execution)
                     combat_state = COMBAT_STATE_ENEMY_EFFECT;
                     combatContext.effectTimer = 0;
                     combatContext.enemyNoteIndex = 0;
-
+                    
                     // Call pattern launch callback (to start visual effects, animations, etc.)
                     if (pat->launch)
                         pat->launch(enemySlot);
@@ -508,6 +569,11 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
 void cancelEnemyPattern(u8 enemyId)
 {
     dprintf(2,"Finishing enemy pattern for enemy %d", enemyId);
+
+    // Clear HUD
+    patternEnemyClearNotes();
+    
+    // Reset combat context
     combatContext.activePattern = PATTERN_PLAYER_NONE;
     combatContext.activeEnemy = ENEMY_NONE;
     combatContext.enemyNoteIndex = 0;

@@ -33,6 +33,11 @@ typedef struct {
 } CombatContext;
 extern CombatContext combatContext; // Combat context
 
+
+// Timings
+#define ENEMY_HURT_DURATION   SCREEN_FPS  // Duration of the hurt animation in frames (enemies)
+#define PLAYER_HURT_DURATION   SCREEN_FPS/2 // Duration of the hurt animation in frames (player)
+
 // Combat functions
 
 bool tryCounterSpell(void); // Try to counter an enemy spell

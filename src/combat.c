@@ -22,6 +22,10 @@ static bool enemyChooseAndLaunch(void)
 {
     dprintf(3, "Checking enemy patterns to launch");
 
+    // Suspend launches while the player is recovering
+    if (obj_character[active_character].state == STATE_HIT)
+        return FALSE;
+
     // If any enemy is hit, we cannot launch a patterns -------------------
     for (u8 e = 0; e < MAX_ENEMIES; ++e)
         if (obj_enemy[e].obj_character.active &&
@@ -147,10 +151,23 @@ void hit_enemy(u8 enemyId, u8 damage)
 // Hit the player
 void hit_player(u8 damage)
 {
-    dprintf(2, "Player hit for %d damage", damage);
-    obj_character[active_character].state = STATE_HIT; // Set player state to HURT
-    play_sample(snd_player_hurt, sizeof(snd_player_hurt));  // feedback
+    // Ignore if the hero is already hurt
+    if (obj_character[active_character].state == STATE_HIT) return;
+
+    dprintf(2,"Player hit for %d damage", damage);
+
+    // Flash + sound
+    play_sample(snd_player_hurt, sizeof(snd_player_hurt));
+    anim_character(active_character, ANIM_HURT);
+
+    // Enter HURT state with fixed timer
+    obj_character[active_character].state     = STATE_HIT;
+    obj_character[active_character].modeTimer = PLAYER_HURT_DURATION;
+
+    // Block any new player pattern during the stun
+    combatContext.patternLockTimer = PLAYER_HURT_DURATION;
 }
+
 
 // Update combat state.  Call every frame while combat_state != COMBAT_STATE_NO
 // Call once per frame when combat_state != COMBAT_STATE_NO

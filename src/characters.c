@@ -69,7 +69,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         if (collision_height==0) collision_height=2; // Two lines height
         if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
-        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow };
+        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow, 0 };
     } else {
         nsprite = obj_character[nchar].sd;
         nsprite_shadow = obj_character[nchar].sd_shadow;
@@ -143,7 +143,7 @@ void init_face(u16 nface)    // Create new character face sprite for dialogs
         default:
             return;
         }
-        obj_face[nface] = (Entity) { true, nsprite, NULL, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0, false };
+        obj_face[nface] = (Entity) { true, nsprite, NULL, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0, false, 0 };
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
@@ -426,22 +426,26 @@ void update_character_animations(void) {
                 }
                 obj_character[chr].state = STATE_IDLE;
                 break;
-            case STATE_HIT:
-                if (obj_character[chr].animation != ANIM_HURT) {
-                    anim_character(chr, ANIM_HURT);
+        case STATE_HIT:
+            if (obj_character[chr].animation != ANIM_HURT)
+                anim_character(chr, ANIM_HURT);
+
+            // Count-down stun
+            if (obj_character[chr].modeTimer)
+                --obj_character[chr].modeTimer;
+            else {
+                obj_character[chr].state = STATE_IDLE;
+                anim_character(chr, ANIM_IDLE);
+                show_or_hide_interface(false);
+                talk_dialog(&dialogs[ACT1_DIALOG3][2]); // (ES) "Eso ha dolido" - (EN) "That hurts"
+                show_or_hide_interface(true);       
                 }
-                // If the animation is done, set to IDLE
-                if (SPR_isAnimationDone(spr_chr[chr])) {
-                    obj_character[chr].state = STATE_IDLE;
-                    anim_character(chr, ANIM_IDLE);
-                    next_frame(false);
-                    show_or_hide_interface(false);
-                    talk_dialog(&dialogs[ACT1_DIALOG3][2]); // (ES) "Eso ha dolido" - (EN) "That hurts"
-                    show_or_hide_interface(true);                    
-                }
-                break;
+            break;
             default:
                 break;
         }
     }
 }
+
+
+

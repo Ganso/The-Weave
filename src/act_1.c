@@ -242,13 +242,13 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     set_limits(0,134,275,172);
 
     // Initialize items
-    // init_item(0, &item_forest_fg1_sprite, PAL0, 260, 176-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 1
-    // init_item(1, &item_forest_fg5_sprite, PAL0, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
-    // init_item(2, &item_forest_fg2_sprite, PAL0, 440, 176-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 2
-    // init_item(3, &item_forest_fg3_sprite, PAL0, 880, 176-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 3
-    // init_item(4, &item_forest_fg4_sprite, PAL0, 1400, 176-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (big)
-    // init_item(5, &item_forest_fg1_sprite, PAL0, 1050, 176-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 1
-    // init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
+    init_item(0, &item_forest_fg1_sprite, PAL0, 260, 176-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 1
+    init_item(1, &item_forest_fg5_sprite, PAL0, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
+    init_item(2, &item_forest_fg2_sprite, PAL0, 440, 176-24, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 2
+    init_item(3, &item_forest_fg3_sprite, PAL0, 880, 176-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 3
+    init_item(4, &item_forest_fg4_sprite, PAL0, 1400, 176-72, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (big)
+    init_item(5, &item_forest_fg1_sprite, PAL0, 1050, 176-16, 0, 0, 0, 0, FORCE_FOREGROUND); // Rock 1
+    init_item(6, &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND); // Tree (vertical)
     
     // Initialize characters
     player_has_rod=true; // Give player the rod
@@ -273,11 +273,11 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     SPR_update();    
     
     // Dialog
-    // talk_dialog(&dialogs[ACT1_DIALOG3][0]); // (ES) "Algún tiempo después" - (EN) "Some time later"
-    // talk_dialog(&dialogs[ACT1_DIALOG3][1]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
-    // talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
-    // talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
-    // talk_dialog(&dialogs[ACT1_DIALOG3][13]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
+    talk_dialog(&dialogs[ACT1_DIALOG3][0]); // (ES) "Algún tiempo después" - (EN) "Some time later"
+    talk_dialog(&dialogs[ACT1_DIALOG3][1]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
+    talk_dialog(&dialogs[ACT1_DIALOG3][11]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
+    talk_dialog(&dialogs[ACT1_DIALOG3][12]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
+    talk_dialog(&dialogs[ACT1_DIALOG3][13]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
 
     // Fade to day palette
     PAL_fadeTo(0, 15, forest_pal.data, SCREEN_FPS, false);
@@ -289,7 +289,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     player_patterns_enabled=true;
     show_or_hide_interface(true);
 
-    while (offset_BGA<60) {
+    while (offset_BGA<360) {
         next_frame(true);
     }
 

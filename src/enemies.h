@@ -14,9 +14,6 @@
 #define ENEMY_CLS_WEAVERGHOST    0
 #define ENEMY_CLS_3HEADMONKEY  1
 
-// Timings
-#define ENEMY_HURT_DURATION   SCREEN_FPS  // Duration of the hurt animation in frames
-
 // Enemy modes
 typedef enum {
     ENEMY_MODE_IDLE,        /* doing nothing */
