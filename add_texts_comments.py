@@ -2,6 +2,9 @@ import os, re, sys
 
 
 def show_help():  
+    """
+    Print usage instructions for the script.
+    """
     print("""  
 Add dialog text comments to C source files  
 
@@ -14,10 +17,15 @@ This script reads the dialog texts from texts.c (and mappings from texts.h) and 
 
 
 def read_mappings(texts_h_file):  
+    """
+    Parse texts.h to build mappings from dialog/choice IDs to their symbolic names.
+    Returns two dictionaries: dialogs and choices.
+    """
     dialogs = {0: "SYSTEM_DIALOG"}  # Default value  
     choices = {}  
     with open(texts_h_file, 'r', encoding='utf-8') as f:  
         for line in f:  
+            # Match dialog and choice #define lines
             dmatch = re.match(r'^\s*#define\s+(\w+)_DIALOG(\d+)\s+(\d+)', line)  
             cmatch = re.match(r'^\s*#define\s+(\w+)_CHOICE(\d+)\s+(\d+)', line)  
             if dmatch:  
@@ -34,6 +42,10 @@ def read_mappings(texts_h_file):
 
 
 def extract_items(block_content):  
+    """
+    Extracts individual struct items from a C array block (between braces).
+    Ignores items containing 'NULL' (used as terminators).
+    """
     items = []  
     brace_count = 0  
     start = None  
@@ -53,6 +65,10 @@ def extract_items(block_content):
 
 
 def parse_dialog_item(item):  
+    """
+    Parse a DialogItem struct to extract Spanish and English text.
+    Returns a dict with 'es' and 'en' keys, or None if not matched.
+    """
     m = re.search(r'\{\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\}', item, re.DOTALL)  
     if m:  
         return {"es": m.group(1).strip(), "en": m.group(2).strip()}  
@@ -60,10 +76,16 @@ def parse_dialog_item(item):
 
 
 def parse_choice_item(item):  
+    """
+    Parse a ChoiceItem struct to extract the options in Spanish and English.
+    Returns a list of dicts with 'es' and 'en' keys for each option.
+    """
+    # Find the number of options
     count_match = re.search(r'FACE_[^,]+,\s*[^,]+,\s*[^,]+,\s*(\d+),', item)  
     if not count_match:  
         return []  
     num_options = int(count_match.group(1))  
+    # Extract the arrays of options for ES and EN
     arrays_match = re.search(r'\{\s*\{(.*?)\}\s*,\s*\{(.*?)\}\s*\}', item, re.DOTALL)  
     if not arrays_match:  
         return []  
@@ -75,10 +97,15 @@ def parse_choice_item(item):
 
 
 def parse_texts_c(texts_c_file):  
+    """
+    Parse texts.c to extract all dialog and choice texts.
+    Returns two dictionaries: dialog_texts and choice_texts.
+    """
     dialog_texts = {}  
     choice_texts = {}  
     with open(texts_c_file, 'r', encoding='utf-8') as f:  
         content = f.read()  
+    # Find all dialog blocks
     dialog_blocks = re.finditer(r'const\s+DialogItem\s+(\w+_dialog\d*)\[\]\s*=\s*{(.*?)};', content, re.DOTALL)  
     for block in dialog_blocks:  
         block_name = block.group(1)  
@@ -89,6 +116,7 @@ def parse_texts_c(texts_c_file):
             if res:  
                 texts.append(res)  
         dialog_texts[block_name.upper()] = texts  
+    # Find all choice blocks
     choice_blocks = re.finditer(r'const\s+ChoiceItem\s+(\w+_choice\d+)\[\]\s*=\s*{(.*?)};', content, re.DOTALL)  
     for block in choice_blocks:  
         block_name = block.group(1)  
@@ -100,12 +128,18 @@ def parse_texts_c(texts_c_file):
         choice_texts[block_name.upper()] = texts  
     return dialog_texts, choice_texts  
 
+
 def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_texts):  
+    """
+    Update the given C source file by adding comments with dialog/choice texts
+    to lines calling talk_dialog() and choice_dialog().
+    """
     modified = False  
     with open(c_file, 'r', encoding='utf-8') as f:  
         lines = f.readlines()  
 
     new_lines = []  
+    # Regex to match talk_dialog and choice_dialog calls
     talk_re = re.compile(r'(\s*)(.*?)(talk_dialog\s*\(\s*&dialogs\[(\w+)_DIALOG(?:\d+)?\]\[(\d+)\]\s*\);)(.*)?$')  
     choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')  
 
@@ -114,7 +148,9 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
 
         m = talk_re.search(l)  
         if m:  
+            # Extract relevant groups from the match
             indent, before, call, act, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), int(m.group(5)), m.group(6) or ""  
+            # Determine the dialog key
             key = "SYSTEM_DIALOG" if act.upper() == "SYSTEM" else None  
             if not key:  
                 dnum_match = re.search(r'_DIALOG(\d+)', call)  
@@ -122,6 +158,7 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
                     key = f"{act}_DIALOG{dnum_match.group(1)}".upper()  
             texts = dialog_texts.get(key, [])  
             if idx < len(texts):  
+                # Add comment with ES and EN text
                 comment = f' // (ES) "{texts[idx]["es"]}" - (EN) "{texts[idx]["en"]}"'  
                 l = f"{indent}{before}{call}{comment}"  
                 modified = True  
@@ -129,11 +166,13 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
         else:  
             m = choice_re.search(l)  
             if m:  
+                # Extract relevant groups from the match
                 indent, before, call, act, choice_num, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5), int(m.group(6)), m.group(7) or ""  
                 key = f"{act}_CHOICE{choice_num}".upper()  
                 opts = choice_texts.get(key, [])  
                 if idx < len(opts):  
                     options = opts[idx]  
+                    # Add comment with all options in ES and EN
                     options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])  
                     comment = f' // {options_text}'  
                     l = f"{indent}{before}{call}{comment}"  
@@ -141,6 +180,7 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
 
         new_lines.append(l + "\n")  
 
+    # Write the updated lines back to the file
     with open(c_file, 'w', encoding='utf-8', newline='') as f:  
         f.writelines(new_lines)  
 
@@ -151,6 +191,9 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
 
 
 def process_file(c_file):  
+    """
+    Process a single C file: read mappings and texts, then update the file.
+    """
     texts_h_file = "src/texts.h"  
     texts_c_file = "src/texts.c"  
     print(f"Processing file: {c_file}")  
@@ -160,6 +203,9 @@ def process_file(c_file):
 
 
 def process_all_files():
+    """
+    Process all C source files in the src directory (except texts.c).
+    """
     for root, _, files in os.walk("src"):
         for file in files:
             if file.endswith(".c") and file != "texts.c":
@@ -168,6 +214,9 @@ def process_all_files():
 
 
 def main():  
+    """
+    Entry point: parse arguments and process files accordingly.
+    """
     if len(sys.argv) < 2:  
         show_help()  
         return  
@@ -184,5 +233,5 @@ def main():
 
 
 if __name__ == "__main__":  
-    main()  
+    main()
 
