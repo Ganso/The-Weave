@@ -1,5 +1,5 @@
 # Weaver Ghost
-SPRITE weaver_ghost_sprite "Sprites/Enemies/weaver_ghost.png" 6 8 BEST 15
+SPRITE weaver_ghost_sprite "Sprites/Enemies/weaver_ghost.png" 6 8 BEST 10
 
 # Three Head Monkey
 SPRITE three_head_monkey_sprite "Sprites/Enemies/3_head_monkey.png" 8 7 BEST 5

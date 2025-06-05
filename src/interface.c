@@ -30,6 +30,7 @@ void show_or_hide_interface(bool visible)    // Toggle visibility of game's bott
         // Clear the window plane and hide rod and pentagram icons
         tile_ind-=int_rod_image.tileset->numTile;
         tile_ind-=int_pentagram_image.tileset->numTile;
+        tile_ind-=int_screen_limit.tileset->numTile;
         VDP_clearPlane(WINDOW, true);
         hide_rod_icons();
         hide_pentagram_icons();
@@ -456,15 +457,10 @@ void update_life_counter(void) {
     }
 
     // If enemy is hit, flash the life counter every odd frame
-    SPR_setVisibility(spr_int_life_counter, VISIBLE); // Ensure life counter is visible
     if (obj_enemy[nenemy].obj_character.state == STATE_HIT) {
         dprintf(2,"Enemy %d hit while checking life counter", nenemy);
-        if (frame_counter% 2 == 0) {
-            dprintf(2,"Flashing life counter");
-            SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter
-            SPR_update(); // Update the sprite engine to reflect changes
-            return;
-        }
+        if (frame_counter% 2 == 0) life_counter++; // Flash between life and life-1
+        else SPR_setPosition(spr_int_life_counter, x-3, y); // Fix position to avoid flickering
     }
 
     // Set the life counter sprite's animation based on the life counter (if not already set)

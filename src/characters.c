@@ -436,7 +436,7 @@ void update_character_animations(void) {
                     anim_character(chr, ANIM_IDLE);
                     next_frame(false);
                     show_or_hide_interface(false);
-                    talk_dialog(&dialogs[ACT1_DIALOG3][2]);   // "That hurts"
+                    talk_dialog(&dialogs[ACT1_DIALOG3][2]); // (ES) "Eso ha dolido" - (EN) "That hurts"
                     show_or_hide_interface(true);                    
                 }
                 break;
