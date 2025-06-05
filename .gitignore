@@ -10,6 +10,7 @@ $RECYCLE.BIN/
 
 # game/data/
 .vscode
+.repomix
 out/
 sgdk/
 *.bat
