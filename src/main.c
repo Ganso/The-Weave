@@ -12,7 +12,7 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
     initialize(true);
 
     current_act=1;
-    current_scene=1;
+    current_scene=5;
 
     dprintf(2,"Loading Act %d, Scene %d\n", current_act, current_scene);
     while (true) { // MAIN LOOP
