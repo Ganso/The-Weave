@@ -139,8 +139,8 @@ const DialogItem act1_dialog3[] = { // Combat zone
          {"Puedo probar a esconderme|o tratar de invocar|al trueno",
          "I could try to hide|or attempt to summon|the thunder"}},
     {FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME, // 5
-        {"Gracias por probar la demo técnica|Sígueme por X para estar al día|@GeeseBumpsGames", 
-         "Thtanks for testing our tech demo|Follow me in X for updates|@GeeseBumpsGames"}},
+        {"Gracias por probar la demo técnica|Síguenos por X o BlueSky|@GeeseBumpsGames", 
+         "Thtanks for testing our tech demo|Follow us in X or BlueSky|@GeeseBumpsGames"}},
      {FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME, // 6
          {"Si reproduzco al revés|las notas, podré|contraatacar este hechizo",
          "If I play the notes backwards|I could be able to|counter the spell"}},

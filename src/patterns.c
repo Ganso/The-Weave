@@ -171,7 +171,7 @@ void launchPlayerPattern(u16 patternId)
     {
         dprintf(2,"Pattern %d not usable right now", patternId);
         show_or_hide_interface(false); // hide interface
-        talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+        talk_dialog(&dialogs[SYSTEM_DIALOG][0]);
         if (interface_active==true) show_or_hide_interface(true); // show interface
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
         setIdle(); // reset combat state
@@ -284,7 +284,19 @@ bool patternPlayerAddNote(u8 noteCode)
                 dprintf(2,"Pattern %d not usable right now", id);
                 setIdle(); // reset combat state´
                 show_or_hide_interface(false); // hide interface
-                talk_dialog(&dialogs[SYSTEM_DIALOG][0]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+
+                // Default dialog is SYSTEM_DIALOG[0]
+                DialogItem* dialog = (DialogItem*) &dialogs[SYSTEM_DIALOG][0];  // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+                // If there's a Ghost and we've trying to launch a direct thunder spell, show specific message
+                for (u8 i = 0; i < MAX_ENEMIES; i++)
+                {
+                    if (obj_enemy[i].class_id==ENEMY_CLS_WEAVERGHOST && id == PATTERN_THUNDER && rev == false)
+                    {
+                        dialog = (DialogItem*) &dialogs[ACT1_DIALOG3][3];
+                        break; // No need to check other enemies
+                    }
+                }
+                talk_dialog(dialog); // Show dialog message
                 show_or_hide_interface(true); // show interface again
             }
             return false; // invalid pattern
