@@ -153,13 +153,6 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
 
 void handle_action_buttons(u16 joy_value)    // Process action buttons for item interaction and musical notes
 {
-    // // Only allow item interaction and note playing in IDLE, WALKING or PLAYING_NOTE states
-    // if (obj_character[active_character].state != STATE_IDLE &&
-    //     obj_character[active_character].state != STATE_WALKING &&
-    //     obj_character[active_character].state != STATE_PLAYING_NOTE) {
-    //         dprintf(2,"  - Skipping action buttons: character state is %d", obj_character[active_character].state);
-    //     return;
-    // }
 
     if (movement_active) {
         if (joy_value & BUTTON_A) { // Detect if the player is interacting with an item
@@ -174,7 +167,6 @@ void handle_action_buttons(u16 joy_value)    // Process action buttons for item 
 
     // Process musical notes if player patterns are enabled and ther's not an active pattern launched
     if (player_patterns_enabled &&
-        combat_state != COMBAT_STATE_PLAYER_PLAYING &&
         combat_state != COMBAT_STATE_PLAYER_EFFECT)
     {
         dprintf(3,"  - Checking buttons. Player pressed action button(s): joy_value=0x%04X", joy_value);
