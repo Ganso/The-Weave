@@ -45,11 +45,13 @@ void set_limits(u16 x_min, u16 y_min, u16 x_max, u16 y_max)    // Set movement b
 void scroll_background(s16 dx)    // Handle background scrolling when character reaches screen edge
 {
     if (player_scroll_active) { // Can player scroll?
-        if (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) { // Scrolling mode is user dependant ?
-            if (offset_BGA+dx>0 && ((s16) offset_BGA+dx)<((s16) background_width-SCREEN_WIDTH)) { // New scroll offset is inside background width boundries?
-                offset_BGA+=dx; // Change offste
+        if (background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) { // Scrolling mode is user dependent?
+            s16 new_offset = (s16)offset_BGA + dx;
+            s16 max_offset = (s16)background_width - SCREEN_WIDTH;
+            if (new_offset >= 0 && new_offset <= max_offset) { // New scroll offset is inside background width boundaries?
+                offset_BGA = (u32)new_offset; // Change offset
                 update_bg(true);
-                // Move following characters to the left
+                // Move following characters to the left/right accordingly
                 for (u16 nchar=0; nchar<MAX_CHR; nchar ++) {
                     if (obj_character[nchar].follows_character==true) {
                         if (obj_character[nchar].x>-20) {
