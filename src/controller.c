@@ -1,5 +1,7 @@
 #include "globals.h"
 
+static void wait_for_followers(s16 dx);    // Wait for following characters if they lag behind
+
 void joy_check(void)    // Process joystick input each frame for movement, actions, and pause
 {
     static u16 frame_counter = 0;
@@ -127,6 +129,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
             (new_x < x_limit_min || new_x > x_limit_max)) {
             // Player is trying to move outside screen boundaries, and scroll mode is user dependent
             scroll_background(dx); // Try to scroll
+            wait_for_followers(dx); // If a follower lags behind, wait for it
             position_updated = true;
         }
         else if (new_x >= x_limit_min && new_x <= x_limit_max) {
@@ -188,5 +191,47 @@ void handle_pause_button(u16 joy_value)    // Handle START button press to show 
             SYS_doVBlankProcess();
         }
         pause_screen(); // Call the pause screen function
+    }
+}
+
+// Check follower distance when scrolling and wait if they lag behind
+static void wait_for_followers(s16 dx)
+{
+    for (u16 chr = 0; chr < MAX_CHR; chr++)
+    {
+        if (chr == active_character) continue;
+
+        if (!obj_character[chr].active || !obj_character[chr].follows_character)
+            continue;
+
+        // Follower is behind depending on movement direction?
+        if ((dx > 0 && obj_character[chr].x < obj_character[active_character].x) ||
+            (dx < 0 && obj_character[chr].x > obj_character[active_character].x))
+        {
+            u16 dist = char_distance(chr, obj_character[chr].x,
+                                     obj_character[chr].y, active_character);
+
+            if (dist > MIN_FOLLOW_DISTANCE)
+            {
+                // Look back and wait
+                look_left(active_character, (dx > 0));
+                obj_character[active_character].state = STATE_IDLE;
+                update_character(active_character);
+                update_character_animations();
+
+                bool old_movement = movement_active;
+                movement_active = FALSE;
+
+                while (dist > MIN_FOLLOW_DISTANCE)
+                {
+                    next_frame(true);
+                    dist = char_distance(chr, obj_character[chr].x,
+                                         obj_character[chr].y, active_character);
+                }
+
+                movement_active = old_movement;
+                break; // Wait for a single follower only
+            }
+        }
     }
 }
