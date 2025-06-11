@@ -1,7 +1,5 @@
 #include "globals.h"
 
-static void wait_for_followers(s16 dx);    // Wait for following characters if they lag behind
-
 void joy_check(void)    // Process joystick input each frame for movement, actions, and pause
 {
     static u16 frame_counter = 0;
@@ -195,7 +193,7 @@ void handle_pause_button(u16 joy_value)    // Handle START button press to show 
 }
 
 // Check follower distance when scrolling and wait if they lag behind
-static void wait_for_followers(s16 dx)
+void wait_for_followers(s16 dx)
 {
     for (u16 chr = 0; chr < MAX_CHR; chr++)
     {
@@ -204,34 +202,28 @@ static void wait_for_followers(s16 dx)
         if (!obj_character[chr].active || !obj_character[chr].follows_character)
             continue;
 
-        // Follower is behind depending on movement direction?
-        if ((dx > 0 && obj_character[chr].x < obj_character[active_character].x) ||
-            (dx < 0 && obj_character[chr].x > obj_character[active_character].x))
+        // Follower is in in the edge of the screen, so we need to wait for it (margin is MIN_FOLLOW_DISTANCE)
+        // dx is the direction of the active character movement (-1 for left, 1 for right)
+        if ((dx > 0 && obj_character[chr].x < MAX_FOLLOW_DISTANCE) ||
+            (dx < 0 && obj_character[chr].x > (x_limit_max - MAX_FOLLOW_DISTANCE)))
         {
-            u16 dist = char_distance(chr, obj_character[chr].x,
-                                     obj_character[chr].y, active_character);
+            dprintf(2,"  - Waiting for follower %d to catch up", chr);
 
-            if (dist > MIN_FOLLOW_DISTANCE)
+            // Look back and wait
+            look_left(active_character, (dx > 0));
+            obj_character[active_character].state = STATE_IDLE;
+            update_character(active_character);
+            update_character_animations();
+
+            bool old_movement = movement_active;
+            movement_active = FALSE;
+            for (u16 i=0; i < FOLLOW_WAIT_DISTANCE; i++)
             {
-                // Look back and wait
-                look_left(active_character, (dx > 0));
-                obj_character[active_character].state = STATE_IDLE;
-                update_character(active_character);
-                update_character_animations();
-
-                bool old_movement = movement_active;
-                movement_active = FALSE;
-
-                while (dist > MIN_FOLLOW_DISTANCE)
-                {
-                    next_frame(true);
-                    dist = char_distance(chr, obj_character[chr].x,
-                                         obj_character[chr].y, active_character);
-                }
-
-                movement_active = old_movement;
-                break; // Wait for a single follower only
+                next_frame(true);
             }
+            movement_active = old_movement;
+            look_left(active_character, (dx < 0)); // Look back to the right if moving right
+        break; // Wait for a single follower only
         }
     }
 }
