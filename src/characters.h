@@ -25,6 +25,7 @@
 // Distances for following characters
 #define MAX_FOLLOW_DISTANCE 40
 #define MIN_FOLLOW_DISTANCE 20
+#define FOLLOW_WAIT_DISTANCE 80
 
 // Characters
 extern Entity obj_character[MAX_CHR];

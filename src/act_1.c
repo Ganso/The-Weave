@@ -108,12 +108,17 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
 void act_1_scene_2(void)    // Corridor scene with history books and memories
 {
     // Initialize level
-    new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 576, BG_SCRL_USER_LEFT, 0);
-    set_limits(0,131,275,170);
+    new_level(NULL, NULL, &historians_corridor_front_tile, &historians_corridor_front_map, historians_corridor_pal, 800, BG_SCRL_USER_LEFT, 0);
+    set_limits(0,140,275,168);
 
     // Initialize items
-    init_item(0, &item_corridor_bookpedestal_sprite, PAL0, 400, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH); // Guild history book
-    init_item(1, &item_corridor_bookpedestal_sprite, PAL0, 200, 90, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH); // Myths and legends
+    init_item(0, &item_corridor_bookpedestal_sprite, PAL0, 600, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH); // Guild history book
+    init_item(1, &item_corridor_bookpedestal_sprite, PAL0, 200, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH); // Myths and legends
+    init_item(2, &item_corridor_lamp_sprite, PAL0, 32, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
+    init_item(3, &item_corridor_lamp_sprite, PAL0, 176, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
+    init_item(4, &item_corridor_lamp_sprite, PAL0, 336, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
+    init_item(5, &item_corridor_lamp_sprite, PAL0, 464, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
+    init_item(6, &item_corridor_lamp_sprite, PAL0, 656, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
