@@ -103,9 +103,9 @@ void talk_dialog(const DialogItem *dialog)    // Display a predefined dialog ite
     talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds);
 }
 
-void talk_cluster(const DialogCluster *cluster)    // Display several dialog lines
+void talk_cluster(const DialogItem *start)    // Display several dialog lines
 {
-    const DialogItem *it = cluster->dialog;
+    const DialogItem *it = start;
     while (it->text[0] != NULL) {
         talk_dialog(it);
         ++it;

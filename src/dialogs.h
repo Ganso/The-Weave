@@ -10,6 +10,6 @@ void split_text(char *input_text, char *line1, char *line2, char *line3); // Spl
 void print_line(char *text, u16 x, u16 y, bool wait_for_frame); // Print a line of text, character by character
 u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_seconds); // Show a choice dialog directly
 u8 choice_dialog(const ChoiceItem *choice); // Show a choice dialog from a ChoiceItem
-void talk_cluster(const DialogCluster *cluster); // Talk multiple lines
+void talk_cluster(const DialogItem *start); // Talk multiple lines
 
 #endif

@@ -24,6 +24,8 @@ def prefix(id_name: str) -> str:
 # ------------------------------------------------------------
 # 1. Leer texts.csv
 # ------------------------------------------------------------
+TERMINATOR = 'NULL'
+
 sets      = OrderedDict()           # {set_name: [rows]}
 prefixes  = {}                      # {set_name: 'SYSMSG'}
 indices   = defaultdict(int)        # índice incremental por set
@@ -33,25 +35,28 @@ with open(CSV_FILE, newline='', encoding='utf-8') as f:
         set_name          = row['set']
         sets.setdefault(set_name, [])
 
-        # Índice secuencial dentro del set
-        row['index']      = indices[set_name]
-        indices[set_name] += 1
+        terminator = row['id'].strip().upper() == TERMINATOR
+        if not terminator:
+            # Índice secuencial dentro del set
+            row['index']      = indices[set_name]
+            indices[set_name] += 1
 
         # Prefijo para IDs auto­generados
         cur_prefix = prefixes.get(set_name)
         if not cur_prefix:
             id_val = row['id'].strip()
-            if id_val:
+            if id_val and not terminator:
                 cur_prefix = id_val.split('_')[0]
             else:
-                # Ajustar prefijado automático (act1_dialog4 → A1D4_0…)
                 m = re.match(r'act(\d+)_dialog(\d+)', set_name)
                 cur_prefix = f"A{m.group(1)}D{m.group(2)}" if m else set_name.upper()
             prefixes[set_name] = cur_prefix
 
         # Auto-genera id si está vacío
-        if not row['id'].strip():
+        if not terminator and not row['id'].strip():
             row['id'] = f"{cur_prefix}_{row['index']}"
+
+        row['terminator'] = terminator
 
         sets[set_name].append(row)
 
@@ -73,9 +78,13 @@ with open(HEADER_FILE, 'w', encoding='utf-8') as h:
     # 3a. Enum de IDs por set
     for s, rows in sets.items():
         h.write(f'enum {enum_name(s)} {{\n')
-        for i, r in enumerate(rows):
-            h.write(f'    {r["id"]} = {i},\n')
-        h.write(f'    {prefix(rows[0]["id"])}_COUNT = {len(rows)}\n')
+        idx = 0
+        for r in rows:
+            if r.get("terminator"):
+                continue
+            h.write(f'    {r["id"]} = {idx},\n')
+            idx += 1
+        h.write(f'    {prefix(rows[0]["id"])}_COUNT = {idx}\n')
         h.write('};\n\n')
 
     # 3b. Enum de índices de set (SYSTEM_DIALOG = 0, …)
@@ -102,9 +111,12 @@ with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
 
     # 4a. Arrays de cada set ---------------------------------------------------
     for s, rows in sets.items():
-        pref = prefix(rows[0]['id'])
+        pref = prefix(next(r['id'] for r in rows if not r.get('terminator')))
         c.write(f'const DialogItem {s}[] = {{\n')
         for r in rows:
+            if r.get('terminator'):
+                c.write('    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } },\n')
+                continue
             es = r["es"].replace('"', '\\"')
             en = r["en"].replace('"', '\\"')
             c.write(f'    [{r["id"]}] = {{ {r["face"]}, {r["side"]}, {r["time"]},\n')
