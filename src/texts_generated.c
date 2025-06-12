@@ -1,0 +1,417 @@
+// Auto-generated from texts.csv and clusters.csv
+#include "globals.h"
+
+const DialogItem system_dialog[] = {
+    [SYSMSG_CANT_USE_PATTERN] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No puedo usar ese patrón|ahora mismo",
+         "I can't use that pattern|right now"}},
+    [SYSMSG_DEMO_TITLE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"The Weave|Demo técnica|Enero de 2025",
+         "The Weave|Tech demo|January 2025"}},
+    [SYSMSG_DISCLAIMER] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final",
+         "Graphics, mechanics or sounds|aren't final, nor they|represent the final result"}},
+    [SYSMSG_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogItem act1_dialog1[] = {
+    [A1D1_OVERSLEPT] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Creo que he dormido demasiado|Debo llegar rápido al salón",
+         "I think I've overslept|I should go to the hall quickly"}},
+    [A1D1_CORRIDOR_MEMORIES] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Aunque siendo el día que es|este pasillo me trae|demasiados recuerdos",
+         "Although in a day like this|this hallway brings back|too many memories"}},
+    [A1D1_REVISIT_MEMORIES] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papá",
+         "Before I leave I want to|revisit some memories|I owe it to dad"}},
+    [A1D1_BOOK_HISTORY] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Este tomo narra la historia|de nuestro gremio|desde la Gran Separación",
+         "This volume narrates the history|of our guild|since the Great Split"}},
+    [A1D1_BOOK_ENDS_WITH_FATHER] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"El último capítulo|termina con el fallecimiento|de mi padre",
+         "The last chapter|ends with the passing|of my father"}},
+    [A1D1_BOOK_MOTHER_WRITES_NEXT] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Madre dice que seré yo|el que deba escribir|el siguiente",
+         "Mother says it will be me|who has to write|the next one"}},
+    [A1D1_MYTH_COLLECTION] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Una colección de|mitos y leyendas|de los distintos gremios",
+         "A collection of|myths and legends|from the different guilds"}},
+    [A1D1_MYTH_PASTORS] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Gracias a mi padre|tenemos documentadas|las que cantaban los Pastores",
+         "Thanks to my father|we have documented|those the Shepherds sang"}},
+    [A1D1_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogItem act1_dialog2[] = {
+    [A1D2_GUILD_YEAR] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Gremio de los historiadores|Año 8121",
+         "Historians guild|Year 8121"}},
+    [A1D2_MONDAY] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Lunes|Primera hora de la mañana",
+         "Monday|Early morning"}},
+    [A1D2_CLIO_LATE] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños",
+         "It's late, Linus|And you shouldn't be late|at your birthday"}},
+    [A1D2_LINUS_STRANGE_DREAM] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"He tenido el sueño|más extraño, Madre",
+         "I have had the strangest|dream, Mother"}},
+    [A1D2_LINUS_SWAN_ROOM] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Un cisne venía a|mi cuarto y...",
+         "A swan came to my room|and..."}},
+    [A1D2_CLIO_LATER] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Luego me lo cuentas|Xander nos espera",
+         "You can tell me later|Xander is waiting for us"}},
+    [A1D2_XANDER_AWAKE] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Por fin|estás despierto, Linus",
+         "At last,|you're awake Linus"}},
+    [A1D2_LINUS_FORGIVE] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Perdóname, maestro|Un extraño sueño me ha|mantenido despierto",
+         "Forgive me, master|A strange dream has|kept me awake"}},
+    [A1D2_XANDER_FATHER_SON] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Ciertamente eres el|hijo de tu padre|Aiden tenía grandes sueños",
+         "You are certainly your|father's son|Aiden had big dreams"}},
+    [A1D2_XANDER_UNACHIEVED] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Y estamos aquí para hablar|sobre uno que|nunca llegó a cumplir",
+         "And we are here to talk|about one that he|never achieved"}},
+    [A1D2_LINUS_WHICH_ONE] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"He leído sus historias|mil veces|¿De cuál hablamos?",
+         "I've read his stories|a thousand times|Which one is this?"}},
+    [A1D2_XANDER_WEAVERS_ISLAND] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Una que no encontrarás en|un libro. La de la isla|del gremio de los Tejedores",
+         "One you won't find in a book|The one about Weavers|guild island"}},
+    [A1D2_XANDER_LEGEND] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Según la leyenda|Fueron un gremio|capaz de tejer hechizos",
+         "According to the legend|They were a guild|able to weave spells"}},
+    [A1D2_XANDER_NO_LEGEND] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Para él no era una leyenda|Los Pastores la cantaban|como cierta",
+         "That was no legend for him|Shepherds sang it as a fact"}},
+    [A1D2_XANDER_VANISHED] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Desaparecieron sin dejar rastro|Aunque muchos creen|que era solo un cuento",
+         "They vanished without a trace|Although many believe|it was just a tale"}},
+    [A1D2_XANDER_FATHER_WANTED] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Tu padre quería encontrar|la isla donde vivían",
+         "Your father wanted to find|their home island"}},
+    [A1D2_CLIO_DESTINY] = { FACE_clio, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Nuestro destino es|documentar hechos,|no perseguirlos",
+         "Our destiny is to|document facts,|not to chase them"}},
+    [A1D2_XANDER_LINUS_AGE] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Linus tiene diecisiete años|Esa era mi edad cuando|viajé por el mundo",
+         "Linus is seventeen|That was my age when|I traveled the world"}},
+    [A1D2_XANDER_FATHER_AGE] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Y la edad de su padre cuando|llegó aquí",
+         "And his father's age when|he came to us"}},
+    [A1D2_XANDER_ONE_YEAR_BEFORE] = { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Un año antes de que|le acogiéramos|como uno de los nuestros",
+         "A year before we|took him as one of ours"}},
+    [A1D2_LINUS_MOTHER] = { FACE_linus, SIDE_RIGHT, 100,
+        {"Madre...",
+         "Mother..."}},
+    [A1D2_CLIO_IF_XANDER_WANTS] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Si Xander lo quiere, así será|Pero no irás solo",
+         "If Xander wants it that way,|so it will be|But you'll not go alone"}},
+    [A1D2_CLIO_NO_TRAVEL] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Nunca me ha gustado viajar|Pero no dejaré que vayas solo",
+         "I've never liked to travel|But I won't let you go alone"}},
+    [A1D2_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogItem act1_dialog3[] = {
+    [A1D3_SOME_TIME_LATER] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Algún tiempo después",
+         "Some time later"}},
+    [A1D3_ENEMIES_APPROACH] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre",
+         "Enemies are approaching|We have to stay alert|Stay close, mother"}},
+    [A1D3_THAT_HURTS] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Eso ha dolido",
+         "That hurts"}},
+    [A1D3_THINK_BACKWARDS] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Quizá deba pensar|al revés",
+         "I should maybe|think backwards"}},
+    [A1D3_THANKS_FOR_PLAYING] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Gracias por probar la demo técnica|Síguenos por X o BlueSky|@GeeseBumpsGames",
+         "Thtanks for testing our tech demo|Follow us in X or BlueSky|@GeeseBumpsGames"}},
+    [A1D3_TURN_OFF_CONSOLE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Apaga tu consola|y haz algo constructivo|como jugar un poco al frontón",
+         "Turn off your console|and do something constructive|like play a little racquetball"}},
+    [A1D3_ORGANIZE_SOCKS] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"o preparar la cena,|o organizar tu cajón de calcetines|alfabéticamente.",
+         "or cook dinner,|or organize your sock drawer|alphabetically."}},
+    [A1D3_THATS_ALL] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"¡Esto es todo!|(por ahora)",
+         "That's all!|(by now)"}},
+    [A1D3_NOTE_ABOUT_SCENE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado",
+         "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"}},
+    [A1D3_DEMO_REASON] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas",
+         "It's been decided to include it|in this technical demo|as a test of certain mechanics"}},
+    [A1D3_PRESS_START] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Pulsa START para ver|tu inventario de hechizos",
+         "Press START to view|your spell inventory"}},
+    [A1D3_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogItem act1_dialog4[] = {
+    [A1D4_HUNDRED_YEARS] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Han pasado ya cien años",
+         "A hundred years have passed"}},
+    [A1D4_CANT_STOP_LONG] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No podremos pararles|por mucho más tiempo",
+         "We won't be able to|stop them for much longer"}},
+    [A1D4_NEXT_MORNING] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"A la mañana siguiente...",
+         "The next morning..."}},
+    [A1D4_BAD_SLEEP] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"He dormido regular esta noche|Tuve horribles pesadillas",
+         "I've not slept well last night|I had terrible nightmares"}},
+    [A1D4_NOT_REAL] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No ha podido ser real|La ventana está cerrada",
+         "It couldn't be real|The windows is closed"}},
+    [A1D4_NO_TIME_SIT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No tengo tiempo de sentarme|Madre me espera",
+         "I don't have time to sit down|Mother wating for me"}},
+    [A1D4_LULLABY] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Esta es la nana que me|cantaban cada noche",
+         "That's the lullaby they used|to sing to me every night"}},
+    [A1D4_LEARNED_PATTERN] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Has aprendido|tu primer patrón",
+         "You have learned|your first pattern"}},
+    [A1D4_PAUSE_MENU] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Entra en el menú de|pausa para verlo",
+         "Enter the pause menu|to check it out"}},
+    [A1D4_WHERE_ARE_YOU] = { FACE_clio, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Linus, ¿dónde estás?",
+         "Linus, where are you?"}},
+    [A1D4_TOO_LATE] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Se me ha hecho demasiado tarde|tengo que ir al salón",
+         "It's gotten too late|I need to go the hall"}},
+    [A1D4_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_sys_demo_warning[] = {
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"The Weave|Demo técnica|Enero de 2025",
+         "The Weave|Tech demo|January 2025"}},
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final",
+         "Graphics, mechanics or sounds|aren't final, nor they|represent the final result"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_swan_intro[] = {
+    { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Han pasado ya cien años",
+         "A hundred years have passed"}},
+    { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No podremos pararles|por mucho más tiempo",
+         "We won't be able to|stop them for much longer"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_morning[] = {
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"A la mañana siguiente...",
+         "The next morning..."}},
+    { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"He dormido regular esta noche|Tuve horribles pesadillas",
+         "I've not slept well last night|I had terrible nightmares"}},
+    { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No ha podido ser real|La ventana está cerrada",
+         "It couldn't be real|The windows is closed"}},
+    { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"No tengo tiempo de sentarme|Madre me espera",
+         "I don't have time to sit down|Mother wating for me"}},
+    { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Esta es la nana que me|cantaban cada noche",
+         "That's the lullaby they used|to sing to me every night"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_learned_pattern[] = {
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Has aprendido|tu primer patrón",
+         "You have learned|your first pattern"}},
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Entra en el menú de|pausa para verlo",
+         "Enter the pause menu|to check it out"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_exit[] = {
+    { FACE_clio, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Linus, ¿dónde estás?",
+         "Linus, where are you?"}},
+    { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Se me ha hecho demasiado tarde|tengo que ir al salón",
+         "It's gotten too late|I need to go the hall"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_intro[] = {
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Creo que he dormido demasiado|Debo llegar rápido al salón",
+         "I think I've overslept|I should go to the hall quickly"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Aunque siendo el día que es|este pasillo me trae|demasiados recuerdos",
+         "Although in a day like this|this hallway brings back|too many memories"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_revisit[] = {
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papá",
+         "Before I leave I want to|revisit some memories|I owe it to dad"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_book_history[] = {
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Este tomo narra la historia|de nuestro gremio|desde la Gran Separación",
+         "This volume narrates the history|of our guild|since the Great Split"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"El último capítulo|termina con el fallecimiento|de mi padre",
+         "The last chapter|ends with the passing|of my father"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Madre dice que seré yo|el que deba escribir|el siguiente",
+         "Mother says it will be me|who has to write|the next one"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_act1_myths[] = {
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Una colección de|mitos y leyendas|de los distintos gremios",
+         "A collection of|myths and legends|from the different guilds"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Gracias a mi padre|tenemos documentadas|las que cantaban los Pastores",
+         "Thanks to my father|we have documented|those the Shepherds sang"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_a1d2_start[] = {
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Gremio de los historiadores|Año 8121",
+         "Historians guild|Year 8121"}},
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Lunes|Primera hora de la mañana",
+         "Monday|Early morning"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_a1d2_clio_late[] = {
+    { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños",
+         "It's late, Linus|And you shouldn't be late|at your birthday"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"He tenido el sueño|más extraño, Madre",
+         "I have had the strangest|dream, Mother"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Un cisne venía a|mi cuarto y...",
+         "A swan came to my room|and..."}},
+    { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Luego me lo cuentas|Xander nos espera",
+         "You can tell me later|Xander is waiting for us"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_a1d2_xander_entrance[] = {
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Por fin|estás despierto, Linus",
+         "At last,|you're awake Linus"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Perdóname, maestro|Un extraño sueño me ha|mantenido despierto",
+         "Forgive me, master|A strange dream has|kept me awake"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Ciertamente eres el|hijo de tu padre|Aiden tenía grandes sueños",
+         "You are certainly your|father's son|Aiden had big dreams"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Y estamos aquí para hablar|sobre uno que|nunca llegó a cumplir",
+         "And we are here to talk|about one that he|never achieved"}},
+    { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"He leído sus historias|mil veces|¿De cuál hablamos?",
+         "I've read his stories|a thousand times|Which one is this?"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Una que no encontrarás en|un libro. La de la isla|del gremio de los Tejedores",
+         "One you won't find in a book|The one about Weavers|guild island"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_a1d2_legend[] = {
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Según la leyenda|Fueron un gremio|capaz de tejer hechizos",
+         "According to the legend|They were a guild|able to weave spells"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Para él no era una leyenda|Los Pastores la cantaban|como cierta",
+         "That was no legend for him|Shepherds sang it as a fact"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Desaparecieron sin dejar rastro|Aunque muchos creen|que era solo un cuento",
+         "They vanished without a trace|Although many believe|it was just a tale"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_a1d2_after_response[] = {
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Tu padre quería encontrar|la isla donde vivían",
+         "Your father wanted to find|their home island"}},
+    { FACE_clio, SIDE_RIGHT, DEFAULT_TALK_TIME,
+        {"Nuestro destino es|documentar hechos,|no perseguirlos",
+         "Our destiny is to|document facts,|not to chase them"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Linus tiene diecisiete años|Esa era mi edad cuando|viajé por el mundo",
+         "Linus is seventeen|That was my age when|I traveled the world"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Y la edad de su padre cuando|llegó aquí",
+         "And his father's age when|he came to us"}},
+    { FACE_xander, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Un año antes de que|le acogiéramos|como uno de los nuestros",
+         "A year before we|took him as one of ours"}},
+    { FACE_linus, SIDE_RIGHT, 100,
+        {"Madre...",
+         "Mother..."}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_a1d2_choice_reply[] = {
+    { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Si Xander lo quiere, así será|Pero no irás solo",
+         "If Xander wants it that way,|so it will be|But you'll not go alone"}},
+    { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Nunca me ha gustado viajar|Pero no dejaré que vayas solo",
+         "I've never liked to travel|But I won't let you go alone"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+static const DialogItem cluster_a1d3_ending[] = {
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"¡Esto es todo!|(por ahora)",
+         "That's all!|(by now)"}},
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado",
+         "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"}},
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas",
+         "It's been decided to include it|in this technical demo|as a test of certain mechanics"}},
+    { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Pulsa START para ver|tu inventario de hechizos",
+         "Press START to view|your spell inventory"}},
+    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogCluster dialog_clusters[] = {
+    [CLUSTER_SYS_DEMO_WARNING] = { cluster_sys_demo_warning },
+    [CLUSTER_ACT1_SWAN_INTRO] = { cluster_act1_swan_intro },
+    [CLUSTER_ACT1_MORNING] = { cluster_act1_morning },
+    [CLUSTER_ACT1_LEARNED_PATTERN] = { cluster_act1_learned_pattern },
+    [CLUSTER_ACT1_EXIT] = { cluster_act1_exit },
+    [CLUSTER_ACT1_INTRO] = { cluster_act1_intro },
+    [CLUSTER_ACT1_REVISIT] = { cluster_act1_revisit },
+    [CLUSTER_ACT1_BOOK_HISTORY] = { cluster_act1_book_history },
+    [CLUSTER_ACT1_MYTHS] = { cluster_act1_myths },
+    [CLUSTER_A1D2_START] = { cluster_a1d2_start },
+    [CLUSTER_A1D2_CLIO_LATE] = { cluster_a1d2_clio_late },
+    [CLUSTER_A1D2_XANDER_ENTRANCE] = { cluster_a1d2_xander_entrance },
+    [CLUSTER_A1D2_LEGEND] = { cluster_a1d2_legend },
+    [CLUSTER_A1D2_AFTER_RESPONSE] = { cluster_a1d2_after_response },
+    [CLUSTER_A1D2_CHOICE_REPLY] = { cluster_a1d2_choice_reply },
+    [CLUSTER_A1D3_ENDING] = { cluster_a1d3_ending },
+};
