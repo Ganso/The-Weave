@@ -5,27 +5,16 @@
 #define NUM_LANGUAGES 2
 #define MAX_CHOICES 4
 
+// Sides
+#define SIDE_LEFT true
+#define SIDE_RIGHT false
+
 enum Languages {
     LANG_SPANISH,
     LANG_ENGLISH
 };
 extern u8 game_language;
 
-// Acts and dialogs
-#define SYSTEM_DIALOG   0
-#define ACT1_DIALOG1    1
-#define ACT1_DIALOG2    2
-#define ACT1_DIALOG3    3
-#define ACT1_DIALOG4    4
-
-// ------------------------------------------------------------------
-// Dialog line identifiers (generated)
-// ------------------------------------------------------------------
-#include "texts_generated.h"
-
-typedef struct {
-    const DialogItem *dialog; // Array containing the lines
-} DialogCluster;
 
 // Choices
 #define ACT1_CHOICE1    0
@@ -36,6 +25,10 @@ typedef struct {
     u16 max_seconds;
     const char *text[NUM_LANGUAGES];
 } DialogItem;
+
+typedef struct {
+    const DialogItem *dialog; // Array containing the lines
+} DialogCluster;
 
 typedef struct {
     u8 face;

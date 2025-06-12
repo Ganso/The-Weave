@@ -1,4 +1,4 @@
-// Auto-generated from texts.csv and clusters.csv
+// Auto-generated from texts.csv and clusters.csv – DO NOT EDIT
 #ifndef TEXTS_GENERATED_H
 #define TEXTS_GENERATED_H
 
@@ -78,6 +78,15 @@ enum Act1Dialog4Id {
     A1D4_COUNT = 11
 };
 
+enum DialogSetId {
+    SYSTEM_DIALOG,  // 0
+    ACT1_DIALOG1,  // 1
+    ACT1_DIALOG2,  // 2
+    ACT1_DIALOG3,  // 3
+    ACT1_DIALOG4,  // 4
+    DIALOG_SET_COUNT
+};
+
 enum DialogClusterId {
     CLUSTER_SYS_DEMO_WARNING,
     CLUSTER_ACT1_SWAN_INTRO,
@@ -98,4 +107,4 @@ enum DialogClusterId {
     CLUSTER_COUNT
 };
 
-#endif
+#endif // TEXTS_GENERATED_H
