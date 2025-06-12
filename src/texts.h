@@ -18,6 +18,15 @@ extern u8 game_language;
 #define ACT1_DIALOG3    3
 #define ACT1_DIALOG4    4
 
+// ------------------------------------------------------------------
+// Dialog line identifiers (generated)
+// ------------------------------------------------------------------
+#include "texts_generated.h"
+
+typedef struct {
+    const DialogItem *dialog; // Array containing the lines
+} DialogCluster;
+
 // Choices
 #define ACT1_CHOICE1    0
 
@@ -39,6 +48,7 @@ typedef struct {
 // Game texts
 extern const DialogItem *dialogs[];
 extern const ChoiceItem *choices[];
+extern const DialogCluster dialog_clusters[];
 
 // Functions
 char* encode_spanish_text(const char* input); // Code Spanish text in the game font charset
