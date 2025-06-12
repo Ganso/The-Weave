@@ -6,8 +6,8 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
     dprintf(2,"The Weave - %s",GAMEVERSION);
     dprintf(2,"https://geese-bumps.itch.io/\n\n");
 
-    //geesebumps_logo(); // GeeseBumps Logo
-    //theweave_intro();  // Game intro
+    geesebumps_logo(); // GeeseBumps Logo
+    theweave_intro();  // Game intro
 
     initialize(true);
 
