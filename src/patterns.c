@@ -171,7 +171,7 @@ void launchPlayerPattern(u16 patternId)
     {
         dprintf(2,"Pattern %d not usable right now", patternId);
         show_or_hide_interface(false); // hide interface
-        talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN]);
+        talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
         if (interface_active==true) show_or_hide_interface(true); // show interface
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
         setIdle(); // reset combat state
