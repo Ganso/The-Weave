@@ -28,8 +28,8 @@ act1_dialog2,A1D2_LINUS_FORGIVE,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Perdón
 act1_dialog2,A1D2_XANDER_YOUR_FATHERS_SON,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"Ciertamente eres el|hijo de tu padre|Aiden tenía grandes sueños","You are certainly your|father's son|Aiden had big dreams"
 act1_dialog2,A1D2_XANDER_UNFULFILLED,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"Y estamos aquí para hablar|sobre uno que|nunca llegó a cumplir","And we are here to talk|about one that he|never achieved"
 act1_dialog2,A1D2_LINUS_WHICH_STORY,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"He leído sus historias|mil veces|¿De cuál hablamos?","I've read his stories|a thousand times|Which one is this?"
-act1_dialog2,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_dialog2,A1D2_XANDER_ISLAND_LEGEND,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"Una que no encontrarás en|un libro. La de la isla|del gremio de los Tejedores","One you won't find in a book|The one about Weavers|guild island"
+act1_dialog2,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_dialog2,A1D2_XANDER_ABILITY,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"Según la leyenda|Fueron un gremio|capaz de tejer hechizos","According to the legend|They were a guild|able to weave spells"
 act1_dialog2,A1D2_XANDER_NOT_LEGEND,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"Para él no era una leyenda|Los Pastores la cantaban|como cierta","That was no legend for him|Shepherds sang it as a fact"
 act1_dialog2,A1D2_XANDER_VANISHED,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"Desaparecieron sin dejar rastro|Aunque muchos creen|que era solo un cuento","They vanished without a trace|Although many believe|it was just a tale"
