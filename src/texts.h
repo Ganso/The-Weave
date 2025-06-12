@@ -26,9 +26,6 @@ typedef struct {
     const char *text[NUM_LANGUAGES];
 } DialogItem;
 
-typedef struct {
-    const DialogItem *dialog; // Array containing the lines
-} DialogCluster;
 
 typedef struct {
     u8 face;
@@ -41,7 +38,6 @@ typedef struct {
 // Game texts
 extern const DialogItem *dialogs[];
 extern const ChoiceItem *choices[];
-extern const DialogCluster dialog_clusters[];
 
 // Functions
 char* encode_spanish_text(const char* input); // Code Spanish text in the game font charset
