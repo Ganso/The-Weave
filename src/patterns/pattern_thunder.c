@@ -14,7 +14,7 @@ void playerThunderLaunch(void)
         obj_enemy[combatContext.activeEnemy].class_id == ENEMY_CLS_WEAVERGHOST)
     {
         show_or_hide_interface(false); // Hide interface
-        talk_dialog(&dialogs[ACT1_DIALOG3][3]); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
+        talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS]); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
         show_or_hide_interface(true);  // Show interface again
         cancelPlayerPattern(); // Cancel the pattern
         return;
