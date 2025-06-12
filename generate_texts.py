@@ -29,6 +29,7 @@ TERMINATOR = 'NULL'
 sets      = OrderedDict()           # {set_name: [rows]}
 prefixes  = {}                      # {set_name: 'SYSMSG'}
 indices   = defaultdict(int)        # índice incremental por set
+null_counters = defaultdict(int)    # número de terminadores por set
 
 with open(CSV_FILE, newline='', encoding='utf-8') as f:
     for row in csv.DictReader(f):
@@ -40,6 +41,9 @@ with open(CSV_FILE, newline='', encoding='utf-8') as f:
             # Índice secuencial dentro del set
             row['index']      = indices[set_name]
             indices[set_name] += 1
+        else:
+            # Contador de terminadores para IDs únicos
+            null_counters[set_name] += 1
 
         # Prefijo para IDs auto­generados
         cur_prefix = prefixes.get(set_name)
@@ -77,14 +81,19 @@ with open(HEADER_FILE, 'w', encoding='utf-8') as h:
 
     # 3a. Enum de IDs por set
     for s, rows in sets.items():
+        pref = prefix(next(r['id'] for r in rows if not r.get('terminator')))
         h.write(f'enum {enum_name(s)} {{\n')
         idx = 0
+        term_num = 0
         for r in rows:
-            if r.get("terminator"):
-                continue
-            h.write(f'    {r["id"]} = {idx},\n')
+            if r.get('terminator'):
+                term_num += 1
+                r['enum_id'] = f'{pref}_TERM_{term_num}'
+            else:
+                r['enum_id'] = r['id']
+            h.write(f'    {r["enum_id"]} = {idx},\n')
             idx += 1
-        h.write(f'    {prefix(rows[0]["id"])}_COUNT = {idx}\n')
+        h.write(f'    {pref}_COUNT = {idx}\n')
         h.write('};\n\n')
 
     # 3b. Enum de índices de set (SYSTEM_DIALOG = 0, …)
@@ -115,12 +124,12 @@ with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
         c.write(f'const DialogItem {s}[] = {{\n')
         for r in rows:
             if r.get('terminator'):
-                c.write('    { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } },\n')
-                continue
-            es = r["es"].replace('"', '\\"')
-            en = r["en"].replace('"', '\\"')
-            c.write(f'    [{r["id"]}] = {{ {r["face"]}, {r["side"]}, {r["time"]},\n')
-            c.write(f'        {{"{es}",\n         "{en}"}} }},\n')
+                c.write(f'    [{r["enum_id"]}] = {{ 0, false, DEFAULT_TALK_TIME, {{ NULL, NULL }} }},\n')
+            else:
+                es = r["es"].replace('"', '\\"')
+                en = r["en"].replace('"', '\\"')
+                c.write(f'    [{r["enum_id"]}] = {{ {r["face"]}, {r["side"]}, {r["time"]},\n')
+                c.write(f'        {{"{es}",\n         "{en}"}} }},\n')
         # Terminador
         c.write(f'    [{pref}_COUNT] = {{ 0, false, DEFAULT_TALK_TIME, {{ NULL, NULL }} }}\n')
         c.write('};\n\n')
