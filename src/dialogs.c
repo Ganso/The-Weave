@@ -103,6 +103,15 @@ void talk_dialog(const DialogItem *dialog)    // Display a predefined dialog ite
     talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds);
 }
 
+void talk_cluster(const DialogCluster *cluster)    // Display several dialog lines
+{
+    const DialogItem *it = cluster->dialog;
+    while (it->text[0] != NULL) {
+        talk_dialog(it);
+        ++it;
+    }
+}
+
 void split_text(char *text, char *line1, char *line2, char *line3)    // Break text into three lines using | as separator
 {
     u16 len = strlen(text);
