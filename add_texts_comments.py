@@ -1,4 +1,32 @@
-import os, re, sys  
+import os, re, sys
+
+
+def parse_enum_values(header_file):
+    """Parse enum definitions to map constant names to numeric values."""
+    values = {}
+    in_enum = False
+    current = 0
+    with open(header_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            if not in_enum:
+                if re.match(r'\s*enum\s+\w+\s*\{', line):
+                    in_enum = True
+                    current = 0
+                continue
+
+            if re.search(r'\};', line):
+                in_enum = False
+                continue
+
+            m = re.match(r'\s*(\w+)(?:\s*=\s*(\d+))?\s*,?', line)
+            if m:
+                name = m.group(1)
+                val = m.group(2)
+                if val is not None:
+                    current = int(val)
+                values[name] = current
+                current += 1
+    return values
 
 
 def show_help():  
@@ -142,7 +170,7 @@ def parse_texts(files):
     return dialog_texts, choice_texts, cluster_texts
 
 
-def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts):
+def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values):
     """
     Update the given C source file by adding comments with dialog/choice texts
     to lines calling talk_dialog() and choice_dialog().
@@ -153,7 +181,7 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts):
 
     new_lines = []  
     # Regex to match talk_dialog, talk_cluster and choice_dialog calls
-    talk_re = re.compile(r'(\s*)(.*?)(talk_dialog\s*\(\s*&dialogs\[(\w+)_DIALOG(?:\d+)?\]\[(\d+)\]\s*\);)(.*)?$')
+    talk_re = re.compile(r'(\s*)(.*?)(talk_dialog\s*\(\s*&dialogs\[(\w+_DIALOG\d*)\]\[([^\]]+)\]\s*\);)(.*)?$')
     cluster_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialog_clusters\[(\w+)\]\s*\);)(.*)?$')
     choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')
 
@@ -162,17 +190,16 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts):
 
         m = talk_re.search(l)
         if m:
-            # Extract relevant groups from the match
-            indent, before, call, act, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), int(m.group(5)), m.group(6) or ""
-            # Determine the dialog key
-            key = "SYSTEM_DIALOG" if act.upper() == "SYSTEM" else None
-            if not key:
-                dnum_match = re.search(r'_DIALOG(\d+)', call)
-                if dnum_match:
-                    key = f"{act}_DIALOG{dnum_match.group(1)}".upper()
+            indent, before, call, act, idx_expr, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5).strip(), m.group(6) or ""
+            # Determine numeric index from expression
+            if idx_expr.isdigit():
+                idx = int(idx_expr)
+            else:
+                idx = enum_values.get(idx_expr)
+
+            key = act.upper()
             texts = dialog_texts.get(key, [])
-            if idx < len(texts):
-                # Add comment with ES and EN text
+            if idx is not None and idx < len(texts):
                 comment = f' // (ES) "{texts[idx]["es"]}" - (EN) "{texts[idx]["en"]}"'
                 l = f"{indent}{before}{call}{comment}"
                 modified = True
@@ -218,7 +245,8 @@ def process_file(c_file):
     """
     print(f"Processing file: {c_file}")
     dialog_texts, choice_texts, cluster_texts = parse_texts(["src/texts.c", "src/texts_generated.c"])
-    update_source_file(c_file, dialog_texts, choice_texts, cluster_texts)
+    enum_values = parse_enum_values("src/texts_generated.h")
+    update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values)
 
 
 def process_all_files():
