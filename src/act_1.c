@@ -33,7 +33,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     wait_seconds(2);
 
     // Dialog
-    talk_cluster(&dialog_clusters[CLUSTER_ACT1_SWAN_INTRO]);
+    talk_cluster(&dialog_clusters[CLUSTER_ACT1_SWAN_INTRO]); // (ES) "Han pasado ya cien años" - (EN) "A hundred years have passed", (ES) "No podremos pararles|por mucho más tiempo" - (EN) "We won't be able to|stop them for much longer"
 
     // Flash to white, hide swan, fade back
     wait_seconds(2);
@@ -86,7 +86,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
             TODO_item_interaction=ITEM_NONE;
             if (item_interacted[3]==false) { // If not already interacted
                 activate_spell(PATTERN_SLEEP); // Activate sleep pattern
-                talk_cluster(&dialog_clusters[CLUSTER_ACT1_LEARNED_PATTERN]);
+                talk_cluster(&dialog_clusters[CLUSTER_ACT1_LEARNED_PATTERN]); // (ES) "Has aprendido|tu primer patrón" - (EN) "You have learned|your first pattern", (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
              }
             item_interacted[3]=true;
             break;
@@ -96,7 +96,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
         if (item_interacted[0]==true && item_interacted[1]==true && item_interacted[2]==true && item_interacted[3]==true) scene_timeout++;
         next_frame(true);
     }
-    talk_cluster(&dialog_clusters[CLUSTER_ACT1_EXIT]);
+    talk_cluster(&dialog_clusters[CLUSTER_ACT1_EXIT]); // (ES) "Linus, ¿dónde estás?" - (EN) "Linus, where are you?", (ES) "Se me ha hecho demasiado tarde|tengo que ir al salón" - (EN) "It's gotten too late|I need to go the hall"
 
     end_level(); // Free resources
     current_scene=2; // Next scene
@@ -121,14 +121,14 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
     init_character(CHR_linus);
 
     // Tech demo warning message
-    talk_cluster(&dialog_clusters[CLUSTER_SYS_DEMO_WARNING]);
+    talk_cluster(&dialog_clusters[CLUSTER_SYS_DEMO_WARNING]); // (ES) "The Weave|Demo técnica|Enero de 2025" - (EN) "The Weave|Tech demo|January 2025", (ES) "Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final" - (EN) "Graphics, mechanics or sounds|aren't final, nor they|represent the final result"
 
     // Put character in screen
     move_character_instant(CHR_linus, 340, 154);
     move_character(CHR_linus, 270, 154);
 
     // Dialog
-    talk_cluster(&dialog_clusters[CLUSTER_ACT1_INTRO]);
+    talk_cluster(&dialog_clusters[CLUSTER_ACT1_INTRO]); // (ES) "Creo que he dormido demasiado|Debo llegar rápido al salón" - (EN) "I think I've overslept|I should go to the hall quickly", (ES) "Aunque siendo el día que es|este pasillo me trae|demasiados recuerdos" - (EN) "Although in a day like this|this hallway brings back|too many memories"
 
     // You can move
     player_scroll_active=true;
@@ -139,12 +139,12 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
         switch (TODO_item_interaction) // Process item interactions
         {
         case 0: // Guild history book
-            talk_cluster(&dialog_clusters[CLUSTER_ACT1_BOOK_HISTORY]);
+            talk_cluster(&dialog_clusters[CLUSTER_ACT1_BOOK_HISTORY]); // (ES) "Este tomo narra la historia|de nuestro gremio|desde la Gran Separación" - (EN) "This volume narrates the history|of our guild|since the Great Split", (ES) "El último capítulo|termina con el fallecimiento|de mi padre" - (EN) "The last chapter|ends with the passing|of my father", (ES) "Madre dice que seré yo|el que deba escribir|el siguiente" - (EN) "Mother says it will be me|who has to write|the next one"
             item_interacted[0]=true;
             TODO_item_interaction=ITEM_NONE;
             break;
         case 1: // Myths and legends
-            talk_cluster(&dialog_clusters[CLUSTER_ACT1_MYTHS]);
+            talk_cluster(&dialog_clusters[CLUSTER_ACT1_MYTHS]); // (ES) "Una colección de|mitos y leyendas|de los distintos gremios" - (EN) "A collection of|myths and legends|from the different guilds", (ES) "Gracias a mi padre|tenemos documentadas|las que cantaban los Pastores" - (EN) "Thanks to my father|we have documented|those the Shepherds sang"
             item_interacted[1]=true;
             TODO_item_interaction=ITEM_NONE;
             break;
@@ -188,9 +188,9 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     show_character(CHR_linus, true);
        
     // Dialog
-    talk_cluster(&dialog_clusters[CLUSTER_A1D2_START]);
+    talk_cluster(&dialog_clusters[CLUSTER_A1D2_START]); // (ES) "Gremio de los historiadores|Año 8121" - (EN) "Historians guild|Year 8121", (ES) "Lunes|Primera hora de la mañana" - (EN) "Monday|Early morning"
     move_character(CHR_linus, 200, 174);
-    talk_cluster(&dialog_clusters[CLUSTER_A1D2_CLIO_LATE]);
+    talk_cluster(&dialog_clusters[CLUSTER_A1D2_CLIO_LATE]); // (ES) "Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños" - (EN) "It's late, Linus|And you shouldn't be late|at your birthday", (ES) "He tenido el sueño|más extraño, Madre" - (EN) "I have had the strangest|dream, Mother", (ES) "Un cisne venía a|mi cuarto y..." - (EN) "A swan came to my room|and...", (ES) "Luego me lo cuentas|Xander nos espera" - (EN) "You can tell me later|Xander is waiting for us"
     // Xander's entrance
     move_character(CHR_clio, 100, 154);
     wait_seconds(1);
@@ -198,14 +198,14 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     move_character_instant(CHR_xander,-30,174);
     show_character(CHR_xander, true);
     move_character(CHR_xander, 40, 174);
-    talk_cluster(&dialog_clusters[CLUSTER_A1D2_XANDER_ENTRANCE]);
+    talk_cluster(&dialog_clusters[CLUSTER_A1D2_XANDER_ENTRANCE]); // (ES) "Por fin|estás despierto, Linus" - (EN) "At last,|you're awake Linus", (ES) "Perdóname, maestro|Un extraño sueño me ha|mantenido despierto" - (EN) "Forgive me, master|A strange dream has|kept me awake", (ES) "Ciertamente eres el|hijo de tu padre|Aiden tenía grandes sueños" - (EN) "You are certainly your|father's son|Aiden had big dreams", (ES) "Y estamos aquí para hablar|sobre uno que|nunca llegó a cumplir" - (EN) "And we are here to talk|about one that he|never achieved", (ES) "He leído sus historias|mil veces|¿De cuál hablamos?" - (EN) "I've read his stories|a thousand times|Which one is this?", (ES) "Una que no encontrarás en|un libro. La de la isla|del gremio de los Tejedores" - (EN) "One you won't find in a book|The one about Weavers|guild island"
     u8 response = choice_dialog(&choices[ACT1_CHOICE1][0]); // (ES) "¿Los Tejedores?" - (EN) "The Weavers?", (ES) "Era mi leyenda favorita" - (EN) "It was my favourite legend", (ES) "¿Qué pasó con ellos?" - (EN) "What happened to them?"
     dprintf(2,"Response: %d\n",response);
     talk_dialog(&dialogs[ACT1_DIALOG2][A1D2_XANDER_LEGEND + response]); // Response texts:
     // If response=0: (ES) "Según la leyenda Fueron un gremio capaz de tejer hechizos" - (EN) "According to the legend They were a guild able to weave spells"
     // If response=1: (ES) "Para él no era una leyenda Los Pastores la cantaban como cierta" - (EN) "That was no legend for him Shepherds sang it as a fact"
     // If response=2: (ES) "Desaparecieron sin dejar rastro Aunque muchos creen que era solo un cuento" - (EN) "They vanished without a trace Although many believe it was just a tale"
-    talk_cluster(&dialog_clusters[CLUSTER_A1D2_AFTER_RESPONSE]);
+    talk_cluster(&dialog_clusters[CLUSTER_A1D2_AFTER_RESPONSE]); // (ES) "Tu padre quería encontrar|la isla donde vivían" - (EN) "Your father wanted to find|their home island", (ES) "Nuestro destino es|documentar hechos,|no perseguirlos" - (EN) "Our destiny is to|document facts,|not to chase them", (ES) "Linus tiene diecisiete años|Esa era mi edad cuando|viajé por el mundo" - (EN) "Linus is seventeen|That was my age when|I traveled the world", (ES) "Y la edad de su padre cuando|llegó aquí" - (EN) "And his father's age when|he came to us", (ES) "Un año antes de que|le acogiéramos|como uno de los nuestros" - (EN) "A year before we|took him as one of ours", (ES) "Madre..." - (EN) "Mother..."
     response = choice_dialog(&choices[ACT1_CHOICE1][1]); // (ES) "Tengo que ir a la isla" - (EN) "I have to go to the island", (ES) "¿Vendrías conmigo?" - (EN) "Would you come with me?"
     look_left(CHR_clio, false);
     talk_dialog(&dialogs[ACT1_DIALOG2][A1D2_CLIO_IF_XANDER_WANTS + response]); // Response texts:
@@ -301,7 +301,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     }
 
     show_or_hide_interface(false);
-    talk_cluster(&dialog_clusters[CLUSTER_A1D3_ENDING]);
+    talk_cluster(&dialog_clusters[CLUSTER_A1D3_ENDING]); // (ES) "¡Esto es todo!|(por ahora)" - (EN) "That's all!|(by now)", (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished", (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics", (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
     PAL_fadeOutAll(120,false);
 
     SYS_hardReset(); // Reset and start again

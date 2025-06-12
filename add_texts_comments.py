@@ -12,7 +12,8 @@ Usage:
     python add_texts_comments.py <file>  
     python add_texts_comments.py *  
 
-This script reads the dialog texts from texts.c (and mappings from texts.h) and adds comments to talk_dialog() and choice_dialog() calls.  
+This script reads the dialog texts from texts.c and texts_generated.c and adds
+comments to talk_dialog(), talk_cluster() and choice_dialog() calls.
 """)  
 
 
@@ -96,40 +97,52 @@ def parse_choice_item(item):
     return [{"es": es.strip(), "en": en.strip()} for es, en in zip(es_options, en_options)]  
 
 
-def parse_texts_c(texts_c_file):  
+def parse_texts(files):
     """
-    Parse texts.c to extract all dialog and choice texts.
-    Returns two dictionaries: dialog_texts and choice_texts.
+    Parse the provided C files to extract dialog, cluster and choice texts.
+    Returns three dictionaries keyed by their array name in uppercase.
     """
-    dialog_texts = {}  
-    choice_texts = {}  
-    with open(texts_c_file, 'r', encoding='utf-8') as f:  
-        content = f.read()  
-    # Find all dialog blocks
-    dialog_blocks = re.finditer(r'const\s+DialogItem\s+(\w+_dialog\d*)\[\]\s*=\s*{(.*?)};', content, re.DOTALL)  
-    for block in dialog_blocks:  
-        block_name = block.group(1)  
-        items = extract_items(block.group(2))  
-        texts = []  
-        for item in items:  
-            res = parse_dialog_item(item)  
-            if res:  
-                texts.append(res)  
-        dialog_texts[block_name.upper()] = texts  
-    # Find all choice blocks
-    choice_blocks = re.finditer(r'const\s+ChoiceItem\s+(\w+_choice\d+)\[\]\s*=\s*{(.*?)};', content, re.DOTALL)  
-    for block in choice_blocks:  
-        block_name = block.group(1)  
-        items = extract_items(block.group(2))  
-        texts = []  
-        for item in items:  
-            opts = parse_choice_item(item)  
-            texts.append(opts)  
-        choice_texts[block_name.upper()] = texts  
-    return dialog_texts, choice_texts  
+    dialog_texts = {}
+    choice_texts = {}
+    cluster_texts = {}
+
+    if isinstance(files, str):
+        files = [files]
+
+    for path in files:
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Dialog and cluster blocks
+        dlg_blocks = re.finditer(r'(?:static\s+)?const\s+DialogItem\s+(\w+)\[\]\s*=\s*{(.*?)};', content, re.DOTALL)
+        for block in dlg_blocks:
+            name = block.group(1)
+            items = extract_items(block.group(2))
+            texts = []
+            for item in items:
+                res = parse_dialog_item(item)
+                if res:
+                    texts.append(res)
+            if name.startswith('cluster_'):
+                cluster_texts[name.upper()] = texts
+            else:
+                dialog_texts[name.upper()] = texts
+
+        # Choice blocks (only in texts.c at the moment)
+        choice_blocks = re.finditer(r'const\s+ChoiceItem\s+(\w+_choice\d+)\[\]\s*=\s*{(.*?)};', content, re.DOTALL)
+        for block in choice_blocks:
+            block_name = block.group(1)
+            items = extract_items(block.group(2))
+            texts = []
+            for item in items:
+                opts = parse_choice_item(item)
+                texts.append(opts)
+            choice_texts[block_name.upper()] = texts
+
+    return dialog_texts, choice_texts, cluster_texts
 
 
-def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_texts):  
+def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts):
     """
     Update the given C source file by adding comments with dialog/choice texts
     to lines calling talk_dialog() and choice_dialog().
@@ -139,44 +152,53 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
         lines = f.readlines()  
 
     new_lines = []  
-    # Regex to match talk_dialog and choice_dialog calls
-    talk_re = re.compile(r'(\s*)(.*?)(talk_dialog\s*\(\s*&dialogs\[(\w+)_DIALOG(?:\d+)?\]\[(\d+)\]\s*\);)(.*)?$')  
-    choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')  
+    # Regex to match talk_dialog, talk_cluster and choice_dialog calls
+    talk_re = re.compile(r'(\s*)(.*?)(talk_dialog\s*\(\s*&dialogs\[(\w+)_DIALOG(?:\d+)?\]\[(\d+)\]\s*\);)(.*)?$')
+    cluster_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialog_clusters\[(\w+)\]\s*\);)(.*)?$')
+    choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')
 
-    for line in lines:  
-        l = line.rstrip('\n')  
+    for line in lines:
+        l = line.rstrip('\n')
 
-        m = talk_re.search(l)  
-        if m:  
+        m = talk_re.search(l)
+        if m:
             # Extract relevant groups from the match
-            indent, before, call, act, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), int(m.group(5)), m.group(6) or ""  
+            indent, before, call, act, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), int(m.group(5)), m.group(6) or ""
             # Determine the dialog key
-            key = "SYSTEM_DIALOG" if act.upper() == "SYSTEM" else None  
-            if not key:  
-                dnum_match = re.search(r'_DIALOG(\d+)', call)  
-                if dnum_match:  
-                    key = f"{act}_DIALOG{dnum_match.group(1)}".upper()  
-            texts = dialog_texts.get(key, [])  
-            if idx < len(texts):  
+            key = "SYSTEM_DIALOG" if act.upper() == "SYSTEM" else None
+            if not key:
+                dnum_match = re.search(r'_DIALOG(\d+)', call)
+                if dnum_match:
+                    key = f"{act}_DIALOG{dnum_match.group(1)}".upper()
+            texts = dialog_texts.get(key, [])
+            if idx < len(texts):
                 # Add comment with ES and EN text
-                comment = f' // (ES) "{texts[idx]["es"]}" - (EN) "{texts[idx]["en"]}"'  
-                l = f"{indent}{before}{call}{comment}"  
-                modified = True  
-
-        else:  
-            m = choice_re.search(l)  
-            if m:  
-                # Extract relevant groups from the match
-                indent, before, call, act, choice_num, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5), int(m.group(6)), m.group(7) or ""  
-                key = f"{act}_CHOICE{choice_num}".upper()  
-                opts = choice_texts.get(key, [])  
-                if idx < len(opts):  
-                    options = opts[idx]  
-                    # Add comment with all options in ES and EN
-                    options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])  
-                    comment = f' // {options_text}'  
-                    l = f"{indent}{before}{call}{comment}"  
-                    modified = True  
+                comment = f' // (ES) "{texts[idx]["es"]}" - (EN) "{texts[idx]["en"]}"'
+                l = f"{indent}{before}{call}{comment}"
+                modified = True
+        else:
+            m = cluster_re.search(l)
+            if m:
+                indent, before, call, cluster_name, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5) or ""
+                texts = cluster_texts.get(cluster_name.upper(), [])
+                if texts:
+                    texts_joined = ', '.join([f'(ES) "{t["es"]}" - (EN) "{t["en"]}"' for t in texts])
+                    comment = f' // {texts_joined}'
+                    l = f"{indent}{before}{call}{comment}"
+                    modified = True
+            else:
+                m = choice_re.search(l)
+                if m:
+                    # Extract relevant groups from the match
+                    indent, before, call, act, choice_num, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5), int(m.group(6)), m.group(7) or ""
+                    key = f"{act}_CHOICE{choice_num}".upper()
+                    opts = choice_texts.get(key, [])
+                    if idx < len(opts):
+                        options = opts[idx]
+                        options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])
+                        comment = f' // {options_text}'
+                        l = f"{indent}{before}{call}{comment}"
+                        modified = True
 
         new_lines.append(l + "\n")  
 
@@ -190,16 +212,13 @@ def update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_te
         print(f"No comments were modified in {c_file}")  
 
 
-def process_file(c_file):  
+def process_file(c_file):
     """
-    Process a single C file: read mappings and texts, then update the file.
+    Process a single C file: read text definitions and update the file.
     """
-    texts_h_file = "src/texts.h"  
-    texts_c_file = "src/texts.c"  
-    print(f"Processing file: {c_file}")  
-    dialogs_map, choices_map = read_mappings(texts_h_file)  
-    dialog_texts, choice_texts = parse_texts_c(texts_c_file)  
-    update_source_file(c_file, dialogs_map, choices_map, dialog_texts, choice_texts)  
+    print(f"Processing file: {c_file}")
+    dialog_texts, choice_texts, cluster_texts = parse_texts(["src/texts.c", "src/texts_generated.c"])
+    update_source_file(c_file, dialog_texts, choice_texts, cluster_texts)
 
 
 def process_all_files():
