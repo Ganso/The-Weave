@@ -67,12 +67,12 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
         switch (TODO_item_interaction) // Process item interactions
         {
         case 0: // Bed
-            talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_BAD_SLEEP]); // (ES) "He dormido regular esta noche|Tuve horribles pesadillas" - (EN) "I've not slept well last night|I had terrible nightmares"
+            talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_SLEPT_BAD]); // (ES) "He dormido regular esta noche|Tuve horribles pesadillas" - (EN) "I've not slept well last night|I had terrible nightmares"
             TODO_item_interaction=ITEM_NONE;
             item_interacted[0]=true;
             break;
         case 1: // Chair
-            talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_NO_TIME_SIT]); // (ES) "No tengo tiempo de sentarme|Madre me espera" - (EN) "I don't have time to sit down|Mother wating for me"
+            talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_NO_TIME_TO_SIT]); // (ES) "No tengo tiempo de sentarme|Madre me espera" - (EN) "I don't have time to sit down|Mother wating for me"
             TODO_item_interaction=ITEM_NONE;
             item_interacted[1]=true;
             break;
@@ -201,7 +201,7 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     talk_cluster(&dialog_clusters[CLUSTER_A1D2_XANDER_ENTRANCE]); // (ES) "Por fin|estás despierto, Linus" - (EN) "At last,|you're awake Linus", (ES) "Perdóname, maestro|Un extraño sueño me ha|mantenido despierto" - (EN) "Forgive me, master|A strange dream has|kept me awake", (ES) "Ciertamente eres el|hijo de tu padre|Aiden tenía grandes sueños" - (EN) "You are certainly your|father's son|Aiden had big dreams", (ES) "Y estamos aquí para hablar|sobre uno que|nunca llegó a cumplir" - (EN) "And we are here to talk|about one that he|never achieved", (ES) "He leído sus historias|mil veces|¿De cuál hablamos?" - (EN) "I've read his stories|a thousand times|Which one is this?", (ES) "Una que no encontrarás en|un libro. La de la isla|del gremio de los Tejedores" - (EN) "One you won't find in a book|The one about Weavers|guild island"
     u8 response = choice_dialog(&choices[ACT1_CHOICE1][0]); // (ES) "¿Los Tejedores?" - (EN) "The Weavers?", (ES) "Era mi leyenda favorita" - (EN) "It was my favourite legend", (ES) "¿Qué pasó con ellos?" - (EN) "What happened to them?"
     dprintf(2,"Response: %d\n",response);
-    talk_dialog(&dialogs[ACT1_DIALOG2][A1D2_XANDER_LEGEND + response]); // Response texts:
+    talk_dialog(&dialogs[ACT1_DIALOG2][A1D2_XANDER_ISLAND_LEGEND + response]); // Response texts:
     // If response=0: (ES) "Según la leyenda Fueron un gremio capaz de tejer hechizos" - (EN) "According to the legend They were a guild able to weave spells"
     // If response=1: (ES) "Para él no era una leyenda Los Pastores la cantaban como cierta" - (EN) "That was no legend for him Shepherds sang it as a fact"
     // If response=2: (ES) "Desaparecieron sin dejar rastro Aunque muchos creen que era solo un cuento" - (EN) "They vanished without a trace Although many believe it was just a tale"
@@ -257,7 +257,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     
     // Dialog
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_SOME_TIME_LATER]); // (ES) "Algún tiempo después" - (EN) "Some time later"
-    talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_ENEMIES_APPROACH]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
+    talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_ENEMIES_APPROACHING]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_NOTE_ABOUT_SCENE]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_DEMO_REASON]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_PRESS_START]); // (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
