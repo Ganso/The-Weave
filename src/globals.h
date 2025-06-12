@@ -43,6 +43,7 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 #include "patterns.h" // Pattern structure and definitions
 #include "items.h" // Items in the scenery
 #include "texts.h" // Text strings (English / Spanish)
+#include "texts_generated.h" // Auto generated texts
 #include "dialogs.h" // Dialog and text related functions
 #include "controller.h" // Controller related functions
 #include "interface.h" // Game interface

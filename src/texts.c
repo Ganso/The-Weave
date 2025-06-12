@@ -1,23 +1,9 @@
 #include "globals.h"
 
-#define SIDE_LEFT true
-#define SIDE_RIGHT false
-
 // MAX TEXT LENGHT: "123456789012345678901234567890" (30 characters)
 
 // Global variable definitions
 u8 game_language=LANG_ENGLISH;
-
-// Dialog data generated from CSV
-#include "texts_generated.c"
-
-const DialogItem *dialogs[] = {
-    system_dialog,  // 0
-    act1_dialog1,   // 1
-    act1_dialog2,   // 2
-    act1_dialog3,   // 3
-    act1_dialog4,   // 4
-};
 
 const ChoiceItem act1_choice1[] = {
     {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 3,
