@@ -72,7 +72,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
             item_interacted[0]=true;
             break;
         case 1: // Chair
-            talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_NO_TIME_TO_SIT]); // (ES) "No tengo tiempo de sentarme|Madre me espera" - (EN) "I don't have time to sit down|Mother wating for me"
+            talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_NO_TIME_TO_SIT]); // (ES) "No tengo tiempo de sentarme|Madre me espera" - (EN) "I don't have time to sit down|Mother waiting for me"
             TODO_item_interaction=ITEM_NONE;
             item_interacted[1]=true;
             break;
@@ -301,7 +301,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     }
 
     show_or_hide_interface(false);
-    talk_cluster(&dialogs[ACT1_DIALOG3][A1D3_THATS_ALL]); // (ES) "¡Esto es todo!|(por ahora)" - (EN) "That's all!|(by now)", (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished", (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics", (ES) "Pulsa START para ver|tu inventario de hechizos" - (EN) "Press START to view|your spell inventory"
+    talk_cluster(&dialogs[ACT1_DIALOG3][A1D3_THATS_ALL]); // (ES) "¡Esto es todo!|(por ahora)" - (EN) "That's all!|(by now)", (ES) "Gracias por probar la demo técnica|Síguenos por X o BlueSky|@GeeseBumpsGames" - (EN) "Thanks for testing our tech demo|Follow us in X or BlueSky|@GeeseBumpsGames", (ES) "Apaga tu consola|y haz algo constructivo|como jugar un poco al frontón" - (EN) "Turn off your console|and do something constructive|like play a little racquetball", (ES) "o preparar la cena,|o organizar tu cajón de calcetines|alfabéticamente." - (EN) "or cook dinner,|or organize your sock drawer|alphabetically."
     PAL_fadeOutAll(120,false);
 
     SYS_hardReset(); // Reset and start again
