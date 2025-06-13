@@ -70,27 +70,31 @@ def read_mappings(texts_h_file):
     return dialogs, choices  
 
 
-def extract_items(block_content):  
+def extract_items(block_content):
+    """Extract individual struct items from a C array block (between braces).
+
+    The previous implementation discarded items containing ``NULL`` which were
+    used as terminators.  Since the generated ``texts.c`` now includes explicit
+    enum values for those terminators, removing them breaks the correspondence
+    between enum indices and the parsed text list.  We now keep every item and
+    let the parser functions return ``None`` for terminators so that the list
+    indices match the enum values.
     """
-    Extracts individual struct items from a C array block (between braces).
-    Ignores items containing 'NULL' (used as terminators).
-    """
-    items = []  
-    brace_count = 0  
-    start = None  
-    for i, ch in enumerate(block_content):  
-        if ch == '{':  
-            if brace_count == 0:  
-                start = i  
-            brace_count += 1  
-        elif ch == '}':  
-            brace_count -= 1  
-            if brace_count == 0 and start is not None:  
-                item = block_content[start:i+1]  
-                if "NULL" not in item:  # Ignore terminator  
-                    items.append(item)  
-                start = None  
-    return items  
+    items = []
+    brace_count = 0
+    start = None
+    for i, ch in enumerate(block_content):
+        if ch == '{':
+            if brace_count == 0:
+                start = i
+            brace_count += 1
+        elif ch == '}':
+            brace_count -= 1
+            if brace_count == 0 and start is not None:
+                item = block_content[start:i+1]
+                items.append(item)
+                start = None
+    return items
 
 
 def parse_dialog_item(item):  
@@ -149,8 +153,7 @@ def parse_texts(files):
             texts = []
             for item in items:
                 res = parse_dialog_item(item)
-                if res:
-                    texts.append(res)
+                texts.append(res)  # ``None`` preserves index for terminators
             if name.startswith('cluster_'):
                 cluster_texts[name.upper()] = texts
             else:
@@ -182,7 +185,8 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_v
     new_lines = []  
     # Regex to match talk_dialog, talk_cluster and choice_dialog calls
     talk_re = re.compile(r'(\s*)(.*?)(talk_dialog\s*\(\s*&dialogs\[(\w+_DIALOG\d*)\]\[([^\]]+)\]\s*\);)(.*)?$')
-    cluster_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialog_clusters\[(\w+)\]\s*\);)(.*)?$')
+    cluster_old_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialog_clusters\[(\w+)\]\s*\);)(.*)?$')
+    cluster_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialogs\[(\w+_DIALOG\d*)\]\[([^\]]+)\]\s*\);)(.*)?$')
     choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')
 
     for line in lines:
@@ -200,32 +204,58 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_v
             key = act.upper()
             texts = dialog_texts.get(key, [])
             if idx is not None and idx < len(texts):
-                comment = f' // (ES) "{texts[idx]["es"]}" - (EN) "{texts[idx]["en"]}"'
-                l = f"{indent}{before}{call}{comment}"
-                modified = True
+                text = texts[idx]
+                if text:
+                    comment = f' // (ES) "{text["es"]}" - (EN) "{text["en"]}"'
+                    l = f"{indent}{before}{call}{comment}"
+                    modified = True
         else:
             m = cluster_re.search(l)
             if m:
-                indent, before, call, cluster_name, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5) or ""
-                texts = cluster_texts.get(cluster_name.upper(), [])
-                if texts:
-                    texts_joined = ', '.join([f'(ES) "{t["es"]}" - (EN) "{t["en"]}"' for t in texts])
-                    comment = f' // {texts_joined}'
+                indent, before, call, act, idx_expr, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5).strip(), m.group(6) or ""
+                if idx_expr.isdigit():
+                    idx = int(idx_expr)
+                else:
+                    idx = enum_values.get(idx_expr)
+
+                key = act.upper()
+                texts = dialog_texts.get(key, [])
+                comments = []
+                while idx is not None and idx < len(texts):
+                    text = texts[idx]
+                    if not text:
+                        break
+                    comments.append(f'(ES) "{text["es"]}" - (EN) "{text["en"]}"')
+                    idx += 1
+                if comments:
+                    comment = f' // {", ".join(comments)}'
                     l = f"{indent}{before}{call}{comment}"
                     modified = True
             else:
-                m = choice_re.search(l)
+                m = cluster_old_re.search(l)
                 if m:
-                    # Extract relevant groups from the match
-                    indent, before, call, act, choice_num, idx, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5), int(m.group(6)), m.group(7) or ""
-                    key = f"{act}_CHOICE{choice_num}".upper()
-                    opts = choice_texts.get(key, [])
-                    if idx < len(opts):
-                        options = opts[idx]
-                        options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])
-                        comment = f' // {options_text}'
+                    indent, before, call, cluster_name, existing_comment = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5) or ""
+                    texts = cluster_texts.get(cluster_name.upper(), [])
+                    comments = [f'(ES) "{t["es"]}" - (EN) "{t["en"]}"' for t in texts if t]
+                    if comments:
+                        comment = f' // {", ".join(comments)}'
                         l = f"{indent}{before}{call}{comment}"
                         modified = True
+                else:
+                    m = choice_re.search(l)
+                    if m:
+                        # Extract relevant groups from the match
+                        indent, before, call, act, choice_num, idx, existing_comment = (
+                            m.group(1), m.group(2), m.group(3), m.group(4), m.group(5), int(m.group(6)), m.group(7) or ""
+                        )
+                        key = f"{act}_CHOICE{choice_num}".upper()
+                        opts = choice_texts.get(key, [])
+                        if idx < len(opts):
+                            options = opts[idx]
+                            options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])
+                            comment = f' // {options_text}'
+                            l = f"{indent}{before}{call}{comment}"
+                            modified = True
 
         new_lines.append(l + "\n")  
 
