@@ -43,3 +43,29 @@ Este archivo proporciona pautas y notas para herramientas automáticas que inter
 - Los scripts de utilidades (`add_texts_comments.py`, `generate_texts.py`) están escritos en Python 3 y siguen la sintaxis estándar del lenguaje.
 
 Estas indicaciones permiten a Codex y a otras herramientas comprender la estructura del proyecto, su estilo de programación y las limitaciones de memoria propias del hardware.
+
+## Lógica del juego
+La carpeta `src/` contiene diversos módulos C organizados por temática. Cada módulo cuenta con un `.c` y su cabecera `.h`, y se incluye de forma indirecta mediante `globals.h`. A grandes rasgos:
+
+- `entity.[ch]` define el tipo `Entity` con posición, sprites, caja de colisión y el enumerado `GameState`. Es la base de personajes, enemigos e items.
+- `characters.[ch]` gestiona los personajes controlables y sus caras.
+- `enemies.[ch]` define las clases e instancias de enemigo junto a funciones de IA y movimiento.
+- `items.[ch]` representa los objetos del escenario que usan internamente un `Entity`.
+- `background.[ch]` maneja el scroll y los límites del escenario.
+- `controller.[ch]` procesa la entrada del pad, el movimiento y la pausa.
+- `collisions.[ch]` ofrece funciones para detectar colisiones y distancias.
+- `interface.[ch]` dibuja la HUD y la pantalla de pausa.
+- `combat.[ch]` implementa la máquina de estados de combate y las acciones `hit_enemy`, `hit_player`, `update_combat`…
+- `patterns.[ch]` gestiona el sistema de hechizos: validación de notas, ejecución y control de efectos. Los ficheros `patterns/*.c` contienen las callbacks de cada hechizo.
+- Otros módulos (`init`, `intro`, `act_1`, `geesebumps`, `sound`, `dialogs`, `texts`…) se encargan de la inicialización, escenas y recursos.
+
+### Sistema de patrones
+Las notas se codifican con constantes `NOTE_MI`…`NOTE_DO`. Jugador y enemigos almacenan una cola de notas (máx. 4). `validate_pattern` comprueba la secuencia y devuelve el ID del patrón, pudiendo indicar si está invertido. Cada `PlayerPattern` o `EnemyPattern` define callbacks `launch`, `update` y si la magia es contrarrestable. Las definiciones se encuentran en las tablas `playerPatterns` y `enemyPatterns`.
+
+### Entidades
+`Entity` incluye estado (`GameState`), posición, tamaño, prioridad, animación y datos de colisión. `characters`, `enemies` e `items` encapsulan este tipo para sus propias necesidades. Los enemigos además almacenan puntos de vida y un `EnemyMode` para distinguir sus fases.
+
+### Combate
+`combat.c` gestiona un bucle basado en `CombatState`. Durante `COMBAT_STATE_IDLE` los enemigos pueden lanzar patrones si su `rechargeFrames` ha terminado. El lanzamiento y actualización de patrones modifican `combat_state` y `combatContext` (temporizadores, notas en curso, enemigo activo…). Las funciones `hit_enemy` y `hit_player` aplican daño y activan la animación de `HURT`. `update_combat` se llama cada fotograma desde `next_frame` para avanzar la máquina de estados.
+
+Estas notas resumen la lógica actual del juego para facilitar futuras modificaciones por parte de herramientas automáticas.
