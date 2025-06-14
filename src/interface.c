@@ -13,6 +13,74 @@ Sprite *spr_pattern_list_note[4];         // Note sprites shown in pause pattern
 bool interface_active;                     // Whether game interface is currently shown
 static u16 interface_sprite_count;        // How many interface sprites were hidden
 
+// Struct to store the animation state of a sprite
+typedef struct {
+    s16 animInd;
+    s16 frameInd;
+    bool autoAnim;
+} AnimState;
+
+static AnimState saved_chr_anim[MAX_CHR];     // Saved animations for characters
+static AnimState saved_enemy_anim[MAX_ENEMIES]; // Saved animations for enemies
+
+// Save current animation state for all characters and enemies and set them to IDLE
+static void save_animation_states(void)
+{
+    for (u16 i = 0; i < MAX_CHR; i++)
+    {
+        saved_chr_anim[i].animInd  = 0;
+        saved_chr_anim[i].frameInd = 0;
+        saved_chr_anim[i].autoAnim = false;
+
+        if (!obj_character[i].active || spr_chr[i] == NULL) continue;
+
+        saved_chr_anim[i].animInd  = spr_chr[i]->animInd;
+        saved_chr_anim[i].frameInd = spr_chr[i]->frameInd;
+        saved_chr_anim[i].autoAnim = SPR_getAutoAnimation(spr_chr[i]);
+
+        SPR_setAutoAnimation(spr_chr[i], FALSE);
+        SPR_setAnimAndFrame(spr_chr[i], ANIM_IDLE, 0);
+    }
+
+    for (u16 e = 0; e < MAX_ENEMIES; e++)
+    {
+        saved_enemy_anim[e].animInd  = 0;
+        saved_enemy_anim[e].frameInd = 0;
+        saved_enemy_anim[e].autoAnim = false;
+
+        if (!obj_enemy[e].obj_character.active || spr_enemy[e] == NULL) continue;
+
+        saved_enemy_anim[e].animInd  = spr_enemy[e]->animInd;
+        saved_enemy_anim[e].frameInd = spr_enemy[e]->frameInd;
+        saved_enemy_anim[e].autoAnim = SPR_getAutoAnimation(spr_enemy[e]);
+
+        SPR_setAutoAnimation(spr_enemy[e], FALSE);
+        SPR_setAnimAndFrame(spr_enemy[e], ANIM_IDLE, 0);
+    }
+}
+
+// Restore animations saved with save_animation_states()
+static void restore_animation_states(void)
+{
+    for (u16 i = 0; i < MAX_CHR; i++)
+    {
+        if (!obj_character[i].active || spr_chr[i] == NULL) continue;
+
+        SPR_setAnimAndFrame(spr_chr[i], saved_chr_anim[i].animInd, saved_chr_anim[i].frameInd);
+        SPR_setAutoAnimation(spr_chr[i], saved_chr_anim[i].autoAnim);
+        obj_character[i].animation = saved_chr_anim[i].animInd;
+    }
+
+    for (u16 e = 0; e < MAX_ENEMIES; e++)
+    {
+        if (!obj_enemy[e].obj_character.active || spr_enemy[e] == NULL) continue;
+
+        SPR_setAnimAndFrame(spr_enemy[e], saved_enemy_anim[e].animInd, saved_enemy_anim[e].frameInd);
+        SPR_setAutoAnimation(spr_enemy[e], saved_enemy_anim[e].autoAnim);
+        obj_enemy[e].obj_character.animation = saved_enemy_anim[e].animInd;
+    }
+}
+
 
 void show_or_hide_interface(bool visible)    // Toggle visibility of game's bottom interface
 {
@@ -288,6 +356,8 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
         spr_pattern_list_note[i] = NULL;
     }
 
+    save_animation_states();
+
     VDP_setHilightShadow(true); // Dim screen
     show_or_hide_interface(false); // Hide interface
     //show_or_hide_enemy_combat_interface(false); // Hide combat interface
@@ -367,6 +437,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
     //show_or_hide_enemy_combat_interface(true); // Show combat interface again
     show_interface_sprites(savedStates); // Restore HUD sprites visibility
     VDP_setHilightShadow(false); // Relit screen
+    restore_animation_states();
     SPR_update();
     VDP_waitVSync();
 }
