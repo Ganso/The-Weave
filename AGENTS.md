@@ -5,6 +5,7 @@ Este archivo proporciona pautas y notas para herramientas automáticas que inter
 ## Descripción general
 - **The Weave** es un fangame de *Loom* desarrollado para **Sega Genesis/Megadrive**.
 - Todo el código está escrito en **C** y se compila con **SGDK** (Sega Genesis Development Kit).
+- La documentación de SGDK puede consultarse en https://stephane-d.github.io/SGDK/
 - Las fuentes están en `src/` y los recursos generados (sprites, fondos, sonidos...) en `res/`.
 
 ## Estilo de código
