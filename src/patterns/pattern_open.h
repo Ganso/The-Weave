@@ -4,13 +4,13 @@
 #include "globals.h"
 
 // Launch the spell
-void playerOpenLaunch(void);
+void player_open_launch(void);
 
 // Update the ongoing spell.
 // Returns true when the effect is finished.
-bool playerOpenUpdate(void);
+bool player_open_update(void);
 
 // Check if the pattern can be used
-bool playerOpenCanUse(void);
+bool player_open_can_use(void);
 
 #endif // PATTERN_OPEN_H

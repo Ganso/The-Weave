@@ -5,9 +5,9 @@
 
 
 // Launch the spell
-void enemyBiteLaunch(u8 enemyId);
+void enemy_bite_launch(u8 enemyId);
 
 // Update the ongoing spell
-bool enemyBiteUpdate(u8 enemyId);
+bool enemy_bite_update(u8 enemyId);
 
 #endif 

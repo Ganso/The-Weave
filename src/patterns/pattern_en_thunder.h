@@ -5,12 +5,12 @@
 
 
 // Launch the spell
-void enemyThunderLaunch(u8 enemyId);
+void enemy_thunder_launch(u8 enemyId);
 
 // Update the ongoing spell
-bool enemyThunderUpdate(u8 enemyId);
+bool enemy_thunder_update(u8 enemyId);
 
 // Pattern has been countered
-void enemyThunderOnCounter(u8 enemyId);     // opcional (solo si counterable)
+void enemy_thunder_on_counter(u8 enemyId);     // opcional (solo si counterable)
 
 #endif /* PATTERN_EN_THUNDER_H */

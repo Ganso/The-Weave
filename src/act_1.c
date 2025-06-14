@@ -295,7 +295,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     move_enemy(0, 250, 136);
     move_enemy(1, 20, 156);
 
-    combatInit();
+    combat_init();
     while (combat_state != COMBAT_NO) {
         next_frame(true);
     }

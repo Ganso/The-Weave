@@ -67,7 +67,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     // Patterns & combat context
     if (first_time) {
         dprintf(2,"Initializing patterns\n");
-        initPlayerPatterns();
+        init_player_patterns();
         dprintf(2,"Initializing enemy classes\n");
         init_enemy_classes();
     }

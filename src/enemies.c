@@ -94,7 +94,7 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     // Initially hide enemy sprites
     SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
     
-    initEnemyPatterns(numenemy); // Initialize enemy patterns
+    init_enemy_patterns(numenemy); // Initialize enemy patterns
 
     for (i = 0; i < MAX_PATTERN_ENEMY; i++)
         obj_enemy[numenemy].last_pattern_time[i] = 0;
@@ -111,7 +111,7 @@ void release_enemy(u16 nenemy)    // Free enemy resources and reset related comb
     }
 
     /* Hide any note indicators (through interface) */
-    patternEnemyClearNotes();
+    pattern_enemy_clear_notes();
 
     /* Deactivate entity */
     obj_enemy[nenemy].obj_character.active = false;

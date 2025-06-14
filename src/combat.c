@@ -8,7 +8,7 @@ CombatContext combatContext; // Combat context
 // --------------------------------
 
 // Returns TRUE if pattern slot pslot for enemy eid can be launched
-static inline bool enemyPatternReady(u8 eid, u8 pslot)
+static inline bool enemy_pattern_ready(u8 eid, u8 pslot)
 {
     EnemyPattern *p = &enemyPatterns[eid][pslot];
     dprintf(3, "Checking enemy pattern %d:%d: enabled=%d, rechargeFrames=%d",
@@ -18,7 +18,7 @@ static inline bool enemyPatternReady(u8 eid, u8 pslot)
 
 // Decrements cooldowns and launches the first ready pattern.
 // Returns TRUE when a launch happened this frame.
-static bool enemyChooseAndLaunch(void)
+static bool enemy_choose_and_launch(void)
 {
     dprintf(3, "Checking enemy patterns to launch");
 
@@ -43,10 +43,10 @@ static bool enemyChooseAndLaunch(void)
     for (u8 e = 0; e < MAX_ENEMIES; ++e)
         if (obj_enemy[e].obj_character.active)
             for (u8 p = 0; p < MAX_PATTERN_ENEMY; ++p)
-                if (enemyPatternReady(e, p))
+                if (enemy_pattern_ready(e, p))
                 {
                     dprintf(2, "Enemy %d launching pattern %d", e, p);
-                    launchEnemyPattern(e, p);          // switches combat_state
+                    launch_enemy_pattern(e, p);          // switches combat_state
                     return TRUE;
                 }
 
@@ -54,7 +54,7 @@ static bool enemyChooseAndLaunch(void)
 }
 
 // Returns TRUE if at least one enemy entity is still active
-static bool anyEnemyActive(void)
+static bool any_enemy_active(void)
 {
     for (u8 i = 0; i < MAX_ENEMIES; ++i)
         if (obj_enemy[i].obj_character.active)
@@ -67,7 +67,7 @@ static bool anyEnemyActive(void)
 // --------------------------------
 
 // Try to counter an enemy spell
-bool tryCounterSpell(void)
+bool try_counter_spell(void)
 {
     if (!combatContext.patternReversed ||
         combat_state != COMBAT_STATE_ENEMY_EFFECT) return false;
@@ -84,7 +84,7 @@ bool tryCounterSpell(void)
 }
 
 // Start combat phase
-void combatInit(void)
+void combat_init(void)
 {
     dprintf(2,"Starting combat phase");
 
@@ -100,13 +100,13 @@ void combatInit(void)
     // Initialize every active enemy's patterns
     for (u8 id = 0; id < MAX_ENEMIES; id++)
         if (obj_enemy[id].obj_character.active)   
-            initEnemyPatterns(id);
+            init_enemy_patterns(id);
 
     show_or_hide_interface(true);
 }
 
 // Finish combat phase
-void combatFinish(void)
+void combat_finish(void)
 {
     dprintf(2,"Finishing combat phase");
 
@@ -179,7 +179,7 @@ void update_combat(void)
 
     // --- B) Always advance the enemy pattern (notes or flash) -------
     if (combatContext.activeEnemy != ENEMY_NONE)
-        updateEnemyPattern(combatContext.activeEnemy);
+        update_enemy_pattern(combatContext.activeEnemy);
 
     // --- C) FSM ------------------------------------------------------
     switch (combat_state)
@@ -189,17 +189,17 @@ void update_combat(void)
 
     case COMBAT_STATE_IDLE:
         if (obj_character[active_character].state == STATE_HIT) break; //  If the player was just hit, stay here one frame
-        if (!anyEnemyActive()) { // If no enemy is alive any more, leave the combat loop
-            setIdle();
+        if (!any_enemy_active()) { // If no enemy is alive any more, leave the combat loop
+            set_idle();
             break;
         }
-       enemyChooseAndLaunch(); // Otherwise let enemies try to launch a pattern
+       enemy_choose_and_launch(); // Otherwise let enemies try to launch a pattern
        break;
 
     case COMBAT_STATE_PLAYER_PLAYING:  break;       // input handled elsewhere
 
     case COMBAT_STATE_PLAYER_EFFECT:
-        if (updatePlayerPattern())                   // pattern finished
+        if (update_player_pattern())                   // pattern finished
             combat_state = COMBAT_STATE_IDLE;
         break;
 
@@ -212,7 +212,7 @@ void update_combat(void)
 }
 
 // Set combat state to idle or none, depending on the context
-void setIdle(void) {
+void set_idle(void) {
     // Check if there's active enemies
     bool hasActiveEnemies = false;
     for (u8 i = 0; i < MAX_ENEMIES; i++) {

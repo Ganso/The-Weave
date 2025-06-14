@@ -25,7 +25,7 @@ void play_sample(const u8 *sample, u32 len)    // Play sound effect sample using
 // ------------------------------------------------------------------
 // Player note (simple pitch table)
 // ------------------------------------------------------------------
-void playPlayerNote(u8 noteCode)
+void play_player_note(u8 noteCode)
 {
     const u8 *sample = NULL;
 
@@ -46,7 +46,7 @@ void playPlayerNote(u8 noteCode)
 // ------------------------------------------------------------------
 // Enemy note
 // ------------------------------------------------------------------
-void playEnemyNote(u8 noteCode)
+void play_enemy_note(u8 noteCode)
 {
     const u8 *sample = NULL;
 
@@ -68,7 +68,7 @@ void playEnemyNote(u8 noteCode)
 // ------------------------------------------------------------------
 // Spell jingle (player side)
 // ------------------------------------------------------------------
-void playPlayerPatternSound(u16 patternId)
+void play_player_pattern_sound(u16 patternId)
 {
     switch (patternId)
     {
@@ -94,7 +94,7 @@ void playPlayerPatternSound(u16 patternId)
 // ------------------------------------------------------------------
 // Spell jingle (enemy side)
 // ------------------------------------------------------------------
-void playEnemyPatternSound(u16 patternId)
+void play_enemy_pattern_sound(u16 patternId)
 {
     switch (patternId)
     {
