@@ -1,12 +1,12 @@
 #include "globals.h"
 
 // Launch callback — currently does nothing
-void playerSleepLaunch(void)
+void player_sleep_launch(void)
 {
 }
 
 // Update callback
-bool playerSleepUpdate(void)
+bool player_sleep_update(void)
 {
     const u16 duration = playerPatterns[PATTERN_HIDE].baseDuration;
 
@@ -16,7 +16,7 @@ bool playerSleepUpdate(void)
 }
 
 // Check if the pattern can be used
-bool playerSleepCanUse(void)
+bool player_sleep_can_use(void)
 {
     if (combatContext.patternReversed) return false; // Not allowed in reverse mode
     return false; // Not available in normal mode anyway by now

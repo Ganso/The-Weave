@@ -158,7 +158,7 @@ void show_pattern_icon(u16 npattern, bool show, bool priority)    // Display or 
     }
 }
 
-SpriteState* hideAllSprites(u16* count)    // Hide all active sprites and save their visibility state
+SpriteState* hide_all_sprites(u16* count)    // Hide all active sprites and save their visibility state
 {
     Sprite* currentSprite = firstSprite;
     u16 spriteCount = 0;
@@ -192,7 +192,7 @@ SpriteState* hideAllSprites(u16* count)    // Hide all active sprites and save t
     return states;
 }
 
-void restoreSpritesVisibility(SpriteState* states, u16 count)    // Restore previously saved sprite visibility states
+void restore_sprites_visibility(SpriteState* states, u16 count)    // Restore previously saved sprite visibility states
 {
     for (u16 i = 0; i < count; i++) {
         if (states[i].sprite != NULL) {
@@ -221,7 +221,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
     VDP_setHilightShadow(true); // Dim screen
     show_or_hide_interface(false); // Hide interface
     //show_or_hide_enemy_combat_interface(false); // Hide combat interface
-    savedStates = hideAllSprites(&spriteCount); // Hide every sprite and save state
+    savedStates = hide_all_sprites(&spriteCount); // Hide every sprite and save state
 
     // Find the first active pattern
     selected_pattern=254;
@@ -295,7 +295,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
 
     show_or_hide_interface(true); // Show interface again
     //show_or_hide_enemy_combat_interface(true); // Show combat interface again
-    restoreSpritesVisibility(savedStates, spriteCount); // Restore sprites visibility
+    restore_sprites_visibility(savedStates, spriteCount); // Restore sprites visibility
     VDP_setHilightShadow(false); // Relit screen
     SPR_update();
     VDP_waitVSync();
@@ -407,11 +407,11 @@ void check_pattern_status(void)
 
         reset_note_queue();                            // hide all 4 icons
         obj_character[active_character].state = STATE_IDLE;
-        playPlayerPatternSound(PATTERN_PLAYER_NONE); // play invalid sound
+        play_player_pattern_sound(PATTERN_PLAYER_NONE); // play invalid sound
 
         // Start global lock so the user cannot mash immediately
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-        setIdle(); // Reset combat state
+        set_idle(); // Reset combat state
     }
 }
 

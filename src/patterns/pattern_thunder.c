@@ -7,7 +7,7 @@
 static u16 savedColor; // original colour in CRAM before the flash
 
 // Launch callback
-void playerThunderLaunch(void)
+void player_thunder_launch(void)
 {
     // If the player is trying to attack a Ghost, give him a clue and return false
     if (combatContext.activeEnemy != ENEMY_NONE &&
@@ -16,7 +16,7 @@ void playerThunderLaunch(void)
         show_or_hide_interface(false); // Hide interface
         talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS]); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
         show_or_hide_interface(true);  // Show interface again
-        cancelPlayerPattern(); // Cancel the pattern
+        cancel_player_pattern(); // Cancel the pattern
         return;
     }
 
@@ -29,11 +29,11 @@ void playerThunderLaunch(void)
     combatContext.effectTimer = 0;
 
     // Sound effect
-    playPlayerPatternSound(PATTERN_THUNDER); // play thunder sound
+    play_player_pattern_sound(PATTERN_THUNDER); // play thunder sound
 }
 
 // Update callback
-bool playerThunderUpdate(void)
+bool player_thunder_update(void)
 {
     const u16 duration = playerPatterns[PATTERN_THUNDER].baseDuration;
 
@@ -54,7 +54,7 @@ bool playerThunderUpdate(void)
 }
 
 // Check if the pattern can be used
-bool playerThunderCanUse(void)
+bool player_thunder_can_use(void)
 {
     dprintf(2, "Checking if Thunder can be used. Combat state: %d, active enemy: %d, pattern reversed: %d",
             combat_state, combatContext.activeEnemy, combatContext.patternReversed);
@@ -68,7 +68,7 @@ bool playerThunderCanUse(void)
     if (combatContext.activeEnemy != ENEMY_NONE &&
         obj_enemy[combatContext.activeEnemy].class_id == ENEMY_CLS_WEAVERGHOST)
     {
-        return false;   // hint will be shown by launchPlayerPattern
+        return false;   // hint will be shown by launch_player_pattern
     }
     return true;
 }

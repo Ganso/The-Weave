@@ -5,15 +5,15 @@
 
 // VGM and WAV resources should be defined as XGM or XGM2 according to the driver version
 
-void play_music(const u8 *music);
-void fade_music(u16 numframes);
-void play_sample(const u8 *sample, u32 len);
+void play_music(const u8 *music); // Start background music
+void fade_music(u16 numframes); // Fade out the music over N frames
+void play_sample(const u8 *sample, u32 len); // Play a sound sample
 
 // Notes and patterns sound effects
-void playPlayerNote(u8 nnote); // Play a note (player)
-void playEnemyNote(u8 nnote); // Play a note (enemy)
-void playPlayerPatternSound(u16 npattern); // Play the sound of a pattern spell (player)
-void playEnemyPatternSound(u16 npattern); // Play the sound of a pattern spell (enemy)
+void play_player_note(u8 nnote); // Play a note (player)
+void play_enemy_note(u8 nnote); // Play a note (enemy)
+void play_player_pattern_sound(u16 npattern); // Play the sound of a pattern spell (player)
+void play_enemy_pattern_sound(u16 npattern); // Play the sound of a pattern spell (enemy)
 
 
 #endif
