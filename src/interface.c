@@ -11,6 +11,7 @@ Sprite *spr_int_life_counter;             // Life counter interface sprite
 Sprite *spr_pause_icon[5];                // Pattern icons shown in pause screen
 Sprite *spr_pattern_list_note[4];         // Note sprites shown in pause pattern list
 bool interface_active;                     // Whether game interface is currently shown
+static u16 interface_sprite_count;        // How many interface sprites were hidden
 
 
 void show_or_hide_interface(bool visible)    // Toggle visibility of game's bottom interface
@@ -192,6 +193,76 @@ SpriteState* hide_all_sprites(u16* count)    // Hide all active sprites and save
     return states;
 }
 
+SpriteState* hide_interface_sprites(void)    // Hide HUD/interface sprites only
+{
+    u16 index = 0;
+    const u16 spriteCount = 1 + 6 + 6 + 6 + 1 + MAX_PLAYER_PATTERNS; // button + rods + enemy rods + pents + life + icons
+    SpriteState* states = MEM_alloc(spriteCount * sizeof(SpriteState));
+
+    // Button A
+    states[index].sprite = spr_int_button_A;
+    states[index].visibility = spr_int_button_A ? SPR_getVisibility(spr_int_button_A) : HIDDEN;
+    if (spr_int_button_A) SPR_setVisibility(spr_int_button_A, HIDDEN);
+    index++;
+
+    // Player rod notes
+    Sprite* rods[6] = {spr_int_rod_1, spr_int_rod_2, spr_int_rod_3, spr_int_rod_4, spr_int_rod_5, spr_int_rod_6};
+    for (u16 i=0; i<6; i++) {
+        states[index].sprite = rods[i];
+        states[index].visibility = rods[i] ? SPR_getVisibility(rods[i]) : HIDDEN;
+        if (rods[i]) SPR_setVisibility(rods[i], HIDDEN);
+        index++;
+    }
+
+    // Enemy rod notes
+    Sprite* enemy_rods[6] = {spr_int_enemy_rod_1, spr_int_enemy_rod_2, spr_int_enemy_rod_3, spr_int_enemy_rod_4, spr_int_enemy_rod_5, spr_int_enemy_rod_6};
+    for (u16 i=0; i<6; i++) {
+        states[index].sprite = enemy_rods[i];
+        states[index].visibility = enemy_rods[i] ? SPR_getVisibility(enemy_rods[i]) : HIDDEN;
+        if (enemy_rods[i]) SPR_setVisibility(enemy_rods[i], HIDDEN);
+        index++;
+    }
+
+    // Pentagram notes
+    Sprite* pents[6] = {spr_int_pentagram_1, spr_int_pentagram_2, spr_int_pentagram_3, spr_int_pentagram_4, spr_int_pentagram_5, spr_int_pentagram_6};
+    for (u16 i=0; i<6; i++) {
+        states[index].sprite = pents[i];
+        states[index].visibility = pents[i] ? SPR_getVisibility(pents[i]) : HIDDEN;
+        if (pents[i]) SPR_setVisibility(pents[i], HIDDEN);
+        index++;
+    }
+
+    // Life counter
+    states[index].sprite = spr_int_life_counter;
+    states[index].visibility = spr_int_life_counter ? SPR_getVisibility(spr_int_life_counter) : HIDDEN;
+    if (spr_int_life_counter) SPR_setVisibility(spr_int_life_counter, HIDDEN);
+    index++;
+
+    // Pattern icons
+    for (u16 p=0; p<MAX_PLAYER_PATTERNS; p++) {
+        states[index].sprite = playerPatterns[p].icon;
+        states[index].visibility = playerPatterns[p].icon ? SPR_getVisibility(playerPatterns[p].icon) : HIDDEN;
+        if (playerPatterns[p].icon) SPR_setVisibility(playerPatterns[p].icon, HIDDEN);
+        index++;
+    }
+
+    interface_sprite_count = index;
+    return states;
+}
+
+void show_interface_sprites(SpriteState* states)    // Restore HUD/interface sprites
+{
+    for (u16 i = 0; i < interface_sprite_count; i++)
+    {
+        if (states[i].sprite != NULL)
+        {
+            SPR_setVisibility(states[i].sprite, states[i].visibility);
+        }
+    }
+
+    MEM_free(states);
+}
+
 void restore_sprites_visibility(SpriteState* states, u16 count)    // Restore previously saved sprite visibility states
 {
     for (u16 i = 0; i < count; i++) {
@@ -210,7 +281,6 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
     u8 old_pattern,selected_pattern,npattern,num_active_patterns=0;
     bool next_pattern_found;
 
-    u16 spriteCount;
     SpriteState* savedStates;
 
     // Initialize pattern list note sprites to NULL
@@ -221,7 +291,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
     VDP_setHilightShadow(true); // Dim screen
     show_or_hide_interface(false); // Hide interface
     //show_or_hide_enemy_combat_interface(false); // Hide combat interface
-    savedStates = hide_all_sprites(&spriteCount); // Hide every sprite and save state
+    savedStates = hide_interface_sprites(); // Hide interface sprites and save state
 
     // Find the first active pattern
     selected_pattern=254;
@@ -295,7 +365,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
 
     show_or_hide_interface(true); // Show interface again
     //show_or_hide_enemy_combat_interface(true); // Show combat interface again
-    restore_sprites_visibility(savedStates, spriteCount); // Restore sprites visibility
+    show_interface_sprites(savedStates); // Restore HUD sprites visibility
     VDP_setHilightShadow(false); // Relit screen
     SPR_update();
     VDP_waitVSync();
