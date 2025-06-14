@@ -30,8 +30,8 @@ void hide_rod_icons(void); // Hide icons in the rod
 void hide_pentagram_icons(void); // Hide icons in the pentagram
 void hide_pattern_icons(void); // Hide all pattern icons
 void show_pattern_icon(u16 npattern, bool show, bool priority); // Show or hide the icon of a pattern spell
-void restoreSpritesVisibility(SpriteState* states, u16 count); // Function to restore the visibility of sprites
-SpriteState* hideAllSprites(u16* count); // Function to hide all sprites and save their state
+void restore_sprites_visibility(SpriteState* states, u16 count); // Restore the visibility of sprites
+SpriteState* hide_all_sprites(u16* count); // Hide all sprites and save their state
 void pause_screen(void); // Pause / State screen
 void show_pause_pattern_list(bool show, u8 active_pattern); // Show or hide pattern list (Pause screen)
 void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show); // Show one of the notes of a pattern in the pattern list (Pause screen)

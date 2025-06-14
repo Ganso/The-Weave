@@ -19,34 +19,34 @@ EnemyPattern enemyPatterns[MAX_ENEMIES][MAX_PATTERN_ENEMY];
 // ---------------------------------------------------------------------
 // Local helpers
 // ---------------------------------------------------------------------
-static inline PlayerPattern* getPlayerPattern(u16 id)
+static inline PlayerPattern* get_player_pattern(u16 id)
 {
     return (id < PATTERN_PLAYER_COUNT) ? &playerPatterns[id] : NULL;
 }
 
-static inline EnemyPattern* getEnemyPattern(u8 slot, u8 pslot)
+static inline EnemyPattern* get_enemy_pattern(u8 slot, u8 pslot)
 {
     return (slot < MAX_ENEMIES && pslot < MAX_PATTERN_ENEMY)
            ? &enemyPatterns[slot][pslot]
            : NULL;
 }
 
-static inline bool playerPatternEnabled(u16 id)
+static inline bool player_pattern_enabled(u16 id)
 {
-    PlayerPattern* p = getPlayerPattern(id);
+    PlayerPattern* p = get_player_pattern(id);
     dprintf(2,"Checking player pattern %d: enabled=%d", id, p ? p->enabled : 0);
     return p && p->enabled;
 }
 
 // Devuelve true si el patrón del enemigo está habilitado y sin cooldown
-static inline bool enemyPatternReady(u8 slot, u8 pslot)
+static inline bool enemy_pattern_ready(u8 slot, u8 pslot)
 {
-    EnemyPattern* p = getEnemyPattern(slot, pslot);
+    EnemyPattern* p = get_enemy_pattern(slot, pslot);
     return p && p->enabled && (p->rechargeFrames == 0);
 }
 
 // Return true if the 4 notes in the array form a palindrome (so it can be reversed)
-static bool isPalindrome(const u8 n[4])
+static bool is_palindrome(const u8 n[4])
 { return (n[0]==n[3]) && (n[1]==n[2]); }
 
 
@@ -54,10 +54,10 @@ static bool isPalindrome(const u8 n[4])
 // Player-side: Initialisation
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
-// initPlayerPatterns  –  set up the 4 default spells (thunder, hide,
+// init_player_patterns  –  set up the 4 default spells (thunder, hide,
 //                        open, sleep) according to the new system.
 // ---------------------------------------------------------------------
-void initPlayerPatterns(void)
+void init_player_patterns(void)
 {
     dprintf(2,"Initializing player patterns");
 
@@ -83,9 +83,9 @@ void initPlayerPatterns(void)
         .notes    = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
         .baseDuration = SCREEN_FPS * 4, // 4 seconds
         // .baseDuration = 120, // 2 seconds (for testing)
-        .canUse   = playerThunderCanUse,
-        .launch   = playerThunderLaunch,
-        .update   = playerThunderUpdate,
+        .canUse   = player_thunder_can_use,
+        .launch   = player_thunder_launch,
+        .update   = player_thunder_update,
         .icon     = NULL // Will load on demand
    };
 
@@ -95,9 +95,9 @@ void initPlayerPatterns(void)
         .enabled  = false,
         .notes    = { NOTE_FA, NOTE_SI, NOTE_SOL, NOTE_DO }, // 2-5-3-6
         .baseDuration = SCREEN_FPS * 4, // 4 seconds
-        .canUse   = playerHideCanUse,
-        .launch   = playerHideLaunch,
-        .update   = playerHideUpdate,
+        .canUse   = player_hide_can_use,
+        .launch   = player_hide_launch,
+        .update   = player_hide_update,
         .icon     = NULL // Will load on demand
     };
 
@@ -107,9 +107,9 @@ void initPlayerPatterns(void)
         .enabled  = false,
         .notes    = { NOTE_FA, NOTE_SOL, NOTE_SOL, NOTE_FA }, // 2-3-3-2
         .baseDuration = 45,
-        .canUse   = playerOpenCanUse,
-        .launch   = playerOpenLaunch,
-        .update   = playerOpenUpdate,
+        .canUse   = player_open_can_use,
+        .launch   = player_open_launch,
+        .update   = player_open_update,
         .icon     = NULL // Will load on demand
     };
 
@@ -119,9 +119,9 @@ void initPlayerPatterns(void)
         .enabled  = false,
         .notes    = { NOTE_FA, NOTE_MI, NOTE_DO, NOTE_LA }, // 2-1-6-4
         .baseDuration = 75,
-        .canUse   = playerSleepCanUse,
-        .launch   = playerSleepLaunch,
-        .update   = playerSleepUpdate,
+        .canUse   = player_sleep_can_use,
+        .launch   = player_sleep_launch,
+        .update   = player_sleep_update,
         .icon     = NULL // Will load on demand
     };
 
@@ -138,15 +138,15 @@ void initPlayerPatterns(void)
 // ---------------------------------------------------------------------
 void activate_spell(u16 patternId)
 {
-    PlayerPattern* p = getPlayerPattern(patternId);
+    PlayerPattern* p = get_player_pattern(patternId);
     if (!p || p->enabled) return;            // already unlocked
 
     // simple feedback: play jingle & flash icon
-    playPlayerPatternSound(patternId);
+    play_player_pattern_sound(patternId);
     show_pattern_icon(patternId, true, true);
     for (u8 i=0; i<4; i++) {
         show_note(p->notes[i], true);
-        playPlayerNote(p->notes[i]);
+        play_player_note(p->notes[i]);
         wait_seconds(1);
         show_note(p->notes[i], false);
     }
@@ -160,9 +160,9 @@ void activate_spell(u16 patternId)
 // ---------------------------------------------------------------------
 // Player-side: launch / update
 // ---------------------------------------------------------------------
-void launchPlayerPattern(u16 patternId)
+void launch_player_pattern(u16 patternId)
 {
-    PlayerPattern* p = getPlayerPattern(patternId);
+    PlayerPattern* p = get_player_pattern(patternId);
     if (!p || !p->enabled)
         return;
 
@@ -174,11 +174,11 @@ void launchPlayerPattern(u16 patternId)
         talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
         if (interface_active==true) show_or_hide_interface(true); // show interface
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-        setIdle(); // reset combat state
+        set_idle(); // reset combat state
         return;
     }
 
-    if (tryCounterSpell()) { reset_note_queue(); return; }
+    if (try_counter_spell()) { reset_note_queue(); return; }
 
     // We are launching a pattern: Set combat and player context
     combatContext.activePattern = patternId;
@@ -190,12 +190,12 @@ void launchPlayerPattern(u16 patternId)
     if (p->launch) p->launch();
 }
 
-bool updatePlayerPattern(void)
+bool update_player_pattern(void)
 {
     if (combat_state != COMBAT_STATE_PLAYER_EFFECT)
         return true;                       // nothing to do
 
-    PlayerPattern* p = getPlayerPattern(combatContext.activePattern);
+    PlayerPattern* p = get_player_pattern(combatContext.activePattern);
     if (!p) return true;                   // safety
 
     combatContext.effectTimer++;
@@ -219,7 +219,7 @@ bool updatePlayerPattern(void)
 // ---------------------------------------------------------------------
 
 // Player presses a note (called from input layer)
-bool patternPlayerAddNote(u8 noteCode)
+bool pattern_player_add_note(u8 noteCode)
 {
     // --- Guards ------------------------------------------------------
     if (noteCode < NOTE_MI || noteCode > NOTE_DO)           return false;
@@ -248,7 +248,7 @@ bool patternPlayerAddNote(u8 noteCode)
     combatContext.playerNotes = slot + 1;
 
     show_note(noteCode, true);
-    playPlayerNote(noteCode);
+    play_player_note(noteCode);
 
     dprintf(2,"NOTE OK %d -> slot %d (playerNotes=%u)",
             noteCode, slot, combatContext.playerNotes);
@@ -257,10 +257,10 @@ bool patternPlayerAddNote(u8 noteCode)
     if (combatContext.playerNotes == 4)
     {
         bool rev;
-        u16 id = validatePattern(noteQueue, &rev);
+        u16 id = validate_pattern(noteQueue, &rev);
 
         combatContext.patternReversed = rev;
-        PlayerPattern* pat = getPlayerPattern(id);
+        PlayerPattern* pat = get_player_pattern(id);
 
         if (id != PATTERN_PLAYER_NONE && pat && pat->enabled &&
             (!pat->canUse || pat->canUse()))
@@ -268,7 +268,7 @@ bool patternPlayerAddNote(u8 noteCode)
             dprintf(2,"Pattern %d recognised (reversed=%d)", id, rev);
             reset_note_queue();
             combatContext.patternReversed = rev;
-            launchPlayerPattern(id);                    // success
+            launch_player_pattern(id);                    // success
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
             return true; // valid pattern
         }
@@ -276,13 +276,13 @@ bool patternPlayerAddNote(u8 noteCode)
         {
             dprintf(2,"Pattern invalid: %d (reversed=%d)", id, rev);
             reset_note_queue();
-            playPlayerPatternSound(PATTERN_PLAYER_NONE); // play invalid sound
+            play_player_pattern_sound(PATTERN_PLAYER_NONE); // play invalid sound
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
             obj_character[active_character].state = STATE_IDLE; // reset player state
             if (id != PATTERN_PLAYER_NONE) {
                 // If the pattern was valid but not usable right now
                 dprintf(2,"Pattern %d not usable right now", id);
-                setIdle(); // reset combat state´
+                set_idle(); // reset combat state´
                 show_or_hide_interface(false); // hide interface
 
                 // Default dialog is SYSTEM_DIALOG[0]
@@ -336,7 +336,7 @@ void reset_note_queue(void)
 // ---------------------------------------------------------------------
 
 // Cancel the current player pattern (e.g. if the player wants to stop playing)
-void cancelPlayerPattern(void)
+void cancel_player_pattern(void)
 {
     dprintf(2,"Cancelling player pattern");
     combatContext.activePattern = PATTERN_PLAYER_NONE;
@@ -344,7 +344,7 @@ void cancelPlayerPattern(void)
     combatContext.patternReversed  = false;
     combatContext.patternLockTimer = 0;   // allow immediate re-input
     reset_note_queue();
-    setIdle(); // reset combat state
+    set_idle(); // reset combat state
 }
 
 // ---------------------------------------------------------------------
@@ -352,7 +352,7 @@ void cancelPlayerPattern(void)
 // ---------------------------------------------------------------------
 
 // Initialize enemy patterns for a specific enemy slot
-void initEnemyPatterns(u8 enemyId)
+void init_enemy_patterns(u8 enemyId)
 {
     /* --- THUNDER / ELECTRIC  (slot 0) --------------------------- */
     enemyPatterns[enemyId][0] = (EnemyPattern){
@@ -362,10 +362,10 @@ void initEnemyPatterns(u8 enemyId)
         .baseDuration   = SCREEN_FPS, 
         .rechargeFrames = SCREEN_FPS*3,
         .enabled        = (obj_enemy[enemyId].class.has_pattern[PATTERN_EN_THUNDER]),
-        .launch         = enemyThunderLaunch,
-        .update         = enemyThunderUpdate,
+        .launch         = enemy_thunder_launch,
+        .update         = enemy_thunder_update,
         .counterable    = TRUE,
-        .onCounter      = enemyThunderOnCounter
+        .onCounter      = enemy_thunder_on_counter
     };
 
     /* --- BITE  (slot 1) ----------------------------------------- */
@@ -376,8 +376,8 @@ void initEnemyPatterns(u8 enemyId)
         .baseDuration   = SCREEN_FPS,
         .rechargeFrames = SCREEN_FPS*2,
         .enabled        = (obj_enemy[enemyId].class.has_pattern[PATTERN_EN_BITE]),
-        .launch         = enemyBiteLaunch,
-        .update         = enemyBiteUpdate,
+        .launch         = enemy_bite_launch,
+        .update         = enemy_bite_update,
         .counterable    = FALSE,
         .onCounter      = NULL
     };
@@ -386,7 +386,7 @@ void initEnemyPatterns(u8 enemyId)
 // -----------------------------------------------------------------------
 // Enemy-side: Add a note to the enemy pattern
 // ------------------------------------------------------------------------
-void patternEnemyAddNote(u8 enemySlot, u8 noteCode)
+void pattern_enemy_add_note(u8 enemySlot, u8 noteCode)
 {
     if (noteCode < NOTE_MI || noteCode > NOTE_DO) return;
 
@@ -421,7 +421,7 @@ void patternEnemyAddNote(u8 enemySlot, u8 noteCode)
 // -------------------------------------------------------------------------
 // Enemy-side: Remove every enemy-note sprite (called when the pattern ends)
 // --------------------------------------------------------------------------
-void patternEnemyClearNotes(void)
+void pattern_enemy_clear_notes(void)
 {
     for (u8 i = 0; i < 6; ++i)
     {
@@ -437,13 +437,13 @@ void patternEnemyClearNotes(void)
 // ---------------------------------------------------------------------
 // Enemy-side: launch / update
 // ---------------------------------------------------------------------
-void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
+void launch_enemy_pattern(u8 enemySlot, u16 patternSlot)
 {
-    EnemyPattern* pat = getEnemyPattern(enemySlot, patternSlot);
+    EnemyPattern* pat = get_enemy_pattern(enemySlot, patternSlot);
     if (!pat || !pat->enabled) return;
 
     // clear any HUD leftovers from a previous pattern
-    patternEnemyClearNotes();
+    pattern_enemy_clear_notes();
 
     // Set combat context
     combatContext.activePattern = pat->id;
@@ -458,7 +458,7 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
 
     // Play first note
     if (pat->noteCount > 0) {
-        patternEnemyAddNote(enemySlot, pat->notes[0]); // Sound & HUD
+        pattern_enemy_add_note(enemySlot, pat->notes[0]); // Sound & HUD
         dprintf(2,"Enemy %d playing note %d", enemySlot, pat->notes[0]);
         combatContext.enemyNoteIndex = 1; // First note is already played
         combatContext.enemyNoteTimer = 0; // Reset timer for next note
@@ -474,7 +474,7 @@ void launchEnemyPattern(u8 enemySlot, u16 patternSlot)
 // ---------------------------------------------------------------------
 // Update enemy pattern (called every frame)
 // ---------------------------------------------------------------------
-bool updateEnemyPattern(u8 enemySlot)
+bool update_enemy_pattern(u8 enemySlot)
 {
     EnemyPattern *pat = &enemyPatterns[enemySlot][0]; // Active pattern in slot 0
 
@@ -500,14 +500,14 @@ bool updateEnemyPattern(u8 enemySlot)
                 {
                     u8 note = pat->notes[combatContext.enemyNoteIndex++];
                     dprintf(2,"Enemy %d playing note %d", enemySlot, note);
-                    patternEnemyAddNote(combatContext.activeEnemy, note); // Sound & HUD (implement HUD separately if needed)
+                    pattern_enemy_add_note(combatContext.activeEnemy, note); // Sound & HUD (implement HUD separately if needed)
                 }
                 else // All notes have been played
                 {
                     dprintf(2,"Enemy %d finished playing notes. Launching pattern.", enemySlot);
 
                     // hide HUD before the effect
-                    patternEnemyClearNotes();
+                    pattern_enemy_clear_notes();
 
                     // Switch state to effect (actual spell execution)
                     combat_state = COMBAT_STATE_ENEMY_EFFECT;
@@ -544,7 +544,7 @@ bool updateEnemyPattern(u8 enemySlot)
 // ---------------------------------------------------------------------
 // Validate 4-note sequence (returns PATTERN_PLAYER_NONE if invalid)
 // ---------------------------------------------------------------------
-u16 validatePattern(const u8 notes[4], bool* reversed)
+u16 validate_pattern(const u8 notes[4], bool* reversed)
 {
     for (u8 i = 0; i < PATTERN_PLAYER_COUNT; ++i)
     {
@@ -564,7 +564,7 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
         if (notes[0]==p->notes[3] && notes[1]==p->notes[2] &&
             notes[2]==p->notes[1] && notes[3]==p->notes[0])
         {
-            if (reversed && !isPalindrome(p->notes)) {
+            if (reversed && !is_palindrome(p->notes)) {
                 *reversed = true;
                 dprintf(2,"Pattern %d recognised (reversed order)", p->id);
             }
@@ -578,12 +578,12 @@ u16 validatePattern(const u8 notes[4], bool* reversed)
 // ---------------------------------------------------------------------
 // Cancel an enemy pattern (e.g. if the player counters it)
 // ---------------------------------------------------------------------
-void cancelEnemyPattern(u8 enemyId)
+void cancel_enemy_pattern(u8 enemyId)
 {
     dprintf(2,"Finishing enemy pattern for enemy %d", enemyId);
 
     // Clear HUD
-    patternEnemyClearNotes();
+    pattern_enemy_clear_notes();
     
     // Reset combat context
     combatContext.activePattern = PATTERN_PLAYER_NONE;

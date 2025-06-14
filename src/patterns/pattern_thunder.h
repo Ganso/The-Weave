@@ -4,13 +4,13 @@
 #include "globals.h"
 
 // Launch the spell
-void playerThunderLaunch(void);
+void player_thunder_launch(void);
 
 // Update the ongoing spell.
 // Returns true when the effect is finished.
-bool playerThunderUpdate(void);
+bool player_thunder_update(void);
 
 // Check if the pattern can be used
-bool playerThunderCanUse(void);
+bool player_thunder_can_use(void);
 
 #endif // PATTERN_THUNDER_H

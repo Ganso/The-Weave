@@ -10,7 +10,7 @@ static bool flashOn;        // TRUE = CRAM entry is white, FALSE = original
 #define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0x4444FF)
 
 // Launch callback — currently does nothing
-void enemyThunderLaunch(u8 enemyId)
+void enemy_thunder_launch(u8 enemyId)
 {
     savedColor = PAL_getColor(PAL0_COL4);
     flashOn    = false;
@@ -18,14 +18,14 @@ void enemyThunderLaunch(u8 enemyId)
 }
 
 // Update callback — returns true when finished
-bool enemyThunderUpdate(u8 enemyId)
+bool enemy_thunder_update(u8 enemyId)
 {
     const u16 duration = enemyPatterns[enemyId][0].baseDuration;
 
     // Flash phase only (notes handled by engine)
     if (!flashOn) {                           // first frame of flash
         PAL_setColor(PAL0_COL4, COLOR_ENEMY_FLASH);
-        playEnemyPatternSound(PATTERN_EN_THUNDER); // play thunder sound
+        play_enemy_pattern_sound(PATTERN_EN_THUNDER); // play thunder sound
         flashOn = true;
     } else if ((frame_counter & 1) == 0) {    // toggle every 2 frames
         u16 col = PAL_getColor(PAL0_COL4);
@@ -52,7 +52,7 @@ bool enemyThunderUpdate(u8 enemyId)
 
 
 // Called when the pattern is countered
-void enemyThunderOnCounter(u8 enemyId)
+void enemy_thunder_on_counter(u8 enemyId)
 {
     dprintf(2, "Enemy %d: Thunder pattern countered", enemyId);
 
@@ -66,6 +66,6 @@ void enemyThunderOnCounter(u8 enemyId)
     // Cool-down so the ghost cannot spam thunder
     enemyPatterns[enemyId][0].rechargeFrames=enemyPatterns[enemyId][0].baseDuration; // Reset cooldown
 
-    cancelEnemyPattern(enemyId); // Reset enemy state
-    cancelPlayerPattern(); // Reset player state
+    cancel_enemy_pattern(enemyId); // Reset enemy state
+    cancel_player_pattern(); // Reset player state
 }
