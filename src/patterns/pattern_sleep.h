@@ -4,13 +4,13 @@
 #include "globals.h"
 
 // Launch the spell
-void playerSleepLaunch(void);
+void player_sleep_launch(void);
 
 // Update the ongoing spell.
 // Returns true when the effect is finished.
-bool playerSleepUpdate(void);
+bool player_sleep_update(void);
 
 // Check if the pattern can be used
-bool playerSleepCanUse(void);
+bool player_sleep_can_use(void);
 
 #endif // PATTERN_SLEEP_H

@@ -40,12 +40,12 @@ extern CombatContext combatContext; // Combat context
 
 // Combat functions
 
-bool tryCounterSpell(void); // Try to counter an enemy spell
-void combatInit(void); // Start combat phase
-void combatFinish(void); // Finish combat phase
+bool try_counter_spell(void); // Try to counter an enemy spell
+void combat_init(void); // Start combat phase
+void combat_finish(void); // Finish combat phase
 void hit_enemy(u8 enemyId, u8 damage); // Hit an enemy
 void hit_player(u8 damage); // Hit the player
 void update_combat(void); // Update combat state, 
-void setIdle(void); // Set combat state to idle or none, depending on the context
+void set_idle(void); // Set combat state to idle or none, depending on the context
 
 #endif

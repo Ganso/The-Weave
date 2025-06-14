@@ -51,21 +51,21 @@ extern Sprite *spr_enemy_shadow[MAX_ENEMIES]; // Enemy shadows sprites
 
 
 /* --- Init / cleanup --- */
-void init_enemy_classes(void);
-void init_enemy(u16 numenemy, u16 class_id);
-void release_enemy(u16 nenemy);
+void init_enemy_classes(void); // Initialize enemy classes
+void init_enemy(u16 numenemy, u16 class_id); // Initialize an enemy
+void release_enemy(u16 nenemy); // Release an enemy
 
 /* --- Runtime updates --- */
-void update_enemy_shadow(u16 nenemy);
-void update_enemy(u16 nenemy);
-void show_enemy(u16 nenemy, bool show);
-void anim_enemy(u16 nenemy, u8 newanimation);
-void look_enemy_left(u16 nenemy, bool direction_right);
-void move_enemy(u16 nenemy, s16 newx, s16 newy);
-void move_enemy_instant(u16 nenemy, s16 x, s16 y);
+void update_enemy_shadow(u16 nenemy); // Update enemy shadow sprite
+void update_enemy(u16 nenemy); // Update enemy state
+void show_enemy(u16 nenemy, bool show); // Show or hide an enemy
+void anim_enemy(u16 nenemy, u8 newanimation); // Change enemy animation
+void look_enemy_left(u16 nenemy, bool direction_right); // Turn enemy left or right
+void move_enemy(u16 nenemy, s16 newx, s16 newy); // Move enemy smoothly
+void move_enemy_instant(u16 nenemy, s16 x, s16 y); // Instantly move enemy
 void update_enemy_animations(void); // Update enemy animations based on their current state
 
 /* --- AI movement --- */
-void approach_enemies(void);
+void approach_enemies(void); // Make enemies walk towards the player
 
 #endif
