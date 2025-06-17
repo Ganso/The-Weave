@@ -386,7 +386,8 @@ void update_character_animations(void) {
         // If there's an active pattern in combat state, play magic animation
         // even if the character is not in PATTERN_EFFECT state (solo protagonista)
         if (chr == active_character &&
-            combat_state == COMBAT_STATE_PLAYER_EFFECT)
+            combat_state == COMBAT_STATE_PLAYER_EFFECT &&
+            combatContext.activePattern != PATTERN_HIDE)
         {
             if (obj_character[chr].animation != ANIM_MAGIC) {
                 anim_character(chr, ANIM_MAGIC);
@@ -416,7 +417,9 @@ void update_character_animations(void) {
                 }
                 break;
             case STATE_PATTERN_EFFECT:
-                if (obj_character[chr].animation != ANIM_MAGIC) {
+                if (chr == active_character && combatContext.activePattern == PATTERN_HIDE) {
+                    // Keep current animation (idle or walking) while hidden
+                } else if (obj_character[chr].animation != ANIM_MAGIC) {
                     anim_character(chr, ANIM_MAGIC);
                 }
                 break;

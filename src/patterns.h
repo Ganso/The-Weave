@@ -114,6 +114,8 @@ void pattern_enemy_clear_notes(void); // Clear all enemy notes
 void init_enemy_patterns(u8 enemyId); // Initialize enemy patterns for a specific enemy slot
 void cancel_enemy_pattern(u8 enemyId); // Reset enemy state after a pattern is finished
 
+u16 get_last_enemy_pattern(void); // Retrieve the enemy pattern active before player spell
+
 // Note validation
 u16 validate_pattern(const u8 notes[4], bool* reversed); // Cancel an enemy pattern (e.g. if the player counters it)
 

@@ -7,9 +7,8 @@ void player_hide_launch(void)
 
     dprintf(2,"Hide spell launched");
 
-    // If an enemy thunder is active, cancel it and show a hint
-    if (combat_state == COMBAT_STATE_ENEMY_EFFECT &&
-        combatContext.activePattern == PATTERN_EN_THUNDER)
+    // If an enemy thunder was active, cancel it and show a hint
+    if (get_last_enemy_pattern() == PATTERN_EN_THUNDER)
     {
         dprintf(2,"Thunder spell cancelled by hide");
         cancelled_thunder = true;
