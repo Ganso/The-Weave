@@ -16,6 +16,14 @@ static bool    enemy_note_active[6] = { false }; // Active enemy notes (1-6: MI-
 PlayerPattern playerPatterns[MAX_PLAYER_PATTERNS];
 EnemyPattern enemyPatterns[MAX_ENEMIES][MAX_PATTERN_ENEMY];
 
+// Remember which enemy pattern was active when the player launched a spell
+static u16 last_enemy_pattern = PATTERN_ENEMY_NONE;
+
+u16 get_last_enemy_pattern(void)
+{
+    return last_enemy_pattern;
+}
+
 // ---------------------------------------------------------------------
 // Local helpers
 // ---------------------------------------------------------------------
@@ -179,6 +187,13 @@ void launch_player_pattern(u16 patternId)
     }
 
     if (try_counter_spell()) { reset_note_queue(); return; }
+
+    // Remember current enemy pattern, if any
+    if (combat_state == COMBAT_STATE_ENEMY_PLAYING ||
+        combat_state == COMBAT_STATE_ENEMY_EFFECT)
+        last_enemy_pattern = combatContext.activePattern;
+    else
+        last_enemy_pattern = PATTERN_ENEMY_NONE;
 
     // We are launching a pattern: Set combat and player context
     combatContext.activePattern = patternId;
@@ -591,6 +606,8 @@ void cancel_enemy_pattern(u8 enemyId)
     combatContext.enemyNoteIndex = 0;
     combatContext.enemyNoteTimer = 0;
     combatContext.effectTimer = 0;
+    last_enemy_pattern = PATTERN_ENEMY_NONE;
+    combat_state = COMBAT_STATE_IDLE;
 
     // Reset enemy state, if the enemy stil exists
     if (enemyId >= MAX_ENEMIES || !obj_enemy[enemyId].obj_character.active) {

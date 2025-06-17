@@ -55,10 +55,7 @@ void handle_movement(u16 joy_value)    // Process directional inputs and update 
 
     // Update the character's state and animation based on movement
     if (moved) {
-        // Don't change state if we're in PATTERN_EFFECT with HIDE
-        if (!(obj_character[active_character].state == STATE_PATTERN_EFFECT && combatContext.activePattern == PATTERN_HIDE)) {
-            obj_character[active_character].state = STATE_WALKING;
-        }
+        obj_character[active_character].state = STATE_WALKING;
     } else if (obj_character[active_character].state == STATE_WALKING) {
         obj_character[active_character].state = STATE_IDLE;
     }
