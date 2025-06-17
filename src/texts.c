@@ -36,7 +36,7 @@ u16 visible_length(const char *text)
     u16 len = 0;
     for (u16 i = 0; text[i] != '\0'; i++)
     {
-        if (text[i] == '@' && (text[i + 1] == 'B' || text[i + 1] == 'R' || text[i + 1] == 'D'))
+        if (text[i] == '@' && (text[i + 1] == '[' || text[i + 1] == ']'))
         {
             i++; // Skip escape sequence
             continue;
