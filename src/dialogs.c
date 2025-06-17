@@ -155,17 +155,17 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
         }
     }
 
-    VDP_setTextPalette(PAL1);
+    VDP_setTextPalette(PAL2);
 
     // Print the text, character by character, handling palette escape codes
     while (text[i] != '\0') {
         if (text[i] == '@' && text[i + 1] == '[') {
-            VDP_setTextPalette(PAL2);
+            VDP_setTextPalette(PAL1);
             i += 2;
             continue;
         }
         if (text[i] == '@' && text[i + 1] == ']') {
-            VDP_setTextPalette(PAL1);
+            VDP_setTextPalette(PAL2);
             i += 2;
             continue;
         }
@@ -178,7 +178,7 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
         pos++;
         i++;
     }
-    VDP_setTextPalette(PAL1); // Ensure palette reset before exit
+    VDP_setTextPalette(PAL2); // Ensure palette reset before exit
 
     if (wait_for_frame) {
         joy_state = JOY_readJoypad(JOY_ALL);

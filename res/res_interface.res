@@ -1,5 +1,3 @@
-PALETTE interface_pal "Sprites/Interface/PAL.png"
-
 # Pentagram
 IMAGE int_pentagram_image "Sprites/Interface/pentagram.png"
 SPRITE int_pentagram_1_sprite "Sprites/Interface/pentagram_1.png" 2 5 BEST 

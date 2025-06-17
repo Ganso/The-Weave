@@ -3,7 +3,6 @@
 #ifndef _RES_RES_INTERFACE_H_
 #define _RES_RES_INTERFACE_H_
 
-extern const Palette interface_pal;
 extern const Image int_pentagram_image;
 extern const SpriteDefinition int_pentagram_1_sprite;
 extern const SpriteDefinition int_pentagram_2_sprite;
