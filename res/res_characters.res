@@ -17,3 +17,4 @@ SPRITE swan_sprite "Sprites/Characters/swan.png" 8 7 BEST 10
 # Palettes
 PALETTE characters_pal "Sprites/Characters/characters.pal"
 PALETTE swan_pal "Sprites/Characters/swan.png"
+
