@@ -69,3 +69,20 @@ void enemy_thunder_on_counter(u8 enemyId)
     cancel_enemy_pattern(enemyId); // Reset enemy state
     cancel_player_pattern(); // Reset player state
 }
+
+// ---------------------------------------------------------------------------
+// Cancel thunder without hitting the enemy (used by the HIDE spell)
+// ---------------------------------------------------------------------------
+void enemy_thunder_cancel(u8 enemyId)
+{
+    dprintf(2, "Enemy %d: Thunder cancelled by hide", enemyId);
+
+    // Restore palette and stop flashing
+    PAL_setColor(PAL0_COL4, savedColor);
+    flashOn = false;
+
+    // Cool-down so the enemy cannot spam thunder
+    enemyPatterns[enemyId][0].rechargeFrames = enemyPatterns[enemyId][0].baseDuration;
+
+    cancel_enemy_pattern(enemyId); // Reset enemy state
+}
