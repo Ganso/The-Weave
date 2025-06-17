@@ -42,5 +42,6 @@ extern const ChoiceItem *choices[];
 // Functions
 char* encode_spanish_text(const char* input); // Code Spanish text in the game font charset
 u16 calculate_text_position(const char *text, bool is_face_left, bool has_face); // Calculate centered text position
+u16 visible_length(const char *text); // Length ignoring color codes
 
 #endif
