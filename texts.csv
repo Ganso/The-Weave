@@ -51,6 +51,7 @@ act1_dialog3,A1D3_THINK_BACKWARDS,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Quizá
 act1_dialog3,A1D3_TRY_HIDE_OR_THUNDER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Puedo probar a esconderme|o tratar de invocar|al trueno","I could try to hide|or attempt to summon|the thunder"
 act1_dialog3,A1D3_REVERSE_NOTES_COUNTER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Si reproduzco al revés|las notas, podré|contraatacar este hechizo","If I play the notes backwards|I could be able to|counter the spell"
 act1_dialog3,A1D3_CANT_CAST_WHILE_HIDDEN,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"No puedo lanzar hechizos|si estoy escondido","I can't launch spells|while hiding"
+act1_dialog3,A1D3_GOOD_IDEA_HIDE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Buena idea. Así no me verán","Good idea. They won't see me"
 act1_dialog3,A1D3_NOTE_ABOUT_SCENE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado","NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
 act1_dialog3,A1D3_DEMO_REASON,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas","It's been decided to include it|in this technical demo|as a test of certain mechanics"
 act1_dialog3,A1D3_PRESS_START,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Pulsa START para ver|tu inventario de hechizos","Press START to view|your spell inventory"
