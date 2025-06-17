@@ -155,9 +155,10 @@ void split_text(char *text, char *line1, char *line2, char *line3)    // Break t
     }
 }
 
+
 void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display text line with character-by-character animation
 {
-    int i = 0;
+    int i = 0, pos = 0;
     u16 joy_state;
     char temp[2] = {0, 0};  // Temporary one character storage
     char *encoded_text = NULL;
@@ -170,16 +171,38 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
         }
     }
 
-    // Print the text, character by character
+    u8 current_font = FONT_DEFAULT;
+    load_font(current_font);
+
+    // Print the text, character by character, handling color escape codes
     while (text[i] != '\0') {
+        if (text[i] == '@' && (text[i + 1] == 'B' || text[i + 1] == 'R' || text[i + 1] == 'D')) {
+            switch (text[i + 1]) {
+                case 'B':
+                    current_font = FONT_BLUE;
+                    break;
+                case 'R':
+                    current_font = FONT_RED;
+                    break;
+                case 'D':
+                    current_font = FONT_DEFAULT;
+                    break;
+            }
+            load_font(current_font);
+            i += 2;
+            continue;
+        }
         temp[0] = text[i];
-        VDP_drawTextBG(WINDOW, temp, x + i, y);
+        VDP_drawTextBG(WINDOW, temp, x + pos, y);
         if (wait_for_frame) {
             joy_state = JOY_readJoypad(JOY_ALL);
             if ((joy_state & BUTTON_A) == 0) next_frame(false); // If button A is being pressed, skip frame update
         }
+        pos++;
         i++;
     }
+
+    load_font(FONT_DEFAULT); // Ensure font reset before exit
 
     if (wait_for_frame) {
         joy_state = JOY_readJoypad(JOY_ALL);
@@ -246,11 +269,16 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     
     for(u8 i = 0; i < num_options && i < MAX_CHOICES; i++) {
         
-        // Calculate lenght (it's important do encode Spanish characters to the standard font before)
-        if (game_language==LANG_ENGLISH) choice_lenght[i]=strlen(options[i]);
-        else {
+        // Calculate length ignoring color codes (encode Spanish characters first)
+        const char *len_text = options[i];
+        if (game_language == LANG_SPANISH) {
             encoded_text = encode_spanish_text(options[i]);
-            choice_lenght[i] = strlen(encoded_text);
+            if (encoded_text != NULL) len_text = encoded_text;
+        }
+        choice_lenght[i] = visible_length(len_text);
+        if (encoded_text != NULL) {
+            free(encoded_text);
+            encoded_text = NULL;
         }
 
         // Center text (calculate position based on plain text)
