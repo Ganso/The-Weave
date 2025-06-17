@@ -175,8 +175,8 @@ const DialogItem act1_dialog3[] = {
 
 const DialogItem act1_dialog4[] = {
     [A1D4_HUNDRED_YEARS] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
-        {"Han pasado ya cien años",
-         "A hundred years have passed"} },
+        {"@BHan @Rpasado @Dya @Bcien @Raños",
+         "@BA @Rhundred @Dyears @Bhave @Rpassed"} },
     [A1D4_CANT_STOP_LONG] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"No podremos pararles|por mucho más tiempo",
          "We won't be able to|stop them for much longer"} },
