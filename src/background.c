@@ -8,10 +8,10 @@ u8 background_scroll_mode;        // Current scrolling behavior mode
 u8 scroll_speed;                  // Parallax scroll speed divider
 bool player_scroll_active;        // Whether player can trigger scrolling
 u16 background_width;             // Total width of background in pixels
-u16 x_limit_min;                  // Minimum X position for movement
-u16 x_limit_max;                  // Maximum X position for movement
-u16 y_limit_min;                  // Minimum Y position for movement
-u16 y_limit_max;                  // Maximum Y position for movement
+u16 x_limit_min;                  // Minimum X position when no scroll
+u16 x_limit_max;                  // Maximum X position when no scroll
+u16 y_limit_min;                  // Minimum Y position when no scroll
+u16 y_limit_max;                  // Maximum Y position when no scroll
 
 void update_bg(bool player_moved)    // Update background scroll positions based on movement
 {
