@@ -36,7 +36,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Load font and set text palette
     VDP_loadFont(font.tileset, DMA);
-    VDP_setTextPalette(PAL1);
+    VDP_setTextPalette(PAL2);
 
     // Initialize globals
 
