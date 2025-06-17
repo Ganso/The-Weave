@@ -16,11 +16,15 @@ void player_hide_launch(void)
         talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_GOOD_IDEA_HIDE]);
         show_or_hide_interface(true);
         enemy_thunder_cancel(combatContext.activeEnemy);
+        combat_state = COMBAT_STATE_PLAYER_EFFECT; // Resume hide effect
+        obj_character[active_character].state = STATE_PATTERN_EFFECT;
     }
     else if (combatContext.activeEnemy != ENEMY_NONE)
     {
         dprintf(2,"Some spell cancelled by hide");
         cancel_enemy_pattern(combatContext.activeEnemy);
+        combat_state = COMBAT_STATE_PLAYER_EFFECT; // Resume hide effect
+        obj_character[active_character].state = STATE_PATTERN_EFFECT;
     }
 
     // Restore active pattern to HIDE in case it was cleared
