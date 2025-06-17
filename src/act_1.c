@@ -248,7 +248,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     playerPatterns[PATTERN_OPEN   ].enabled = true;
     playerPatterns[PATTERN_SLEEP  ].enabled = true;
 
-    move_character(CHR_linus, 30, 154);
+    move_character(CHR_linus, SCROLL_START_DISTANCE+10, 154);
 
     // Stop protagonist before talking
     obj_character[active_character].state = STATE_IDLE;

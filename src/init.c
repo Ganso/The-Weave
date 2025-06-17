@@ -35,7 +35,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     else SCREEN_FPS=60; // NTSC
 
     // Load font and set text palette
-    VDP_loadFont(font.tileset, DMA);
+    load_font(FONT_DEFAULT);
     VDP_setTextPalette(PAL2);
 
     // Initialize globals

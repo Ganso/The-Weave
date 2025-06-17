@@ -1,5 +1,21 @@
 #include "globals.h"
 
+void load_font(u8 font_color) // Load a font of a particular color
+{
+    switch (font_color)
+    {
+        case FONT_DEFAULT:
+            VDP_loadFont(font.tileset, DMA);
+            break;
+        case FONT_BLUE:
+            VDP_loadFont(font_blue.tileset, DMA);
+            break;
+        case FONT_RED:
+            VDP_loadFont(font_red.tileset, DMA);
+            break;
+    }
+}
+
 void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display dialog with optional face portrait and timed text
 {
     u16 faceposx,buttonposx;
