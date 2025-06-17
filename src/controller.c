@@ -73,6 +73,11 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     s16 new_y = current_y + dy;
     u8 player_y_size = obj_character[active_character].y_size;
     bool direction_changed = false;
+    bool scroll_user_mode =
+        (background_scroll_mode == BG_SCRL_USER_RIGHT ||
+         background_scroll_mode == BG_SCRL_USER_LEFT);
+    bool can_scroll = scroll_user_mode && player_scroll_active;
+    bool use_limits = !scroll_user_mode || !player_scroll_active;
 
     // Check if we're changing horizontal direction
     if (dx != 0) {
@@ -104,9 +109,12 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
             test_y += move_dy;
             num_colls++;
 
-            // Stay within screen boundaries
-            if (test_x < x_limit_min || test_x > x_limit_max ||
-                test_y + player_y_size < y_limit_min || test_y + player_y_size > y_limit_max) {
+            // Stay within screen boundaries when limits are active
+            if (use_limits &&
+                (test_x < x_limit_min || test_x > x_limit_max ||
+                 test_y + player_y_size < y_limit_min ||
+                 test_y + player_y_size > y_limit_max))
+            {
                 break;
             }
         }
@@ -120,27 +128,37 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
 
     // Handle horizontal movement
     if (dx != 0) {
-        if ((background_scroll_mode == BG_SCRL_USER_RIGHT || background_scroll_mode == BG_SCRL_USER_LEFT) &&
-            (new_x < x_limit_min || new_x > x_limit_max)) {
-            // Player is trying to move outside screen boundaries, and scroll mode is user dependent
-            scroll_background(dx); // Try to scroll
-            wait_for_followers(dx); // If a follower lags behind, wait for it
+        bool at_scroll_edge =
+            (dx < 0 && new_x <= SCROLL_START_DISTANCE) ||
+            (dx > 0 &&
+             new_x + obj_character[active_character].x_size >=
+                 SCREEN_WIDTH - SCROLL_START_DISTANCE);
+
+        if (can_scroll && at_scroll_edge) {
+            // Character reached screen edge → start scrolling
+            scroll_background(dx);
+            wait_for_followers(dx);
             position_updated = true;
         }
-        else if (new_x >= x_limit_min && new_x <= x_limit_max) {
+        else if (!use_limits ||
+                 (new_x >= x_limit_min && new_x <= x_limit_max)) {
             // Update character position and flip state
             obj_character[active_character].x = new_x;
             if (direction_changed) {
-                obj_character[active_character].flipH = (dx < 0); // Only update flip if direction changed
+                obj_character[active_character].flipH = (dx < 0);
             }
             position_updated = true;
         }
     }
 
     // Handle vertical movement
-    if (dy != 0 && new_y + player_y_size >= y_limit_min && new_y + player_y_size <= y_limit_max) {
-        obj_character[active_character].y = new_y;
-        position_updated = true;
+    if (dy != 0) {
+        if (!use_limits ||
+            (new_y + player_y_size >= y_limit_min &&
+             new_y + player_y_size <= y_limit_max)) {
+            obj_character[active_character].y = new_y;
+            position_updated = true;
+        }
     }
 
     // Update character sprite position if any movement occurred
