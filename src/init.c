@@ -35,11 +35,10 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     else SCREEN_FPS=60; // NTSC
 
     // Load font and set text palette
-    load_font(FONT_DEFAULT);
-    VDP_setTextPalette(PAL2);
+    VDP_loadFont(font.tileset, DMA);
+    VDP_setTextPalette(PAL1);
 
     // Initialize globals
-    tile_ind = TILE_USER_INDEX;
 
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);

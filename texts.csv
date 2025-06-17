@@ -60,11 +60,11 @@ act1_dialog3,A1D3_THANKS_FOR_PLAYING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Grac
 act1_dialog3,A1D3_TURN_OFF_CONSOLE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Apaga tu consola|y haz algo constructivo|como jugar un poco al frontón","Turn off your console|and do something constructive|like play a little racquetball"
 act1_dialog3,A1D3_ORGANIZE_SOCKS,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"o preparar la cena,|o organizar tu cajón de calcetines|alfabéticamente.","or cook dinner,|or organize your sock drawer|alphabetically."
 
-act1_dialog4,A1D4_HUNDRED_YEARS,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,"@BHan @Rpasado @Dya @Bcien @Raños","@BA @Rhundred @Dyears @Bhave @Rpassed"
+act1_dialog4,A1D4_HUNDRED_YEARS,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,"@[Han@] @[pasado@] ya @[cien@] @[años@]","@[A@] @[hundred@] years @[have@] @[passed@]"
 act1_dialog4,A1D4_CANT_STOP_LONG,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,"No podremos pararles|por mucho más tiempo","We won't be able to|stop them for much longer"
 act1_dialog4,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_dialog4,A1D4_NEXT_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"A la @Bmañana @Dsiguiente...","The next morning..."
-act1_dialog4,A1D4_SLEPT_BAD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"He dormido @Rregular @Desta noche|Tuve horribles pesadillas","I've not slept well last night|I had terrible nightmares"
+act1_dialog4,A1D4_NEXT_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"A la @[mañana@] siguiente...","The next morning..."
+act1_dialog4,A1D4_SLEPT_BAD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"He dormido @[regular@] esta noche|Tuve horribles pesadillas","I've not slept well last night|I had terrible nightmares"
 act1_dialog4,A1D4_NOT_REAL,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"No ha podido ser real|La ventana está cerrada","It couldn't be real|The windows is closed"
 act1_dialog4,A1D4_NO_TIME_TO_SIT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"No tengo tiempo de sentarme|Madre me espera","I don't have time to sit down|Mother waiting for me"
 act1_dialog4,A1D4_LULLABY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Esta es la nana que me|cantaban cada noche","That's the lullaby they used|to sing to me every night"

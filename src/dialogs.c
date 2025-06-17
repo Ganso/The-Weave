@@ -1,21 +1,5 @@
 #include "globals.h"
 
-void load_font(u8 font_color) // Load a font of a particular color
-{
-    switch (font_color)
-    {
-        case FONT_DEFAULT:
-            VDP_loadFont(font.tileset, DMA);
-            break;
-        case FONT_BLUE:
-            VDP_loadFont(font_blue.tileset, DMA);
-            break;
-        case FONT_RED:
-            VDP_loadFont(font_red.tileset, DMA);
-            break;
-    }
-}
-
 void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display dialog with optional face portrait and timed text
 {
     u16 faceposx,buttonposx;
@@ -171,24 +155,17 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
         }
     }
 
-    u8 current_font = FONT_DEFAULT;
-    load_font(current_font);
+    VDP_setTextPalette(PAL1);
 
-    // Print the text, character by character, handling color escape codes
+    // Print the text, character by character, handling palette escape codes
     while (text[i] != '\0') {
-        if (text[i] == '@' && (text[i + 1] == 'B' || text[i + 1] == 'R' || text[i + 1] == 'D')) {
-            switch (text[i + 1]) {
-                case 'B':
-                    current_font = FONT_BLUE;
-                    break;
-                case 'R':
-                    current_font = FONT_RED;
-                    break;
-                case 'D':
-                    current_font = FONT_DEFAULT;
-                    break;
-            }
-            load_font(current_font);
+        if (text[i] == '@' && text[i + 1] == '[') {
+            VDP_setTextPalette(PAL2);
+            i += 2;
+            continue;
+        }
+        if (text[i] == '@' && text[i + 1] == ']') {
+            VDP_setTextPalette(PAL1);
             i += 2;
             continue;
         }
@@ -201,8 +178,7 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
         pos++;
         i++;
     }
-
-    load_font(FONT_DEFAULT); // Ensure font reset before exit
+    VDP_setTextPalette(PAL1); // Ensure palette reset before exit
 
     if (wait_for_frame) {
         joy_state = JOY_readJoypad(JOY_ALL);
