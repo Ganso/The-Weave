@@ -13,16 +13,19 @@ extern u8 scroll_speed; // Scroll speed (each mode uses it in a way)
 extern bool player_scroll_active; // Can you scroll ?
 extern u16 background_width; // Background width
 
+// Distance from screen edges where scrolling begins
+#define SCROLL_START_DISTANCE 40
+
 #define BG_SCRL_AUTO_RIGHT   00 // background scrolls in auto mode to the right (updated every frame)
 #define BG_SCRL_AUTO_LEFT    01 // background scrolls in auto mode to the left (updated every frame)
 #define BG_SCRL_USER_RIGHT   10 // background scrolls as the player walks - user starts in the left, and advances to the right
 #define BG_SCRL_USER_LEFT    11 // background scrolls as the player walks - user starts in the right, and advances to the left
 
-// Screen limits
-extern u16 x_limit_min; // Minimum x position (if there's scroll, player scrolls at that point)
-extern u16 x_limit_max; // Maximum x position (if there's scroll, player scrolls at that point)
-extern u16 y_limit_min; // Minimum y position
-extern u16 y_limit_max; // Maximum y position
+// Screen limits used when scrolling is disabled
+extern u16 x_limit_min; // Minimum x position when no scroll
+extern u16 x_limit_max; // Maximum x position when no scroll
+extern u16 y_limit_min; // Minimum y position when no scroll
+extern u16 y_limit_max; // Maximum y position when no scroll
 
 #define X_OUT_OF_BOUNDS 9999 // Value to return when x coordinate is out of bounds
 
