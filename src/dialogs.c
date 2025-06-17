@@ -100,19 +100,19 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
 void talk_dialog(const DialogItem *dialog)    // Display a predefined dialog item with face and text
 {
     reset_character_animations();
-    dprintf(2, "Leyendo texto: %s", (char *)dialog->text[game_language]);
+    dprintf(2, "Reading text: %s", (char *)dialog->text[game_language]);
     talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds);
 }
 
 void talk_cluster(const DialogItem *start)    // Display several dialog lines
 {
-    dprintf(2, "Iniciando cluster");
+    dprintf(2, "Starting cluster");
     const DialogItem *it = start;
     while (it->text[0] != NULL) {
         talk_dialog(it);
         ++it;
     }
-    dprintf(2, "NULL encontrado. Fin del cluster");
+    dprintf(2, "NULL found. End of cluster");
 }
 
 void split_text(char *text, char *line1, char *line2, char *line3)    // Break text into three lines using | as separator
