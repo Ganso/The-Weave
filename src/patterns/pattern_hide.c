@@ -3,15 +3,12 @@
 // Launch callback
 void player_hide_launch(void)
 {
-    bool cancelled_thunder = false;
-
     dprintf(2,"Hide spell launched");
 
     // If an enemy thunder was active, cancel it and show a hint
     if (get_last_enemy_pattern() == PATTERN_EN_THUNDER)
     {
         dprintf(2,"Thunder spell cancelled by hide");
-        cancelled_thunder = true;
         show_or_hide_interface(false);
         talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_GOOD_IDEA_HIDE]);
         show_or_hide_interface(true);
