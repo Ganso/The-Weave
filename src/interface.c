@@ -581,7 +581,7 @@ void update_life_counter(void) {
         }
         return;
     }
-    dprintf(2,"Updating life counter for enemy %d", nenemy);
+    dprintf(3,"Updating life counter for enemy %d", nenemy);
 
     // Calculate X and Y position for the life counter, just above the enemy
     u16 x = obj_enemy[nenemy].obj_character.x + (obj_enemy[nenemy].obj_character.x_size / 2) - 16; // Centered on the enemy. 16 is half the life counter width.
