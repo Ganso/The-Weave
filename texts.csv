@@ -1,6 +1,7 @@
 set,id,face,side,time,es,en
 system_dialog,SYSMSG_DEMO_TITLE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[The Weave@]|Demo técnica|Junio de 2025,@[The Weave@]|Tech demo|June 2025
 system_dialog,SYSMSG_DISCLAIMER,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final","Graphics, mechanics or sounds|aren't final, nor they|represent the final result"
+act1_dialog1,NULL,0,false,DEFAULT_TALK_TIME,,
 system_dialog,SYSMSG_CANT_USE_PATTERN,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No puedo usar ese patrón|ahora mismo,I can't use that pattern|right now
 act1_dialog1,A1D1_OVERSLEPT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Creo que he dormido demasiado|Debo llegar rápido al salón,I think I've overslept|I should go to the hall quickly
 act1_dialog1,A1D1_CORRIDOR_MEMORIES,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Aunque siendo el día que es|este pasillo me trae|@[demasiados recuerdos@],Although in a day like this|this hallway brings back|too @[many memories@]
@@ -43,7 +44,7 @@ act1_dialog2,A1D2_CLIO_IF_XANDER_WANTS,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"Si
 act1_dialog2,A1D2_CLIO_I_WONT_LET_YOU,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Nunca me ha gustado viajar|Pero no dejaré que vayas solo,I've never liked to travel|But I won't let you go alone
 act1_dialog3,A1D3_SOME_TIME_LATER,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Algún tiempo después,Some time later
 act1_dialog3,A1D3_ENEMIES_APPROACHING,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre","Enemies are approaching|We have to stay alert|Stay close, mother"
-act1_dialog3,A1D3_NOTE_ABOUT_SCENE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado,NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished
+act1_dialog3,A1D3_NOTE_ABOUT_SCENE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[NOTA@]: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado,@[NOTE@]: Neither that scene nor those|graphics will be present|in the game when it's finished
 act1_dialog3,A1D3_DEMO_REASON,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas,It's been decided to include it|in this technical demo|as a test of certain mechanics
 act1_dialog3,A1D3_PRESS_START,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Pulsa @[START@] para ver|tu inventario de hechizos,Press @[START@] to view|your spell inventory
 act1_dialog3,A1D3_THAT_HURTS,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Eso ha dolido,That hurts
@@ -65,7 +66,7 @@ act1_dialog4,A1D4_NO_TIME_TO_SIT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No tengo
 act1_dialog4,A1D4_NOT_REAL,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No ha podido ser real|La ventana está cerrada,It couldn't be real|The windows is closed
 act1_dialog4,A1D4_LULLABY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Esta es la @[nana@] que me|cantaban cada noche,That's the @[lullaby@] they used|to sing to me every night
 act1_dialog4,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_dialog4,A1D4_LEARNED_PATTERN,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Has aprendido|tu primer @[patrón@],You have learned|your first [@pattern@]
+act1_dialog4,A1D4_LEARNED_PATTERN,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Has aprendido|tu primer @[patrón@],You have learned|your first @[pattern@]
 act1_dialog4,A1D4_ENTER_PAUSE_MENU,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Entra en el menú de|pausa para verlo,Enter the pause menu|to check it out
 act1_dialog4,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_dialog4,A1D4_MOTHER_CALLS,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"@[Linus@], ¿dónde estás?","@[Linus@], where are you?"
