@@ -10,7 +10,7 @@ void player_hide_launch(void)
     {
         dprintf(2,"Thunder spell cancelled by hide");
         show_or_hide_interface(false);
-        talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_GOOD_IDEA_HIDE]);
+        talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_GOOD_IDEA_HIDE]); // (ES) "Buena idea. Así no me verán" - (EN) "Good idea. They won't see me"
         show_or_hide_interface(true);
         enemy_thunder_cancel(combatContext.activeEnemy);
         combat_state = COMBAT_STATE_PLAYER_EFFECT; // Resume hide effect
