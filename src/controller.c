@@ -134,7 +134,11 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
              new_x + obj_character[active_character].x_size >=
                  SCREEN_WIDTH - SCROLL_START_DISTANCE);
 
-        if (can_scroll && at_scroll_edge) {
+        bool can_scroll_further =
+            (dx < 0 && offset_BGA > 0) ||
+            (dx > 0 && offset_BGA < (background_width - SCREEN_WIDTH));
+
+        if (can_scroll && at_scroll_edge && can_scroll_further) {
             // Character reached screen edge → start scrolling
             scroll_background(dx);
             wait_for_followers(dx);
