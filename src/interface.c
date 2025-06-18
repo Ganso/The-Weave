@@ -90,7 +90,7 @@ void show_or_hide_interface(bool visible)    // Toggle visibility of game's bott
         // Draw the rod and pentagram images in the window plane
         VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 22, false, true);
         tile_ind+=int_screen_limit.tileset->numTile;
-        VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 23, false, true);
+        VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 24, false, true);
         tile_ind+=int_rod_image.tileset->numTile;
         VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
         tile_ind+=int_pentagram_image.tileset->numTile;
@@ -139,10 +139,10 @@ void show_note(u8 nnote, bool visible)
     if (visible) {
         // Create sprite if it does not yet exist
         if (*rodSpr == NULL)
-            *rodSpr = SPR_addSpriteSafe(rodDef, rodX, 212,
+            *rodSpr = SPR_addSpriteSafe(rodDef, rodX, 210,
                                         TILE_ATTR(PAL2,false,false,false));
         if (*pentSpr == NULL && player_patterns_enabled)
-            *pentSpr = SPR_addSpriteSafe(pentDef, pentX, 180,
+            *pentSpr = SPR_addSpriteSafe(pentDef, pentX, 178,
                                         TILE_ATTR(PAL2,false,false,false));
     } else {
         // Destroy sprite if present
@@ -502,7 +502,7 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)    // Dis
 
     if (show==true) {
         x=251+nnote*16;
-        spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,false,false,false));
+        spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,true,false,false));
     }
     else {
         if (spr_pattern_list_note[nnote] != NULL) {
