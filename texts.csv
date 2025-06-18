@@ -1,7 +1,7 @@
 set,id,face,side,time,es,en
 system_dialog,SYSMSG_DEMO_TITLE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[The Weave@]|Demo técnica|Junio de 2025,@[The Weave@]|Tech demo|June 2025
 system_dialog,SYSMSG_DISCLAIMER,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final","Graphics, mechanics or sounds|aren't final, nor they|represent the final result"
-act1_dialog1,NULL,0,false,DEFAULT_TALK_TIME,,
+system_dialog,NULL,0,false,DEFAULT_TALK_TIME,,
 system_dialog,SYSMSG_CANT_USE_PATTERN,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No puedo usar ese patrón|ahora mismo,I can't use that pattern|right now
 act1_dialog1,A1D1_OVERSLEPT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Creo que he dormido demasiado|Debo llegar rápido al salón,I think I've overslept|I should go to the hall quickly
 act1_dialog1,A1D1_CORRIDOR_MEMORIES,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Aunque siendo el día que es|este pasillo me trae|@[demasiados recuerdos@],Although in a day like this|this hallway brings back|too @[many memories@]
@@ -33,7 +33,7 @@ act1_dialog2,A1D2_XANDER_ABILITY,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Según 
 act1_dialog2,A1D2_XANDER_NOT_LEGEND,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Para él no era una leyenda|Los @[Pastores@] la cantaban|como cierta,That was no legend for him|@[Shepherds@] sang it as a fact
 act1_dialog2,A1D2_XANDER_VANISHED,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Desaparecieron sin dejar rastro|Aunque muchos creen|que era solo un cuento,They vanished without a trace|Although many believe|it was just a tale
 act1_dialog2,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_dialog2,A1D2_XANDER_FATHER_WANTED,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Tu padre quería encontrar|la isla donde vivían,Your father wanted to find|their home island
+act1_dialog2,A1D2_XANDER_FATHER_WANTED,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Tu padre quería encontrar|@[la isla donde vivían@],Your father wanted to find|their @[home island@]
 act1_dialog2,A1D2_CLIO_DESTINY,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"Nuestro destino es|documentar hechos,|no perseguirlos","Our destiny is to|document facts,|not to chase them"
 act1_dialog2,A1D2_XANDER_LINUS_AGE,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Linus tiene diecisiete años|Esa era mi edad cuando|viajé por el mundo,Linus is seventeen|That was my age when|I traveled the world
 act1_dialog2,A1D2_XANDER_FATHERS_AGE,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Y la edad de su padre cuando|llegó aquí,And his father's age when|he came to us
