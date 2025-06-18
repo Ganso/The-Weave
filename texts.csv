@@ -66,11 +66,11 @@ act1_dialog4,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_dialog4,A1D4_NEXT_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"A la mañana siguiente...","The next morning..."
 act1_dialog4,A1D4_SLEPT_BAD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"He dormido regular esta noche|Tuve horribles pesadillas","I've not slept well last night|I had terrible nightmares"
 act1_dialog4,A1D4_NOT_REAL,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"No ha podido ser real|La ventana está cerrada","It couldn't be real|The windows is closed"
-act1_dialog4,A1D4_NO_TIME_TO_SIT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"No tengo tiempo de sentarme|Madre me espera","I don't have time to sit down|Mother waiting for me"
+act1_dialog4,A1D4_NO_TIME_TO_SIT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"No tengo tiempo de sentarme|@[Madre@] me espera","I don't have time to sit down|@[Mother@] is waiting for me"
 act1_dialog4,A1D4_LULLABY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Esta es la @[nana@] que me|cantaban cada noche","That's the @[lullaby@] they used|to sing to me every night"
 act1_dialog4,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_dialog4,A1D4_LEARNED_PATTERN,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"@[Has aprendido|tu primer patrón@]","@[You have learned|your first pattern@]"
+act1_dialog4,A1D4_LEARNED_PATTERN,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"@[Has aprendido@]|@[tu primer patrón@]","@[You have learned@]|@[your first pattern@]"
 act1_dialog4,A1D4_ENTER_PAUSE_MENU,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Entra en el menú de|pausa para verlo","Enter the pause menu|to check it out"
 act1_dialog4,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_dialog4,A1D4_MOTHER_CALLS,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"Linus, ¿dónde estás?","Linus, where are you?"
+act1_dialog4,A1D4_MOTHER_CALLS,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"@[Linus@], ¿dónde estás?","@[Linus@], where are you?"
 act1_dialog4,A1D4_TOO_LATE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Se me ha hecho demasiado tarde|tengo que ir al salón","It's gotten too late|I need to go the hall"
