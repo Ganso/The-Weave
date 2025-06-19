@@ -50,8 +50,8 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
         drops_shadow=false;
         break;
     case ENEMY_CLS_3HEADMONKEY:
-        nsprite = &three_head_monkey_sprite;
-        nsprite_shadow = &three_head_monkey_sprite_shadow;
+        // nsprite = &three_head_monkey_sprite;
+        // nsprite_shadow = &three_head_monkey_sprite_shadow;
         break;
     default:
         return;
