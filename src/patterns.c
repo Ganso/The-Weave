@@ -310,11 +310,22 @@ bool pattern_player_add_note(u8 noteCode)
                 // If there's a Ghost and we're trying to launch a direct thunder spell, show specific message
                 for (u8 i = 0; i < MAX_ENEMIES; i++)
                 {
-                    if (obj_enemy[i].class_id == ENEMY_CLS_WEAVERGHOST && id == PATTERN_THUNDER && !rev)
+                    if (obj_enemy[i].class_id == ENEMY_CLS_WEAVERGHOST)
                     {
-                        dprintf(2,"Ghost detected, showing specific dialog for thunder");
-                        dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_NOTES_COUNTER];
-                        break; // No need to check other enemies
+                        if (id == PATTERN_THUNDER && !rev)
+                        {
+                            dprintf(2,"Ghost detected, showing specific dialog for thunder");
+                            dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_NOTES_COUNTER];
+                            break; // No need to check other enemies
+                        }
+                        if (id == PATTERN_THUNDER && rev &&
+                            (combat_state != COMBAT_STATE_ENEMY_EFFECT ||
+                             combatContext.activePattern != PATTERN_EN_THUNDER))
+                        {
+                            dprintf(2,"Ghost detected, showing hint for reverse thunder timing");
+                            dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_HINT];
+                            break; // No need to check other enemies
+                        }
                     }
                 }
 
