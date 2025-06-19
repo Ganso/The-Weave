@@ -39,6 +39,7 @@ bool enemy_thunder_update(u8 enemyId)
     if (++combatContext.effectTimer >= duration)
     {
         PAL_setColor(PAL0_COL4, savedColor);  // restore sky
+        flashOn = false;                      // reset flash state
         SPR_setAnim(spr_enemy[enemyId], ANIM_IDLE);
         if (obj_character[active_character].state != STATE_HIT)
         {
