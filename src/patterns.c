@@ -179,7 +179,9 @@ void launch_player_pattern(u16 patternId)
     {
         dprintf(2,"Pattern %d not usable right now", patternId);
         show_or_hide_interface(false); // hide interface
+        hide_enemy_notes();
         talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+        show_enemy_notes();
         if (interface_active==true) show_or_hide_interface(true); // show interface
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
         set_idle(); // reset combat state
@@ -316,7 +318,9 @@ bool pattern_player_add_note(u8 noteCode)
                     }
                 }
 
+                hide_enemy_notes();
                 talk_dialog(dialog);           // Show dialog message
+                show_enemy_notes();
                 show_or_hide_interface(true);  // show interface again
                 if (resume_enemy) // If there's an enemy, resume its effect
                 {
@@ -460,6 +464,30 @@ void pattern_enemy_clear_notes(void)
             spr_enemy_rod[i] = NULL;
         }
         enemy_note_active[i] = false;
+    }
+}
+
+// Temporarily hide all active enemy note sprites
+void hide_enemy_notes(void)
+{
+    for (u8 i = 0; i < 6; ++i)
+    {
+        if (spr_enemy_rod[i] && enemy_note_active[i])
+        {
+            SPR_setVisibility(spr_enemy_rod[i], HIDDEN);
+        }
+    }
+}
+
+// Show again all active enemy note sprites
+void show_enemy_notes(void)
+{
+    for (u8 i = 0; i < 6; ++i)
+    {
+        if (spr_enemy_rod[i] && enemy_note_active[i])
+        {
+            SPR_setVisibility(spr_enemy_rod[i], VISIBLE);
+        }
     }
 }
 

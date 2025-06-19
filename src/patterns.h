@@ -111,6 +111,8 @@ void launch_enemy_pattern(u8 enemySlot, u16 patternSlot); // Launch an enemy pat
 bool update_enemy_pattern(u8 enemySlot);      // Called every frame (true = finished)
 void pattern_enemy_add_note(u8 enemySlot, u8 noteCode); // Add a note to the enemy pattern
 void pattern_enemy_clear_notes(void); // Clear all enemy notes
+void hide_enemy_notes(void);          // Temporarily hide enemy note sprites
+void show_enemy_notes(void);          // Restore enemy note sprites
 void init_enemy_patterns(u8 enemyId); // Initialize enemy patterns for a specific enemy slot
 void cancel_enemy_pattern(u8 enemyId); // Reset enemy state after a pattern is finished
 
