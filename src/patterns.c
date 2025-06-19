@@ -296,9 +296,10 @@ bool pattern_player_add_note(u8 noteCode)
             obj_character[active_character].state = STATE_IDLE; // reset player state
             if (id != PATTERN_PLAYER_NONE) {
                 // If the pattern was valid but not usable right now
-                dprintf(2,"Pattern %d not usable right now", id);
-                set_idle(); // reset combat state´
-                show_or_hide_interface(false); // hide interface
+            dprintf(2,"Pattern %d not usable right now", id);
+            bool resume_enemy = (combatContext.activeEnemy != ENEMY_NONE);
+            set_idle(); // reset combat state
+            show_or_hide_interface(false); // hide interface
 
                 // Default dialog is SYSTEM_DIALOG[0]
                 DialogItem* dialog = (DialogItem*) &dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN];  // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
@@ -313,6 +314,8 @@ bool pattern_player_add_note(u8 noteCode)
                 }
                 talk_dialog(dialog); // Show dialog message
                 show_or_hide_interface(true); // show interface again
+                if (resume_enemy)
+                    combat_state = COMBAT_STATE_ENEMY_EFFECT; // resume enemy
             }
             return false; // invalid pattern
         }
