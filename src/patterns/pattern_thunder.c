@@ -16,11 +16,16 @@ void player_thunder_launch(void)
         show_or_hide_interface(false); // Hide interface
         talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS]); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
         show_or_hide_interface(true);  // Show interface again
-        cancel_player_pattern(); // Cancel the pattern
+        reset_note_queue();            // clear notes without stopping enemy
+        combatContext.activePattern = PATTERN_PLAYER_NONE;
+        combatContext.patternReversed = false;
+        combatContext.patternLockTimer = 0;
+        obj_character[active_character].state = STATE_IDLE;
+        combat_state = COMBAT_STATE_ENEMY_EFFECT; // resume enemy effect
         return;
     }
 
-    // Save current CRAM entry so we can restore it later            */
+    // Save current CRAM entry so we can restore it later
     savedColor = PAL_getColor(PAL0_COL4); 
     dprintf(2, "Thunder: initial CRAM colour 0-4 = 0x%04X\n", savedColor);
 
