@@ -541,12 +541,8 @@ bool update_enemy_pattern(u8 enemySlot)
             if (pat->update && pat->update(enemySlot))
             {
                 // Pattern effect ended
-                pat->rechargeFrames = pat->baseDuration; // Reset cooldown to baseDuration
-                combat_state = COMBAT_STATE_IDLE;
-
-                // Restore enemy to idle animation
-                SPR_setAnim(spr_enemy[enemySlot], ANIM_IDLE);
-
+                pat->rechargeFrames = pat->baseDuration; // Reset cooldown
+                cancel_enemy_pattern(enemySlot);          // Restore combat state
                 return true;
             }
             return false; // Pattern effect still running
