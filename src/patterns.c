@@ -310,6 +310,7 @@ bool pattern_player_add_note(u8 noteCode)
                 {
                     if (obj_enemy[i].class_id == ENEMY_CLS_WEAVERGHOST && id == PATTERN_THUNDER && !rev)
                     {
+                        dprintf(2,"Ghost detected, showing specific dialog for thunder");
                         dialog = (DialogItem*) &dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS];
                         break; // No need to check other enemies
                     }
@@ -317,8 +318,15 @@ bool pattern_player_add_note(u8 noteCode)
 
                 talk_dialog(dialog);           // Show dialog message
                 show_or_hide_interface(true);  // show interface again
-                if (resume_enemy)
-                    combat_state = COMBAT_STATE_ENEMY_EFFECT; // resume enemy
+                if (resume_enemy) // If there's an enemy, resume its effect
+                {
+                    if (combatContext.activePattern == PATTERN_EN_THUNDER)
+                    {
+                        enemy_thunder_cancel(combatContext.activeEnemy); // stop flash
+                    }
+                    else
+                        combat_state = COMBAT_STATE_ENEMY_EFFECT; // resume enemy
+                }
             }
             return false; // invalid pattern
         }
