@@ -6,6 +6,10 @@ system_dialog,SYSMSG_CANT_USE_PATTERN,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No 
 act1_dialog1,A1D1_OVERSLEPT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Creo que he dormido demasiado|Debo llegar rápido al salón,I think I've overslept|I should go to the hall quickly
 act1_dialog1,A1D1_CORRIDOR_MEMORIES,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Aunque siendo el día que es|este pasillo me trae|@[demasiados recuerdos@],Although in a day like this|this hallway brings back|too @[many memories@]
 act1_dialog1,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_dialog1,A1D1_DOOR1_CHECK,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"No puedo entrar en el cuarto|de los ancianos sin su permiso","I can't enter the elders' room|without their permission"
+act1_dialog1,A1D1_DOOR2_CHECK,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Luego iré a la biblioteca|Me paso allí media vida","I'll go to the library later|I spend half my life there"
+act1_dialog1,A1D1_DOOR3_CHECK,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Luego volveré a mi cuarto|Ahora me esperan","I'll go back to my room later|Now I have to go"
+act1_dialog1,A1D1_MAP_CHECK,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Tenemos la mejor colección|de mapas de @[todos los gremios@]","We have the best collection|of maps from @[all guilds@]"
 act1_dialog1,A1D1_REVISIT_MEMORIES,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papá,Before I leave I want to|revisit some memories|I owe it to dad
 act1_dialog1,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_dialog1,A1D1_BOOK_HISTORY,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Este tomo narra la historia|de nuestro gremio|desde la @[Gran Separación@],This volume narrates the history|of our guild|since the @[Great Split@]

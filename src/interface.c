@@ -10,8 +10,9 @@ Sprite *spr_int_pentagram_1,*spr_int_pentagram_2,*spr_int_pentagram_3,*spr_int_p
 Sprite *spr_int_life_counter;             // Life counter interface sprite
 Sprite *spr_pause_icon[5];                // Pattern icons shown in pause screen
 Sprite *spr_pattern_list_note[4];         // Note sprites shown in pause pattern list
-bool interface_active;                     // Whether game interface is currently shown
+bool interface_active;                    // Whether game interface is currently shown
 static u16 interface_sprite_count;        // How many interface sprites were hidden
+bool player_has_paused;                   // Has the player paused the game since last reset?
 
 // Struct to store the animation state of a sprite
 typedef struct {
@@ -434,12 +435,12 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
     }
 
     show_or_hide_interface(true); // Show interface again
-    //show_or_hide_enemy_combat_interface(true); // Show combat interface again
     show_interface_sprites(savedStates); // Restore HUD sprites visibility
     VDP_setHilightShadow(false); // Relit screen
     restore_animation_states();
     SPR_update();
     VDP_waitVSync();
+    player_has_paused = true; // Set pause flag
 }
 
 void show_pause_pattern_list(bool show, u8 active_pattern)    // Display pattern list in pause screen with active pattern highlighted

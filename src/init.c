@@ -81,7 +81,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     combatContext.activeEnemy    = ENEMY_NONE;
 
     // Items
-    TODO_item_interaction=ITEM_NONE;
+    last_interacted_item=ITEM_NONE;
 
     // Release active character, faces, enemies and items
     for (i=0;i<MAX_CHR;i++) {
@@ -143,6 +143,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     interface_active=false; // No interface by default
     player_scroll_active=false; // You can't scroll the screen by default
     movement_active=false; // You can't move by default
+    player_has_paused=false; // Player has not paused the game yet
 
     dprintf(2,"everthing initialized, background scroll mode=%d, scroll speed=%d\n", background_scroll_mode, scroll_speed);
     update_bg(false);
@@ -209,7 +210,7 @@ void end_level() {    // Clean up level resources and reset game state
 
     // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos
 
-    TODO_item_interaction = ITEM_NONE;
+    last_interacted_item = ITEM_NONE;
 
     // Reset scroll values
     offset_BGA = 0;
