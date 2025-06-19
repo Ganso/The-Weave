@@ -8,6 +8,8 @@ SPRITE item_bedroom_cabinet "Sprites/Items/Act1/bedroom_cabinet.png" 7 11 BEST
 # Act 1 - Scene 2 (corridor)
 SPRITE item_corridor_bookpedestal_sprite "Sprites/Items/Act1/book_in_pedestal.png" 6 8 BEST
 SPRITE item_corridor_lamp_sprite "Sprites/Items/Act1/corridor_lamp.png" 6 8 BEST 20
+SPRITE item_corridor_door_bottom_sprite "Sprites/Items/Act1/corridor_door_bottom.png" 4 1 BEST
+SPRITE item_corridor_map_bottom_sprite "Sprites/Items/Act1/corridor_map_bottom.png" 10  1 BEST
 
 # Act 1 - Scene 5 (forest)
 SPRITE item_forest_fg1_sprite "Sprites/Items/Act1/forest_fgsprite1.png" 4 2 BEST 

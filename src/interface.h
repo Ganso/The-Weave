@@ -23,6 +23,7 @@ extern Sprite *spr_pattern_list_note[4]; // The 4 notes in right of the pattern 
 
 // Others
 extern bool interface_active; // Do we have to show the interface?
+extern bool player_has_paused; // Has the player paused the game since last reset?
 
 void show_or_hide_interface(bool visible); // Show or hide the bottom interface
 void show_note(u8 nnote, bool visible); // Show or hide notes

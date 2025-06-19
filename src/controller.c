@@ -178,7 +178,7 @@ void handle_action_buttons(u16 joy_value)    // Process action buttons for item 
             u16 nitem=detect_nearby_item();
             if (nitem!=ITEM_NONE) {
                 dprintf(2,"  - Player pressed A, interacting with item %d", nitem);
-                TODO_item_interaction=nitem;
+                last_interacted_item=nitem;
                 // Don't return here, continue to process note playing
             }
         }

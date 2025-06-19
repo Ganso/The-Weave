@@ -62,38 +62,41 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
 
     bool item_interacted[4]={false,false,false,false};
     bool scene_timeout=0;
-    while (scene_timeout<(SCREEN_FPS*3)) // Scene ends 3 seconds after interacting every object
+    while (scene_timeout<(SCREEN_FPS*3)) // Scene ends 3 seconds after interacting the cabinet
     {
-        switch (TODO_item_interaction) // Process item interactions
+        switch (last_interacted_item) // Process item interactions
         {
         case 0: // Bed
             talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_SLEPT_BAD]); // (ES) "He dormido regular esta noche|Tuve horribles pesadillas" - (EN) "I've not slept well last night|I had terrible nightmares"
-            TODO_item_interaction=ITEM_NONE;
+            last_interacted_item=ITEM_NONE;
             item_interacted[0]=true;
+            scene_timeout=0;
             break;
         case 1: // Chair
             talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_NO_TIME_TO_SIT]); // (ES) "No tengo tiempo de sentarme|@[Madre@] me espera" - (EN) "I don't have time to sit down|@[Mother@] is waiting for me"
-            TODO_item_interaction=ITEM_NONE;
+            last_interacted_item=ITEM_NONE;
             item_interacted[1]=true;
+            scene_timeout=0;
             break;
         case 2: // Windowsill
             talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_NOT_REAL]); // (ES) "No ha podido ser real|La ventana está cerrada" - (EN) "It couldn't be real|The windows is closed"
-            TODO_item_interaction=ITEM_NONE;
+            last_interacted_item=ITEM_NONE;
             item_interacted[2]=true;
+            scene_timeout=0;
             break;
         case 3: // Cabinet
             talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_LULLABY]); // (ES) "Esta es la @[nana@] que me|cantaban cada noche" - (EN) "That's the @[lullaby@] they used|to sing to me every night"
-            TODO_item_interaction=ITEM_NONE;
+            last_interacted_item=ITEM_NONE;
             if (item_interacted[3]==false) { // If not already interacted
                 activate_spell(PATTERN_SLEEP); // Activate sleep pattern
-                talk_cluster(&dialogs[ACT1_DIALOG4][A1D4_LEARNED_PATTERN]); // (ES) "@[Has aprendido@]|@[tu primer patrón@]" - (EN) "@[You have learned@]|@[your first pattern@]", (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
+                talk_cluster(&dialogs[ACT1_DIALOG4][A1D4_LEARNED_PATTERN]); // (ES) "Has aprendido|tu primer @[patrón@]" - (EN) "You have learned|your first @[pattern@]", (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
              }
             item_interacted[3]=true;
             break;
         default:
             break;
         }
-        if (item_interacted[0]==true && item_interacted[1]==true && item_interacted[2]==true && item_interacted[3]==true) scene_timeout++;
+        if (item_interacted[3]==true && player_has_paused) scene_timeout++; // If we have interacted with the cabinet and the player has checked the pattern, start counting time
         next_frame(true);
     }
     talk_cluster(&dialogs[ACT1_DIALOG4][A1D4_MOTHER_CALLS]); // (ES) "@[Linus@], ¿dónde estás?" - (EN) "@[Linus@], where are you?", (ES) "Se me ha hecho demasiado tarde|tengo que ir al salón" - (EN) "It's gotten too late|I need to go the hall"
@@ -116,12 +119,17 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
     init_item(4, &item_corridor_lamp_sprite, PAL0, 336, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
     init_item(5, &item_corridor_lamp_sprite, PAL0, 464, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
     init_item(6, &item_corridor_lamp_sprite, PAL0, 656, 0, 0, 0, 0, 0, FORCE_BACKGROUND); // Corridor lamp
+    init_item(7, &item_corridor_door_bottom_sprite, PAL0, 96, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND); // Corridor door bottom
+    init_item(8, &item_corridor_door_bottom_sprite, PAL0, 400, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND); // Corridor door bottom
+    init_item(9, &item_corridor_door_bottom_sprite, PAL0, 720, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND); // Corridor door bottom
+    init_item(10, &item_corridor_map_bottom_sprite, PAL0, 240, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND); // Corridor map bottom
+    init_item(11, &item_corridor_map_bottom_sprite, PAL0, 544, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND); // Corridor map bottom
 
     // Initialize characters and dialog faces
     init_character(CHR_linus);
 
     // Tech demo warning message
-    talk_cluster(&dialogs[SYSTEM_DIALOG][SYSMSG_DEMO_TITLE]); // (ES) "@[The Weave@]|Demo técnica|Junio de 2025" - (EN) "@[The Weave@]|Tech demo|June 2025", (ES) "Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final" - (EN) "Graphics, mechanics or sounds|aren't final, nor they|represent the final result", (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+    talk_cluster(&dialogs[SYSTEM_DIALOG][SYSMSG_DEMO_TITLE]); // (ES) "@[The Weave@]|Demo técnica|Junio de 2025" - (EN) "@[The Weave@]|Tech demo|June 2025", (ES) "Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final" - (EN) "Graphics, mechanics or sounds|aren't final, nor they|represent the final result"
 
     // Put character in screen
     move_character_instant(CHR_linus, 340, 154);
@@ -134,19 +142,43 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
     player_scroll_active=true;
     movement_active=true;
 
-    bool item_interacted[2]={false, false};
+    bool item_interacted[2]={false, false}; // Books read
     while (true) {
-        switch (TODO_item_interaction) // Process item interactions
+        switch (last_interacted_item) // Process item interactions
         {
         case 0: // Guild history book
-            talk_cluster(&dialogs[ACT1_DIALOG1][A1D1_BOOK_HISTORY]); // (ES) "Este tomo narra la historia|de nuestro gremio|desde la @[Gran Separación@]" - (EN) "This volume narrates the history|of our guild|since the @[Great Split@]", (ES) "El último capítulo|termina con el fallecimiento|de mi padre" - (EN) "The last chapter|ends with the passing|of my father", (ES) "Madre dice que seré yo|el que deba escribir|el siguiente" - (EN) "Mother says it will be me|who has to write|the next one"
+            // Read the entire text the first time, or just the first part if already read
+            if (item_interacted[0]==false) talk_cluster(&dialogs[ACT1_DIALOG1][A1D1_BOOK_HISTORY]); // (ES) "Este tomo narra la historia|de nuestro gremio|desde la @[Gran Separación@]" - (EN) "This volume narrates the history|of our guild|since the @[Great Split@]", (ES) "El último capítulo|termina con el fallecimiento|de mi padre" - (EN) "The last chapter|ends with the passing|of my father", (ES) "Madre dice que seré yo|el que deba escribir|el siguiente" - (EN) "Mother says it will be me|who has to write|the next one"
+            else talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_BOOK_HISTORY]); // (ES) "Este tomo narra la historia|de nuestro gremio|desde la @[Gran Separación@]" - (EN) "This volume narrates the history|of our guild|since the @[Great Split@]"
             item_interacted[0]=true;
-            TODO_item_interaction=ITEM_NONE;
+            last_interacted_item=ITEM_NONE;
             break;
         case 1: // Myths and legends
-            talk_cluster(&dialogs[ACT1_DIALOG1][A1D1_MYTH_COLLECTION]); // (ES) "Una colección de|mitos y leyendas|de los distintos gremios" - (EN) "A collection of|myths and legends|from the different guilds", (ES) "Gracias a mi padre|tenemos documentadas|las que cantaban los @[Pastores@]" - (EN) "Thanks to my father|we have documented|those the @[Shepherds@] sang"
+            // Read the entire text the first time, or just the first part if already read
+            if (item_interacted[1]==false) talk_cluster(&dialogs[ACT1_DIALOG1][A1D1_MYTH_COLLECTION]); // (ES) "Una colección de|mitos y leyendas|de los distintos gremios" - (EN) "A collection of|myths and legends|from the different guilds", (ES) "Gracias a mi padre|tenemos documentadas|las que cantaban los @[Pastores@]" - (EN) "Thanks to my father|we have documented|those the @[Shepherds@] sang"
+            else talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_MYTH_COLLECTION]); // (ES) "Una colección de|mitos y leyendas|de los distintos gremios" - (EN) "A collection of|myths and legends|from the different guilds"
             item_interacted[1]=true;
-            TODO_item_interaction=ITEM_NONE;
+            last_interacted_item=ITEM_NONE;
+            break;
+        case 7: // Left door
+            talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_DOOR1_CHECK]); // (ES) "No puedo entrar en el cuarto|de los ancianos sin su permiso" - (EN) "I can't enter the elders' room|without their permission"
+            last_interacted_item=ITEM_NONE;
+            break;
+        case 8: // Middle door
+            talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_DOOR2_CHECK]); // (ES) "Luego iré a la biblioteca|Me paso allí media vida" - (EN) "I'll go to the library later|I spend half my life there"
+            last_interacted_item=ITEM_NONE;
+            break;
+        case 9: // Right door
+            talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_DOOR3_CHECK]); // (ES) "Luego volveré a mi cuarto|Ahora me esperan" - (EN) "I'll go back to my room later|Now I have to go"
+            last_interacted_item=ITEM_NONE;
+            break;
+        case 10: // Map
+            talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_MAP_CHECK]); // (ES) "Tenemos la mejor colección|de mapas de @[todos los gremios@]" - (EN) "We have the best collection|of maps from @[all guilds@]"
+            last_interacted_item=ITEM_NONE;
+            break;
+        case 11: // Map
+            talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_MAP_CHECK]); // (ES) "Tenemos la mejor colección|de mapas de @[todos los gremios@]" - (EN) "We have the best collection|of maps from @[all guilds@]"
+            last_interacted_item=ITEM_NONE;
             break;
         default:
             break;
@@ -205,7 +237,7 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     // If response=0: (ES) "Según la leyenda Fueron un gremio capaz de tejer hechizos" - (EN) "According to the legend They were a guild able to weave spells"
     // If response=1: (ES) "Para él no era una leyenda Los Pastores la cantaban como cierta" - (EN) "That was no legend for him Shepherds sang it as a fact"
     // If response=2: (ES) "Desaparecieron sin dejar rastro Aunque muchos creen que era solo un cuento" - (EN) "They vanished without a trace Although many believe it was just a tale"
-    talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_XANDER_FATHER_WANTED]); // (ES) "Tu padre quería encontrar|la isla donde vivían" - (EN) "Your father wanted to find|their home island", (ES) "Nuestro destino es|documentar hechos,|no perseguirlos" - (EN) "Our destiny is to|document facts,|not to chase them", (ES) "Linus tiene diecisiete años|Esa era mi edad cuando|viajé por el mundo" - (EN) "Linus is seventeen|That was my age when|I traveled the world", (ES) "Y la edad de su padre cuando|llegó aquí" - (EN) "And his father's age when|he came to us", (ES) "Un año antes de que|le acogiéramos|como uno de los nuestros" - (EN) "A year before we|took him as one of ours", (ES) "Madre..." - (EN) "Mother..."
+    talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_XANDER_FATHER_WANTED]); // (ES) "Tu padre quería encontrar|@[la isla donde vivían@]" - (EN) "Your father wanted to find|their @[home island@]", (ES) "Nuestro destino es|documentar hechos,|no perseguirlos" - (EN) "Our destiny is to|document facts,|not to chase them", (ES) "Linus tiene diecisiete años|Esa era mi edad cuando|viajé por el mundo" - (EN) "Linus is seventeen|That was my age when|I traveled the world", (ES) "Y la edad de su padre cuando|llegó aquí" - (EN) "And his father's age when|he came to us", (ES) "Un año antes de que|le acogiéramos|como uno de los nuestros" - (EN) "A year before we|took him as one of ours", (ES) "Madre..." - (EN) "Mother..."
     response = choice_dialog(&choices[ACT1_CHOICE1][1]); // (ES) "Tengo que ir a la isla" - (EN) "I have to go to the island", (ES) "¿Vendrías conmigo?" - (EN) "Would you come with me?"
     look_left(CHR_clio, false);
     talk_dialog(&dialogs[ACT1_DIALOG2][A1D2_CLIO_IF_XANDER_WANTS + response]); // Response texts:
@@ -258,7 +290,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     // Dialog
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_SOME_TIME_LATER]); // (ES) "Algún tiempo después" - (EN) "Some time later"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_ENEMIES_APPROACHING]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
-    talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_NOTE_ABOUT_SCENE]); // (ES) "NOTA: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "NOTE: Neither that scene nor those|graphics will be present|in the game when it's finished"
+    talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_NOTE_ABOUT_SCENE]); // (ES) "@[NOTA@]: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "@[NOTE@]: Neither that scene nor those|graphics will be present|in the game when it's finished"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_DEMO_REASON]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_PRESS_START]); // (ES) "Pulsa @[START@] para ver|tu inventario de hechizos" - (EN) "Press @[START@] to view|your spell inventory"
 

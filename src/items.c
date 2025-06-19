@@ -2,7 +2,8 @@
 
 Item obj_item[MAX_ITEMS];              // Array of game items with their properties
 Sprite *spr_item[MAX_ITEMS];           // Array of item sprites
-u16 TODO_item_interaction;          // ID of item currently TODO interaction
+u16 last_interacted_item;              // The item currently interacted by the player
+
 
 void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u16 collision_width, u16 collision_x_offset, u16 collision_height, u16 collision_y_offset, u8 check_depth)    // Initialize item with sprite and collision properties
 {

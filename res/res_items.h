@@ -10,6 +10,8 @@ extern const SpriteDefinition item_bedroom_windowsill;
 extern const SpriteDefinition item_bedroom_cabinet;
 extern const SpriteDefinition item_corridor_bookpedestal_sprite;
 extern const SpriteDefinition item_corridor_lamp_sprite;
+extern const SpriteDefinition item_corridor_door_bottom_sprite;
+extern const SpriteDefinition item_corridor_map_bottom_sprite;
 extern const SpriteDefinition item_forest_fg1_sprite;
 extern const SpriteDefinition item_forest_fg2_sprite;
 extern const SpriteDefinition item_forest_fg3_sprite;
