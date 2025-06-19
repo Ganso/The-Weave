@@ -48,7 +48,7 @@ act1_dialog2,A1D2_CLIO_IF_XANDER_WANTS,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"Si
 act1_dialog2,A1D2_CLIO_I_WONT_LET_YOU,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Nunca me ha gustado viajar|Pero no dejaré que vayas solo,I've never liked to travel|But I won't let you go alone
 act1_dialog3,A1D3_SOME_TIME_LATER,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Algún tiempo después,Some time later
 act1_dialog3,A1D3_ENEMIES_APPROACHING,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre","Enemies are approaching|We have to stay alert|Stay close, mother"
-act1_dialog3,A1D3_NOTE_ABOUT_SCENE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[NOTA@]: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado,@[NOTE@]: Neither that scene nor those|graphics will be present|in the game when it's finished
+act1_dialog3,A1D3_NOTE_ABOUT_SCENE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[NOTA@]: Puede que esta escena o estos|hechizos no estén en el|juego cuando esté terminado,@[NOTE@]: This scene or these|spells may not be in the|game when finished
 act1_dialog3,A1D3_DEMO_REASON,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas,It's been decided to include it|in this technical demo|as a test of certain mechanics
 act1_dialog3,A1D3_PRESS_START,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Pulsa @[START@] para ver|tu inventario de hechizos,Press @[START@] to view|your spell inventory
 act1_dialog3,A1D3_THAT_HURTS,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Eso ha dolido,That hurts
