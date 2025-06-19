@@ -294,25 +294,31 @@ bool pattern_player_add_note(u8 noteCode)
             play_player_pattern_sound(PATTERN_PLAYER_NONE); // play invalid sound
             combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
             obj_character[active_character].state = STATE_IDLE; // reset player state
-            if (id != PATTERN_PLAYER_NONE) {
-                // If the pattern was valid but not usable right now
-                dprintf(2,"Pattern %d not usable right now", id);
-                set_idle(); // reset combat state´
+            if (id != PATTERN_PLAYER_NONE)
+            {
+                // Pattern was valid but unusable right now
+                dprintf(2, "Pattern %d not usable right now", id);
+                bool resume_enemy = (combatContext.activeEnemy != ENEMY_NONE);
+                set_idle();                    // reset combat state
                 show_or_hide_interface(false); // hide interface
 
                 // Default dialog is SYSTEM_DIALOG[0]
                 DialogItem* dialog = (DialogItem*) &dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN];  // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
-                // If there's a Ghost and we've trying to launch a direct thunder spell, show specific message
+
+                // If there's a Ghost and we're trying to launch a direct thunder spell, show specific message
                 for (u8 i = 0; i < MAX_ENEMIES; i++)
                 {
-                    if (obj_enemy[i].class_id==ENEMY_CLS_WEAVERGHOST && id == PATTERN_THUNDER && rev == false)
+                    if (obj_enemy[i].class_id == ENEMY_CLS_WEAVERGHOST && id == PATTERN_THUNDER && !rev)
                     {
                         dialog = (DialogItem*) &dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS];
                         break; // No need to check other enemies
                     }
                 }
-                talk_dialog(dialog); // Show dialog message
-                show_or_hide_interface(true); // show interface again
+
+                talk_dialog(dialog);           // Show dialog message
+                show_or_hide_interface(true);  // show interface again
+                if (resume_enemy)
+                    combat_state = COMBAT_STATE_ENEMY_EFFECT; // resume enemy
             }
             return false; // invalid pattern
         }
