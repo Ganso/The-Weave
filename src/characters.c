@@ -441,6 +441,7 @@ void update_character_animations(void) {
                 anim_character(chr, ANIM_IDLE);
                 show_or_hide_interface(false);
                 talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_THAT_HURTS]); // (ES) "Eso ha dolido" - (EN) "That hurts"
+                talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_TRY_HIDE_OR_THUNDER]); // (ES) "Puedo probar a esconderme|o tratar de invocar|al trueno" - (EN) "I could try to hide|or attempt to summon|the thunder"
                 show_or_hide_interface(true);       
                 }
             break;
