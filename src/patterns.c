@@ -313,7 +313,7 @@ bool pattern_player_add_note(u8 noteCode)
                     if (obj_enemy[i].class_id == ENEMY_CLS_WEAVERGHOST && id == PATTERN_THUNDER && !rev)
                     {
                         dprintf(2,"Ghost detected, showing specific dialog for thunder");
-                        dialog = (DialogItem*) &dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS];
+                        dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_NOTES_COUNTER];
                         break; // No need to check other enemies
                     }
                 }

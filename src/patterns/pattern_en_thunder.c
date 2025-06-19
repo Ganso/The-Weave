@@ -1,18 +1,18 @@
 #include "globals.h"
 
 // Local data
-static u16  savedColor;     // Palette entry to restore after flash
 static bool flashOn;        // TRUE = CRAM entry is white, FALSE = original
 
 // Macro helpers
 #define PAL_ENTRY(pal,col)  (((pal)<<4)|(col))
 #define PAL0_COL4           PAL_ENTRY(0,4)
-#define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0x4444FF)
+#define COLOR_INITIAL_SKY     RGB24_TO_VDPCOLOR(0x1585c2) // Initial sky color
+#define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0x4444a3) // Flash color for enemy thunder
 
 // Launch callback — currently does nothing
 void enemy_thunder_launch(u8 enemyId)
 {
-    savedColor = PAL_getColor(PAL0_COL4);
+    dprintf(2, "Enemy %d: Thunder pattern launched", enemyId);
     flashOn    = false;
     SPR_setAnim(spr_enemy[enemyId], ANIM_ACTION);   // playing
 }
@@ -29,7 +29,7 @@ bool enemy_thunder_update(u8 enemyId)
         flashOn = true;
     } else if ((frame_counter & 1) == 0) {    // toggle every 2 frames
         u16 col = PAL_getColor(PAL0_COL4);
-        PAL_setColor(PAL0_COL4, (col == COLOR_ENEMY_FLASH) ? savedColor
+        PAL_setColor(PAL0_COL4, (col == COLOR_ENEMY_FLASH) ? COLOR_INITIAL_SKY
                                                          : COLOR_ENEMY_FLASH);
     }
 
@@ -38,7 +38,7 @@ bool enemy_thunder_update(u8 enemyId)
 
     if (++combatContext.effectTimer >= duration)
     {
-        PAL_setColor(PAL0_COL4, savedColor);  // restore sky
+        PAL_setColor(PAL0_COL4, COLOR_INITIAL_SKY);  // restore sky
         flashOn = false;                      // reset flash state
         SPR_setAnim(spr_enemy[enemyId], ANIM_IDLE);
         if (obj_character[active_character].state != STATE_HIT)
@@ -58,7 +58,7 @@ void enemy_thunder_on_counter(u8 enemyId)
     dprintf(2, "Enemy %d: Thunder pattern countered", enemyId);
 
     // Stop flashing immediately
-    PAL_setColor(PAL0_COL4, savedColor);
+    PAL_setColor(PAL0_COL4, COLOR_INITIAL_SKY);
     flashOn = false;
 
     // Apply damage to the enemy
@@ -79,7 +79,7 @@ void enemy_thunder_cancel(u8 enemyId)
     dprintf(2, "Enemy %d: Thunder cancelled by hide", enemyId);
 
     // Restore palette and stop flashing
-    PAL_setColor(PAL0_COL4, savedColor);
+    PAL_setColor(PAL0_COL4, COLOR_INITIAL_SKY);
     flashOn = false;
 
     // Cool-down so the enemy cannot spam thunder
