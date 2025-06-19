@@ -290,7 +290,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     // Dialog
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_SOME_TIME_LATER]); // (ES) "Algún tiempo después" - (EN) "Some time later"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_ENEMIES_APPROACHING]); // (ES) "Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre" - (EN) "Enemies are approaching|We have to stay alert|Stay close, mother"
-    talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_NOTE_ABOUT_SCENE]); // (ES) "@[NOTA@]: Ni esta escena ni estos|gráficos estarán en el|juego cuando esté terminado" - (EN) "@[NOTE@]: Neither that scene nor those|graphics will be present|in the game when it's finished"
+    talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_NOTE_ABOUT_SCENE]); // (ES) "@[NOTA@]: Puede que esta escena o estos|hechizos no estén en el|juego cuando esté terminado" - (EN) "@[NOTE@]: This scene or these|spells may not be in the|game when finished"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_DEMO_REASON]); // (ES) "Se ha decidido incluirla|en esta demo técnica|como prueba de ciertas mecánicas" - (EN) "It's been decided to include it|in this technical demo|as a test of certain mechanics"
     talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_PRESS_START]); // (ES) "Pulsa @[START@] para ver|tu inventario de hechizos" - (EN) "Press @[START@] to view|your spell inventory"
 

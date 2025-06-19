@@ -315,7 +315,7 @@ bool pattern_player_add_note(u8 noteCode)
                         if (id == PATTERN_THUNDER && !rev)
                         {
                             dprintf(2,"Ghost detected, showing specific dialog for thunder");
-                            dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_NOTES_COUNTER];
+                            dialog = (DialogItem*) &dialogs[ACT1_DIALOG3][A1D3_REVERSE_NOTES_COUNTER];
                             break; // No need to check other enemies
                         }
                         if (id == PATTERN_THUNDER && rev &&
@@ -323,7 +323,7 @@ bool pattern_player_add_note(u8 noteCode)
                              combatContext.activePattern != PATTERN_EN_THUNDER))
                         {
                             dprintf(2,"Ghost detected, showing hint for reverse thunder timing");
-                            dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_HINT];
+                            dialog = (DialogItem*) &dialogs[ACT1_DIALOG3][A1D3_REVERSE_HINT];
                             break; // No need to check other enemies
                         }
                     }

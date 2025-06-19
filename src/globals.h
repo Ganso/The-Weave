@@ -9,7 +9,7 @@
 #include <genesis.h>
 
 // Debug
-#define DEBUG_LEVEL 2  // 0: no debug, 1: only errors, 2: debug messages, 3: verbose debug messages
+#define DEBUG_LEVEL 1  // 0: no debug, 1: easter eggs & errors, 2: debug messages, 3: verbose debug messages
 
 #define dprintf(level, ...) ((void)0)
 #if DEBUG_LEVEL > 0
