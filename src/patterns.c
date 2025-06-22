@@ -88,7 +88,7 @@ void init_player_patterns(void)
     playerPatterns[PATTERN_THUNDER] = (PlayerPattern){
         .id       = PATTERN_THUNDER,
         .enabled  = false,
-        .notes    = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
+        .notes    = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_SOL}, // 1-2-3-3
         .baseDuration = SCREEN_FPS * 4, // 4 seconds
         // .baseDuration = 120, // 2 seconds (for testing)
         .canUse   = player_thunder_can_use,
@@ -101,7 +101,7 @@ void init_player_patterns(void)
     playerPatterns[PATTERN_HIDE] = (PlayerPattern){
         .id       = PATTERN_HIDE,
         .enabled  = false,
-        .notes    = { NOTE_FA, NOTE_SI, NOTE_SOL, NOTE_DO }, // 2-5-3-6
+        .notes    = { NOTE_FA, NOTE_SOL, NOTE_SOL, NOTE_FA }, // 2-3-3-2
         .baseDuration = SCREEN_FPS * 4, // 4 seconds
         .canUse   = player_hide_can_use,
         .launch   = player_hide_launch,
@@ -113,7 +113,7 @@ void init_player_patterns(void)
     playerPatterns[PATTERN_OPEN] = (PlayerPattern){
         .id       = PATTERN_OPEN,
         .enabled  = false,
-        .notes    = { NOTE_FA, NOTE_SOL, NOTE_SOL, NOTE_FA }, // 2-3-3-2
+        .notes    = { NOTE_FA, NOTE_SI, NOTE_SOL, NOTE_DO }, // 2-5-3-6
         .baseDuration = 45,
         .canUse   = player_open_can_use,
         .launch   = player_open_launch,
@@ -401,7 +401,7 @@ void init_enemy_patterns(u8 enemyId)
     /* --- THUNDER / ELECTRIC  (slot 0) --------------------------- */
     enemyPatterns[enemyId][0] = (EnemyPattern){
         .id             = PATTERN_EN_THUNDER,
-        .notes         = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_LA }, // 1-2-3-4
+        .notes         = { NOTE_MI, NOTE_FA, NOTE_SOL, NOTE_SOL }, // 1-2-3-3
         .noteCount      = 4,
         .baseDuration   = SCREEN_FPS, 
         .rechargeFrames = SCREEN_FPS*3,
