@@ -29,6 +29,17 @@ def parse_enum_values(header_file):
     return values
 
 
+def build_prefix_map(enum_values):
+    """Create a mapping from constant prefixes to index->name dictionaries."""
+    prefix_map = {}
+    for name, idx in enum_values.items():
+        if name.endswith('_COUNT') or 'TERM_' in name or name == 'NULL':
+            continue
+        prefix = name.split('_')[0]
+        prefix_map.setdefault(prefix, {})[idx] = name
+    return prefix_map
+
+
 def show_help():  
     """
     Print usage instructions for the script.
@@ -173,12 +184,24 @@ def parse_texts(files):
     return dialog_texts, choice_texts, cluster_texts
 
 
-def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values):
-    """
-    Update the given C source file by adding comments with dialog/choice texts
-    to lines calling talk_dialog() and choice_dialog().
-    """
-    modified = False  
+def gather_all_constants(enum_values):
+    """Return the set of dialog constant names excluding terminators."""
+    return {
+        n
+        for n in enum_values
+        if not n.endswith('_COUNT')
+        and 'TERM_' not in n
+        and n != 'NULL'
+        and not re.match(r'^ACT\d+_DIALOG\d+$', n)
+        and n != 'SYSTEM_DIALOG'
+    }
+
+
+def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values, prefix_map):
+    """Update ``c_file`` inserting text comments and return modification info."""
+    modified = False
+    changes = []
+    used_constants = set()
     with open(c_file, 'r', encoding='utf-8') as f:  
         lines = f.readlines()  
 
@@ -189,7 +212,9 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_v
     cluster_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialogs\[(\w+_DIALOG\d*)\]\[([^\]]+)\]\s*\);)(.*)?$')
     choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')
 
-    for line in lines:
+    ref_re = re.compile(r'dialogs\s*\[(\w+_DIALOG\d*)\]\s*\[(\w+)\]')
+
+    for lineno, line in enumerate(lines, 1):
         l = line.rstrip('\n')
 
         m = talk_re.search(l)
@@ -207,8 +232,12 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_v
                 text = texts[idx]
                 if text:
                     comment = f' // (ES) "{text["es"]}" - (EN) "{text["en"]}"'
-                    l = f"{indent}{before}{call}{comment}"
-                    modified = True
+                    new_line = f"{indent}{before}{call}{comment}"
+                    if new_line != l:
+                        l = new_line
+                        modified = True
+                        changes.append(f"talk_dialog {idx_expr} in line {lineno}")
+            used_constants.add(idx_expr)
         else:
             m = cluster_re.search(l)
             if m:
@@ -221,16 +250,24 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_v
                 key = act.upper()
                 texts = dialog_texts.get(key, [])
                 comments = []
+                prefix = idx_expr.split('_')[0]
                 while idx is not None and idx < len(texts):
                     text = texts[idx]
                     if not text:
                         break
                     comments.append(f'(ES) "{text["es"]}" - (EN) "{text["en"]}"')
+                    const = prefix_map.get(prefix, {}).get(idx)
+                    if const:
+                        used_constants.add(const)
                     idx += 1
                 if comments:
                     comment = f' // {", ".join(comments)}'
-                    l = f"{indent}{before}{call}{comment}"
-                    modified = True
+                    new_line = f"{indent}{before}{call}{comment}"
+                    if new_line != l:
+                        l = new_line
+                        modified = True
+                        changes.append(f"talk_cluster {idx_expr} in line {lineno}")
+                used_constants.add(idx_expr)
             else:
                 m = cluster_old_re.search(l)
                 if m:
@@ -239,8 +276,12 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_v
                     comments = [f'(ES) "{t["es"]}" - (EN) "{t["en"]}"' for t in texts if t]
                     if comments:
                         comment = f' // {", ".join(comments)}'
-                        l = f"{indent}{before}{call}{comment}"
-                        modified = True
+                        new_line = f"{indent}{before}{call}{comment}"
+                        if new_line != l:
+                            l = new_line
+                            modified = True
+                            changes.append(f"talk_cluster {cluster_name} in line {lineno}")
+                    used_constants.add(cluster_name)
                 else:
                     m = choice_re.search(l)
                     if m:
@@ -254,40 +295,61 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_v
                             options = opts[idx]
                             options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])
                             comment = f' // {options_text}'
-                            l = f"{indent}{before}{call}{comment}"
-                            modified = True
+                            new_line = f"{indent}{before}{call}{comment}"
+                            if new_line != l:
+                                l = new_line
+                                modified = True
+                                changes.append(f"choice_dialog {act}_CHOICE{choice_num} in line {lineno}")
+                            used_constants.add(act)
 
-        new_lines.append(l + "\n")  
+        # Detect raw references to dialogs outside talk_* calls
+        for rm in ref_re.finditer(l):
+            used_constants.add(rm.group(2))
+
+        new_lines.append(l + "\n")
 
     # Write the updated lines back to the file
-    with open(c_file, 'w', encoding='utf-8', newline='') as f:  
-        f.writelines(new_lines)  
+    if modified:
+        with open(c_file, 'w', encoding='utf-8', newline='') as f:
+            f.writelines(new_lines)
 
-    if modified:  
-        print(f"Successfully updated comments in {c_file}")  
-    else:  
-        print(f"No comments were modified in {c_file}")  
+    return modified, changes, used_constants
 
 
-def process_file(c_file):
-    """
-    Process a single C file: read text definitions and update the file.
-    """
-    print(f"Processing file: {c_file}")
-    dialog_texts, choice_texts, cluster_texts = parse_texts(["src/texts.c", "src/texts_generated.c"])
-    enum_values = parse_enum_values("src/texts_generated.h")
-    update_source_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values)
+def process_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values, used):
+    """Process a single C file and print changes if any."""
+    prefix_map = build_prefix_map(enum_values)
+    modified, changes, refs = update_source_file(
+        c_file, dialog_texts, choice_texts, cluster_texts, enum_values, prefix_map
+    )
+    used.update(refs)
+    if modified:
+        print(c_file)
+        for ch in changes:
+            print(f"  • {ch}")
 
 
 def process_all_files():
-    """
-    Process all C source files in the src directory (except texts.c).
-    """
+    """Process all C source files and report orphan texts."""
+    dialog_texts, choice_texts, cluster_texts = parse_texts([
+        "src/texts.c",
+        "src/texts_generated.c",
+    ])
+    enum_values = parse_enum_values("src/texts_generated.h")
+    used = set()
+
     for root, _, files in os.walk("src"):
         for file in files:
             if file.endswith(".c") and file != "texts.c":
                 c_file = os.path.join(root, file)
-                process_file(c_file)
+                process_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values, used)
+
+    all_consts = gather_all_constants(enum_values)
+    orphans = sorted(all_consts - used)
+    if orphans:
+        print("Textos hu\u00e9rfanos:")
+        for name in orphans:
+            print(f"  • {name}")
 
 
 def main():  
@@ -306,7 +368,13 @@ def main():
         if not os.path.exists(c_file):  
             print(f"Error: File {c_file} not found")  
             return  
-        process_file(c_file)  
+        dialog_texts, choice_texts, cluster_texts = parse_texts([
+            "src/texts.c",
+            "src/texts_generated.c",
+        ])
+        enum_values = parse_enum_values("src/texts_generated.h")
+        dummy_used = set()
+        process_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values, dummy_used)
 
 
 if __name__ == "__main__":  
