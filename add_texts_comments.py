@@ -204,9 +204,17 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts,
     cluster_old_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialog_clusters\[(\w+)\]\s*\);)(.*)?$')
     cluster_re = re.compile(r'(\s*)(.*?)(talk_cluster\s*\(\s*&dialogs\[(\w+_DIALOG\d*)\]\[([^\]]+)\]\s*\);)(.*)?$')
     choice_re = re.compile(r'(\s*)(.*?)(choice_dialog\s*\(\s*&choices\[(\w+)_CHOICE(\d+)\]\[(\d+)\]\s*\);)(.*)?$')
+    dialog_ref_re = re.compile(r'dialogs\[(\w+)\]\[([^\]]+)\]')
 
     for lineno, line in enumerate(lines, start=1):
         l = line.rstrip('\n')
+        for set_name, idx_expr in dialog_ref_re.findall(l):
+            if idx_expr.isdigit():
+                idx = int(idx_expr)
+            else:
+                idx = enum_values.get(idx_expr)
+            if idx is not None:
+                used_texts.setdefault(set_name.upper(), set()).add(idx)
 
         m = talk_re.search(l)
         if m:
@@ -246,7 +254,7 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts,
                         break
                     comments.append(f'(ES) "{text["es"]}" - (EN) "{text["en"]}"')
                     idx += 1
-                if comments:
+                if comments and not existing_comment.strip():
                     comment = f' // {", ".join(comments)}'
                     l = f"{indent}{before}{call}{comment}"
                     modified = True
@@ -272,7 +280,7 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts,
                         )
                         key = f"{act}_CHOICE{choice_num}".upper()
                         opts = choice_texts.get(key, [])
-                        if idx < len(opts):
+                        if idx < len(opts) and not existing_comment.strip():
                             options = opts[idx]
                             options_text = ', '.join([f'(ES) "{o["es"]}" - (EN) "{o["en"]}"' for o in options])
                             comment = f' // {options_text}'
@@ -281,14 +289,12 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts,
                             changes.append(f"choice_dialog {act}_CHOICE{choice_num}[{idx}] in line {lineno}")
 
         new_lines.append(l + "\n")
-
     if modified:
         with open(c_file, 'w', encoding='utf-8', newline='') as f:
             f.writelines(new_lines)
     return modified, changes
 
-
-def process_file(c_file, dialog_texts, choice_texts, cluster_texts,
+  def process_file(c_file, dialog_texts, choice_texts, cluster_texts,
                  enum_values, enum_sets, used_texts):
     """Process a single C file."""
     modified, changes = update_source_file(
