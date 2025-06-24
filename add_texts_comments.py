@@ -230,7 +230,7 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts,
             if idx is not None and idx < len(texts):
                 text = texts[idx]
                 used_texts.setdefault(key, set()).add(idx)
-                if text and not existing_comment.strip():
+                if text:
                     comment = f' // (ES) "{text["es"]}" - (EN) "{text["en"]}"'
                     l = f"{indent}{before}{call}{comment}"
                     modified = True
@@ -266,7 +266,7 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts,
                     texts = cluster_texts.get(cluster_name.upper(), [])
                     comments = [f'(ES) "{t["es"]}" - (EN) "{t["en"]}"' for t in texts if t]
                     # Old style clusters: mark as used if possible
-                    if comments and not existing_comment.strip():
+                    if comments:
                         comment = f' // {", ".join(comments)}'
                         l = f"{indent}{before}{call}{comment}"
                         modified = True
@@ -289,14 +289,12 @@ def update_source_file(c_file, dialog_texts, choice_texts, cluster_texts,
                             changes.append(f"choice_dialog {act}_CHOICE{choice_num}[{idx}] in line {lineno}")
 
         new_lines.append(l + "\n")
-
     if modified:
         with open(c_file, 'w', encoding='utf-8', newline='') as f:
             f.writelines(new_lines)
     return modified, changes
 
-
-def process_file(c_file, dialog_texts, choice_texts, cluster_texts,
+  def process_file(c_file, dialog_texts, choice_texts, cluster_texts,
                  enum_values, enum_sets, used_texts):
     """Process a single C file."""
     modified, changes = update_source_file(
@@ -336,18 +334,6 @@ def main():
     if sys.argv[1] == "*":
         process_all_files(dialog_texts, choice_texts, cluster_texts,
                           enum_values, enum_sets, used_texts)
-        orphans = []
-        for set_name, texts in dialog_texts.items():
-            inv = {v: k for k, v in enum_sets.get(set_name, {}).items()}
-            used = used_texts.get(set_name, set())
-            for idx, text in enumerate(texts):
-                if text and idx not in used:
-                    const = inv.get(idx, f"{set_name}[{idx}]")
-                    orphans.append(f"{const}")
-        if orphans:
-            print("Orphan texts:")
-            for o in orphans:
-                print(f"  {o}")
     else:
         c_file = sys.argv[1]
         if not c_file.startswith("src/"):
@@ -357,6 +343,20 @@ def main():
             return
         process_file(c_file, dialog_texts, choice_texts, cluster_texts,
                      enum_values, enum_sets, used_texts)
+
+    # Report orphan texts
+    orphans = []
+    for set_name, texts in dialog_texts.items():
+        inv = {v: k for k, v in enum_sets.get(set_name, {}).items()}
+        used = used_texts.get(set_name, set())
+        for idx, text in enumerate(texts):
+            if text and idx not in used:
+                const = inv.get(idx, f"{set_name}[{idx}]")
+                orphans.append(f"{const}")
+    if orphans:
+        print("Orphan texts:")
+        for o in orphans:
+            print(f"  {o}")
 
 
 if __name__ == "__main__":  
