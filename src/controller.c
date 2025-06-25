@@ -70,10 +70,16 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     s16 current_x = obj_character[active_character].x;
     s16 current_y = obj_character[active_character].y;
 
-    fix16 fx = obj_character[active_character].fx + FIX16_MUL(obj_character[active_character].velocity, INT_TO_FIX16(dx));
-    fix16 fy = obj_character[active_character].fy + FIX16_MUL(obj_character[active_character].velocity, INT_TO_FIX16(dy));
+    fix16 fx = obj_character[active_character].fx +
+               FIX16_MUL(obj_character[active_character].velocity,
+                          INT_TO_FIX16(dx));
+    fix16 fy = obj_character[active_character].fy +
+               FIX16_MUL(obj_character[active_character].velocity,
+                          INT_TO_FIX16(dy));
     s16 new_x = FIX16_TO_INT(fx);
     s16 new_y = FIX16_TO_INT(fy);
+    fix16 new_fx = fx;
+    fix16 new_fy = fy;
     u8 player_y_size = obj_character[active_character].y_size;
     bool direction_changed = false;
     bool scroll_user_mode =
@@ -125,6 +131,10 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         // Update new position to where we found no collision
         new_x = test_x;
         new_y = test_y;
+        fx = INT_TO_FIX16(new_x);
+        fy = INT_TO_FIX16(new_y);
+        new_fx = fx;
+        new_fy = fy;
     }
 
     bool position_updated = false;
@@ -151,7 +161,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
                  (new_x >= x_limit_min && new_x <= x_limit_max)) {
             // Update character position and flip state
             obj_character[active_character].x = new_x;
-            obj_character[active_character].fx = INT_TO_FIX16(new_x);
+            obj_character[active_character].fx = new_fx;
             if (direction_changed) {
                 obj_character[active_character].flipH = (dx < 0);
             }
@@ -164,7 +174,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         if (new_y + player_y_size >= y_limit_min &&
             new_y + player_y_size <= y_limit_max) {
             obj_character[active_character].y = new_y;
-            obj_character[active_character].fy = INT_TO_FIX16(new_y);
+            obj_character[active_character].fy = new_fy;
             position_updated = true;
         }
     }
@@ -173,8 +183,8 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     if (position_updated) {
         update_character(active_character);
     }
-    obj_character[active_character].fx = INT_TO_FIX16(obj_character[active_character].x);
-    obj_character[active_character].fy = INT_TO_FIX16(obj_character[active_character].y);
+    obj_character[active_character].fx = new_fx;
+    obj_character[active_character].fy = new_fy;
 }
 
 void handle_action_buttons(u16 joy_value)    // Process action buttons for item interaction and musical notes

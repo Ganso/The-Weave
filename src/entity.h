@@ -14,7 +14,7 @@ extern bool movement_active;
 // Fixed point helpers (10.6 format)
 #define FIX16_ONE       64
 #define INT_TO_FIX16(n) ((fix16)((n) << 6))
-#define FIX16_TO_INT(n) ((s16)((n) >> 6))
+#define FIX16_TO_INT(n) ((s16)((n) / FIX16_ONE))
 #define FIX16_MUL(a,b)  ((fix16)(((s32)(a) * (s32)(b)) >> 6))
 
 // Entities states

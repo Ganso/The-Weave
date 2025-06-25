@@ -185,8 +185,6 @@ void move_enemy(u16 nenemy, s16 newx, s16 newy)    // Move enemy with walking an
 
     move_entity(&obj_enemy[nenemy].obj_character, spr_enemy[nenemy], newx, newy);
     update_enemy_shadow(nenemy);
-    obj_enemy[nenemy].obj_character.fx = INT_TO_FIX16(obj_enemy[nenemy].obj_character.x);
-    obj_enemy[nenemy].obj_character.fy = INT_TO_FIX16(obj_enemy[nenemy].obj_character.y);
 
     anim_enemy(nenemy, ANIM_IDLE);
 }

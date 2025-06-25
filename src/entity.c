@@ -8,15 +8,11 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move 
     u16 nenemy = ENEMY_NONE;
 
     newy-=entity->y_size; // Now all calculations are relative to the bottom line, not the upper one
-    
-    s16 x = entity->x;
-    s16 y = entity->y;
-    s16 dx = newx - x;
-    s16 dy = newy - y;
-    s16 sx = dx > 0 ? 1 : -1;
-    s16 sy = dy > 0 ? 1 : -1;
-    s16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
-    s16 e2;
+
+    fix16 fx = entity->fx;
+    fix16 fy = entity->fy;
+    fix16 target_fx = INT_TO_FIX16(newx);
+    fix16 target_fy = INT_TO_FIX16(newy);
     bool old_movement_active=movement_active;
 
 
@@ -37,22 +33,34 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move 
     }
 
     movement_active=false; // Player can't move while an entity is moving
-    for(;;)
+    while (fx != target_fx || fy != target_fy)
     {
-        SPR_setPosition(sprite, x, y);
+        if (fx < target_fx) {
+            fx += entity->velocity;
+            if (fx > target_fx) fx = target_fx;
+        }
+        else if (fx > target_fx) {
+            fx -= entity->velocity;
+            if (fx < target_fx) fx = target_fx;
+        }
+
+        if (fy < target_fy) {
+            fy += entity->velocity;
+            if (fy > target_fy) fy = target_fy;
+        }
+        else if (fy > target_fy) {
+            fy -= entity->velocity;
+            if (fy < target_fy) fy = target_fy;
+        }
+
+        entity->x = FIX16_TO_INT(fx);
+        entity->y = FIX16_TO_INT(fy);
+        SPR_setPosition(sprite, entity->x, entity->y);
         if (nchar != CHR_NONE) update_character_shadow(nchar);
         if (nenemy != ENEMY_NONE) update_enemy_shadow(nenemy);
-        entity->x = x;
-        entity->y = y;
         next_frame(false);
-
-        if (x == newx && y == newy) break;
-
-        e2 = err;
-        if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }
-        if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
-    entity->fx = INT_TO_FIX16(entity->x);
-    entity->fy = INT_TO_FIX16(entity->y);
+    entity->fx = fx;
+    entity->fy = fy;
     movement_active=old_movement_active;
 }
