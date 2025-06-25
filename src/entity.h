@@ -11,6 +11,12 @@
 // Global variables
 extern bool movement_active;
 
+// Fixed point helpers (10.6 format)
+#define FIX16_ONE       64
+#define INT_TO_FIX16(n) ((fix16)((n) << 6))
+#define FIX16_TO_INT(n) ((s16)((n) >> 6))
+#define FIX16_MUL(a,b)  ((fix16)(((s32)(a) * (s32)(b)) >> 6))
+
 // Entities states
 typedef enum {
     STATE_IDLE,
@@ -33,6 +39,8 @@ typedef struct
     const SpriteDefinition  *sd_shadow;
     s16                     x;
     s16                     y;
+    fix16                   fx;
+    fix16                   fy;
     u8                      x_size;
     u8                      y_size;
     u16                     palette;
@@ -46,7 +54,7 @@ typedef struct
     u8                      collision_height;
     GameState               state;
     bool                    follows_character;
-    u8                      follow_speed;
+    fix16                   velocity;
     bool                    drops_shadow;
     u16                     modeTimer;
 } Entity;
