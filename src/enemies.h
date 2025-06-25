@@ -27,7 +27,6 @@ typedef struct
 {
     u16 max_hitpoints;
     bool follows_character; // If true, the enemy will follow the character
-    u8 follow_speed;
     bool has_pattern[MAX_PATTERN_ENEMY]; // If true, the enemy has a particular pattern
 } Enemy_Class;
 extern Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object

@@ -69,7 +69,13 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         if (collision_height==0) collision_height=2; // Two lines height
         if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
-        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow, 0 };
+        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow,
+            0, 0, INT_TO_FIX16(0), INT_TO_FIX16(0),
+            x_size, y_size, npal, false, false, ANIM_IDLE, false,
+            collision_x_offset, collision_y_offset, collision_width, collision_height,
+            STATE_IDLE, FALSE, INT_TO_FIX16(1), drops_shadow, 0 };
+        if (nchar == CHR_clio)
+            obj_character[nchar].velocity = (fix16)(FIX16_ONE * 3 / 4);
     } else {
         nsprite = obj_character[nchar].sd;
         nsprite_shadow = obj_character[nchar].sd_shadow;
@@ -143,7 +149,11 @@ void init_face(u16 nface)    // Create new character face sprite for dialogs
         default:
             return;
         }
-        obj_face[nface] = (Entity) { true, nsprite, NULL, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0, false, 0 };
+        obj_face[nface] = (Entity) { true, nsprite, NULL,
+            0, 160, INT_TO_FIX16(0), INT_TO_FIX16(160),
+            64, 64, npal, false, false, ANIM_IDLE, false,
+            0, 0, 0, 0, STATE_IDLE, FALSE,
+            INT_TO_FIX16(1), false, 0 };
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
@@ -221,6 +231,8 @@ void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with wal
     }
 
     move_entity(&obj_character[nchar], spr_chr[nchar], newx, newy);
+    obj_character[nchar].fx = INT_TO_FIX16(obj_character[nchar].x);
+    obj_character[nchar].fy = INT_TO_FIX16(obj_character[nchar].y);
     obj_character[nchar].state=STATE_IDLE; // Set state to idle after moving
 }
 
@@ -231,6 +243,8 @@ void move_character_instant(u16 nchar,s16 x,s16 y)    // Set character position 
     SPR_setPosition(spr_chr[nchar], x, y);
     obj_character[nchar].x = x;
     obj_character[nchar].y = y;
+    obj_character[nchar].fx = INT_TO_FIX16(x);
+    obj_character[nchar].fy = INT_TO_FIX16(y);
     update_character_shadow(nchar);
     next_frame(false);
 }
@@ -267,10 +281,9 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     }
 }
 
-void follow_active_character(u16 nchar, bool follow, u8 follow_speed)    // Set character to follow active character
+void follow_active_character(u16 nchar, bool follow)    // Set character to follow active character
 {
     obj_character[nchar].follows_character=follow;
-    obj_character[nchar].follow_speed=follow_speed;
     obj_character[nchar].state=STATE_IDLE;
     show_character(nchar, true);
 }
@@ -296,8 +309,6 @@ void approach_characters(void)    // Move NPCs that follow the hero
         if (!obj_character[nchar].active ||
             !obj_character[nchar].follows_character)               continue;
 
-        // Throttle by follow_speed
-        if (frame_counter % obj_character[nchar].follow_speed)     continue;
 
         dprintf(3,"Character %d is following\n", nchar);
 
@@ -311,10 +322,13 @@ void approach_characters(void)    // Move NPCs that follow the hero
              (obj_character[nchar].y +
               obj_character[nchar].y_size);
 
-        newx = obj_character[nchar].x +
-               (dx ? (dx > 0 ? 1 : -1) : 0);
-        newy = obj_character[nchar].y +
-               (dy ? (dy > 0 ? 1 : -1) : 0);
+        if (dx)
+            obj_character[nchar].fx += (dx > 0 ? obj_character[nchar].velocity : -obj_character[nchar].velocity);
+        if (dy)
+            obj_character[nchar].fy += (dy > 0 ? obj_character[nchar].velocity : -obj_character[nchar].velocity);
+
+        newx = FIX16_TO_INT(obj_character[nchar].fx);
+        newy = FIX16_TO_INT(obj_character[nchar].fy);
 
         // Distance to the active character if we accept the new position
         distance = char_distance(nchar, newx, newy, active_character);

@@ -52,5 +52,7 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move 
         if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }
         if (e2 < abs(dy)) { err += abs(dx); y += sy; }
     }
+    entity->fx = INT_TO_FIX16(entity->x);
+    entity->fy = INT_TO_FIX16(entity->y);
     movement_active=old_movement_active;
 }

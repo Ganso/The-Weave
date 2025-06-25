@@ -29,7 +29,11 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
     obj_item[nitem].check_depth=check_depth;
 
     // We set X to 0, as we are gonna calc it later
-    obj_item[nitem].entity = (Entity) { true, spritedef, NULL, 0, y, x_size, y_size, npal, false, false, ANIM_IDLE, true, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, false, 0 };
+    obj_item[nitem].entity = (Entity) { true, spritedef, NULL,
+        0, y, INT_TO_FIX16(0), INT_TO_FIX16(y),
+        x_size, y_size, npal, false, false, ANIM_IDLE, true,
+        collision_x_offset, collision_y_offset, collision_width, collision_height,
+        STATE_IDLE, FALSE, INT_TO_FIX16(0), false, 0 };
     spr_item[nitem] = NULL;
 
     // Check visibility and load sprite if needed
@@ -106,6 +110,8 @@ void display_item_if_visible(u16 nitem)    // Show/hide item based on screen vis
     // Update final state
     obj_item[nitem].entity.visible = should_be_visible;
     obj_item[nitem].entity.x = x;
+    obj_item[nitem].entity.fx = INT_TO_FIX16(x);
+    obj_item[nitem].entity.fy = INT_TO_FIX16(obj_item[nitem].entity.y);
 }
 
 void check_items_visibility(void)    // Update visibility state of all active items

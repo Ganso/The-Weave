@@ -64,6 +64,7 @@ Las notas se codifican con constantes `NOTE_MI`…`NOTE_DO`. Jugador y enemigos 
 
 ### Entidades
 `Entity` incluye estado (`GameState`), posición, tamaño, prioridad, animación y datos de colisión. `characters`, `enemies` e `items` encapsulan este tipo para sus propias necesidades. Los enemigos además almacenan puntos de vida y un `EnemyMode` para distinguir sus fases.
+Desde esta actualización las entidades manejan coordenadas de tipo fijo (`fix16`) en `fx`/`fy` y una velocidad `velocity` expresada también en ese formato para permitir movimiento subpixel.
 
 ### Combate
 `combat.c` gestiona un bucle basado en `CombatState`. Durante `COMBAT_STATE_IDLE` los enemigos pueden lanzar patrones si su `rechargeFrames` ha terminado. El lanzamiento y actualización de patrones modifican `combat_state` y `combatContext` (temporizadores, notas en curso, enemigo activo…). Las funciones `hit_enemy` y `hit_player` aplican daño y activan la animación de `HURT`. `update_combat` se llama cada fotograma desde `next_frame` para avanzar la máquina de estados.
