@@ -30,6 +30,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
     u8 collision_y_offset=0;
     u8 collision_width=0;
     u8 collision_height=0;
+    f16 velocity = FIX16_ONE; // Default velocity for characters
     bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
     const SpriteDefinition *nsprite_shadow = NULL;
@@ -43,10 +44,12 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
             if (player_has_rod) nsprite = &linus_sprite;
             else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
+            velocity = FIX16_ONE * 1.5 ; // Linus is faster
             break;
         case CHR_clio:
             nsprite = &clio_sprite;
             nsprite_shadow = &clio_shadow_sprite;
+            velocity = FIX16_ONE * 3 / 4; // Clio is slower
             break;
         case CHR_xander:
             nsprite = &xander_sprite;
@@ -73,9 +76,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
             0, 0, INT_TO_FIX16(0), INT_TO_FIX16(0),
             x_size, y_size, npal, false, false, ANIM_IDLE, false,
             collision_x_offset, collision_y_offset, collision_width, collision_height,
-            STATE_IDLE, FALSE, INT_TO_FIX16(1), drops_shadow, 0 };
-        if (nchar == CHR_clio)
-            obj_character[nchar].velocity = (fix16)(FIX16_ONE * 3 / 4);
+            STATE_IDLE, FALSE, velocity, drops_shadow, 0 };
     } else {
         nsprite = obj_character[nchar].sd;
         nsprite_shadow = obj_character[nchar].sd_shadow;
