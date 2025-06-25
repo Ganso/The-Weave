@@ -232,8 +232,6 @@ void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with wal
     }
 
     move_entity(&obj_character[nchar], spr_chr[nchar], newx, newy);
-    obj_character[nchar].fx = INT_TO_FIX16(obj_character[nchar].x);
-    obj_character[nchar].fy = INT_TO_FIX16(obj_character[nchar].y);
     obj_character[nchar].state=STATE_IDLE; // Set state to idle after moving
 }
 
