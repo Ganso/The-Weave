@@ -37,5 +37,6 @@ WANTED: Graphic artists who can handle Sega Megadrive hardware limitations.
 
 Add gameplay captures here:
 
-![Screenshot 1](docs/images/screenshot1.png)
-![Screenshot 2](docs/images/screenshot2.png)
+![Screenshot 1](docs/images/screenshot_1.png)
+![Screenshot 2](docs/images/screenshot_2.png)
+![Screenshot 3](docs/images/screenshot_3.png)
