@@ -67,10 +67,11 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     // dx Horizontal movement (-1 for left, 1 for right, 0 for no horizontal movement)
     // dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
 
-    s16 current_x = obj_character[active_character].x;
-    s16 current_y = obj_character[active_character].y;
-    s16 new_x = current_x + dx;
-    s16 new_y = current_y + dy;
+    fix16 current_x = obj_character[active_character].x;
+    fix16 current_y = obj_character[active_character].y;
+    fix16 step = obj_character[active_character].speed;
+    fix16 new_x = current_x + dx * step;
+    fix16 new_y = current_y + dy * step;
     u8 player_y_size = obj_character[active_character].y_size;
     bool direction_changed = false;
     bool scroll_user_mode =
@@ -86,23 +87,23 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     }
 
     // Check for collision at new position
-    if ((detect_char_enemy_collision(active_character, new_x, new_y) != ENEMY_NONE) ||
-        (detect_char_item_collision(active_character, new_x, new_y) != ITEM_NONE) ||
-        (detect_char_char_collision(active_character, new_x, new_y) != CHR_NONE)) {
+    if ((detect_char_enemy_collision(active_character, to_int(new_x), to_int(new_y)) != ENEMY_NONE) ||
+        (detect_char_item_collision(active_character, to_int(new_x), to_int(new_y)) != ITEM_NONE) ||
+        (detect_char_char_collision(active_character, to_int(new_x), to_int(new_y)) != CHR_NONE)) {
         
         num_colls = 0; // Reset collision counter
         
         // If changing direction, try moving in new direction
         // If not changing direction, try moving in opposite direction
-        s16 move_dx = direction_changed ? dx : -dx;
-        s16 move_dy = direction_changed ? dy : -dy;
-        s16 test_x = direction_changed ? current_x : new_x;
-        s16 test_y = direction_changed ? current_y : new_y;
+        fix16 move_dx = direction_changed ? dx * step : -dx * step;
+        fix16 move_dy = direction_changed ? dy * step : -dy * step;
+        fix16 test_x = direction_changed ? current_x : new_x;
+        fix16 test_y = direction_changed ? current_y : new_y;
 
         // Move pixel by pixel until no collision or MAX_COLLISIONS reached
-        while ((detect_char_enemy_collision(active_character, test_x, test_y) != ENEMY_NONE ||
-               detect_char_item_collision(active_character, test_x, test_y) != ITEM_NONE ||
-               detect_char_char_collision(active_character, test_x, test_y) != CHR_NONE) &&
+        while ((detect_char_enemy_collision(active_character, to_int(test_x), to_int(test_y)) != ENEMY_NONE ||
+               detect_char_item_collision(active_character, to_int(test_x), to_int(test_y)) != ITEM_NONE ||
+               detect_char_char_collision(active_character, to_int(test_x), to_int(test_y)) != CHR_NONE) &&
                num_colls < MAX_COLLISIONS) {
             
             test_x += move_dx;
@@ -111,9 +112,9 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
 
             // Stay within screen boundaries
             if ((use_x_limits &&
-                 (test_x < x_limit_min || test_x > x_limit_max)) ||
-                test_y + player_y_size < y_limit_min ||
-                test_y + player_y_size > y_limit_max)
+                 (to_int(test_x) < x_limit_min || to_int(test_x) > x_limit_max)) ||
+                to_int(test_y) + player_y_size < y_limit_min ||
+                to_int(test_y) + player_y_size > y_limit_max)
             {
                 break;
             }
@@ -129,9 +130,9 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     // Handle horizontal movement
     if (dx != 0) {
         bool at_scroll_edge =
-            (dx < 0 && new_x <= SCROLL_START_DISTANCE) ||
+            (dx < 0 && to_int(new_x) <= SCROLL_START_DISTANCE) ||
             (dx > 0 &&
-             new_x + obj_character[active_character].x_size >=
+             to_int(new_x) + obj_character[active_character].x_size >=
                  SCREEN_WIDTH - SCROLL_START_DISTANCE);
 
         bool can_scroll_further =
@@ -145,7 +146,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
             position_updated = true;
         }
         else if (!use_x_limits ||
-                 (new_x >= x_limit_min && new_x <= x_limit_max)) {
+                 (to_int(new_x) >= x_limit_min && to_int(new_x) <= x_limit_max)) {
             // Update character position and flip state
             obj_character[active_character].x = new_x;
             if (direction_changed) {
@@ -157,8 +158,8 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
 
     // Handle vertical movement
     if (dy != 0) {
-        if (new_y + player_y_size >= y_limit_min &&
-            new_y + player_y_size <= y_limit_max) {
+        if (to_int(new_y) + player_y_size >= y_limit_min &&
+            to_int(new_y) + player_y_size <= y_limit_max) {
             obj_character[active_character].y = new_y;
             position_updated = true;
         }
@@ -222,8 +223,8 @@ void wait_for_followers(s16 dx)
 
         // Follower is in in the edge of the screen, so we need to wait for it (margin is MIN_FOLLOW_DISTANCE)
         // dx is the direction of the active character movement (-1 for left, 1 for right)
-        if ((dx > 0 && obj_character[chr].x < MAX_FOLLOW_DISTANCE) ||
-            (dx < 0 && obj_character[chr].x > (x_limit_max - MAX_FOLLOW_DISTANCE)))
+        if ((dx > 0 && to_int(obj_character[chr].x) < MAX_FOLLOW_DISTANCE) ||
+            (dx < 0 && to_int(obj_character[chr].x) > (x_limit_max - MAX_FOLLOW_DISTANCE)))
         {
             dprintf(2,"  - Waiting for follower %d to catch up", chr);
 

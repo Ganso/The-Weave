@@ -27,7 +27,7 @@ typedef struct
 {
     u16 max_hitpoints;
     bool follows_character; // If true, the enemy will follow the character
-    u8 follow_speed;
+    fix16 speed;            // Movement speed in pixels/frame
     bool has_pattern[MAX_PATTERN_ENEMY]; // If true, the enemy has a particular pattern
 } Enemy_Class;
 extern Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object
@@ -61,7 +61,7 @@ void update_enemy(u16 nenemy); // Update enemy state
 void show_enemy(u16 nenemy, bool show); // Show or hide an enemy
 void anim_enemy(u16 nenemy, u8 newanimation); // Change enemy animation
 void look_enemy_left(u16 nenemy, bool direction_right); // Turn enemy left or right
-void move_enemy(u16 nenemy, s16 newx, s16 newy); // Move enemy smoothly
+void move_enemy(u16 nenemy, fix16 newx, fix16 newy); // Move enemy smoothly
 void move_enemy_instant(u16 nenemy, s16 x, s16 y); // Instantly move enemy
 void update_enemy_animations(void); // Update enemy animations based on their current state
 

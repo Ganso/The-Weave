@@ -31,8 +31,8 @@ typedef struct
     bool                    active;
     const SpriteDefinition  *sd;
     const SpriteDefinition  *sd_shadow;
-    s16                     x;
-    s16                     y;
+    fix16                   x;                 // X position in 10.6 fixed point
+    fix16                   y;                 // Y position in 10.6 fixed point
     u8                      x_size;
     u8                      y_size;
     u16                     palette;
@@ -46,11 +46,15 @@ typedef struct
     u8                      collision_height;
     GameState               state;
     bool                    follows_character;
-    u8                      follow_speed;
+    fix16                   speed;             // Movement speed in pixels/frame
     bool                    drops_shadow;
     u16                     modeTimer;
 } Entity;
 
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Move an entity
+void move_entity(Entity *entity, Sprite *sprite, fix16 newx, fix16 newy); // Move an entity
+
+// Fixed point helpers
+static inline fix16 to_fix16(s16 v) { return v << 6; }
+static inline s16  to_int(fix16 v) { return v >> 6; }
 
 #endif

@@ -585,8 +585,8 @@ void update_life_counter(void) {
     dprintf(3,"Updating life counter for enemy %d", nenemy);
 
     // Calculate X and Y position for the life counter, just above the enemy
-    u16 x = obj_enemy[nenemy].obj_character.x + (obj_enemy[nenemy].obj_character.x_size / 2) - 16; // Centered on the enemy. 16 is half the life counter width.
-    u16 y = obj_enemy[nenemy].obj_character.y - 8; // 16 pixels above the enemy
+    u16 x = to_int(obj_enemy[nenemy].obj_character.x) + (obj_enemy[nenemy].obj_character.x_size / 2) - 16; // Centered on the enemy. 16 is half the life counter width.
+    u16 y = to_int(obj_enemy[nenemy].obj_character.y) - 8; // 16 pixels above the enemy
 
     // Get the life counter animation (hitpoints - 1)
     life_counter = obj_enemy[nenemy].hitpoints - 1;

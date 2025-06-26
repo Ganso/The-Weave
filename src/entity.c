@@ -2,21 +2,21 @@
 
 bool movement_active;    // Whether entity movement is currently allowed
 
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move entity to new position with smooth animation and shadow updates
+void move_entity(Entity *entity, Sprite *sprite, fix16 newx, fix16 newy)    // Move entity to new position with smooth animation and shadow updates
 {
     u16 nchar=CHR_NONE;
     u16 nenemy = ENEMY_NONE;
 
-    newy-=entity->y_size; // Now all calculations are relative to the bottom line, not the upper one
-    
-    s16 x = entity->x;
-    s16 y = entity->y;
-    s16 dx = newx - x;
-    s16 dy = newy - y;
-    s16 sx = dx > 0 ? 1 : -1;
-    s16 sy = dy > 0 ? 1 : -1;
-    s16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
-    s16 e2;
+    newy-=to_fix16(entity->y_size); // Now all calculations are relative to the bottom line, not the upper one
+
+    fix16 x = entity->x;
+    fix16 y = entity->y;
+    fix16 dx = newx - x;
+    fix16 dy = newy - y;
+    fix16 sx = dx > 0 ? to_fix16(1) : to_fix16(-1);
+    fix16 sy = dy > 0 ? to_fix16(1) : to_fix16(-1);
+    fix16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
+    fix16 e2;
     bool old_movement_active=movement_active;
 
 
@@ -39,7 +39,7 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move 
     movement_active=false; // Player can't move while an entity is moving
     for(;;)
     {
-        SPR_setPosition(sprite, x, y);
+        SPR_setPosition(sprite, to_int(x), to_int(y));
         if (nchar != CHR_NONE) update_character_shadow(nchar);
         if (nenemy != ENEMY_NONE) update_enemy_shadow(nenemy);
         entity->x = x;
