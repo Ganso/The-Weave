@@ -35,8 +35,7 @@ WANTED: Graphic artists who can handle Sega Megadrive hardware limitations.
 
 ## Screenshots
 
-Add gameplay captures here:
-
+In-game screenshots from June'25 tech demo
 ![Screenshot 1](docs/images/screenshot_1.png)
 ![Screenshot 2](docs/images/screenshot_2.png)
 ![Screenshot 3](docs/images/screenshot_3.png)
