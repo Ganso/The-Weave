@@ -257,6 +257,9 @@ void wait_for_followers(s16 dx)
                 next_frame(true);
             }
             movement_active = old_movement;
+            // Re-sync protagonist fixed coordinates after waiting
+            obj_character[active_character].fx = INT_TO_FIX16(obj_character[active_character].x);
+            obj_character[active_character].fy = INT_TO_FIX16(obj_character[active_character].y);
             look_left(active_character, (dx < 0)); // Look back to the right if moving right
         break; // Wait for a single follower only
         }

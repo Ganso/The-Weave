@@ -62,10 +62,13 @@ void scroll_background(s16 dx)    // Handle background scrolling when character 
                         {
                             obj_character[nchar].x -= dx;
                             obj_character[nchar].fx = INT_TO_FIX16(obj_character[nchar].x);
+                            obj_character[nchar].state = STATE_IDLE; // Stop walking animation
                             update_character(nchar);
                         }
                     }
                 }
+                // Keep protagonist coordinates in sync
+                obj_character[active_character].fx = INT_TO_FIX16(obj_character[active_character].x);
             }
         }
     }

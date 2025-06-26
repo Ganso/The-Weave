@@ -348,9 +348,11 @@ void approach_characters(void)    // Move NPCs that follow the hero
         {
             dprintf(3,"Character %d moving to (%d, %d)\n", nchar, newx, newy);
 
-            // Update entity position
+            // Update entity position and keep fixed coordinates in sync
             obj_character[nchar].x     = newx;
             obj_character[nchar].y     = newy;
+            obj_character[nchar].fx    = INT_TO_FIX16(newx);
+            obj_character[nchar].fy    = INT_TO_FIX16(newy);
             obj_character[nchar].flipH = (dx < 0);
 
             // Update sprite position and properties
