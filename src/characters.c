@@ -289,6 +289,11 @@ void follow_active_character(u16 nchar, bool follow)    // Set character to foll
 
 void approach_characters(void)    // Move NPCs that follow the hero
 {
+    if (followers_moved_by_scroll)
+    {
+        followers_moved_by_scroll = FALSE;
+        return;
+    }
     u16 nchar;
     s16 newx, newy;
     s16 dx,  dy;
