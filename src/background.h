@@ -12,6 +12,7 @@ extern u8 background_scroll_mode; // Scroll modes (BG_SCRL_*)
 extern u8 scroll_speed; // Scroll speed (each mode uses it in a way)
 extern bool player_scroll_active; // Can you scroll ?
 extern u16 background_width; // Background width
+extern bool followers_moved_by_scroll; // True if followers moved when scrolling
 
 // Distance from screen edges where scrolling begins
 #define SCROLL_START_DISTANCE 40
