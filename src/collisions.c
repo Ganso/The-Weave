@@ -11,9 +11,9 @@ u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)    // Calculate Manhattan
     s16 char1_bottom = char1_top + obj_character[char1].collision_height;
 
     // Calculate char2's collision box boundaries
-    s16 char2_left = obj_character[char2].x + obj_character[char2].collision_x_offset;
+    s16 char2_left = F16_toRoundedInt(obj_character[char2].x) + obj_character[char2].collision_x_offset;
     s16 char2_right = char2_left + obj_character[char2].collision_width;
-    s16 char2_top = obj_character[char2].y + obj_character[char2].collision_y_offset;
+    s16 char2_top = F16_toRoundedInt(obj_character[char2].y) + obj_character[char2].collision_y_offset;
     s16 char2_bottom = char2_top + obj_character[char2].collision_height;
 
     // Find closest x point on char2's box to char1's box
@@ -42,9 +42,9 @@ u16 char_distance(u16 char1, s16 x1, u8 y1, u16 char2)    // Calculate Manhattan
 u16 item_distance(u16 nitem, u16 x, u8 y)    // Calculate Manhattan distance from point to item collision box
 {
     // Calculate item's collision box boundaries
-    s16 item_left = obj_item[nitem].entity.x + obj_item[nitem].entity.collision_x_offset;
+    s16 item_left = F16_toRoundedInt(obj_item[nitem].entity.x) + obj_item[nitem].entity.collision_x_offset;
     s16 item_right = item_left + obj_item[nitem].entity.collision_width;
-    s16 item_top = obj_item[nitem].entity.y + obj_item[nitem].entity.collision_y_offset;
+    s16 item_top = F16_toRoundedInt(obj_item[nitem].entity.y) + obj_item[nitem].entity.collision_y_offset;
     s16 item_bottom = item_top + obj_item[nitem].entity.collision_height;
     
     // Find closest x point on box
@@ -91,13 +91,13 @@ u16 detect_char_char_collision(u16 nchar, u16 x, u8 y)    // Check for collision
                 // Compute other character collision box
                 u16 other_col_x1, other_col_x2;
                 if (obj_character[other_char].flipH) {
-                    other_col_x1 = obj_character[other_char].x + obj_character[other_char].x_size - obj_character[other_char].collision_x_offset - obj_character[other_char].collision_width;
+                    other_col_x1 = F16_toRoundedInt(obj_character[other_char].x) + obj_character[other_char].x_size - obj_character[other_char].collision_x_offset - obj_character[other_char].collision_width;
                     other_col_x2 = other_col_x1 + obj_character[other_char].collision_width;
                 } else {
-                    other_col_x1 = obj_character[other_char].x + obj_character[other_char].collision_x_offset;
+                    other_col_x1 = F16_toRoundedInt(obj_character[other_char].x) + obj_character[other_char].collision_x_offset;
                     other_col_x2 = other_col_x1 + obj_character[other_char].collision_width;
                 }
-                u8 other_col_y1 = obj_character[other_char].y + obj_character[other_char].collision_y_offset;
+                u8 other_col_y1 = F16_toRoundedInt(obj_character[other_char].y) + obj_character[other_char].collision_y_offset;
                 u8 other_col_y2 = other_col_y1 + obj_character[other_char].collision_height;
 
                 // Check if collision boxes overlap
@@ -140,9 +140,9 @@ u16 detect_char_item_collision(u16 nchar, u16 x, u8 y)    // Check for collision
         {
             //dprintf(2,"Detectando colisión con %d", nitem);
             // Calculate item's bounding box
-            item_left = obj_item[nitem].entity.x + obj_item[nitem].entity.collision_x_offset;
+            item_left = F16_toRoundedInt(obj_item[nitem].entity.x) + obj_item[nitem].entity.collision_x_offset;
             item_right = item_left + obj_item[nitem].entity.collision_width;
-            item_top = obj_item[nitem].entity.y + obj_item[nitem].entity.collision_y_offset;
+            item_top = F16_toRoundedInt(obj_item[nitem].entity.y) + obj_item[nitem].entity.collision_y_offset;
             item_bottom = item_top + obj_item[nitem].entity.collision_height;
             //dprintf(2,"DATOS OBJETO: (x,y)=(%d,%d), offset(x,y)=(%d,%d), tam(x,y)=(%d,%d)",obj_item[nitem].entity.x,obj_item[nitem].entity.y,obj_item[nitem].entity.collision_x_offset,obj_item[nitem].entity.collision_y_offset,obj_item[nitem].entity.collision_width,obj_item[nitem].entity.collision_height);
             //dprintf(2,"CAJA OBJETO: (%d,%d)-(%d,%d)",item_left,item_top,item_right,item_bottom);
@@ -183,13 +183,13 @@ u16 detect_char_enemy_collision(u16 nchar, u16 x, u8 y)    // Check for collisio
                 // Compute enemy collision box
                 u16 enemy_col_x1, enemy_col_x2;
                 if (obj_enemy[nenemy].obj_character.flipH) {
-                    enemy_col_x1 = obj_enemy[nenemy].obj_character.x + obj_enemy[nenemy].obj_character.x_size - obj_enemy[nenemy].obj_character.collision_x_offset - obj_enemy[nenemy].obj_character.collision_width;
+                    enemy_col_x1 = F16_toRoundedInt(obj_enemy[nenemy].obj_character.x) + obj_enemy[nenemy].obj_character.x_size - obj_enemy[nenemy].obj_character.collision_x_offset - obj_enemy[nenemy].obj_character.collision_width;
                     enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
                 } else {
-                    enemy_col_x1 = obj_enemy[nenemy].obj_character.x + obj_enemy[nenemy].obj_character.collision_x_offset;
+                    enemy_col_x1 = F16_toRoundedInt(obj_enemy[nenemy].obj_character.x) + obj_enemy[nenemy].obj_character.collision_x_offset;
                     enemy_col_x2 = enemy_col_x1 + obj_enemy[nenemy].obj_character.collision_width;
                 }
-                u8 enemy_col_y1 = obj_enemy[nenemy].obj_character.y + obj_enemy[nenemy].obj_character.collision_y_offset;
+                u8 enemy_col_y1 = F16_toRoundedInt(obj_enemy[nenemy].obj_character.y) + obj_enemy[nenemy].obj_character.collision_y_offset;
                 u8 enemy_col_y2 = enemy_col_y1 + obj_enemy[nenemy].obj_character.collision_height;
 
                 // Check if collision boxes overlap
@@ -236,13 +236,13 @@ u16 detect_enemy_char_collision(u16 nenemy, u16 x, u8 y)    // Check for collisi
                 // Compute character collision box
                 u16 char_col_x1, char_col_x2;
                 if (obj_character[nchar].flipH) {
-                    char_col_x1 = obj_character[nchar].x + obj_character[nchar].x_size - obj_character[nchar].collision_x_offset - obj_character[nchar].collision_width;
+                    char_col_x1 = F16_toRoundedInt(obj_character[nchar].x) + obj_character[nchar].x_size - obj_character[nchar].collision_x_offset - obj_character[nchar].collision_width;
                     char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
                 } else {
-                    char_col_x1 = obj_character[nchar].x + obj_character[nchar].collision_x_offset;
+                    char_col_x1 = F16_toRoundedInt(obj_character[nchar].x) + obj_character[nchar].collision_x_offset;
                     char_col_x2 = char_col_x1 + obj_character[nchar].collision_width;
                 }
-                u8 char_col_y1 = obj_character[nchar].y + obj_character[nchar].collision_y_offset;
+                u8 char_col_y1 = F16_toRoundedInt(obj_character[nchar].y) + obj_character[nchar].collision_y_offset;
                 u8 char_col_y2 = char_col_y1 + obj_character[nchar].collision_height;
 
                 // Check if collision boxes overlap

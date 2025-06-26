@@ -46,11 +46,11 @@ void update_character(u16 nchar); // Update a character based on every parameter
 void show_character(u16 nchar, bool show); // Show or hide a character
 void anim_character(u16 nchar, u8 newanimation); // Change a character's animation
 void look_left(u16 nchar, bool left); // Make a character look to the left (or right)
-void move_character(u16 nchar, s16 x, s16 y); // Move a character to a new position
-void move_character_instant(u16 nchar, s16 x, s16 y); // Move a character to a new position (instantly)
+void move_character(u16 nchar, fix16 x, fix16 y); // Move a character to a new position
+void move_character_instant(u16 nchar, fix16 x, fix16 y); // Move a character to a new position (instantly)
 void update_sprites_depth(void); // Update characters, items and enemies depth
 void update_character_shadow(u16 nchar); // Update shadow position for a character
-void follow_active_character(u16 nchar, bool follow, u8 follow_speed); // Follow (or unfollow active character)
+void follow_active_character(u16 nchar, bool follow); // Follow (or unfollow active character)
 void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
 void reset_character_animations(void); // Reset all character animations to idle
 void update_character_animations(void); //Update the character's animation based on its current state

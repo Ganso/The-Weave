@@ -63,7 +63,7 @@ La carpeta `src/` contiene diversos módulos C organizados por temática. Cada m
 Las notas se codifican con constantes `NOTE_MI`…`NOTE_DO`. Jugador y enemigos almacenan una cola de notas (máx. 4). `validate_pattern` comprueba la secuencia y devuelve el ID del patrón, pudiendo indicar si está invertido. Cada `PlayerPattern` o `EnemyPattern` define callbacks `launch`, `update` y si la magia es contrarrestable. Las definiciones se encuentran en las tablas `playerPatterns` y `enemyPatterns`.
 
 ### Entidades
-`Entity` incluye estado (`GameState`), posición, tamaño, prioridad, animación y datos de colisión. `characters`, `enemies` e `items` encapsulan este tipo para sus propias necesidades. Los enemigos además almacenan puntos de vida y un `EnemyMode` para distinguir sus fases.
+`Entity` incluye estado (`GameState`), posición, tamaño, prioridad, animación y datos de colisión. Las coordenadas `x` e `y` usan el tipo `fix16` de SGDK para permitir movimiento subpíxel. Cada entidad tiene un valor `speed` (`fix16`) que define sus píxeles por fotograma (0 en los objetos). `characters`, `enemies` e `items` encapsulan este tipo para sus propias necesidades. Los enemigos además almacenan puntos de vida y un `EnemyMode` para distinguir sus fases.
 
 ### Combate
 `combat.c` gestiona un bucle basado en `CombatState`. Durante `COMBAT_STATE_IDLE` los enemigos pueden lanzar patrones si su `rechargeFrames` ha terminado. El lanzamiento y actualización de patrones modifican `combat_state` y `combatContext` (temporizadores, notas en curso, enemigo activo…). Las funciones `hit_enemy` y `hit_player` aplican daño y activan la animación de `HURT`. `update_combat` se llama cada fotograma desde `next_frame` para avanzar la máquina de estados.
