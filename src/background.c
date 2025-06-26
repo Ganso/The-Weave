@@ -12,6 +12,7 @@ u16 x_limit_min;                  // Minimum X position when no scroll
 u16 x_limit_max;                  // Maximum X position when no scroll
 u16 y_limit_min;                  // Minimum Y position when no scroll
 u16 y_limit_max;                  // Maximum Y position when no scroll
+bool followers_moved_by_scroll;   // True if followers were moved during scroll
 
 void update_bg(bool player_moved)    // Update background scroll positions based on movement
 {
@@ -51,11 +52,16 @@ void scroll_background(s16 dx)    // Handle background scrolling when character 
             if (new_offset >= 0 && new_offset <= max_offset) { // New scroll offset is inside background width boundaries?
                 offset_BGA = (u32)new_offset; // Change offset
                 update_bg(true);
+                followers_moved_by_scroll = TRUE; // Mark that followers were moved
                 // Move following characters to the left/right accordingly
-                for (u16 nchar=0; nchar<MAX_CHR; nchar ++) {
-                    if (obj_character[nchar].follows_character==true) {
-                        if (obj_character[nchar].x>-20) {
-                            obj_character[nchar].x-=dx;
+                for (u16 nchar=0; nchar<MAX_CHR; nchar++)
+                {
+                    if (obj_character[nchar].follows_character)
+                    {
+                        if (obj_character[nchar].x > -20)
+                        {
+                            obj_character[nchar].x -= dx;
+                            obj_character[nchar].fx = INT_TO_FIX16(obj_character[nchar].x);
                             update_character(nchar);
                         }
                     }
