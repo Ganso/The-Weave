@@ -105,17 +105,23 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         // If not changing direction, try moving in opposite direction
         s16 move_dx = direction_changed ? dx : -dx;
         s16 move_dy = direction_changed ? dy : -dy;
-        s16 test_x = direction_changed ? current_x : new_x;
-        s16 test_y = direction_changed ? current_y : new_y;
+        fix16 move_fx = INT_TO_FIX16(move_dx);
+        fix16 move_fy = INT_TO_FIX16(move_dy);
+        fix16 test_fx = direction_changed ? obj_character[active_character].fx : new_fx;
+        fix16 test_fy = direction_changed ? obj_character[active_character].fy : new_fy;
+        s16 test_x = FIX16_TO_INT(test_fx);
+        s16 test_y = FIX16_TO_INT(test_fy);
 
         // Move pixel by pixel until no collision or MAX_COLLISIONS reached
         while ((detect_char_enemy_collision(active_character, test_x, test_y) != ENEMY_NONE ||
                detect_char_item_collision(active_character, test_x, test_y) != ITEM_NONE ||
                detect_char_char_collision(active_character, test_x, test_y) != CHR_NONE) &&
                num_colls < MAX_COLLISIONS) {
-            
-            test_x += move_dx;
-            test_y += move_dy;
+
+            test_fx += move_fx;
+            test_fy += move_fy;
+            test_x = FIX16_TO_INT(test_fx);
+            test_y = FIX16_TO_INT(test_fy);
             num_colls++;
 
             // Stay within screen boundaries
@@ -129,12 +135,10 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         }
 
         // Update new position to where we found no collision
-        new_x = test_x;
-        new_y = test_y;
-        fx = INT_TO_FIX16(new_x);
-        fy = INT_TO_FIX16(new_y);
-        new_fx = fx;
-        new_fy = fy;
+        new_fx = test_fx;
+        new_fy = test_fy;
+        new_x = FIX16_TO_INT(new_fx);
+        new_y = FIX16_TO_INT(new_fy);
     }
 
     bool position_updated = false;
