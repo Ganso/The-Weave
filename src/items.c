@@ -29,7 +29,7 @@ void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_b
     obj_item[nitem].check_depth=check_depth;
 
     // We set X to 0, as we are gonna calc it later
-    obj_item[nitem].entity = (Entity) { true, spritedef, NULL, 0, y, x_size, y_size, npal, false, false, ANIM_IDLE, true, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, false, 0 };
+    obj_item[nitem].entity = (Entity) { true, spritedef, NULL, to_fix32(0), to_fix32(y), x_size, y_size, 0, npal, false, false, ANIM_IDLE, true, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, false, 0 };
     spr_item[nitem] = NULL;
 
     // Check visibility and load sprite if needed
@@ -72,10 +72,10 @@ void display_item_if_visible(u16 nitem)    // Show/hide item based on screen vis
         // Item should be visible
         if (spr_item[nitem] == NULL) {
             dprintf(2,"Item %d now visible. LOADING.", nitem);
-            spr_item[nitem] = SPR_addSpriteSafe(obj_item[nitem].entity.sd, 
-                                               x, 
-                                               obj_item[nitem].entity.y, 
-                                               TILE_ATTR(obj_item[nitem].entity.palette, 
+            spr_item[nitem] = SPR_addSpriteSafe(obj_item[nitem].entity.sd,
+                                               x,
+                                               to_int(obj_item[nitem].entity.y),
+                                               TILE_ATTR(obj_item[nitem].entity.palette,
                                                        false, false, false));
             
             if (spr_item[nitem] == NULL) {
@@ -89,7 +89,7 @@ void display_item_if_visible(u16 nitem)    // Show/hide item based on screen vis
         if (clamped_x < -(s16)(sprite_width - 1)) clamped_x = -(s16)(sprite_width - 1);
         if (clamped_x > SCREEN_WIDTH - 1) clamped_x = SCREEN_WIDTH - 1;
         
-        SPR_setPosition(spr_item[nitem], clamped_x, obj_item[nitem].entity.y);
+        SPR_setPosition(spr_item[nitem], clamped_x, to_int(obj_item[nitem].entity.y));
         SPR_setVisibility(spr_item[nitem], VISIBLE);
     } else {
         // Item should be invisible
@@ -105,7 +105,7 @@ void display_item_if_visible(u16 nitem)    // Show/hide item based on screen vis
     
     // Update final state
     obj_item[nitem].entity.visible = should_be_visible;
-    obj_item[nitem].entity.x = x;
+    obj_item[nitem].entity.x = to_fix32(x);
 }
 
 void check_items_visibility(void)    // Update visibility state of all active items
@@ -127,10 +127,10 @@ u16 detect_nearby_item()    // Find closest item within interaction range of act
     u16 distance;
     
     // Get active character's position
-    u16 char_x = obj_character[active_character].x + 
+    u16 char_x = to_int(obj_character[active_character].x) +
                  obj_character[active_character].collision_x_offset + 
                  (obj_character[active_character].collision_width / 2);
-    u8 char_y = obj_character[active_character].y + 
+    u8 char_y = to_int(obj_character[active_character].y) +
                 obj_character[active_character].collision_y_offset + 
                 (obj_character[active_character].collision_height / 2);
 

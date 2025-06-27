@@ -26,15 +26,30 @@ typedef enum {
 } GameState;
 
 // Game entity definition
+typedef s32 fix32;
+
+#define FIX32_ONE (1 << 16)
+
+static inline fix32 to_fix32(s16 value)
+{
+    return ((fix32)value) << 16;
+}
+
+static inline s16 to_int(fix32 value)
+{
+    return (s16)(value >> 16);
+}
+
 typedef struct
 {
     bool                    active;
     const SpriteDefinition  *sd;
     const SpriteDefinition  *sd_shadow;
-    s16                     x;
-    s16                     y;
+    fix32                   x;
+    fix32                   y;
     u8                      x_size;
     u8                      y_size;
+    fix32                   speed;
     u16                     palette;
     u8                      priority;
     u8                      flipH;
@@ -46,11 +61,10 @@ typedef struct
     u8                      collision_height;
     GameState               state;
     bool                    follows_character;
-    u8                      follow_speed;
     bool                    drops_shadow;
     u16                     modeTimer;
 } Entity;
 
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Move an entity
+void move_entity(Entity *entity, Sprite *sprite, fix32 newx, fix32 newy); // Move an entity using fixed point values
 
 #endif

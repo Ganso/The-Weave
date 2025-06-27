@@ -184,10 +184,10 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
             break;
         }
 
-        if (offset_BGA<=1 && obj_character[active_character].x<=1) { // Players try to exit screen
+        if (offset_BGA<=1 && to_int(obj_character[active_character].x)<=1) { // Players try to exit screen
             if (item_interacted[0]==false || item_interacted[1]==false) { // We han't read every book
                 talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_REVISIT_MEMORIES]); // (ES) "Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papá" - (EN) "Before I leave I want to|revisit some memories|I owe it to dad"
-                move_character(active_character,20,obj_character[active_character].y+obj_character[active_character].y_size); // Go backwards
+                move_character(active_character,20,to_int(obj_character[active_character].y)+obj_character[active_character].y_size); // Go backwards
             }
             else break; // We have read it --> exit
         }
@@ -195,7 +195,7 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
         next_frame(true);
     }
 
-    move_character(active_character,-30,obj_character[active_character].y+obj_character[active_character].y_size);
+    move_character(active_character,-30,to_int(obj_character[active_character].y)+obj_character[active_character].y_size);
 
     end_level(); // Free resources
     current_scene=3; // Next scene
@@ -272,7 +272,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     active_character=CHR_linus;
     move_character_instant(CHR_linus, -30, 154);
     move_character_instant(CHR_clio, -30, 154);
-    follow_active_character(CHR_clio, true, 2);
+    follow_active_character(CHR_clio, true, obj_character[CHR_clio].speed);
 
     // Initialize spells
     playerPatterns[PATTERN_THUNDER].enabled = true;

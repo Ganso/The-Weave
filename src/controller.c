@@ -67,8 +67,8 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     // dx Horizontal movement (-1 for left, 1 for right, 0 for no horizontal movement)
     // dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
 
-    s16 current_x = obj_character[active_character].x;
-    s16 current_y = obj_character[active_character].y;
+    s16 current_x = to_int(obj_character[active_character].x);
+    s16 current_y = to_int(obj_character[active_character].y);
     s16 new_x = current_x + dx;
     s16 new_y = current_y + dy;
     u8 player_y_size = obj_character[active_character].y_size;
@@ -147,7 +147,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         else if (!use_x_limits ||
                  (new_x >= x_limit_min && new_x <= x_limit_max)) {
             // Update character position and flip state
-            obj_character[active_character].x = new_x;
+            obj_character[active_character].x = to_fix32(new_x);
             if (direction_changed) {
                 obj_character[active_character].flipH = (dx < 0);
             }
@@ -159,7 +159,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     if (dy != 0) {
         if (new_y + player_y_size >= y_limit_min &&
             new_y + player_y_size <= y_limit_max) {
-            obj_character[active_character].y = new_y;
+            obj_character[active_character].y = to_fix32(new_y);
             position_updated = true;
         }
     }
