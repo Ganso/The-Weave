@@ -69,7 +69,11 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         if (collision_height==0) collision_height=2; // Two lines height
         if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
-        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0), x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow, 0 };
+        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow,
+            FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0),
+            x_size, y_size, npal, false, false, ANIM_IDLE, false,
+            collision_x_offset, collision_y_offset, collision_width, collision_height,
+            STATE_IDLE, FALSE, drops_shadow, 0 };
     } else {
         nsprite = obj_character[nchar].sd;
         nsprite_shadow = obj_character[nchar].sd_shadow;
@@ -143,7 +147,9 @@ void init_face(u16 nface)    // Create new character face sprite for dialogs
         default:
             return;
         }
-        obj_face[nface] = (Entity) { true, nsprite, NULL, 0, 160, 64, 64, npal, false, false, ANIM_IDLE, false, 0, 0, 0, 0, STATE_IDLE, FALSE, 0, false, 0 };
+        obj_face[nface] = (Entity) { true, nsprite, NULL,
+            0, 160, FASTFIX32_FROM_INT(0), 64, 64, npal, false, false, ANIM_IDLE, false,
+            0, 0, 0, 0, STATE_IDLE, FALSE, false, 0 };
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
@@ -268,11 +274,11 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     }
 }
 
-void follow_active_character(u16 nchar, bool follow, u8 follow_speed)    // Set character to follow active character
+void follow_active_character(u16 nchar, bool follow, fastfix32 speed)    // Set character to follow active character
 {
-    obj_character[nchar].follows_character=follow;
-    obj_character[nchar].follow_speed=follow_speed;
-    obj_character[nchar].state=STATE_IDLE;
+    obj_character[nchar].follows_character = follow;
+    obj_character[nchar].speed = speed;
+    obj_character[nchar].state = STATE_IDLE;
     show_character(nchar, true);
 }
 
@@ -297,14 +303,11 @@ void approach_characters(void)    // Move NPCs that follow the hero
         if (!obj_character[nchar].active ||
             !obj_character[nchar].follows_character)               continue;
 
-        // Throttle by follow_speed
-        if (frame_counter % obj_character[nchar].follow_speed)     continue;
-
         dprintf(3,"Character %d is following\n", nchar);
 
         has_moved=false;
 
-        // Calculate new position towards the active character (1 px step)
+        // Calculate new position towards the active character
         dx = FASTFIX32_TO_INT(obj_character[active_character].x) -
              FASTFIX32_TO_INT(obj_character[nchar].x);
         dy = (FASTFIX32_TO_INT(obj_character[active_character].y) +
@@ -312,10 +315,11 @@ void approach_characters(void)    // Move NPCs that follow the hero
              (FASTFIX32_TO_INT(obj_character[nchar].y) +
               obj_character[nchar].y_size);
 
+        s16 step = FASTFIX32_TO_INT(obj_character[nchar].speed);
         newx = FASTFIX32_TO_INT(obj_character[nchar].x) +
-               (dx ? (dx > 0 ? 1 : -1) : 0);
+               (dx ? (dx > 0 ? step : -step) : 0);
         newy = FASTFIX32_TO_INT(obj_character[nchar].y) +
-               (dy ? (dy > 0 ? 1 : -1) : 0);
+               (dy ? (dy > 0 ? step : -step) : 0);
 
         // Distance to the active character if we accept the new position
         distance = char_distance(nchar, newx, newy, active_character);
