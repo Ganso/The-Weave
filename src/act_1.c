@@ -27,7 +27,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     PAL_getColors(0, paltmp, 64); // backup current palete
     play_sample(snd_effect_magic_appear, sizeof(snd_effect_magic_appear)); // something magically appearing sound effect
     PAL_fadeToAll(geesebumps_pal_white.data, SCREEN_FPS, false); // fade to white
-    move_character_instant(CHR_swan,141,110);
+    move_character_instant(CHR_swan, FASTFIX32_FROM_INT(141), FASTFIX32_FROM_INT(110));
     show_character(CHR_swan, true); // show swan
     PAL_fadeToAll(paltmp, SCREEN_FPS, false); // fade to night palete
     wait_seconds(2);
@@ -53,7 +53,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     // Wake linus up
     release_item(4);
     PAL_setPalette(PAL1, characters_pal.data, DMA);
-    move_character_instant(CHR_linus, 35, 175);
+    move_character_instant(CHR_linus, FASTFIX32_FROM_INT(35), FASTFIX32_FROM_INT(175));
     show_character(CHR_linus, true);
     
     // You can move
@@ -132,8 +132,8 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
     talk_cluster(&dialogs[SYSTEM_DIALOG][SYSMSG_DEMO_TITLE]); // (ES) "@[The Weave@]|Demo técnica|Junio de 2025" - (EN) "@[The Weave@]|Tech demo|June 2025", (ES) "Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final" - (EN) "Graphics, mechanics or sounds|aren't final, nor they|represent the final result"
 
     // Put character in screen
-    move_character_instant(CHR_linus, 340, 154);
-    move_character(CHR_linus, 270, 154);
+    move_character_instant(CHR_linus, FASTFIX32_FROM_INT(340), FASTFIX32_FROM_INT(154));
+    move_character(CHR_linus, FASTFIX32_FROM_INT(270), FASTFIX32_FROM_INT(154));
 
     // Dialog
     talk_cluster(&dialogs[ACT1_DIALOG1][A1D1_OVERSLEPT]); // (ES) "Creo que he dormido demasiado|Debo llegar rápido al salón" - (EN) "I think I've overslept|I should go to the hall quickly", (ES) "Aunque siendo el día que es|este pasillo me trae|@[demasiados recuerdos@]" - (EN) "Although in a day like this|this hallway brings back|too @[many memories@]"
@@ -184,10 +184,12 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
             break;
         }
 
-        if (offset_BGA<=1 && obj_character[active_character].x<=1) { // Players try to exit screen
+        if (offset_BGA<=1 && FASTFIX32_TO_INT(obj_character[active_character].x)<=1) { // Players try to exit screen
             if (item_interacted[0]==false || item_interacted[1]==false) { // We han't read every book
                 talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_REVISIT_MEMORIES]); // (ES) "Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papá" - (EN) "Before I leave I want to|revisit some memories|I owe it to dad"
-                move_character(active_character,20,obj_character[active_character].y+obj_character[active_character].y_size); // Go backwards
+                move_character(active_character,
+                               FASTFIX32_FROM_INT(20),
+                               obj_character[active_character].y + FASTFIX32_FROM_INT(obj_character[active_character].y_size)); // Go backwards
             }
             else break; // We have read it --> exit
         }
@@ -195,7 +197,9 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
         next_frame(true);
     }
 
-    move_character(active_character,-30,obj_character[active_character].y+obj_character[active_character].y_size);
+    move_character(active_character,
+                   FASTFIX32_FROM_INT(-30),
+                   obj_character[active_character].y + FASTFIX32_FROM_INT(obj_character[active_character].y_size));
 
     end_level(); // Free resources
     current_scene=3; // Next scene
@@ -212,8 +216,8 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     init_character(CHR_xander);
     
     // Starting positions
-    move_character_instant(CHR_clio,40,174);
-    move_character_instant(CHR_linus,360,164);
+    move_character_instant(CHR_clio, FASTFIX32_FROM_INT(40), FASTFIX32_FROM_INT(174));
+    move_character_instant(CHR_linus, FASTFIX32_FROM_INT(360), FASTFIX32_FROM_INT(164));
     look_left(CHR_clio,false);
     look_left(CHR_linus,true);
     show_character(CHR_clio, true);
@@ -221,15 +225,15 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
        
     // Dialog
     talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_GUILD_YEAR]); // (ES) "@[Gremio de los historiadores@]|Año 8121" - (EN) "@[Historians guild@]|Year 8121", (ES) "Lunes|Primera hora de la mañana" - (EN) "Monday|Early morning"
-    move_character(CHR_linus, 200, 174);
+    move_character(CHR_linus, FASTFIX32_FROM_INT(200), FASTFIX32_FROM_INT(174));
     talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_CLIO_LATE]); // (ES) "Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños" - (EN) "It's late, Linus|And you shouldn't be late|at your birthday", (ES) "He tenido el sueño|más extraño, Madre" - (EN) "I have had the strangest|dream, Mother", (ES) "Un @[cisne@] venía a|mi cuarto y..." - (EN) "A @[swan@] came to my room|and...", (ES) "Luego me lo cuentas|@[Xander@] nos espera" - (EN) "You can tell me later|@[Xander@] is waiting for us"
     // Xander's entrance
-    move_character(CHR_clio, 100, 154);
+    move_character(CHR_clio, FASTFIX32_FROM_INT(100), FASTFIX32_FROM_INT(154));
     wait_seconds(1);
     look_left(CHR_clio, true);
-    move_character_instant(CHR_xander,-30,174);
+    move_character_instant(CHR_xander, FASTFIX32_FROM_INT(-30), FASTFIX32_FROM_INT(174));
     show_character(CHR_xander, true);
-    move_character(CHR_xander, 40, 174);
+    move_character(CHR_xander, FASTFIX32_FROM_INT(40), FASTFIX32_FROM_INT(174));
     talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_XANDER_AWAKE]); // (ES) "Por fin|estás despierto, Linus" - (EN) "At last,|you're awake Linus", (ES) "Perdóname, maestro|Un extraño sueño me ha|mantenido despierto" - (EN) "Forgive me, master|A strange dream has|kept me awake", (ES) "Ciertamente eres el|hijo de tu padre|@[Aiden@] tenía grandes sueños" - (EN) "You are certainly your|father's son|@[Aiden@] had big dreams", (ES) "Y estamos aquí para hablar|sobre uno que|nunca llegó a cumplir" - (EN) "And we are here to talk|about one that he|never achieved", (ES) "He leído sus historias|mil veces|¿De cuál hablamos?" - (EN) "I've read his stories|a thousand times|Which one is this?", (ES) "Una que no encontrarás en|un libro. La de la isla|del @[Gremio de los Tejedores@]" - (EN) "One you won't find in a book|The one about @[Weavers|guild@] island"
     u8 response = choice_dialog(&choices[ACT1_CHOICE1][0]); // (ES) "¿Los Tejedores?" - (EN) "The Weavers?", (ES) "Era mi leyenda favorita" - (EN) "It was my favourite legend", (ES) "¿Qué pasó con ellos?" - (EN) "What happened to them?"
     dprintf(2,"Response: %d\n",response);
@@ -270,8 +274,8 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     init_character(CHR_linus);
     init_character(CHR_clio);
     active_character=CHR_linus;
-    move_character_instant(CHR_linus, -30, 154);
-    move_character_instant(CHR_clio, -30, 154);
+    move_character_instant(CHR_linus, FASTFIX32_FROM_INT(-30), FASTFIX32_FROM_INT(154));
+    move_character_instant(CHR_clio, FASTFIX32_FROM_INT(-30), FASTFIX32_FROM_INT(154));
     follow_active_character(CHR_clio, true, 2);
 
     // Initialize spells
@@ -280,7 +284,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     playerPatterns[PATTERN_OPEN   ].enabled = true;
     playerPatterns[PATTERN_SLEEP  ].enabled = true;
 
-    move_character(CHR_linus, SCROLL_START_DISTANCE+10, 154);
+    move_character(CHR_linus, FASTFIX32_FROM_INT(SCROLL_START_DISTANCE+10), FASTFIX32_FROM_INT(154));
 
     // Stop protagonist before talking
     obj_character[active_character].state = STATE_IDLE;
@@ -321,10 +325,10 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
 
     init_enemy(0,ENEMY_CLS_WEAVERGHOST);
     init_enemy(1,ENEMY_CLS_WEAVERGHOST);
-    move_enemy_instant(0, 350, 176);
-    move_enemy_instant(1, -20, 156);
-    move_enemy(0, 250, 136);
-    move_enemy(1, 20, 156);
+    move_enemy_instant(0, FASTFIX32_FROM_INT(350), FASTFIX32_FROM_INT(176));
+    move_enemy_instant(1, FASTFIX32_FROM_INT(-20), FASTFIX32_FROM_INT(156));
+    move_enemy(0, FASTFIX32_FROM_INT(250), FASTFIX32_FROM_INT(136));
+    move_enemy(1, FASTFIX32_FROM_INT(20), FASTFIX32_FROM_INT(156));
 
     combat_init();
     while (combat_state != COMBAT_NO) {

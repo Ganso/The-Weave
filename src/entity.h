@@ -11,6 +11,10 @@
 // Global variables
 extern bool movement_active;
 
+typedef s32 fastfix32;                       // 16.16 fixed point value
+#define FASTFIX32_FROM_INT(v) ((fastfix32)((v) << 16))
+#define FASTFIX32_TO_INT(v)   ((s16)((v) >> 16))
+
 // Entities states
 typedef enum {
     STATE_IDLE,
@@ -31,8 +35,8 @@ typedef struct
     bool                    active;
     const SpriteDefinition  *sd;
     const SpriteDefinition  *sd_shadow;
-    s16                     x;
-    s16                     y;
+    fastfix32               x;
+    fastfix32               y;
     u8                      x_size;
     u8                      y_size;
     u16                     palette;
@@ -51,6 +55,6 @@ typedef struct
     u16                     modeTimer;
 } Entity;
 
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy); // Move an entity
+void move_entity(Entity *entity, Sprite *sprite, fastfix32 newx, fastfix32 newy); // Move an entity
 
 #endif
