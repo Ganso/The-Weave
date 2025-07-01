@@ -68,10 +68,13 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
 
     // Initialize enemy character with sprite, position, and collision attributes
     obj_enemy[numenemy].obj_character = (Entity) {
-        true, nsprite, nsprite_shadow, FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0), x_size, y_size, npal, false, false,
-        ANIM_IDLE, false, collision_x_offset, collision_y_offset, 
-        collision_width, collision_height, STATE_IDLE, 
-        obj_enemy_class[class].follows_character, obj_enemy_class[class].follow_speed,
+        true, nsprite, nsprite_shadow,
+        FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0),
+        FASTFIX32_FROM_INT(obj_enemy_class[class].follow_speed),
+        x_size, y_size, npal, false, false,
+        ANIM_IDLE, false, collision_x_offset, collision_y_offset,
+        collision_width, collision_height, STATE_IDLE,
+        obj_enemy_class[class].follows_character,
         drops_shadow, 0
     };
 
@@ -209,32 +212,31 @@ void approach_enemies(void)    // Update enemy positions to follow player during
 
     if (combat_state == COMBAT_STATE_IDLE && combatContext.activePattern != PATTERN_HIDE) { // Only move enemies during combat when the player is not hidden
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            has_moved=false;
-            if (obj_enemy[nenemy].obj_character.follows_character == true) { // Check if this enemy type follows characters
-                if (frame_counter%obj_enemy[nenemy].obj_character.follow_speed==0) { // Move at enemy's specific speed
-                    // Calculate direction towards active character
-                    dx = FASTFIX32_TO_INT(obj_character[active_character].x) - FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.x);
-                    dy = (FASTFIX32_TO_INT(obj_character[active_character].y) + obj_character[active_character].y_size) -
-                        (FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.y) + obj_enemy[nenemy].obj_character.y_size);
+            has_moved = false;
+            if (obj_enemy[nenemy].obj_character.follows_character) {
+                // Calculate direction towards active character
+                dx = FASTFIX32_TO_INT(obj_character[active_character].x) - FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.x);
+                dy = (FASTFIX32_TO_INT(obj_character[active_character].y) + obj_character[active_character].y_size) -
+                    (FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.y) + obj_enemy[nenemy].obj_character.y_size);
 
-                    // Move by 1 pixel in the calculated direction
-                    newx = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.x) + (dx != 0 ? (dx > 0 ? 1 : -1) : 0);
-                    newy = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.y) + (dy != 0 ? (dy > 0 ? 1 : -1) : 0);
+                s16 step = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.speed);
+                newx = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.x) + (dx != 0 ? (dx > 0 ? step : -step) : 0);
+                newy = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.y) + (dy != 0 ? (dy > 0 ? step : -step) : 0);
 
-                    // Check for collision at new position
-                    collision_result = detect_enemy_char_collision(nenemy, newx, newy);
+                // Check for collision at new position
+                collision_result = detect_enemy_char_collision(nenemy, newx, newy);
 
-                    // Move the enemy if there's no collision and it's not currently attacking
-                    if (collision_result == CHR_NONE && combatContext.activeEnemy==ENEMY_NONE) {
-                        obj_enemy[nenemy].obj_character.x = FASTFIX32_FROM_INT(newx);
-                        obj_enemy[nenemy].obj_character.y = FASTFIX32_FROM_INT(newy);
-                        obj_enemy[nenemy].obj_character.animation=ANIM_WALK;
-                        obj_enemy[nenemy].obj_character.flipH=(dx<0);
-                        update_enemy(nenemy);
-                        has_moved=true;
-                    }
-                if (has_moved==false && combatContext.activeEnemy!=nenemy) anim_enemy(nenemy,ANIM_IDLE); // Set to idle if not moved and not attacking
+                // Move the enemy if there's no collision and it's not currently attacking
+                if (collision_result == CHR_NONE && combatContext.activeEnemy == ENEMY_NONE) {
+                    obj_enemy[nenemy].obj_character.x = FASTFIX32_FROM_INT(newx);
+                    obj_enemy[nenemy].obj_character.y = FASTFIX32_FROM_INT(newy);
+                    obj_enemy[nenemy].obj_character.animation = ANIM_WALK;
+                    obj_enemy[nenemy].obj_character.flipH = (dx < 0);
+                    update_enemy(nenemy);
+                    has_moved = true;
                 }
+                if (!has_moved && combatContext.activeEnemy != nenemy)
+                    anim_enemy(nenemy, ANIM_IDLE); // Set to idle if not moved and not attacking
             }
         }
     }

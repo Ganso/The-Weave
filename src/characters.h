@@ -50,7 +50,7 @@ void move_character(u16 nchar, fastfix32 x, fastfix32 y); // Move a character to
 void move_character_instant(u16 nchar, fastfix32 x, fastfix32 y); // Move a character to a new position (instantly)
 void update_sprites_depth(void); // Update characters, items and enemies depth
 void update_character_shadow(u16 nchar); // Update shadow position for a character
-void follow_active_character(u16 nchar, bool follow, u8 follow_speed); // Follow (or unfollow active character)
+void follow_active_character(u16 nchar, bool follow, fastfix32 speed); // Follow (or unfollow active character)
 void approach_characters(void); // Move characters with STATE_FOLLOWING towards the active character
 void reset_character_animations(void); // Reset all character animations to idle
 void update_character_animations(void); //Update the character's animation based on its current state
