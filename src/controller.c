@@ -67,8 +67,8 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     // dx Horizontal movement (-1 for left, 1 for right, 0 for no horizontal movement)
     // dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
 
-    s16 current_x = obj_character[active_character].x;
-    s16 current_y = obj_character[active_character].y;
+    s16 current_x = FASTFIX32_TO_INT(obj_character[active_character].x);
+    s16 current_y = FASTFIX32_TO_INT(obj_character[active_character].y);
     s16 new_x = current_x + dx;
     s16 new_y = current_y + dy;
     u8 player_y_size = obj_character[active_character].y_size;
@@ -147,7 +147,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         else if (!use_x_limits ||
                  (new_x >= x_limit_min && new_x <= x_limit_max)) {
             // Update character position and flip state
-            obj_character[active_character].x = new_x;
+            obj_character[active_character].x = FASTFIX32_FROM_INT(new_x);
             if (direction_changed) {
                 obj_character[active_character].flipH = (dx < 0);
             }
@@ -159,7 +159,7 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     if (dy != 0) {
         if (new_y + player_y_size >= y_limit_min &&
             new_y + player_y_size <= y_limit_max) {
-            obj_character[active_character].y = new_y;
+            obj_character[active_character].y = FASTFIX32_FROM_INT(new_y);
             position_updated = true;
         }
     }
@@ -222,8 +222,8 @@ void wait_for_followers(s16 dx)
 
         // Follower is in in the edge of the screen, so we need to wait for it (margin is MIN_FOLLOW_DISTANCE)
         // dx is the direction of the active character movement (-1 for left, 1 for right)
-        if ((dx > 0 && obj_character[chr].x < MAX_FOLLOW_DISTANCE) ||
-            (dx < 0 && obj_character[chr].x > (x_limit_max - MAX_FOLLOW_DISTANCE)))
+        if ((dx > 0 && FASTFIX32_TO_INT(obj_character[chr].x) < MAX_FOLLOW_DISTANCE) ||
+            (dx < 0 && FASTFIX32_TO_INT(obj_character[chr].x) > (x_limit_max - MAX_FOLLOW_DISTANCE)))
         {
             dprintf(2,"  - Waiting for follower %d to catch up", chr);
 
