@@ -276,7 +276,7 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     active_character=CHR_linus;
     move_character_instant(CHR_linus, FASTFIX32_FROM_INT(-30), FASTFIX32_FROM_INT(154));
     move_character_instant(CHR_clio, FASTFIX32_FROM_INT(-30), FASTFIX32_FROM_INT(154));
-    follow_active_character(CHR_clio, true, 0.5);
+    follow_active_character(CHR_clio, true, FASTFIX32_FROM_INT(1) / 2);
 
     // Initialize spells
     playerPatterns[PATTERN_THUNDER].enabled = true;
