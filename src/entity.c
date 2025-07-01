@@ -2,17 +2,18 @@
 
 bool movement_active;    // Whether entity movement is currently allowed
 
-void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move entity to new position with smooth animation and shadow updates
+void move_entity(Entity *entity, Sprite *sprite, fastfix32 newx, fastfix32 newy)    // Move entity to new position with smooth animation and shadow updates
 {
     u16 nchar=CHR_NONE;
     u16 nenemy = ENEMY_NONE;
 
-    newy-=entity->y_size; // Now all calculations are relative to the bottom line, not the upper one
-    
-    s16 x = entity->x;
-    s16 y = entity->y;
-    s16 dx = newx - x;
-    s16 dy = newy - y;
+    s16 target_x = FASTFIX32_TO_INT(newx);
+    s16 target_y = FASTFIX32_TO_INT(newy) - entity->y_size; // Now all calculations are relative to the bottom line, not the upper one
+
+    s16 x = FASTFIX32_TO_INT(entity->x);
+    s16 y = FASTFIX32_TO_INT(entity->y);
+    s16 dx = target_x - x;
+    s16 dy = target_y - y;
     s16 sx = dx > 0 ? 1 : -1;
     s16 sy = dy > 0 ? 1 : -1;
     s16 err = (abs(dx) > abs(dy) ? abs(dx) : -abs(dy)) / 2;
@@ -42,11 +43,11 @@ void move_entity(Entity *entity, Sprite *sprite, s16 newx, s16 newy)    // Move 
         SPR_setPosition(sprite, x, y);
         if (nchar != CHR_NONE) update_character_shadow(nchar);
         if (nenemy != ENEMY_NONE) update_enemy_shadow(nenemy);
-        entity->x = x;
-        entity->y = y;
+        entity->x = FASTFIX32_FROM_INT(x);
+        entity->y = FASTFIX32_FROM_INT(y);
         next_frame(false);
 
-        if (x == newx && y == newy) break;
+        if (x == target_x && y == target_y) break;
 
         e2 = err;
         if (e2 > -abs(dx)) { err -= abs(dy); x += sx; }

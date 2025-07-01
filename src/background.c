@@ -54,8 +54,8 @@ void scroll_background(s16 dx)    // Handle background scrolling when character 
                 // Move following characters to the left/right accordingly
                 for (u16 nchar=0; nchar<MAX_CHR; nchar ++) {
                     if (obj_character[nchar].follows_character==true) {
-                        if (obj_character[nchar].x>-20) {
-                            obj_character[nchar].x-=dx;
+                        if (FASTFIX32_TO_INT(obj_character[nchar].x)>-20) {
+                            obj_character[nchar].x = FASTFIX32_FROM_INT(FASTFIX32_TO_INT(obj_character[nchar].x)-dx);
                             update_character(nchar);
                         }
                     }
