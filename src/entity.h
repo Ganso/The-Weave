@@ -37,6 +37,7 @@ typedef struct
     const SpriteDefinition  *sd_shadow;
     fastfix32               x;
     fastfix32               y;
+    fastfix32               speed;
     u8                      x_size;
     u8                      y_size;
     u16                     palette;
@@ -50,7 +51,6 @@ typedef struct
     u8                      collision_height;
     GameState               state;
     bool                    follows_character;
-    u8                      follow_speed;
     bool                    drops_shadow;
     u16                     modeTimer;
 } Entity;
