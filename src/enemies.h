@@ -61,8 +61,8 @@ void update_enemy(u16 nenemy); // Update enemy state
 void show_enemy(u16 nenemy, bool show); // Show or hide an enemy
 void anim_enemy(u16 nenemy, u8 newanimation); // Change enemy animation
 void look_enemy_left(u16 nenemy, bool direction_right); // Turn enemy left or right
-void move_enemy(u16 nenemy, s16 newx, s16 newy); // Move enemy smoothly
-void move_enemy_instant(u16 nenemy, s16 x, s16 y); // Instantly move enemy
+void move_enemy(u16 nenemy, fastfix32 newx, fastfix32 newy); // Move enemy smoothly
+void move_enemy_instant(u16 nenemy, fastfix32 x, fastfix32 y); // Instantly move enemy
 void update_enemy_animations(void); // Update enemy animations based on their current state
 
 /* --- AI movement --- */

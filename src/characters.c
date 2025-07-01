@@ -11,8 +11,8 @@ void update_character_shadow(u16 nchar)    // Update shadow sprite position base
 {
     if (obj_character[nchar].drops_shadow && spr_chr_shadow[nchar] != NULL) {
         // Position shadow at the bottom of character's collision box
-        s16 shadow_x = obj_character[nchar].x;  // Center shadow (24/2 = 12)
-        s16 shadow_y = obj_character[nchar].y + obj_character[nchar].collision_y_offset - 4;      // Place at bottom (8/2 = 4)
+        s16 shadow_x = FASTFIX32_TO_INT(obj_character[nchar].x);  // Center shadow (24/2 = 12)
+        s16 shadow_y = FASTFIX32_TO_INT(obj_character[nchar].y) + obj_character[nchar].collision_y_offset - 4;      // Place at bottom (8/2 = 4)
         
         // Flip shadow if character is looking to the left
         SPR_setHFlip(spr_chr_shadow[nchar], obj_character[nchar].flipH);
@@ -69,7 +69,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         if (collision_height==0) collision_height=2; // Two lines height
         if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
-        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, 0, 0, x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow, 0 };
+        obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow, FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0), x_size, y_size, npal, false, false, ANIM_IDLE, false, collision_x_offset, collision_y_offset, collision_width, collision_height, STATE_IDLE, FALSE, 0, drops_shadow, 0 };
     } else {
         nsprite = obj_character[nchar].sd;
         nsprite_shadow = obj_character[nchar].sd_shadow;
@@ -77,8 +77,8 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         obj_character[nchar].active=true;
     }
 
-    dprintf(2,"Adding sprite for character %d at (%d, %d)\n", nchar, obj_character[nchar].x, obj_character[nchar].y);
-    spr_chr[nchar] = SPR_addSpriteSafe(nsprite, obj_character[nchar].x, obj_character[nchar].y, 
+    dprintf(2,"Adding sprite for character %d at (%d, %d)\n", nchar, FASTFIX32_TO_INT(obj_character[nchar].x), FASTFIX32_TO_INT(obj_character[nchar].y));
+    spr_chr[nchar] = SPR_addSpriteSafe(nsprite, FASTFIX32_TO_INT(obj_character[nchar].x), FASTFIX32_TO_INT(obj_character[nchar].y),
                                        TILE_ATTR(npal, obj_character[nchar].priority, false, obj_character[nchar].flipH));
 
     if (spr_chr[nchar] != NULL) {
@@ -170,7 +170,7 @@ void release_face(u16 nface)    // Free face sprite resources but keep entity da
 
 void update_character(u16 nchar)    // Update character sprite properties from current state
 {
-    SPR_setPosition(spr_chr[nchar],obj_character[nchar].x,obj_character[nchar].y);
+    SPR_setPosition(spr_chr[nchar], FASTFIX32_TO_INT(obj_character[nchar].x), FASTFIX32_TO_INT(obj_character[nchar].y));
     SPR_setPriority(spr_chr[nchar],obj_character[nchar].priority);
     SPR_setVisibility(spr_chr[nchar],obj_character[nchar].visible?VISIBLE:HIDDEN);
     SPR_setHFlip(spr_chr[nchar],obj_character[nchar].flipH);
@@ -207,13 +207,13 @@ void look_left(u16 nchar, bool direction_right)    // Set character sprite horiz
     SPR_update();
 }
 
-void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with walking animation and direction update
+void move_character(u16 nchar, fastfix32 newx, fastfix32 newy)    // Move character with walking animation and direction update
 {
     show_character(nchar, true);
     obj_character[nchar].state=STATE_WALKING;
 
     // Look in the appropriate direction
-    s16 dx = newx - obj_character[nchar].x;
+    s16 dx = FASTFIX32_TO_INT(newx) - FASTFIX32_TO_INT(obj_character[nchar].x);
     if (dx < 0) {
         look_left(nchar, true);
     } else if (dx > 0) {
@@ -224,13 +224,14 @@ void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with wal
     obj_character[nchar].state=STATE_IDLE; // Set state to idle after moving
 }
 
-void move_character_instant(u16 nchar,s16 x,s16 y)    // Set character position immediately without animation
+void move_character_instant(u16 nchar, fastfix32 x, fastfix32 y)    // Set character position immediately without animation
 {
-    y-=obj_character[nchar].y_size; // Now all calculations are relative to the bottom line, not the upper one
+    s16 xi = FASTFIX32_TO_INT(x);
+    s16 yi = FASTFIX32_TO_INT(y) - obj_character[nchar].y_size; // Use bottom line coordinate
 
-    SPR_setPosition(spr_chr[nchar], x, y);
+    SPR_setPosition(spr_chr[nchar], xi, yi);
     obj_character[nchar].x = x;
-    obj_character[nchar].y = y;
+    obj_character[nchar].y = FASTFIX32_FROM_INT(yi);
     update_character_shadow(nchar);
     next_frame(false);
 }
@@ -242,7 +243,7 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     // Update character depth
     for (i = 0; i < MAX_CHR; i++) {
         if (obj_character[i].active==true) {
-            SPR_setDepth(spr_chr[i], -obj_character[i].y-obj_character[i].y_size); // Negative of the bottom line of the sprite
+            SPR_setDepth(spr_chr[i], -FASTFIX32_TO_INT(obj_character[i].y)-obj_character[i].y_size); // Negative of the bottom line of the sprite
         }
     }
 
@@ -254,7 +255,7 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
             } else if (obj_item[i].check_depth==FORCE_FOREGROUND) {
                 SPR_setDepth(spr_item[i], SPR_MIN_DEPTH+100); // Foreground items are always at the front (add 100 so it doesn't interfere with frontend interface items)
             } else {
-                SPR_setDepth(spr_item[i], -obj_item[i].entity.y-obj_item[i].entity.y_size); // Negative of the bottom line of the sprite
+                SPR_setDepth(spr_item[i], -FASTFIX32_TO_INT(obj_item[i].entity.y)-obj_item[i].entity.y_size); // Negative of the bottom line of the sprite
             }
         }
     }
@@ -262,7 +263,7 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     // Update enemies depth
     for (i = 0; i < MAX_ENEMIES; i++) {
         if (obj_enemy[i].obj_character.active==true) {
-            SPR_setDepth(spr_enemy[i], -obj_enemy[i].obj_character.y-obj_enemy[i].obj_character.y_size); // Negative of the bottom line of the sprite
+            SPR_setDepth(spr_enemy[i], -FASTFIX32_TO_INT(obj_enemy[i].obj_character.y)-obj_enemy[i].obj_character.y_size); // Negative of the bottom line of the sprite
         }
     }
 }
@@ -304,16 +305,16 @@ void approach_characters(void)    // Move NPCs that follow the hero
         has_moved=false;
 
         // Calculate new position towards the active character (1 px step)
-        dx = obj_character[active_character].x -
-             obj_character[nchar].x;
-        dy = (obj_character[active_character].y +
+        dx = FASTFIX32_TO_INT(obj_character[active_character].x) -
+             FASTFIX32_TO_INT(obj_character[nchar].x);
+        dy = (FASTFIX32_TO_INT(obj_character[active_character].y) +
               obj_character[active_character].y_size) -
-             (obj_character[nchar].y +
+             (FASTFIX32_TO_INT(obj_character[nchar].y) +
               obj_character[nchar].y_size);
 
-        newx = obj_character[nchar].x +
+        newx = FASTFIX32_TO_INT(obj_character[nchar].x) +
                (dx ? (dx > 0 ? 1 : -1) : 0);
-        newy = obj_character[nchar].y +
+        newy = FASTFIX32_TO_INT(obj_character[nchar].y) +
                (dy ? (dy > 0 ? 1 : -1) : 0);
 
         // Distance to the active character if we accept the new position
@@ -331,8 +332,8 @@ void approach_characters(void)    // Move NPCs that follow the hero
             dprintf(3,"Character %d moving to (%d, %d)\n", nchar, newx, newy);
 
             // Update entity position
-            obj_character[nchar].x     = newx;
-            obj_character[nchar].y     = newy;
+            obj_character[nchar].x     = FASTFIX32_FROM_INT(newx);
+            obj_character[nchar].y     = FASTFIX32_FROM_INT(newy);
             obj_character[nchar].flipH = (dx < 0);
 
             // Update sprite position and properties
