@@ -219,17 +219,19 @@ void approach_enemies(void)    // Update enemy positions to follow player during
                 dy = (FASTFIX32_TO_INT(obj_character[active_character].y) + obj_character[active_character].y_size) -
                     (FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.y) + obj_enemy[nenemy].obj_character.y_size);
 
-                s16 step = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.speed);
-                newx = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.x) + (dx != 0 ? (dx > 0 ? step : -step) : 0);
-                newy = FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.y) + (dy != 0 ? (dy > 0 ? step : -step) : 0);
+                fastfix32 step = obj_enemy[nenemy].obj_character.speed;
+                fastfix32 newx_fixed = obj_enemy[nenemy].obj_character.x + (dx != 0 ? (dx > 0 ? step : -step) : 0);
+                fastfix32 newy_fixed = obj_enemy[nenemy].obj_character.y + (dy != 0 ? (dy > 0 ? step : -step) : 0);
+                newx = FASTFIX32_TO_INT(newx_fixed);
+                newy = FASTFIX32_TO_INT(newy_fixed);
 
                 // Check for collision at new position
                 collision_result = detect_enemy_char_collision(nenemy, newx, newy);
 
                 // Move the enemy if there's no collision and it's not currently attacking
                 if (collision_result == CHR_NONE && combatContext.activeEnemy == ENEMY_NONE) {
-                    obj_enemy[nenemy].obj_character.x = FASTFIX32_FROM_INT(newx);
-                    obj_enemy[nenemy].obj_character.y = FASTFIX32_FROM_INT(newy);
+                    obj_enemy[nenemy].obj_character.x = newx_fixed;
+                    obj_enemy[nenemy].obj_character.y = newy_fixed;
                     obj_enemy[nenemy].obj_character.animation = ANIM_WALK;
                     obj_enemy[nenemy].obj_character.flipH = (dx < 0);
                     update_enemy(nenemy);

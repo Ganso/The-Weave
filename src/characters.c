@@ -315,11 +315,13 @@ void approach_characters(void)    // Move NPCs that follow the hero
              (FASTFIX32_TO_INT(obj_character[nchar].y) +
               obj_character[nchar].y_size);
 
-        s16 step = FASTFIX32_TO_INT(obj_character[nchar].speed);
-        newx = FASTFIX32_TO_INT(obj_character[nchar].x) +
-               (dx ? (dx > 0 ? step : -step) : 0);
-        newy = FASTFIX32_TO_INT(obj_character[nchar].y) +
-               (dy ? (dy > 0 ? step : -step) : 0);
+        fastfix32 step = obj_character[nchar].speed;
+        fastfix32 newx_fixed = obj_character[nchar].x +
+                               (dx ? (dx > 0 ? step : -step) : 0);
+        fastfix32 newy_fixed = obj_character[nchar].y +
+                               (dy ? (dy > 0 ? step : -step) : 0);
+        newx = FASTFIX32_TO_INT(newx_fixed);
+        newy = FASTFIX32_TO_INT(newy_fixed);
 
         // Distance to the active character if we accept the new position
         distance = char_distance(nchar, newx, newy, active_character);
@@ -336,8 +338,8 @@ void approach_characters(void)    // Move NPCs that follow the hero
             dprintf(3,"Character %d moving to (%d, %d)\n", nchar, newx, newy);
 
             // Update entity position
-            obj_character[nchar].x     = FASTFIX32_FROM_INT(newx);
-            obj_character[nchar].y     = FASTFIX32_FROM_INT(newy);
+            obj_character[nchar].x     = newx_fixed;
+            obj_character[nchar].y     = newy_fixed;
             obj_character[nchar].flipH = (dx < 0);
 
             // Update sprite position and properties
