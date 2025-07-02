@@ -43,10 +43,12 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
             if (player_has_rod) nsprite = &linus_sprite;
             else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
+            obj_character[nchar].speed = LINUS_WALK_SPEED;
             break;
         case CHR_clio:
             nsprite = &clio_sprite;
             nsprite_shadow = &clio_shadow_sprite;
+            obj_character[nchar].speed = CLIO_WALK_SPEED;
             break;
         case CHR_xander:
             nsprite = &xander_sprite;
@@ -80,6 +82,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         npal = obj_character[nchar].palette;
         obj_character[nchar].active=true;
     }
+
 
     dprintf(2,"Adding sprite for character %d at (%d, %d)\n", nchar, FASTFIX32_TO_INT(obj_character[nchar].x), FASTFIX32_TO_INT(obj_character[nchar].y));
     spr_chr[nchar] = SPR_addSpriteSafe(nsprite, FASTFIX32_TO_INT(obj_character[nchar].x), FASTFIX32_TO_INT(obj_character[nchar].y),

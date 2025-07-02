@@ -27,6 +27,10 @@
 #define MIN_FOLLOW_DISTANCE 20
 #define FOLLOW_WAIT_DISTANCE 80
 
+// Player speed (fixed point 16.16)
+#define LINUS_WALK_SPEED ((fastfix32)0x00018000)     // 1.5 px/frame
+#define CLIO_WALK_SPEED  FASTFIX32_FROM_INT(1)       // 1 px/frame
+
 // Characters
 extern Entity obj_character[MAX_CHR];
 extern Sprite *spr_chr[MAX_CHR];
