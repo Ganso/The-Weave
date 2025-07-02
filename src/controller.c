@@ -67,10 +67,19 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     // dx Horizontal movement (-1 for left, 1 for right, 0 for no horizontal movement)
     // dy Vertical movement (-1 for up, 1 for down, 0 for no vertical movement)
 
-    s16 current_x = FASTFIX32_TO_INT(obj_character[active_character].x);
-    s16 current_y = FASTFIX32_TO_INT(obj_character[active_character].y);
-    s16 new_x = current_x + dx;
-    s16 new_y = current_y + dy;
+    fastfix32 step = obj_character[active_character].speed;
+    fastfix32 current_x_fixed = obj_character[active_character].x;
+    fastfix32 current_y_fixed = obj_character[active_character].y;
+    fastfix32 new_x_fixed = current_x_fixed;
+    fastfix32 new_y_fixed = current_y_fixed;
+
+    if (dx != 0) new_x_fixed += (dx > 0 ? step : -step);
+    if (dy != 0) new_y_fixed += (dy > 0 ? step : -step);
+
+    s16 current_x = FASTFIX32_TO_INT(current_x_fixed);
+    s16 current_y = FASTFIX32_TO_INT(current_y_fixed);
+    s16 new_x = FASTFIX32_TO_INT(new_x_fixed);
+    s16 new_y = FASTFIX32_TO_INT(new_y_fixed);
     u8 player_y_size = obj_character[active_character].y_size;
     bool direction_changed = false;
     bool scroll_user_mode =
@@ -122,6 +131,8 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
         // Update new position to where we found no collision
         new_x = test_x;
         new_y = test_y;
+        new_x_fixed = FASTFIX32_FROM_INT(new_x);
+        new_y_fixed = FASTFIX32_FROM_INT(new_y);
     }
 
     bool position_updated = false;
@@ -142,12 +153,13 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
             // Character reached screen edge → start scrolling
             scroll_background(dx);
             wait_for_followers(dx);
+            new_x_fixed = current_x_fixed;
             position_updated = true;
         }
         else if (!use_x_limits ||
                  (new_x >= x_limit_min && new_x <= x_limit_max)) {
             // Update character position and flip state
-            obj_character[active_character].x = FASTFIX32_FROM_INT(new_x);
+            obj_character[active_character].x = new_x_fixed;
             if (direction_changed) {
                 obj_character[active_character].flipH = (dx < 0);
             }
@@ -159,8 +171,10 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     if (dy != 0) {
         if (new_y + player_y_size >= y_limit_min &&
             new_y + player_y_size <= y_limit_max) {
-            obj_character[active_character].y = FASTFIX32_FROM_INT(new_y);
+            obj_character[active_character].y = new_y_fixed;
             position_updated = true;
+        } else {
+            new_y_fixed = current_y_fixed;
         }
     }
 
