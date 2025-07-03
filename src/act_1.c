@@ -187,7 +187,7 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
         if (offset_BGA<=1 && FASTFIX32_TO_INT(obj_character[active_character].x)<=1) { // Players try to exit screen
             if (item_interacted[0]==false || item_interacted[1]==false) { // We han't read every book
                 talk_dialog(&dialogs[ACT1_DIALOG1][A1D1_REVISIT_MEMORIES]); // (ES) "Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papá" - (EN) "Before I leave I want to|revisit some memories|I owe it to dad"
-                move_character(active_character, 20, FASTFIX32_TO_INT(obj_character[active_character].y + obj_character[active_character].y_size)); // Go backwards
+                move_character(active_character, 20, FASTFIX32_TO_INT(obj_character[active_character].y)); // Go backwards
             }
             else break; // We have read it --> exit
         }
@@ -195,7 +195,7 @@ void act_1_scene_2(void)    // Corridor scene with history books and memories
         next_frame(true);
     }
 
-    move_character(active_character, -30, FASTFIX32_TO_INT(obj_character[active_character].y + obj_character[active_character].y_size));
+    move_character(active_character, -30, FASTFIX32_TO_INT(obj_character[active_character].y));
 
     end_level(); // Free resources
     current_scene=3; // Next scene
