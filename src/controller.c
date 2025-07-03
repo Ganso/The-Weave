@@ -146,8 +146,8 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
                  SCREEN_WIDTH - SCROLL_START_DISTANCE);
 
         bool can_scroll_further =
-            (dx < 0 && offset_BGA > 0) ||
-            (dx > 0 && offset_BGA < (background_width - SCREEN_WIDTH));
+            (dx < 0 && FASTFIX32_TO_INT(offset_BGA) > 0) ||
+            (dx > 0 && FASTFIX32_TO_INT(offset_BGA) < (background_width - SCREEN_WIDTH));
 
         if (can_scroll && at_scroll_edge && can_scroll_further) {
             // Character reached screen edge → start scrolling
