@@ -43,12 +43,12 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
             if (player_has_rod) nsprite = &linus_sprite;
             else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
-            obj_character[nchar].speed = LINUS_WALK_SPEED;
+            obj_character[nchar].speed = FASTFIX32_FROM_INT(3) / 2; // 1.5 px/frame
             break;
         case CHR_clio:
             nsprite = &clio_sprite;
             nsprite_shadow = &clio_shadow_sprite;
-            obj_character[nchar].speed = CLIO_WALK_SPEED;
+            obj_character[nchar].speed = FASTFIX32_FROM_INT(3) / 4; // 0.75 px/frame
             break;
         case CHR_xander:
             nsprite = &xander_sprite;
@@ -216,7 +216,7 @@ void look_left(u16 nchar, bool direction_right)    // Set character sprite horiz
     SPR_update();
 }
 
-void move_character(u16 nchar, fastfix32 newx, fastfix32 newy)    // Move character with walking animation and direction update
+void move_character(u16 nchar, u16 newx, u16 newy)    // Move character with walking animation and direction update
 {
     show_character(nchar, true);
     obj_character[nchar].state=STATE_WALKING;
@@ -229,14 +229,18 @@ void move_character(u16 nchar, fastfix32 newx, fastfix32 newy)    // Move charac
         look_left(nchar, false);
     }
 
+    dprintf(3,"Moving character %d to (%d, %d)\n", nchar, newx, newy);
+
     move_entity(&obj_character[nchar], spr_chr[nchar], newx, newy);
     obj_character[nchar].state=STATE_IDLE; // Set state to idle after moving
 }
 
-void move_character_instant(u16 nchar, fastfix32 x, fastfix32 y)    // Set character position immediately without animation
+void move_character_instant(u16 nchar, u16 x, u16 y)    // Set character position immediately without animation
 {
     s16 xi = FASTFIX32_TO_INT(x);
     s16 yi = FASTFIX32_TO_INT(y) - obj_character[nchar].y_size; // Use bottom line coordinate
+
+    dprintf(3,"Instantly moving character %d to (%d, %d)\n", nchar, xi, yi);
 
     SPR_setPosition(spr_chr[nchar], xi, yi);
     obj_character[nchar].x = x;
@@ -277,10 +281,9 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     }
 }
 
-void follow_active_character(u16 nchar, bool follow, fastfix32 speed)    // Set character to follow active character
+void follow_active_character(u16 nchar, bool follow)    // Set character to follow active character
 {
     obj_character[nchar].follows_character = follow;
-    obj_character[nchar].speed = speed;
     obj_character[nchar].state = STATE_IDLE;
     show_character(nchar, true);
 }

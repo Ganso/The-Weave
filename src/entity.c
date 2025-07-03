@@ -20,6 +20,7 @@ void move_entity(Entity *entity, Sprite *sprite, fastfix32 newx, fastfix32 newy)
     s16 e2;
     bool old_movement_active=movement_active;
 
+    dprintf(3,"Moving entity %p to (%d, %d)\n", entity, target_x, target_y);
 
     // Check if this entity is a character so we can update its shadow
     for (u16 i = 0; i < MAX_CHR; i++) {
