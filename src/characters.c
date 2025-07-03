@@ -54,6 +54,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         case CHR_xander:
             nsprite = &xander_sprite;
             nsprite_shadow = &xander_shadow_sprite;
+            speed = FASTFIX32_FROM_INT(3) / 4; // 0.75 px/frame
             break;
         case CHR_swan:
             nsprite = &swan_sprite;
