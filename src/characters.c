@@ -71,6 +71,8 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         if (collision_height==0) collision_height=2; // Two lines height
         if (collision_y_offset==0) collision_y_offset=y_size-1; // At the feet
 
+        dprintf(3,"Speed (in micropixels/frame): %d\n", FASTFIX32_TO_INT(obj_character[nchar].speed*1000));
+
         obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow,
             FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0),
             x_size, y_size, npal, false, false, ANIM_IDLE, false,
