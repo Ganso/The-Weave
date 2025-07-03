@@ -225,11 +225,11 @@ void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with wal
     s16 dx = newx - FASTFIX32_TO_INT(obj_character[nchar].x);
     if (dx < 0) {
         look_left(nchar, true);
-    } else if (dx > 0) {
+    } else if (dx > 0) { 
         look_left(nchar, false);
     }
 
-    dprintf(3,"Moving character %d to (%d, %d)\n", nchar, newx, newy);
+    dprintf(3,"Moving character %d to (%d, %d)\n", nchar, FASTFIX32_FROM_INT(newx), FASTFIX32_FROM_INT(newy));
 
     move_entity(&obj_character[nchar], spr_chr[nchar], newx, newy);
     obj_character[nchar].state=STATE_IDLE; // Set state to idle after moving
