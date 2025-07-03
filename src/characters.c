@@ -318,18 +318,23 @@ void approach_characters(void)    // Move NPCs that follow the hero
                FASTFIX32_TO_INT(obj_character[nchar].y));
 
         // Calculate new position towards the active character
-        dx = FASTFIX32_TO_INT(obj_character[active_character].x) -
-             FASTFIX32_TO_INT(obj_character[nchar].x);
-        dy = (FASTFIX32_TO_INT(obj_character[active_character].y) +
-              obj_character[active_character].y_size) -
-             (FASTFIX32_TO_INT(obj_character[nchar].y) +
-              obj_character[nchar].y_size);
+        // Calculate the position difference using fastfix32 to avoid rounding
+        fastfix32 dx_fixed = obj_character[active_character].x -
+                             obj_character[nchar].x;
+        fastfix32 dy_fixed =
+            (obj_character[active_character].y +
+             FASTFIX32_FROM_INT(obj_character[active_character].y_size)) -
+            (obj_character[nchar].y +
+             FASTFIX32_FROM_INT(obj_character[nchar].y_size));
 
         fastfix32 step = obj_character[nchar].speed;
         fastfix32 newx_fixed = obj_character[nchar].x +
-                               (dx ? (dx > 0 ? step : -step) : 0);
+                               (dx_fixed > 0 ? step : (dx_fixed < 0 ? -step : 0));
         fastfix32 newy_fixed = obj_character[nchar].y +
-                               (dy ? (dy > 0 ? step : -step) : 0);
+                               (dy_fixed > 0 ? step : (dy_fixed < 0 ? -step : 0));
+        // Use integer coordinates for distance check and logs
+        dx = FASTFIX32_TO_INT(dx_fixed);
+        dy = FASTFIX32_TO_INT(dy_fixed);
         newx = FASTFIX32_TO_INT(newx_fixed);
         newy = FASTFIX32_TO_INT(newy_fixed);
 
