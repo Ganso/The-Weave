@@ -216,13 +216,13 @@ void look_left(u16 nchar, bool direction_right)    // Set character sprite horiz
     SPR_update();
 }
 
-void move_character(u16 nchar, u16 newx, u16 newy)    // Move character with walking animation and direction update
+void move_character(u16 nchar, s16 newx, s16 newy)    // Move character with walking animation and direction update
 {
     show_character(nchar, true);
     obj_character[nchar].state=STATE_WALKING;
 
     // Look in the appropriate direction
-    s16 dx = FASTFIX32_TO_INT(newx) - FASTFIX32_TO_INT(obj_character[nchar].x);
+    s16 dx = newx - FASTFIX32_TO_INT(obj_character[nchar].x);
     if (dx < 0) {
         look_left(nchar, true);
     } else if (dx > 0) {
@@ -235,15 +235,15 @@ void move_character(u16 nchar, u16 newx, u16 newy)    // Move character with wal
     obj_character[nchar].state=STATE_IDLE; // Set state to idle after moving
 }
 
-void move_character_instant(u16 nchar, u16 x, u16 y)    // Set character position immediately without animation
+void move_character_instant(u16 nchar, s16 x, s16 y)    // Set character position immediately without animation
 {
-    s16 xi = FASTFIX32_TO_INT(x);
-    s16 yi = FASTFIX32_TO_INT(y) - obj_character[nchar].y_size; // Use bottom line coordinate
+    s16 xi = x;
+    s16 yi = y - obj_character[nchar].y_size; // Use bottom line coordinate
 
     dprintf(3,"Instantly moving character %d to (%d, %d)\n", nchar, xi, yi);
 
     SPR_setPosition(spr_chr[nchar], xi, yi);
-    obj_character[nchar].x = x;
+    obj_character[nchar].x = FASTFIX32_FROM_INT(xi);
     obj_character[nchar].y = FASTFIX32_FROM_INT(yi);
     update_character_shadow(nchar);
     next_frame(false);
