@@ -302,8 +302,6 @@ void approach_characters(void)    // Move NPCs that follow the hero
 
     for (nchar = 0; nchar < MAX_CHR; nchar++)
     {
-        dprintf(3,"Approaching character %d\n", nchar);
-
         // Skip the active character
         if (nchar == active_character) continue;
 
@@ -314,6 +312,10 @@ void approach_characters(void)    // Move NPCs that follow the hero
         dprintf(3,"Character %d is following\n", nchar);
 
         has_moved=false;
+
+        dprintf(3,"Character %d position: (%d, %d)\n", nchar,
+               FASTFIX32_TO_INT(obj_character[nchar].x),
+               FASTFIX32_TO_INT(obj_character[nchar].y));
 
         // Calculate new position towards the active character
         dx = FASTFIX32_TO_INT(obj_character[active_character].x) -
