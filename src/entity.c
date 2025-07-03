@@ -16,8 +16,13 @@ void move_entity(Entity *entity, Sprite *sprite, fastfix32 newx, fastfix32 newy)
     fastfix32 dy = target_y - y;
     fastfix32 abs_dx = dx >= 0 ? dx : -dx;
     fastfix32 abs_dy = dy >= 0 ? dy : -dy;
-    u32 steps = (abs_dx > abs_dy ? abs_dx : abs_dy) >> 16;
+    fastfix32 step_size = entity->speed;
+    if (step_size <= 0) step_size = FASTFIX32_FROM_INT(1);
+
+    fastfix32 max_dist = (abs_dx > abs_dy) ? abs_dx : abs_dy;
+    u32 steps = (u32)(max_dist / step_size);
     if (steps == 0) steps = 1;
+
     fastfix32 step_x = dx / (fastfix32)steps;
     fastfix32 step_y = dy / (fastfix32)steps;
     bool old_movement_active = movement_active;
