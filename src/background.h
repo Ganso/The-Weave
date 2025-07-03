@@ -4,7 +4,7 @@
 // Backgrounds
 extern Map *background_BGA;
 extern Map *background_BGB;
-extern u32 offset_BGA;
+extern fastfix32 offset_BGA; // Foreground scroll offset in fixed point
 extern u32 offset_BGB;
 
 // Background scroll modes

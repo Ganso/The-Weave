@@ -133,11 +133,11 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     scroll_speed=new_scroll_speed;
     background_width=new_background_width;
 
-    offset_BGA=0;
+    offset_BGA = FASTFIX32_FROM_INT(0);
     offset_BGB=0;
 
     if (background_scroll_mode==BG_SCRL_USER_LEFT) { // We should start at the rightmost edge of the screen
-        offset_BGA=background_width-SCREEN_WIDTH;
+        offset_BGA = FASTFIX32_FROM_INT(background_width - SCREEN_WIDTH);
     }
 
     interface_active=false; // No interface by default
@@ -213,7 +213,7 @@ void end_level() {    // Clean up level resources and reset game state
     last_interacted_item = ITEM_NONE;
 
     // Reset scroll values
-    offset_BGA = 0;
+    offset_BGA = FASTFIX32_FROM_INT(0);
     offset_BGB = 0;
     background_scroll_mode = 0;
     scroll_speed = 0;
