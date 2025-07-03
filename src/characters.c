@@ -30,6 +30,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
     u8 collision_y_offset=0;
     u8 collision_width=0;
     u8 collision_height=0;
+    fastfix32 speed= FASTFIX32_FROM_INT(1);
     bool drops_shadow=true;
     const SpriteDefinition *nsprite = NULL;
     const SpriteDefinition *nsprite_shadow = NULL;
@@ -43,12 +44,12 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
             if (player_has_rod) nsprite = &linus_sprite;
             else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
-            obj_character[nchar].speed = FASTFIX32_FROM_INT(3) / 2; // 1.5 px/frame
+            speed = FASTFIX32_FROM_INT(3) / 2; // 1.5 px/frame
             break;
         case CHR_clio:
             nsprite = &clio_sprite;
             nsprite_shadow = &clio_shadow_sprite;
-            obj_character[nchar].speed = FASTFIX32_FROM_INT(3) / 4; // 0.75 px/frame
+            speed = FASTFIX32_FROM_INT(3) / 4; // 0.75 px/frame
             break;
         case CHR_xander:
             nsprite = &xander_sprite;
@@ -74,7 +75,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         dprintf(3,"Speed (in micropixels/frame): %d\n", FASTFIX32_TO_INT(obj_character[nchar].speed*1000));
 
         obj_character[nchar] = (Entity) { true, nsprite, nsprite_shadow,
-            FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0),
+            FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0), speed,
             x_size, y_size, npal, false, false, ANIM_IDLE, false,
             collision_x_offset, collision_y_offset, collision_width, collision_height,
             STATE_IDLE, FALSE, drops_shadow, 0 };
@@ -315,10 +316,6 @@ void approach_characters(void)    // Move NPCs that follow the hero
 
         has_moved=false;
 
-        dprintf(3,"Character %d position: (%d, %d)\n", nchar,
-               FASTFIX32_TO_INT(obj_character[nchar].x),
-               FASTFIX32_TO_INT(obj_character[nchar].y));
-
         // Calculate new position towards the active character
         // Calculate the position difference using fastfix32 to avoid rounding
         fastfix32 dx_fixed = obj_character[active_character].x -
@@ -328,7 +325,7 @@ void approach_characters(void)    // Move NPCs that follow the hero
              FASTFIX32_FROM_INT(obj_character[active_character].y_size)) -
             (obj_character[nchar].y +
              FASTFIX32_FROM_INT(obj_character[nchar].y_size));
-
+        
         fastfix32 step = obj_character[nchar].speed;
         fastfix32 newx_fixed = obj_character[nchar].x +
                                (dx_fixed > 0 ? step : (dx_fixed < 0 ? -step : 0));
