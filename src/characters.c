@@ -298,7 +298,7 @@ void approach_characters(void)    // Move NPCs that follow the hero
 {
     u16 nchar;
     s16 newx, newy;
-    s16 dx,  dy;
+    s16 dx, dy;
     bool has_moved;
     u16 distance;
 

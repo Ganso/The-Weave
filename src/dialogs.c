@@ -146,6 +146,12 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
     u16 joy_state;
     char temp[2] = {0, 0};  // Temporary one character storage
     char *encoded_text = NULL;
+    Sprite *spr_fadein;
+
+    // Load Fade-in sprite
+    spr_fadein = SPR_addSprite(&int_fadein_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
+    SPR_setVisibility(spr_fadein, HIDDEN);
+    SPR_setAnimationLoop(spr_fadein, false);
 
     // Code Spanish text
     if (game_language == LANG_SPANISH) {
@@ -170,10 +176,27 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
             continue;
         }
         temp[0] = text[i];
+        
+        // Draw the fade-in sprite over the character position
+        SPR_setPosition(spr_fadein, (x + pos) * 8, y * 8);
+        SPR_setVisibility(spr_fadein, VISIBLE);
+        SPR_setAnimAndFrame(spr_fadein, 0, 0); // Reset animation
+       
+        // Draw text behind the fade-in sprite
         VDP_drawTextBG(WINDOW, temp, x + pos, y);
+
+        // Wait for fade-in animation to complete or skip everything if button A is pressed
+        bool animation_done = false;
+
         if (wait_for_frame) {
-            joy_state = JOY_readJoypad(JOY_ALL);
-            if ((joy_state & BUTTON_A) == 0) next_frame(false); // If button A is being pressed, skip frame update
+            while (!animation_done) {
+                joy_state = JOY_readJoypad(JOY_ALL);
+                if ((joy_state & BUTTON_A) == 0) {
+                        // If button A is not being pressed, update frame
+                        next_frame(false);
+                        animation_done = SPR_isAnimationDone(spr_fadein);
+                } else animation_done = true; // Skip animation if button A is pressed
+            }
         }
         pos++;
         i++;
@@ -193,6 +216,9 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
     if (encoded_text != NULL) {
         free(encoded_text);
     }
+
+    // Free the fade-in sprite
+    SPR_releaseSprite(spr_fadein);
 }
 
 u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_seconds)    // Display dialog with multiple choice options
