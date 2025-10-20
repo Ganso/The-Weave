@@ -6,13 +6,14 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
     dprintf(1,"The Weave - %s",GAMEVERSION);
     dprintf(1,"https://geese-bumps.itch.io/\n\n");
 
-    // geesebumps_logo(); // GeeseBumps Logo
-    // theweave_intro();  // Game intro
+    //geesebumps_logo(); // GeeseBumps Logo
+    //theweave_intro();  // Game intro
+    game_language = LANG_SPANISH; // Definir idioma a español para pruebas
 
     initialize(true);
 
     current_act=1;
-    current_scene=1;
+    current_scene=3;
 
     dprintf(2,"Loading Act %d, Scene %d\n", current_act, current_scene);
     while (true) { // MAIN LOOP

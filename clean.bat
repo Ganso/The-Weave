@@ -1,0 +1,1 @@
+c:\sgdk\bin\make -f c:\sgdk\makefile.gen clean
