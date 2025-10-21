@@ -189,17 +189,19 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
         bool animation_done = false;
 
         // Play random dialog1 to dialog3 sound
-        u8 dialog_sound = (random() % 3) + 1;
-        switch (dialog_sound) {
-            case 1:
-                play_sample(snd_dialog1, sizeof(snd_dialog1));
-                break;
-            case 2:
-                play_sample(snd_dialog2, sizeof(snd_dialog2));
-                break;
-            case 3:
-                play_sample(snd_dialog3, sizeof(snd_dialog3));
-                break;
+        if (text[i] != ' ') {
+            u8 dialog_sound = (random() % 3) + 1;
+            switch (dialog_sound) {
+                case 1:
+                    play_sample(snd_dialog1, sizeof(snd_dialog1));
+                    break;
+                case 2:
+                    play_sample(snd_dialog2, sizeof(snd_dialog2));
+                    break;
+                case 3:
+                    play_sample(snd_dialog3, sizeof(snd_dialog3));
+                    break;
+            }
         }
 
         if (wait_for_frame) {

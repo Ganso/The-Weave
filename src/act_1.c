@@ -228,7 +228,7 @@ void act_1_scene_3(void)    // Hall scene with Clio and Xander discussing Weaver
     // Dialog
     talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_GUILD_YEAR]); // (ES) "@[Gremio de los historiadores@]|Año 8121" - (EN) "@[Historians guild@]|Year 8121", (ES) "Lunes|Primera hora de la mañana" - (EN) "Monday|Early morning"
     move_character(CHR_linus, 200, 174);
-    talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_CLIO_LATE]); // (ES) "Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños" - (EN) "It's late, Linus|And you shouldn't be late|at your birthday", (ES) "He tenido el sueño|más extraño, Madre" - (EN) "I have had the strangest|dream, Mother", (ES) "Un @[cisne@] venía a|mi cuarto y..." - (EN) "A @[swan@] came to my room|and...", (ES) "Luego me lo cuentas|@[Xander@] nos espera" - (EN) "You can tell me later|@[Xander@] is waiting for us"
+    talk_cluster(&dialogs[ACT1_DIALOG2][A1D2_CLIO_LATE]); // (ES) "Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños" - (EN) "It's late, Linus|And you shouldn't be late|at your birthday", (ES) "He tenido un sueño|de lo más extraño, Madre" - (EN) "I have had the strangest|dream, Mother", (ES) "Un @[cisne@] venía a|mi cuarto y..." - (EN) "A @[swan@] came to my room|and...", (ES) "Luego me lo cuentas|@[Xander@] nos espera" - (EN) "You can tell me later|@[Xander@] is waiting for us"
     // Xander's entrance
     move_character(CHR_clio, 100, 154);
     wait_seconds(1);

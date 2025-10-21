@@ -22,7 +22,7 @@ act1_dialog2,A1D2_GUILD_YEAR,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[Gremio de l
 act1_dialog2,A1D2_MONDAY_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Lunes|Primera hora de la mañana,Monday|Early morning
 act1_dialog2,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_dialog2,A1D2_CLIO_LATE,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños","It's late, Linus|And you shouldn't be late|at your birthday"
-act1_dialog2,A1D2_LINUS_STRANGEST_DREAM,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"He tenido el sueño|más extraño, Madre","I have had the strangest|dream, Mother"
+act1_dialog2,A1D2_LINUS_STRANGEST_DREAM,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"He tenido un sueño|de lo más extraño, Madre","I have had the strangest|dream, Mother"
 act1_dialog2,A1D2_SWAN_CAME,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Un @[cisne@] venía a|mi cuarto y...,A @[swan@] came to my room|and...
 act1_dialog2,A1D2_CLIO_TELL_LATER,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Luego me lo cuentas|@[Xander@] nos espera,You can tell me later|@[Xander@] is waiting for us
 act1_dialog2,NULL,0,false,DEFAULT_TALK_TIME,,
