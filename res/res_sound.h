@@ -1,5 +1,3 @@
-#include <genesis.h>
-
 #ifndef _RES_RES_SOUND_H_
 #define _RES_RES_SOUND_H_
 
@@ -11,6 +9,9 @@ extern const u8 snd_player_hurt[5120];
 extern const u8 snd_player_hit_enemy[15360];
 extern const u8 snd_effect_magic_appear[90368];
 extern const u8 snd_effect_magic_disappear[90368];
+extern const u8 snd_dialog1[256];
+extern const u8 snd_dialog2[256];
+extern const u8 snd_dialog3[256];
 extern const u8 snd_note_mi[1024];
 extern const u8 snd_note_fa[1024];
 extern const u8 snd_note_sol[1024];

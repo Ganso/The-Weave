@@ -1,30 +1,30 @@
 out/res/res_interface.o: res/res_interface.res \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/enemy_rod_2.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pattern_open.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/rod_6.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/button_A.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/rod_2.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/enemy_rod_6.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pentagram_3.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/rod_5.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pentagram.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pattern_thunder.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/life_counter.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/enemy_rod_1.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pentagram_4.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/fadein.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/enemy_rod_5.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/rod_1.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/magic_anim.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pentagram_1.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pentagram_6.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pattern_hide.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/rod_4.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/enemy_rod_4.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pentagram_5.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/rod.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/enemy_rod_3.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pattern_sleep.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/screen_limit.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/rod_3.png \
-G:/Mi\ unidad/Codigo/Genesis/The\ Weave/res/Sprites/Interface/pentagram_2.png
+D:/GitHub/The-Weave/res/Sprites/Interface/rod_1.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pentagram_5.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/rod_6.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/screen_limit.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pattern_thunder.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/enemy_rod_3.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/fadein.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/life_counter.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/button_A.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/enemy_rod_4.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pattern_open.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pentagram_4.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/rod_3.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/enemy_rod_6.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/magic_anim.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pentagram_2.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pentagram_3.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/rod_4.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/enemy_rod_5.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pattern_hide.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/enemy_rod_1.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pentagram_6.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pentagram.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pattern_sleep.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/rod_2.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/rod.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/rod_5.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/pentagram_1.png \
+D:/GitHub/The-Weave/res/Sprites/Interface/enemy_rod_2.png
