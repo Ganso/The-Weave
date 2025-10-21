@@ -18,7 +18,7 @@ XGM2 snd_enemy_note_do "Sound/Notes/12-Enemy_note_C4.vgm"
 WAV snd_pattern_thunder "Sound/Patterns/pattern_thunder.wav" XGM2
 WAV snd_pattern_hide "Sound/Patterns/pattern_hide.wav" XGM2
 WAV snd_pattern_open "Sound/Patterns/pattern_open.wav" XGM2
-WAV snd_pattern_invalid "Sound/Patterns/pattern_invalid.wav" XGM
+WAV snd_pattern_invalid "Sound/Patterns/pattern_invalid.wav" XGM2
 
 WAV snd_player_hurt "Sound/Player/player_hurt.wav" XGM2
 WAV snd_player_hit_enemy "Sound/Player/player_hit_enemy.wav" XGM2

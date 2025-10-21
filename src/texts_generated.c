@@ -71,7 +71,7 @@ const DialogItem act1_dialog2[] = {
         {"Es tarde, Linus|Y uno no debe llegar tarde|a su cumpleaños",
          "It's late, Linus|And you shouldn't be late|at your birthday"} },
     [A1D2_LINUS_STRANGEST_DREAM] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
-        {"He tenido el sueño|más extraño, Madre",
+        {"He tenido un sueño|de lo más extraño, Madre",
          "I have had the strangest|dream, Mother"} },
     [A1D2_SWAN_CAME] = { FACE_linus, SIDE_RIGHT, DEFAULT_TALK_TIME,
         {"Un @[cisne@] venía a|mi cuarto y...",
