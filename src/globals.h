@@ -31,6 +31,7 @@
 #include "../res/res_sound.h"
 #include "../res/res_geesebumps.h"
 #include "../res/res_intro.h"
+#include "../res/res_dialogs.h"
 
 extern u16 tile_ind; // Tiles index
 extern u16 frame_counter; // Number of frames counter (random number generator, and frameskip counter in some functions)
@@ -44,12 +45,12 @@ extern u16 frame_counter; // Number of frames counter (random number generator, 
 #include "items.h" // Items in the scenery
 #include "texts.h" // Text strings (English / Spanish)
 #include "texts_generated.h" // Auto generated texts
-#include "dialogs.h" // Dialog and text related functions
 #include "controller.h" // Controller related functions
 #include "interface.h" // Game interface
 #include "background.h" // Background and scenery related objects and functions
 #include "collisions.h" // Distance and collisions related functions
 #include "sound.h" // Music and SFX
+#include "dialogs.h" // Dialog and text related functions
 
 // Main game libraries
 #include "init.h" // Initialization functions

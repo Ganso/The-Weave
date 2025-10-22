@@ -23,11 +23,12 @@ out/src/patterns/pattern_en_thunder.o: src/patterns/pattern_en_thunder.c \
  src/../res/res_backgrounds.h src/../res/res_characters.h \
  src/../res/res_faces.h src/../res/res_enemies.h src/../res/res_items.h \
  src/../res/res_interface.h src/../res/res_sound.h \
- src/../res/res_geesebumps.h src/../res/res_intro.h src/entity.h \
- src/combat.h src/characters.h src/enemies.h src/patterns.h src/globals.h \
- src/patterns/pattern_open.h src/patterns/pattern_hide.h \
- src/patterns/pattern_sleep.h src/patterns/pattern_thunder.h \
- src/patterns/pattern_en_thunder.h src/patterns/pattern_en_bite.h \
- src/items.h src/texts.h src/texts_generated.h src/dialogs.h \
- src/controller.h src/interface.h src/background.h src/collisions.h \
- src/sound.h src/init.h src/intro.h src/geesebumps.h src/act_1.h
+ src/../res/res_geesebumps.h src/../res/res_intro.h \
+ src/../res/res_dialogs.h src/entity.h src/combat.h src/characters.h \
+ src/enemies.h src/patterns.h src/globals.h src/patterns/pattern_open.h \
+ src/patterns/pattern_hide.h src/patterns/pattern_sleep.h \
+ src/patterns/pattern_thunder.h src/patterns/pattern_en_thunder.h \
+ src/patterns/pattern_en_bite.h src/items.h src/texts.h \
+ src/texts_generated.h src/controller.h src/interface.h src/background.h \
+ src/collisions.h src/sound.h src/dialogs.h src/init.h src/intro.h \
+ src/geesebumps.h src/act_1.h
