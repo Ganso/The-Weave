@@ -191,11 +191,12 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame)    // Display tex
         bool animation_done = false;
 
         // Play random dialog1 to dialog8 sound
-        if (text[i] != ' ') {
-            u8 dialog_sound = (random() % 8);
+        if (text[i] == ' ') {
+            u8 dialog_sound = (random() % 4);
             //play_sample(character_sample[CHR_linus][0], sizeof(character_sample[CHR_linus][0]));
-            XGM2_stopPCM(SOUND_PCM_CH1);
-            XGM2_playPCM(character_sample[CHR_linus][dialog_sound], sizeof(character_sample[CHR_linus][dialog_sound]), SOUND_PCM_CH1);
+            if (!XGM2_isPlayingPCM(SOUND_PCM_CH3)) {
+                 XGM2_playPCM(character_sample[CHR_linus][dialog_sound], sizeof(character_sample[CHR_linus][dialog_sound]), SOUND_PCM_CH3);
+            }
         }
 
         if (wait_for_frame) {
@@ -413,38 +414,38 @@ void init_character_samples(void) // Initialize character voice samples
     character_sample[CHR_linus][1] = snd_dialog_linus2;
     character_sample[CHR_linus][2] = snd_dialog_linus3;
     character_sample[CHR_linus][3] = snd_dialog_linus4;
-    character_sample[CHR_linus][4] = snd_dialog_linus5;
-    character_sample[CHR_linus][5] = snd_dialog_linus6;
-    character_sample[CHR_linus][6] = snd_dialog_linus7;
-    character_sample[CHR_linus][7] = snd_dialog_linus8;
+    // character_sample[CHR_linus][4] = snd_dialog_linus5;
+    // character_sample[CHR_linus][5] = snd_dialog_linus6;
+    // character_sample[CHR_linus][6] = snd_dialog_linus7;
+    // character_sample[CHR_linus][7] = snd_dialog_linus8;
 
     // Clio samples
-    character_sample[CHR_clio][0] = snd_dialog_clio1;
-    character_sample[CHR_clio][1] = snd_dialog_clio2;
-    character_sample[CHR_clio][2] = snd_dialog_clio3;
-    character_sample[CHR_clio][3] = snd_dialog_clio4;
-    character_sample[CHR_clio][4] = snd_dialog_clio5;
-    character_sample[CHR_clio][5] = snd_dialog_clio6;
-    character_sample[CHR_clio][6] = snd_dialog_clio7;
-    character_sample[CHR_clio][7] = snd_dialog_clio8;
+    // character_sample[CHR_clio][0] = snd_dialog_clio1;
+    // character_sample[CHR_clio][1] = snd_dialog_clio2;
+    // character_sample[CHR_clio][2] = snd_dialog_clio3;
+    // character_sample[CHR_clio][3] = snd_dialog_clio4;
+    // character_sample[CHR_clio][4] = snd_dialog_clio5;
+    // character_sample[CHR_clio][5] = snd_dialog_clio6;
+    // character_sample[CHR_clio][6] = snd_dialog_clio7;
+    // character_sample[CHR_clio][7] = snd_dialog_clio8;
 
     // Xander samples
-    character_sample[CHR_xander][0] = snd_dialog_xander1;
-    character_sample[CHR_xander][1] = snd_dialog_xander2;
-    character_sample[CHR_xander][2] = snd_dialog_xander3;
-    character_sample[CHR_xander][3] = snd_dialog_xander4;
-    character_sample[CHR_xander][4] = snd_dialog_xander5;
-    character_sample[CHR_xander][5] = snd_dialog_xander6;
-    character_sample[CHR_xander][6] = snd_dialog_xander7;
-    character_sample[CHR_xander][7] = snd_dialog_xander8;
+    // character_sample[CHR_xander][0] = snd_dialog_xander1;
+    // character_sample[CHR_xander][1] = snd_dialog_xander2;
+    // character_sample[CHR_xander][2] = snd_dialog_xander3;
+    // character_sample[CHR_xander][3] = snd_dialog_xander4;
+    // character_sample[CHR_xander][4] = snd_dialog_xander5;
+    // character_sample[CHR_xander][5] = snd_dialog_xander6;
+    // character_sample[CHR_xander][6] = snd_dialog_xander7;
+    // character_sample[CHR_xander][7] = snd_dialog_xander8;
 
     // Typewriter sound effect
-    character_sample[MAX_CHR][0] = snd_dialog_typewriter1;
-    character_sample[MAX_CHR][1] = snd_dialog_typewriter2;
-    character_sample[MAX_CHR][2] = snd_dialog_typewriter3;
-    character_sample[MAX_CHR][3] = snd_dialog_typewriter4;
-    character_sample[MAX_CHR][4] = snd_dialog_typewriter5;
-    character_sample[MAX_CHR][5] = snd_dialog_typewriter6;
-    character_sample[MAX_CHR][6] = snd_dialog_typewriter7;
-    character_sample[MAX_CHR][7] = snd_dialog_typewriter8;
+    // character_sample[MAX_CHR][0] = snd_dialog_typewriter1;
+    // character_sample[MAX_CHR][1] = snd_dialog_typewriter2;
+    // character_sample[MAX_CHR][2] = snd_dialog_typewriter3;
+    // character_sample[MAX_CHR][3] = snd_dialog_typewriter4;
+    // character_sample[MAX_CHR][4] = snd_dialog_typewriter5;
+    // character_sample[MAX_CHR][5] = snd_dialog_typewriter6;
+    // character_sample[MAX_CHR][6] = snd_dialog_typewriter7;
+    // character_sample[MAX_CHR][7] = snd_dialog_typewriter8;
 }
