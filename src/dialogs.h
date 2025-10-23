@@ -4,7 +4,10 @@
 #define DEFAULT_TALK_TIME 10   // Default maximum time in conversations (10 seconds)
 #define DEFAULT_CHOICE_TIME 30   // Default maximum time for choices (30 seconds)
 
-extern const u8 *character_sample[MAX_CHR+1][8]; // Character voice samples (MAX_CHR+1 == typewriter sound)
+#define MAX_DIALOG_SOUNDS 4  // Maximum number of dialog sounds per character
+
+extern const u8 *character_sample[MAX_CHR+1][MAX_DIALOG_SOUNDS]; // Character voice samples (MAX_CHR+1 == typewriter sound)
+extern u32 character_sample_size[MAX_CHR+1][MAX_DIALOG_SOUNDS]; // Size of each character voice sample
 
 void talk(u8 nface, bool isinleft, char *text, u16 max_seconds); // Make a character talk
 void talk_dialog(const DialogItem *dialog); // Talk a dialog line
