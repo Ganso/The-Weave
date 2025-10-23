@@ -1,27 +1,34 @@
 # ============================================================
-# Simple Cartoon Voice Generator - Sims Style
+# Sims-Style Cartoon Voice Generator - Tight & Fast Edition
 # ============================================================
-# Load syllables, apply pitch/speed independently, reduce duration to 0.1s.
-# Add subtle Sims-like effects (slight distortion, glitch, reverb).
+# Generates short, punchy syllables with aggressive trimming.
+# No attack/decay, designed for seamless concatenation.
+#
+# Folders:
+#   - "syllables" for base TTS WAVs
+#   - "voices" for processed character voices
 #
 # Requirements:
-#   pip install gtts pydub soundfile numpy
+#   pip install gtts pydub librosa soundfile numpy
 #
 # ============================================================
 
 import numpy as np
-from pydub import AudioSegment
+from pydub import AudioSegment, silence
 from pathlib import Path
 from gtts import gTTS
 import io
+import librosa
 
 # -------------------------
 # CONFIGURATION
 # -------------------------
-PHONEME_FOLDER = Path("phonems")
-OUTPUT_FOLDER = Path(".")
-TARGET_DURATION_MS = 100  # 0.1 seconds (reduced from 0.2)
 
+SYLLABLES_FOLDER = Path("syllables")
+VOICES_FOLDER = Path("voices")
+TARGET_FINAL_DURATION_MS = 200  # Shorter for faster pace
+
+# Single clear pronunciation
 BASE_SYLLABLES = {
     "ba": "bah",
     "da": "dah",
@@ -33,262 +40,268 @@ BASE_SYLLABLES = {
     "pa": "pah",
 }
 
+# Voice parameters with speed factor added
 VOICES = {
     "linus": {
-        "speed_factor": 0.97,
-        "pitch_shift": 0.90,
-        "volume_change_db": 7,
-        "reverb": False,
-        "glitch": 0.1,           # subtle glitch
-        "distortion": 0.05,      # minimal distortion
-    },
-    "clio": {
-        "speed_factor": 0.92,
-        "pitch_shift": 1.20,
+        "pitch_semitones": -3,
+        "speed_factor": 1.15,    # Speed up 15%
         "volume_change_db": 8,
         "reverb": False,
-        "glitch": 0.08,
-        "distortion": 0.04,
+        "glitch": 0.05,
+        "distortion": 0.03,
+    },
+    "clio": {
+        "pitch_semitones": +4,
+        "speed_factor": 1.15,    # Speed up 15%
+        "volume_change_db": 9,
+        "reverb": False,
+        "glitch": 0.04,
+        "distortion": 0.02,
     },
     "xander": {
-        "speed_factor": 0.98,
-        "pitch_shift": 0.70,
-        "volume_change_db": 5,
+        "pitch_semitones": -7,
+        "speed_factor": 1.15,    # Speed up 15%
+        "volume_change_db": 9,
         "reverb": True,
-        "glitch": 0.15,          # more glitch for character
-        "distortion": 0.08,      # more distortion
+        "glitch": 0.15,
+        "distortion": 0.07,
     },
 }
 
+# -------------------------
+# HELPER FUNCTIONS
+# -------------------------
 
-# -------------------------
-# TTS GENERATION
-# -------------------------
 def decode_mp3_basic(mp3_bytes):
-    """Decode MP3 using pydub."""
+    """Decode MP3 to pydub AudioSegment."""
     try:
-        audio = AudioSegment.from_mp3(io.BytesIO(mp3_bytes))
-        return audio
+        return AudioSegment.from_mp3(io.BytesIO(mp3_bytes))
     except Exception as e:
         print(f"[ERROR] MP3 decoding: {e}")
         return None
 
+def aggressive_trim_silence(audio, silence_thresh=-40, chunk_size=10):
+    """
+    Aggressively trim silence and fade edges.
+    Removes attack and decay for tight syllables.
+    """
+    try:
+        # Detect non-silent parts with aggressive threshold
+        nonsilent_ranges = silence.detect_nonsilent(
+            audio, 
+            min_silence_len=chunk_size,
+            silence_thresh=silence_thresh
+        )
+        
+        if not nonsilent_ranges:
+            return audio
+        
+        # Get core audio only
+        start_trim = nonsilent_ranges[0][0]
+        end_trim = nonsilent_ranges[-1][1]
+        
+        # Cut MORE aggressively - remove attack/decay completely
+        audio_core = audio[start_trim:end_trim]
+        
+        # Apply very short fade in/out (5ms) to avoid clicks
+        audio_core = audio_core.fade_in(5).fade_out(5)
+        
+        return audio_core
+    except Exception as e:
+        print(f"[WARNING] Trim failed: {e}")
+        return audio
 
 def generate_base_syllables():
-    """Generate base syllable WAV files using gtts."""
-    print("=== Generating base syllables with phonetic TTS ===\n")
+    """Generate clean syllables with aggressive trimming."""
+    print("=== Generating base syllables (tight & clean) ===\n")
+    SYLLABLES_FOLDER.mkdir(exist_ok=True)
     
-    PHONEME_FOLDER.mkdir(exist_ok=True)
-    
-    for internal_name, phonetic_text in BASE_SYLLABLES.items():
-        output_path = PHONEME_FOLDER / f"{internal_name}.wav"
-        
+    for name, text in BASE_SYLLABLES.items():
+        output_path = SYLLABLES_FOLDER / f"{name}.wav"
         if output_path.exists():
-            print(f"[SKIP] {internal_name}.wav already exists")
+            print(f"[SKIP] {name}.wav exists")
             continue
         
         try:
-            print(f"[GENERATING] {internal_name} ('{phonetic_text}')...", end=" ", flush=True)
-            
-            tts = gTTS(text=phonetic_text, lang='en', slow=False)
+            print(f"[GENERATING] {name} ('{text}')...", end=" ", flush=True)
+            tts = gTTS(text=text, lang="en", slow=False)
             mp3_buffer = io.BytesIO()
             tts.write_to_fp(mp3_buffer)
             mp3_buffer.seek(0)
             
             audio = decode_mp3_basic(mp3_buffer.getvalue())
-            
             if audio is None:
-                print(f"[ERROR] Empty audio data")
+                print("[ERROR] Empty audio")
                 continue
             
-            audio.export(str(output_path), format="wav")
-            print(f"[OK]")
+            # Aggressively trim all silence
+            audio = aggressive_trim_silence(audio, silence_thresh=-40)
             
+            # Normalize
+            audio = audio.normalize()
+            
+            audio.export(str(output_path), format="wav")
+            print(f"[OK] {len(audio)}ms")
         except Exception as e:
             print(f"[ERROR] {e}")
 
-
-# -------------------------
-# DSP EFFECTS - SUBTLE SIMS STYLE
-# -------------------------
-def change_pitch(audio, pitch_shift):
-    """Change pitch without changing speed/duration."""
-    if pitch_shift == 1.0:
-        return audio
+def pitch_shift_librosa(audio_segment, semitones):
+    """High-quality pitch shifting."""
+    if semitones == 0:
+        return audio_segment
     
     try:
-        sample_rate = audio.frame_rate
-        new_frame_rate = int(sample_rate * pitch_shift)
-        
-        if new_frame_rate < 8000:
-            new_frame_rate = 8000
-        if new_frame_rate > 48000:
-            new_frame_rate = 48000
-        
-        shifted_audio = audio._spawn(
-            audio.raw_data,
-            overrides={"frame_rate": new_frame_rate}
-        ).set_frame_rate(sample_rate)
-        
-        return shifted_audio
-    except Exception as e:
-        print(f"    [WARNING] Pitch shift failed: {e}")
-        return audio
-
-
-def add_subtle_distortion(audio, amount):
-    """Add subtle harmonic distortion for synthetic character."""
-    if amount <= 0:
-        return audio
-    
-    try:
-        # Convert to numpy
-        samples = np.array(audio.get_array_of_samples(), dtype=np.float32)
-        if audio.channels == 2:
+        samples = np.array(audio_segment.get_array_of_samples(), dtype=np.float32)
+        if audio_segment.channels == 2:
             samples = samples.reshape((-1, 2)).mean(axis=1)
         samples = samples / 32768.0
         
-        # Apply soft clipping (tanh distortion)
-        distorted = np.tanh(samples * (1 + amount * 2)) * 0.9
+        sr = audio_segment.frame_rate
+        shifted = librosa.effects.pitch_shift(samples, sr=sr, n_steps=semitones)
         
-        # Blend: keep mostly original, add small amount of distortion
-        samples_out = samples * (1 - amount * 0.5) + distorted * (amount * 0.5)
+        # Normalize
+        peak = np.max(np.abs(shifted))
+        if peak > 0:
+            shifted = shifted / peak * 0.95
         
-        # Convert back
-        samples_int16 = np.int16(samples_out * 32767)
-        audio_out = AudioSegment(
+        samples_int16 = np.int16(shifted * 32767)
+        
+        return AudioSegment(
             samples_int16.tobytes(),
-            frame_rate=audio.frame_rate,
+            frame_rate=sr,
             sample_width=2,
             channels=1
         )
-        return audio_out
     except Exception as e:
-        print(f"    [WARNING] Distortion failed: {e}")
-        return audio
+        print(f"[WARNING] Pitch shift failed: {e}")
+        return audio_segment
 
-
-def add_subtle_glitch(audio, amount):
-    """Add subtle glitch artifacts for Sims-like effect."""
+def add_distortion(audio, amount):
+    """Subtle harmonic distortion."""
     if amount <= 0:
         return audio
-    
+    try:
+        samples = np.array(audio.get_array_of_samples(), dtype=np.float32)
+        if audio.channels == 2:
+            samples = samples.reshape((-1, 2)).mean(axis=1)
+        samples /= 32768.0
+        
+        distorted = np.tanh(samples * (1 + amount * 3)) * 0.85
+        blended = samples * (1 - amount * 0.5) + distorted * (amount * 0.5)
+        
+        samples_int16 = np.int16(blended * 32767)
+        return AudioSegment(samples_int16.tobytes(), frame_rate=audio.frame_rate,
+                            sample_width=2, channels=1)
+    except:
+        return audio
+
+def add_glitch(audio, amount):
+    """Random amplitude drops."""
+    if amount <= 0:
+        return audio
     try:
         samples = np.array(audio.get_array_of_samples(), dtype=np.float32)
         if audio.channels == 2:
             samples = samples.reshape((-1, 2)).mean(axis=1)
         
-        # Add small random bit drops (very subtle)
-        np.random.seed(42)  # consistent seed per voice
-        glitch_mask = np.random.random(len(samples)) < (amount * 0.01)
-        samples[glitch_mask] = samples[glitch_mask] * 0.7
+        np.random.seed(42)
+        mask = np.random.random(len(samples)) < (amount * 0.02)
+        samples[mask] *= 0.7
         
-        # Convert back
         samples_int16 = np.int16(samples)
-        audio_out = AudioSegment(
-            samples_int16.tobytes(),
-            frame_rate=audio.frame_rate,
-            sample_width=2,
-            channels=1
-        )
-        return audio_out
-    except Exception as e:
-        print(f"    [WARNING] Glitch failed: {e}")
+        return AudioSegment(samples_int16.tobytes(), frame_rate=audio.frame_rate,
+                            sample_width=2, channels=1)
+    except:
         return audio
 
-
-def simple_reverb(audio, amount=0.2):
-    """Add simple reverb/echo effect."""
-    delay_ms = 40
-    if len(audio) <= delay_ms:
+def add_reverb(audio, amount=0.15):
+    """Very short echo for minimal reverb."""
+    delay = 30  # Shorter delay for tighter sound
+    if len(audio) <= delay:
         return audio
-    
     try:
-        delayed = AudioSegment.silent(duration=delay_ms) + audio[:-delay_ms]
-        reverb_audio = audio.overlay(delayed, position=0, gain_during_overlay=amount - 6)
-        return reverb_audio
-    except Exception as e:
-        print(f"    [WARNING] Reverb failed: {e}")
+        delayed = AudioSegment.silent(duration=delay) + audio[:-delay]
+        return audio.overlay(delayed, position=0, gain_during_overlay=amount - 7)
+    except:
         return audio
-
 
 # -------------------------
 # MAIN PROCESSING
 # -------------------------
-def process_and_save_phoneme(syllable_name, voice_name, params, index):
-    """Process syllable with speed, pitch, and Sims effects."""
-    in_path = PHONEME_FOLDER / f"{syllable_name}.wav"
+
+def process_syllable(syllable_name, voice_name, params, index):
+    """Process syllable into tight character voice."""
+    in_path = SYLLABLES_FOLDER / f"{syllable_name}.wav"
     if not in_path.exists():
         print(f"[WARNING] Missing: {in_path}")
         return
-
+    
     try:
-        # Load WAV
         audio = AudioSegment.from_wav(str(in_path))
-        
         if len(audio) == 0:
-            print(f"[ERROR] Empty audio from {in_path}")
+            print(f"[ERROR] Empty audio: {in_path}")
             return
         
-        # Step 1: Apply speed change
-        speed_factor = params["speed_factor"]
+        # Speed up audio first (makes it shorter and snappier)
+        speed_factor = params.get("speed_factor", 1.0)
         if speed_factor != 1.0:
-            try:
-                audio = audio.speedup(speed_factor)
-            except Exception as e:
-                print(f"    [WARNING] Speedup failed: {e}")
+            audio = audio.speedup(playback_speed=speed_factor)
         
-        # Step 2: Apply pitch shift independently
-        pitch_shift = params["pitch_shift"]
-        audio = change_pitch(audio, pitch_shift)
+        # Apply pitch shift
+        semitones = params.get("pitch_semitones", 0)
+        audio = pitch_shift_librosa(audio, semitones)
         
-        # Step 3: Trim/pad to target duration (0.1s = 100ms)
-        if len(audio) > TARGET_DURATION_MS:
-            audio = audio[:TARGET_DURATION_MS]
-        elif len(audio) < TARGET_DURATION_MS:
-            silence = AudioSegment.silent(duration=(TARGET_DURATION_MS - len(audio)))
-            audio = audio + silence
+        # Trim or pad to exact target (tight!)
+        if len(audio) > TARGET_FINAL_DURATION_MS:
+            # Trim from end, keep the core syllable
+            audio = audio[:TARGET_FINAL_DURATION_MS]
+        elif len(audio) < TARGET_FINAL_DURATION_MS:
+            # Pad minimally at end
+            audio += AudioSegment.silent(TARGET_FINAL_DURATION_MS - len(audio))
         
-        # Step 4: Apply volume boost
-        audio = audio + params["volume_change_db"]
+        # Add very short fade at end to avoid click when concatenating
+        audio = audio.fade_out(5)
         
-        # Step 5: Add subtle Sims-style effects
-        audio = add_subtle_distortion(audio, params["distortion"])
-        audio = add_subtle_glitch(audio, params["glitch"])
+        # Volume boost
+        audio += params.get("volume_change_db", 0)
         
-        # Step 6: Apply reverb if enabled
+        # Apply effects
+        audio = add_distortion(audio, params.get("distortion", 0))
+        audio = add_glitch(audio, params.get("glitch", 0))
+        
         if params.get("reverb", False):
-            audio = simple_reverb(audio, amount=0.2)
+            audio = add_reverb(audio, amount=0.15)
+        
+        # Final normalization
+        audio = audio.normalize()
         
         # Export
-        out_path = OUTPUT_FOLDER / f"{voice_name}voice{index + 1}.wav"
+        out_path = VOICES_FOLDER / f"{voice_name}voice{index + 1}.wav"
         audio.export(str(out_path), format="wav")
         print(f"[OK] {out_path} ({len(audio)}ms)")
         
     except Exception as e:
-        print(f"[ERROR] Processing {syllable_name}: {e}")
-
+        print(f"[ERROR] {syllable_name}: {e}")
 
 # -------------------------
 # MAIN EXECUTION
 # -------------------------
+
 if __name__ == "__main__":
-    print("="*60)
-    print("SIMS-STYLE CARTOON VOICE GENERATOR")
-    print("="*60)
-    print()
+    VOICES_FOLDER.mkdir(exist_ok=True)
+    SYLLABLES_FOLDER.mkdir(exist_ok=True)
     
     generate_base_syllables()
     
-    print("\n" + "="*60)
-    print("PROCESSING SYLLABLES INTO CHARACTER VOICES")
-    print("="*60 + "\n")
+    print("\n" + "=" * 60)
+    print("Processing syllables into character voices")
+    print("=" * 60 + "\n")
     
     for voice_name, params in VOICES.items():
-        print(f"\n--- Processing: {voice_name.upper()} ---\n")
-        for i, syllable_name in enumerate(BASE_SYLLABLES.keys()):
-            process_and_save_phoneme(syllable_name, voice_name, params, i)
+        print(f"\n--- {voice_name.upper()} ---\n")
+        for idx, syllable in enumerate(BASE_SYLLABLES.keys()):
+            process_syllable(syllable, voice_name, params, idx)
     
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("COMPLETE!")
-    print("="*60)
+    print("=" * 60)
