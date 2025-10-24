@@ -180,7 +180,7 @@ void launch_player_pattern(u16 patternId)
         dprintf(2,"Pattern %d not usable right now", patternId);
         show_or_hide_interface(false); // hide interface
         hide_enemy_notes();
-        talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN]); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
+        talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN], true); // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
         show_enemy_notes();
         if (interface_active==true) show_or_hide_interface(true); // show interface
         combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
@@ -330,7 +330,7 @@ bool pattern_player_add_note(u8 noteCode)
                 }
 
                 hide_enemy_notes();
-                talk_dialog(dialog);           // Show dialog message
+                talk_dialog(dialog, false);           // Show dialog message
                 show_enemy_notes();
                 show_or_hide_interface(true);  // show interface again
                 if (resume_enemy) // If there's an enemy, resume its effect

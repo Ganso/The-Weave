@@ -5,7 +5,7 @@ u32 voice_sample_size[MAX_VOICE][MAX_DIALOG_SOUNDS]; // Size of each character v
 u8 voice_numsamples[MAX_VOICE]; // Number of samples per voice
 
 
-void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display dialog with optional face portrait and timed text
+void talk(u8 nface, bool isinleft, char *text, u16 max_seconds, bool sound_on)    // Display dialog with optional face portrait and timed text
 {
     u16 faceposx,buttonposx;
     u16 textposx_line1=0, textposx_line2=0, textposx_line3=0;
@@ -63,9 +63,9 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
         strcpy(text_line1,"");
     }
     dprintf(3,"Calling print_line for each line with params: (%d,23), (%d,24), (%d,25)\n",textposx_line1,textposx_line2,textposx_line3);
-    print_line(text_line1, textposx_line1, 23, true, nface);
-    print_line(text_line2, textposx_line2, 24, true, nface);
-    print_line(text_line3, textposx_line3, 25, true, nface);
+    print_line(text_line1, textposx_line1, 23, true, nface, sound_on);
+    print_line(text_line2, textposx_line2, 24, true, nface, sound_on);
+    print_line(text_line3, textposx_line3, 25, true, nface, sound_on);
     SPR_setVisibility (spr_int_button_A, VISIBLE);
     SPR_setPosition (spr_int_button_A, buttonposx, 208);
     next_frame(false);
@@ -104,19 +104,19 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds)    // Display di
     next_frame(false);
 }
 
-void talk_dialog(const DialogItem *dialog)    // Display a predefined dialog item with face and text
+void talk_dialog(const DialogItem *dialog, bool sound_on)    // Display a predefined dialog item with face and text
 {
     reset_character_animations();
     dprintf(2, "Reading text: %s", (char *)dialog->text[game_language]);
-    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds);
+    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds, sound_on);
 }
 
-void talk_cluster(const DialogItem *start)    // Display several dialog lines
+void talk_cluster(const DialogItem *start, bool sound_on)    // Display several dialog lines
 {
     dprintf(2, "Starting cluster");
     const DialogItem *it = start;
     while (it->text[0] != NULL) {
-        talk_dialog(it);
+        talk_dialog(it, sound_on);
         ++it;
     }
     dprintf(2, "NULL found. End of cluster");
@@ -147,7 +147,7 @@ void split_text(char *text, char *line1, char *line2, char *line3)    // Break t
 }
 
 
-void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface)    // Display text line with character-by-character animation
+void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool sound_on)    // Display text line with character-by-character animation
 {
     int i = 0, pos = 0;
     u16 joy_state;
@@ -156,14 +156,11 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface)    // D
     Sprite *spr_fadein;
     u8 voice_talking, dialog_sound;
 
-    dprintf(3, "print_line called with text: %s at (%d,%d)\n", text, x, y);
-
     // Load Fade-in sprite
     if (spr_fadein == NULL)
         spr_fadein = SPR_addSprite(&int_fadein_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
     SPR_setVisibility(spr_fadein, HIDDEN);
     SPR_setAnimationLoop(spr_fadein, false);
-    dprintf(3, "Sprite for fade-in loaded\n");
 
     // Code Spanish text
     if (game_language == LANG_SPANISH) {
@@ -174,8 +171,6 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface)    // D
     }
 
     VDP_setTextPalette(PAL2);
-
-    dprintf(3, "Printing line at (%d,%d): %s\n", x, y, text);
     
     // Print the text, character by character, handling palette escape codes
     while (text[i] != '\0') {
@@ -199,10 +194,8 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface)    // D
         // Draw text behind the fade-in sprite
         VDP_drawTextBG(WINDOW, temp, x + pos, y);
 
-        dprintf(3, "Printed char: %c at (%d,%d)\n", text[i], x + pos, y);
-
         // Find appropiate voice sample for character
-        if (text[i] != ' ') {
+        if (sound_on && text[i] != ' ') {
             switch (nface) {
                 case FACE_clio:
                     voice_talking = VOICE_WOMAN;
@@ -233,10 +226,12 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface)    // D
 
                 // Only play if channel 3 is not already playing
                 // TODO: Implement it as a function in the sound library
-                if (! (XGM2_isPlayingPCM(SOUND_PCM_CH3_MSK) & SOUND_PCM_CH3_MSK) ) {
-                    XGM2_playPCM(voice_sample[voice_talking][dialog_sound], 
-                                voice_sample_size[voice_talking][dialog_sound], 
-                                SOUND_PCM_CH3);
+                if (sound_on) {
+                    if (! (XGM2_isPlayingPCM(SOUND_PCM_CH3_MSK) & SOUND_PCM_CH3_MSK) ) {
+                        XGM2_playPCM(voice_sample[voice_talking][dialog_sound], 
+                                    voice_sample_size[voice_talking][dialog_sound], 
+                                    SOUND_PCM_CH3);
+                    }
                 }
 
                 joy_state = JOY_readJoypad(JOY_ALL);
@@ -281,6 +276,8 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     u16 num_ticks = 0;
     u16 max_ticks = max_seconds * SCREEN_FPS;
     
+    dprintf(2, "Displaying choice with %d options\n", num_options);
+
     // Load magic animation sprite
     Sprite* spr_magic_anim = SPR_addSprite(&int_magin_anim_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
     SPR_setVisibility(spr_magic_anim, HIDDEN);
@@ -342,7 +339,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
         }
 
         // Show plain text first
-        print_line(options[i], textposx[i], start_y + i, false, nface);
+        print_line(options[i], textposx[i], start_y + i, false, nface, false);
     }
 
     // Add selection markers to initial option
@@ -441,6 +438,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
 u8 choice_dialog(const ChoiceItem *item)    // Display a predefined choice dialog item
 {
     reset_character_animations();
+    dprintf(2, "Displaying choice dialog with %d options\n", item->num_options);
     u8 result = choice(item->face, item->side, (char **)item->options[game_language], item->num_options, item->max_seconds);
     return result;
 }

@@ -15,7 +15,7 @@ void player_thunder_launch(void)
     {
         show_or_hide_interface(false); // Hide interface
         dprintf(2, "Player trying to use Thunder against a Ghost, showing dialog (1)");
-        talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS]); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
+        talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_THINK_BACKWARDS], false); // (ES) "Quizá deba pensar|al revés" - (EN) "I should maybe|think backwards"
         show_or_hide_interface(true);  // Show interface again
         reset_note_queue();            // clear notes without stopping enemy
         combatContext.activePattern = PATTERN_PLAYER_NONE;
