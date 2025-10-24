@@ -1,5 +1,8 @@
 Magic:
 https://freesound.org/people/hjohnl/sounds/61521/
+<<<<<<< HEAD
 
 Dialogs:
 https://pixabay.com/sound-effects/typewriter-typing-68696/
+=======
+>>>>>>> 8b32cfbb0e7bc1040649f7174244acfe76763651

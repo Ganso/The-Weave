@@ -27,9 +27,12 @@ WAV snd_player_hit_enemy "Sound/Player/player_hit_enemy.wav" XGM2
 
 WAV snd_effect_magic_appear "Sound/Effects/effect_magic_appear.wav" XGM2
 WAV snd_effect_magic_disappear "Sound/Effects/effect_magic_appear_inverted.wav" XGM2
+<<<<<<< HEAD
 
 # Dialog sounds
 
 WAV snd_dialog1 "Sound/Effects/dialog1.wav" XGM2
 WAV snd_dialog2 "Sound/Effects/dialog2.wav" XGM2
 WAV snd_dialog3 "Sound/Effects/dialog3.wav" XGM2
+=======
+>>>>>>> 8b32cfbb0e7bc1040649f7174244acfe76763651
