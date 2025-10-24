@@ -1,10 +1,9 @@
 # ============================================================
-# Sims-Style Cartoon Voice Generator — Gender/Type Naming
-# (with parametrizable final volume for all voices)
+# Sims-Style Cartoon Voice Generator — Numeric Indexed Edition
 # ============================================================
-# Generates trimmed, punchy syllables with voices labeled as
-# 'woman', 'man', and 'deep' (not persons). File names are:
-#   woman-ba.wav, man-ba.wav, deep-ba.wav, etc.
+# Generates voice files with numeric indices instead of syllable names.
+# Easy to swap syllable content without changing game code.
+# Format: [voicetype]_[index].wav (e.g., woman_0.wav, man_3.wav)
 #
 # Requirements:
 #   pip install gtts pydub librosa soundfile numpy
@@ -17,51 +16,80 @@ from gtts import gTTS
 import io
 import librosa
 
-# Folder locations
+# ============================================================
+# GLOBAL TUNING PARAMETERS
+# ============================================================
+
+GLOBAL_SPEED_MULTIPLIER = 2.2
+TRIM_PERCENTAGE = 0.15
+FADE_IN_MS = 30
+FADE_OUT_MS = 5
+CROSSFADE_MS = 15
+SILENCE_THRESHOLD_DB = -35
+MIN_SILENCE_LEN_MS = 5
+LOWPASS_CUTOFF_HZ = 3500
+BASE_VOLUME_REDUCTION_DB = -6
+NORMALIZATION_PEAK = 0.95
+
 SYLLABLES_FOLDER = Path("syllables")
 VOICES_FOLDER = Path("voices")
-TARGET_FINAL_DURATION_MS = 200  # Each output clip: 200ms
 
-# Simple English syllables — one per file
-BASE_SYLLABLES = {
-    "ba": "bah",
-    "da": "dah",
-    "ma": "mah",
-    "na": "nah",
-    "bi": "bee",
-    "mi": "mee",
-    "bo": "boh",
-    "pa": "pah",
+# Map phoneme index to TTS text
+# Change these strings to modify what sounds are generated
+# Example: "bla" for "bla bla bla" effect
+SYLLABLE_MAP = {
+    0: "bah",      # Index 0
+    1: "dah",      # Index 1
+    2: "blah",      # Index 2
+    3: "beh",      # Index 3
+    4: "deh",      # Index 4
+    5: "bleh",      # Index 5
+    6: "bli",      # Index 6
+    7: "blu",      # Index 7
 }
 
-# Voice types instead of personas
+# Alternative syllable set for "bla bla" effect (uncomment to use)
+# SYLLABLE_MAP = {
+#     0: "bla",
+#     1: "bla",
+#     2: "bla",
+#     3: "bla",
+#     4: "bla",
+#     5: "bla",
+#     6: "bla",
+#     7: "bla",
+# }
+
 VOICE_TYPES = {
     "woman": {
-        "pitch_semitones": +4,
-        "speed_factor": 1.15,
-        "volume_change_db": 8,
-        "reverb": False,
-        "glitch": 0.04,
+        "pitch_semitones": +3,
+        "speed_factor_multiplier": 1.0,
+        "volume_change_db": 6,
+        "glitch": 0.03,
         "distortion": 0.02,
-        "final_volume_db": -8
+        "final_volume_db": BASE_VOLUME_REDUCTION_DB,
+        "lowpass_cutoff": 3200,
+        "crossfade_enable": True,
     },
     "man": {
-        "pitch_semitones": -3,
-        "speed_factor": 1.15,
-        "volume_change_db": 8,
-        "reverb": False,
-        "glitch": 0.05,
+        "pitch_semitones": -2,
+        "speed_factor_multiplier": 1.0,
+        "volume_change_db": 6,
+        "glitch": 0.04,
         "distortion": 0.03,
-        "final_volume_db": -8
+        "final_volume_db": BASE_VOLUME_REDUCTION_DB,
+        "lowpass_cutoff": 3500,
+        "crossfade_enable": True,
     },
     "deep": {
-        "pitch_semitones": -7,
-        "speed_factor": 1.15,
-        "volume_change_db": 9,
-        "reverb": True,
-        "glitch": 0.15,
-        "distortion": 0.07,
-        "final_volume_db": -8
+        "pitch_semitones": -6,
+        "speed_factor_multiplier": 1.0,
+        "volume_change_db": 7,
+        "glitch": 0.12,
+        "distortion": 0.06,
+        "final_volume_db": BASE_VOLUME_REDUCTION_DB,
+        "lowpass_cutoff": 3800,
+        "crossfade_enable": True,
     },
 }
 
@@ -73,30 +101,33 @@ def decode_mp3_basic(mp3_bytes):
         print(f"[ERROR] MP3 decoding: {e}")
         return None
 
-def aggressive_trim_silence(audio, silence_thresh=-40, chunk_size=10):
-    """
-    Aggressive silence trimming; removes attack and release, keeps only core.
-    """
-    nonsilent_ranges = silence.detect_nonsilent(audio, min_silence_len=chunk_size, silence_thresh=silence_thresh)
+def gentle_trim_silence(audio, silence_thresh=SILENCE_THRESHOLD_DB, chunk_size=15):
+    """Gentler silence trimming that preserves envelope."""
+    nonsilent_ranges = silence.detect_nonsilent(
+        audio, 
+        min_silence_len=chunk_size, 
+        silence_thresh=silence_thresh
+    )
     if not nonsilent_ranges:
         return audio
     start_trim, end_trim = nonsilent_ranges[0][0], nonsilent_ranges[-1][1]
-    audio_core = audio[start_trim:end_trim].fade_in(5).fade_out(5)
+    start_trim = max(0, start_trim - 15)
+    end_trim = min(len(audio), end_trim + 15)
+    audio_core = audio[start_trim:end_trim]
+    audio_core = audio_core.fade_in(10).fade_out(10)
     return audio_core
 
 def generate_base_syllables():
-    """
-    Generate basic syllable WAVs, trimmed aggressively, one pronunciation per syllable.
-    """
-    print("=== Generating base syllables ===\n")
+    """Generate basic syllable WAVs using numeric indices."""
+    print("=== Generating optimized syllables ===\n")
     SYLLABLES_FOLDER.mkdir(exist_ok=True)
-    for name, text in BASE_SYLLABLES.items():
-        output_path = SYLLABLES_FOLDER / f"{name}.wav"
+    for index, text in SYLLABLE_MAP.items():
+        output_path = SYLLABLES_FOLDER / f"{index}.wav"
         if output_path.exists():
-            print(f"[SKIP] {name}.wav")
+            print(f"[SKIP] {index}.wav")
             continue
         try:
-            print(f"[GENERATING] {name} ('{text}')...", end=" ", flush=True)
+            print(f"[GENERATING] index {index} ('{text}')...", end=" ", flush=True)
             tts = gTTS(text=text, lang="en", slow=False)
             mp3_buffer = io.BytesIO()
             tts.write_to_fp(mp3_buffer)
@@ -105,7 +136,7 @@ def generate_base_syllables():
             if audio is None:
                 print("[ERROR] Empty audio")
                 continue
-            audio = aggressive_trim_silence(audio, silence_thresh=-40)
+            audio = gentle_trim_silence(audio, silence_thresh=SILENCE_THRESHOLD_DB)
             audio = audio.normalize()
             audio.export(str(output_path), format="wav")
             print(f"[OK] {len(audio)}ms")
@@ -125,7 +156,7 @@ def pitch_shift_librosa(audio_segment, semitones):
         shifted = librosa.effects.pitch_shift(samples, sr=sr, n_steps=semitones)
         peak = np.max(np.abs(shifted))
         if peak > 0:
-            shifted = shifted / peak * 0.95
+            shifted = shifted / peak * NORMALIZATION_PEAK
         samples_int16 = np.int16(shifted * 32767)
         return AudioSegment(
             samples_int16.tobytes(),
@@ -137,8 +168,45 @@ def pitch_shift_librosa(audio_segment, semitones):
         print(f"[WARNING] Pitch shift failed: {e}")
         return audio_segment
 
+def aggressive_trim_cv(audio, trim_pct=TRIM_PERCENTAGE, fade_in_ms=FADE_IN_MS, fade_out_ms=FADE_OUT_MS):
+    """Ultra-aggressive trim with smooth fade-in and clipped fade-out."""
+    nonsilent_ranges = silence.detect_nonsilent(
+        audio, 
+        min_silence_len=MIN_SILENCE_LEN_MS,
+        silence_thresh=SILENCE_THRESHOLD_DB
+    )
+    if not nonsilent_ranges:
+        return audio
+    
+    start_trim = nonsilent_ranges[0][0]
+    end_trim = nonsilent_ranges[-1][1]
+    
+    duration = end_trim - start_trim
+    trim_margin = int(duration * trim_pct)
+    
+    start_trim = max(0, start_trim + trim_margin)
+    end_trim = min(len(audio), end_trim - trim_margin)
+    
+    audio_core = audio[start_trim:end_trim]
+    audio_core = audio_core.fade_in(fade_in_ms).fade_out(fade_out_ms)
+    
+    return audio_core
+
+def apply_crossfade_prep(audio, crossfade_ms=CROSSFADE_MS):
+    """Prepare audio for crossfading with next syllable."""
+    return audio
+
+def add_lowpass_filter(audio, cutoff_freq=LOWPASS_CUTOFF_HZ):
+    """Apply low-pass filter to reduce high-frequency harshness."""
+    try:
+        filtered = audio.low_pass_filter(cutoff_freq)
+        return filtered
+    except Exception as e:
+        print(f"[WARNING] Low-pass filter failed: {e}")
+        return audio
+
 def add_distortion(audio, amount):
-    """Synthetic harmonic distortion effect."""
+    """Minimal harmonic distortion for synthetic character."""
     if amount <= 0:
         return audio
     try:
@@ -156,7 +224,7 @@ def add_distortion(audio, amount):
         return audio
 
 def add_glitch(audio, amount):
-    """Glitch: random amplitude drops."""
+    """Subtle glitch effect for digital character."""
     if amount <= 0:
         return audio
     try:
@@ -173,23 +241,9 @@ def add_glitch(audio, amount):
         print(f"[WARNING] Glitch failed: {e}")
         return audio
 
-def add_reverb(audio, amount=0.15):
-    """Short digital echo, low amount."""
-    delay = 30
-    if len(audio) <= delay:
-        return audio
-    try:
-        delayed = AudioSegment.silent(duration=delay) + audio[:-delay]
-        return audio.overlay(delayed, position=0, gain_during_overlay=amount - 7)
-    except:
-        return audio
-
-def process_syllable(syllable_name, voicetype, params):
-    """
-    Convert one syllable to one voice type with all effects,
-    outputting as <type>-<syllable>.wav in 'voices' folder.
-    """
-    in_path = SYLLABLES_FOLDER / f"{syllable_name}.wav"
+def process_syllable(index, voicetype, params):
+    """Process syllable with advanced concatenation optimization."""
+    in_path = SYLLABLES_FOLDER / f"{index}.wav"
     if not in_path.exists():
         print(f"[WARNING] Missing: {in_path}")
         return
@@ -198,50 +252,58 @@ def process_syllable(syllable_name, voicetype, params):
         if len(audio) == 0:
             print(f"[ERROR] Empty audio: {in_path}")
             return
-        # Speed up first to increase sense of urgency
-        speed_factor = params.get("speed_factor", 1.0)
+        
+        speed_factor = GLOBAL_SPEED_MULTIPLIER * params.get("speed_factor_multiplier", 1.0)
         if speed_factor != 1.0:
             audio = audio.speedup(playback_speed=speed_factor)
-        # Professional pitch shift
+        
         audio = pitch_shift_librosa(audio, params.get("pitch_semitones", 0))
-        # Aggressively trim leftover silences after effects
-        audio = aggressive_trim_silence(audio, silence_thresh=-40)
-        # End trimming: hard cut to exact target duration
-        if len(audio) > TARGET_FINAL_DURATION_MS:
-            audio = audio[:TARGET_FINAL_DURATION_MS]
-        elif len(audio) < TARGET_FINAL_DURATION_MS:
-            audio += AudioSegment.silent(TARGET_FINAL_DURATION_MS - len(audio))
-        # Fade out 5ms to prevent clicks
-        audio = audio.fade_out(5)
-        # Volume
+        
+        audio = aggressive_trim_cv(
+            audio, 
+            trim_pct=TRIM_PERCENTAGE,
+            fade_in_ms=FADE_IN_MS,
+            fade_out_ms=FADE_OUT_MS
+        )
+        
+        if params.get("crossfade_enable", True):
+            audio = apply_crossfade_prep(audio, crossfade_ms=CROSSFADE_MS)
+        
         audio += params.get("volume_change_db", 0)
-        # Effects
+        
         audio = add_distortion(audio, params.get("distortion", 0))
         audio = add_glitch(audio, params.get("glitch", 0))
-        if params.get("reverb", False):
-            audio = add_reverb(audio, amount=0.15)
+        
+        lowpass_freq = params.get("lowpass_cutoff", LOWPASS_CUTOFF_HZ)
+        audio = add_lowpass_filter(audio, lowpass_freq)
+        
         audio = audio.normalize()
-        # Final output volume adjustment (parametrizable)
-        final_db = params.get("final_volume_db", 0)  # default = no change
-        audio = audio + final_db if final_db != 0 else audio
-        # Export with type name: woman-ba.wav etc
-        out_path = VOICES_FOLDER / f"{voicetype}-{syllable_name}.wav"
+        
+        final_db = params.get("final_volume_db", BASE_VOLUME_REDUCTION_DB)
+        if final_db != 0:
+            audio = audio + final_db
+        
+        # Numeric filename: voicetype_index.wav
+        out_path = VOICES_FOLDER / f"{voicetype}_{index}.wav"
         audio.export(str(out_path), format="wav")
         print(f"[OK] {out_path} ({len(audio)}ms)")
+        
     except Exception as e:
-        print(f"[ERROR] {syllable_name}, type={voicetype}: {e}")
+        print(f"[ERROR] index {index}, type={voicetype}: {e}")
 
 if __name__ == "__main__":
     VOICES_FOLDER.mkdir(exist_ok=True)
     SYLLABLES_FOLDER.mkdir(exist_ok=True)
     generate_base_syllables()
     print("\n" + "=" * 60)
-    print("Processing syllables into voice types")
+    print(f"Processing syllables (Global Speed: {GLOBAL_SPEED_MULTIPLIER}×)")
+    print(f"Fade-in: {FADE_IN_MS}ms | Fade-out: {FADE_OUT_MS}ms | Crossfade: {CROSSFADE_MS}ms")
     print("=" * 60 + "\n")
     for voicetype, params in VOICE_TYPES.items():
         print(f"\n--- {voicetype.upper()} ---\n")
-        for syllable in BASE_SYLLABLES.keys():
-            process_syllable(syllable, voicetype, params)
+        for index in SYLLABLE_MAP.keys():
+            process_syllable(index, voicetype, params)
     print("\n" + "=" * 60)
-    print("COMPLETE!")
+    print(f"COMPLETE! Generated 24 voice files (speed={GLOBAL_SPEED_MULTIPLIER}×)")
+    print("Numeric format: [voicetype]_[index].wav")
     print("=" * 60)

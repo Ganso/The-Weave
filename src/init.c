@@ -96,12 +96,9 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     for (i=0;i<MAX_ITEMS;i++) {
         if (obj_item[i].entity.active==true) release_item(i);
     }
-<<<<<<< HEAD
-=======
 
     // Voice samples
     init_voice_samples();
->>>>>>> 8b32cfbb0e7bc1040649f7174244acfe76763651
 }
 
 // initialize level and load background

@@ -47,9 +47,8 @@
         },
         {
             "label": "run-emulator",
-            "command": "C:\\Users\\javi\\bin\\blastem-win64-0.6.3-pre\\blastem.exe",
+            "command": "d:\\bin\\blast.bat",
             "args": [
-                "G:\\Mi unidad\\Codigo\\Genesis\\The Weave\\out\\rom.bin"
             ],
             //"dependsOn": "make",
             "type": "shell",
