@@ -98,7 +98,7 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
     }
 
     // Voice samples
-    init_character_samples();
+    init_voice_samples();
 }
 
 // initialize level and load background
