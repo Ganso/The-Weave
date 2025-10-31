@@ -228,9 +228,11 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool so
                 // TODO: Implement it as a function in the sound library
                 if (sound_on) {
                     if (! (XGM2_isPlayingPCM(SOUND_PCM_CH3_MSK) & SOUND_PCM_CH3_MSK) ) {
-                        XGM2_playPCM(voice_sample[voice_talking][dialog_sound], 
+                        if (random() % 2 == 0) { // Random pauses between syllables
+                            XGM2_playPCM(voice_sample[voice_talking][dialog_sound], 
                                     voice_sample_size[voice_talking][dialog_sound], 
                                     SOUND_PCM_CH3);
+                        }
                     }
                 }
 

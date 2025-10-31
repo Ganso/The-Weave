@@ -5,6 +5,11 @@
 # Easy to swap syllable content without changing game code.
 # Format: [voicetype]_[index].wav (e.g., woman_0.wav, man_3.wav)
 #
+# Features:
+#   - Aggressive tail removal + sharp decay for punchy syllables
+#   - Speed, pitch, and volume fully customizable
+#   - Low-pass filtering to reduce stridency
+#
 # Requirements:
 #   pip install gtts pydub librosa soundfile numpy
 # ============================================================
@@ -20,47 +25,34 @@ import librosa
 # GLOBAL TUNING PARAMETERS
 # ============================================================
 
-#GLOBAL_SPEED_MULTIPLIER = 2.8
-GLOBAL_SPEED_MULTIPLIER = 1.4
-TRIM_PERCENTAGE = 0.15
-FADE_IN_MS = 30
-FADE_OUT_MS = 5
-CROSSFADE_MS = 15
-SILENCE_THRESHOLD_DB = -35
-MIN_SILENCE_LEN_MS = 5
-LOWPASS_CUTOFF_HZ = 3500
-BASE_VOLUME_REDUCTION_DB = -6
-NORMALIZATION_PEAK = 0.95
+GLOBAL_SPEED_MULTIPLIER = 1.4      # Master speed control (higher = faster)
+TRIM_PERCENTAGE = 0.20             # Remove % from edges
+FADE_IN_MS = 70                    # Fade-in duration
+FADE_OUT_MS = 60                   # Decay
+SYLLABLE_MIN_VOLUME_FACTOR = 0.3   # End at % volume (cutoff)
+CROSSFADE_MS = 15                  # Crossfade preparation
+SILENCE_THRESHOLD_DB = -35         # Silence detection threshold
+MIN_SILENCE_LEN_MS = 5             # Minimum silence block size
+LOWPASS_CUTOFF_HZ = 3500           # Base low-pass frequency
+BASE_VOLUME_REDUCTION_DB = -6      # Final output volume reduction
+NORMALIZATION_PEAK = 0.95          # Peak level after normalization
 
 SYLLABLES_FOLDER = Path("syllables")
 VOICES_FOLDER = Path("voices")
 
-# Map phoneme index to TTS text
-# Change these strings to modify what sounds are generated
-# Example: "bla" for "bla bla bla" effect
+# Map phoneme index to TTS text (modify these to change syllable sounds)
 SYLLABLE_MAP = {
-    0: "blabla",      # Index 0
-    1: "blah",      # Index 1
-    2: "blahblah",      # Index 2
-    3: "bleh",      # Index 3
-    4: "baah",      # Index 4
-    5: "bli",      # Index 5
-    6: "bleh",      # Index 6
+    0: "bah",      # Index 0
+    1: "dah",      # Index 1
+    2: "blah",     # Index 2
+    3: "beh",      # Index 3
+    4: "deh",      # Index 4
+    5: "bleh",     # Index 5
+    6: "bli",      # Index 6
     7: "blu",      # Index 7
 }
 
-# Alternative syllable set for "bla bla" effect (uncomment to use)
-# SYLLABLE_MAP = {
-#     0: "bla",
-#     1: "bla",
-#     2: "bla",
-#     3: "bla",
-#     4: "bla",
-#     5: "bla",
-#     6: "bla",
-#     7: "bla",
-# }
-
+# Voice configurations
 VOICE_TYPES = {
     "woman": {
         "pitch_semitones": +3,
@@ -93,6 +85,10 @@ VOICE_TYPES = {
         "crossfade_enable": True,
     },
 }
+
+# ============================================================
+# HELPER FUNCTIONS
+# ============================================================
 
 def decode_mp3_basic(mp3_bytes):
     """Decode MP3 file to AudioSegment."""
@@ -169,8 +165,11 @@ def pitch_shift_librosa(audio_segment, semitones):
         print(f"[WARNING] Pitch shift failed: {e}")
         return audio_segment
 
-def aggressive_trim_cv(audio, trim_pct=TRIM_PERCENTAGE, fade_in_ms=FADE_IN_MS, fade_out_ms=FADE_OUT_MS):
-    """Ultra-aggressive trim with smooth fade-in and clipped fade-out."""
+def aggressive_trim_cv(audio, trim_pct=TRIM_PERCENTAGE, fade_in_ms=FADE_IN_MS):
+    """
+    AGGRESSIVE trim with smooth fade-in.
+    Removes significant tail material for punchy syllables.
+    """
     nonsilent_ranges = silence.detect_nonsilent(
         audio, 
         min_silence_len=MIN_SILENCE_LEN_MS,
@@ -189,9 +188,45 @@ def aggressive_trim_cv(audio, trim_pct=TRIM_PERCENTAGE, fade_in_ms=FADE_IN_MS, f
     end_trim = min(len(audio), end_trim - trim_margin)
     
     audio_core = audio[start_trim:end_trim]
-    audio_core = audio_core.fade_in(fade_in_ms).fade_out(fade_out_ms)
+    audio_core = audio_core.fade_in(fade_in_ms)
     
     return audio_core
+
+def apply_aggressive_release(audio, min_factor=SYLLABLE_MIN_VOLUME_FACTOR, fade_length_ms=FADE_OUT_MS):
+    """
+    Apply AGGRESSIVE sharp decay to the end.
+    Volume drops sharply from 1.0 to min_factor (0.1 = 10%) over fade_length_ms.
+    Creates punchy cutoff suitable for short syllables.
+    """
+    samples = np.array(audio.get_array_of_samples())
+    n_channels = audio.channels
+    sample_count = len(samples) // n_channels if n_channels > 1 else len(samples)
+    sr = audio.frame_rate
+    fade_len = int(sr * fade_length_ms / 1000)
+    
+    if fade_len > sample_count:
+        fade_len = sample_count
+    
+    for c in range(n_channels):
+        chan_offset = c if n_channels > 1 else 0
+        chan_samples = samples[chan_offset::n_channels].copy()
+        fade_start = len(chan_samples) - fade_len
+        
+        if fade_start < 0:
+            fade_start = 0
+            fade_len = len(chan_samples)
+        
+        # SHARP exponential ramp from 1.0 to min_factor
+        # More aggressive than linear: uses power law
+        ramp = np.power(np.linspace(1.0, min_factor, fade_len), 1.0)
+        chan_samples[fade_start:] = (chan_samples[fade_start:] * ramp).astype(chan_samples.dtype)
+        
+        if n_channels > 1:
+            samples[chan_offset::n_channels] = chan_samples
+        else:
+            samples = chan_samples
+    
+    return audio._spawn(samples.tobytes())
 
 def apply_crossfade_prep(audio, crossfade_ms=CROSSFADE_MS):
     """Prepare audio for crossfading with next syllable."""
@@ -218,8 +253,12 @@ def add_distortion(audio, amount):
         distorted = np.tanh(samples * (1 + amount * 3)) * 0.85
         blended = samples * (1 - amount * 0.5) + distorted * (amount * 0.5)
         samples_int16 = np.int16(blended * 32767)
-        return AudioSegment(samples_int16.tobytes(), frame_rate=audio.frame_rate,
-                            sample_width=2, channels=1)
+        return AudioSegment(
+            samples_int16.tobytes(), 
+            frame_rate=audio.frame_rate,
+            sample_width=2, 
+            channels=1
+        )
     except Exception as e:
         print(f"[WARNING] Distortion failed: {e}")
         return audio
@@ -236,14 +275,21 @@ def add_glitch(audio, amount):
         mask = np.random.random(len(samples)) < (amount * 0.02)
         samples[mask] *= 0.7
         samples_int16 = np.int16(samples)
-        return AudioSegment(samples_int16.tobytes(), frame_rate=audio.frame_rate,
-                            sample_width=2, channels=1)
+        return AudioSegment(
+            samples_int16.tobytes(), 
+            frame_rate=audio.frame_rate,
+            sample_width=2, 
+            channels=1
+        )
     except Exception as e:
         print(f"[WARNING] Glitch failed: {e}")
         return audio
 
 def process_syllable(index, voicetype, params):
-    """Process syllable with advanced concatenation optimization."""
+    """
+    Process syllable with AGGRESSIVE optimization.
+    30% trim + sharp 100ms decay = punchy, clear syllables.
+    """
     in_path = SYLLABLES_FOLDER / f"{index}.wav"
     if not in_path.exists():
         print(f"[WARNING] Missing: {in_path}")
@@ -254,37 +300,48 @@ def process_syllable(index, voicetype, params):
             print(f"[ERROR] Empty audio: {in_path}")
             return
         
+        # Speed adjustment
         speed_factor = GLOBAL_SPEED_MULTIPLIER * params.get("speed_factor_multiplier", 1.0)
         if speed_factor != 1.0:
             audio = audio.speedup(playback_speed=speed_factor)
         
+        # Pitch shift
         audio = pitch_shift_librosa(audio, params.get("pitch_semitones", 0))
         
-        audio = aggressive_trim_cv(
-            audio, 
-            trim_pct=TRIM_PERCENTAGE,
-            fade_in_ms=FADE_IN_MS,
-            fade_out_ms=FADE_OUT_MS
-        )
+        # AGGRESSIVE trim with fade-in only
+        audio = aggressive_trim_cv(audio, trim_pct=TRIM_PERCENTAGE, fade_in_ms=FADE_IN_MS)
         
+        # Crossfade preparation
         if params.get("crossfade_enable", True):
             audio = apply_crossfade_prep(audio, crossfade_ms=CROSSFADE_MS)
         
+        # Volume boost
         audio += params.get("volume_change_db", 0)
         
+        # Effects
         audio = add_distortion(audio, params.get("distortion", 0))
         audio = add_glitch(audio, params.get("glitch", 0))
         
+        # Low-pass filter
         lowpass_freq = params.get("lowpass_cutoff", LOWPASS_CUTOFF_HZ)
         audio = add_lowpass_filter(audio, lowpass_freq)
         
+        # CRITICAL: Apply AGGRESSIVE sharp decay BEFORE normalization
+        audio = apply_aggressive_release(
+            audio, 
+            min_factor=SYLLABLE_MIN_VOLUME_FACTOR, 
+            fade_length_ms=FADE_OUT_MS
+        )
+        
+        # Normalize
         audio = audio.normalize()
         
+        # Final volume adjustment
         final_db = params.get("final_volume_db", BASE_VOLUME_REDUCTION_DB)
         if final_db != 0:
             audio = audio + final_db
         
-        # Numeric filename: voicetype_index.wav
+        # Export with numeric naming
         out_path = VOICES_FOLDER / f"{voicetype}_{index}.wav"
         audio.export(str(out_path), format="wav")
         print(f"[OK] {out_path} ({len(audio)}ms)")
@@ -292,19 +349,28 @@ def process_syllable(index, voicetype, params):
     except Exception as e:
         print(f"[ERROR] index {index}, type={voicetype}: {e}")
 
+# ============================================================
+# MAIN EXECUTION
+# ============================================================
+
 if __name__ == "__main__":
     VOICES_FOLDER.mkdir(exist_ok=True)
     SYLLABLES_FOLDER.mkdir(exist_ok=True)
+    
     generate_base_syllables()
+    
     print("\n" + "=" * 60)
     print(f"Processing syllables (Global Speed: {GLOBAL_SPEED_MULTIPLIER}×)")
-    print(f"Fade-in: {FADE_IN_MS}ms | Fade-out: {FADE_OUT_MS}ms | Crossfade: {CROSSFADE_MS}ms")
+    print(f"AGGRESSIVE MODE: 30% trim + {FADE_OUT_MS}ms sharp decay to {SYLLABLE_MIN_VOLUME_FACTOR*100:.0f}%")
     print("=" * 60 + "\n")
+    
     for voicetype, params in VOICE_TYPES.items():
         print(f"\n--- {voicetype.upper()} ---\n")
         for index in SYLLABLE_MAP.keys():
             process_syllable(index, voicetype, params)
+    
     print("\n" + "=" * 60)
-    print(f"COMPLETE! Generated 24 voice files (speed={GLOBAL_SPEED_MULTIPLIER}×)")
+    print(f"COMPLETE! Generated {len(VOICE_TYPES) * len(SYLLABLE_MAP)} voice files")
+    print(f"Speed: {GLOBAL_SPEED_MULTIPLIER}× | Trim: {TRIM_PERCENTAGE*100:.0f}% | Decay: {FADE_OUT_MS}ms→{SYLLABLE_MIN_VOLUME_FACTOR*100:.0f}%")
     print("Numeric format: [voicetype]_[index].wav")
     print("=" * 60)
