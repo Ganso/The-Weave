@@ -20,7 +20,8 @@ import librosa
 # GLOBAL TUNING PARAMETERS
 # ============================================================
 
-GLOBAL_SPEED_MULTIPLIER = 2.8
+#GLOBAL_SPEED_MULTIPLIER = 2.8
+GLOBAL_SPEED_MULTIPLIER = 1.4
 TRIM_PERCENTAGE = 0.15
 FADE_IN_MS = 30
 FADE_OUT_MS = 5
@@ -38,14 +39,14 @@ VOICES_FOLDER = Path("voices")
 # Change these strings to modify what sounds are generated
 # Example: "bla" for "bla bla bla" effect
 SYLLABLE_MAP = {
-    0: "babla",      # Index 0
-    1: "dabla",      # Index 1
+    0: "blabla",      # Index 0
+    1: "blah",      # Index 1
     2: "blahblah",      # Index 2
-    3: "baba",      # Index 3
-    4: "blabla",      # Index 4
-    5: "bleble",      # Index 5
-    6: "blibli",      # Index 6
-    7: "blublu",      # Index 7
+    3: "bleh",      # Index 3
+    4: "baah",      # Index 4
+    5: "bli",      # Index 5
+    6: "bleh",      # Index 6
+    7: "blu",      # Index 7
 }
 
 # Alternative syllable set for "bla bla" effect (uncomment to use)
