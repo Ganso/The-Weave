@@ -1,522 +1,436 @@
 #!/usr/bin/env python3
 # ============================================================
-# SYLLABLE DECOMPOSITION WITH FREE AI + PHONETIC MAPPING
-# Maps AI-generated syllables to closest inventory match
+# ANIMALESE PHONEME GENERATOR FOR MEGADRIVE
+# 
+# RAW = Exactamente como viene del original, SIN normalización
+# Fricativas se copian directamente del RAW (sin procesar)
 # ============================================================
 
-import requests
-import json
-import numpy as np
-from pydub import AudioSegment, silence
+import urllib.request
 from pathlib import Path
-from gtts import gTTS
-import io
+import numpy as np
+import struct
 import librosa
-import unicodedata
-import time
-from difflib import SequenceMatcher
+import soundfile as sf
 
 # ============================================================
-# CONFIGURATION
+# CONSTANTS
 # ============================================================
 
-OPENROUTER_API_KEY = "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"
-OPENROUTER_MODEL = "mistralai/mistral-7b-instruct"
+SAMPLE_FREQ = 44100
+LIBRARY_LETTER_SECS = 0.15
+LIBRARY_SAMPLES_PER_LETTER = int(LIBRARY_LETTER_SECS * SAMPLE_FREQ)
+OUTPUT_LETTER_SECS = 0.075
+OUTPUT_SAMPLES_PER_LETTER = int(OUTPUT_LETTER_SECS * SAMPLE_FREQ)
 
-GLOBAL_SPEED_MULTIPLIER = 1.4
-TRIM_PERCENTAGE = 0.05
-FADE_IN_MS = 15
-FADE_OUT_MS = 80
-SYLLABLE_MIN_VOLUME_FACTOR = 0.3
-SILENCE_THRESHOLD_DB = -35
-MIN_SILENCE_LEN_MS = 5
-LOWPASS_CUTOFF_HZ = 3500
-BASE_VOLUME_REDUCTION_DB = -6
-NORMALIZATION_PEAK = 0.95
-INTER_SYLLABLE_SILENCE_MS = 10
+DOWNLOAD_DIR = Path("animalese_download")
+PHONEMES_DIR = Path("phonemes_animalese")
+SYNTHESIS_DIR = Path("synthesis_animalese")
 
-SYLLABLES_FOLDER = Path("syllables_pilot")
-VOICES_FOLDER = Path("voices_pilot")
-SYNTHESIS_FOLDER = Path("synthesis_test")
+ANIMALESE_WAV_URL = "https://github.com/Acedio/animalese.js/raw/refs/heads/master/animalese.wav"
 
-# ============================================================
-# SYLLABLE INVENTORY (40 SYLLABLES)
-# ============================================================
-
-SYLLABLE_MAP = {
-    "pa": ("pa", "pah"), "pe": ("pe", "peh"), "pi": ("pi", "pee"), "po": ("po", "poh"), "pu": ("pu", "poo"),
-    "ta": ("ta", "tah"), "te": ("te", "teh"), "ti": ("ti", "tee"), "to": ("to", "toh"), "tu": ("tu", "too"),
-    "ka": ("ka", "kah"), "ke": ("ke", "keh"), "ki": ("ki", "kee"), "ko": ("ko", "koh"), "ku": ("ku", "koo"),
-    "ba": ("ba", "bah"), "be": ("be", "beh"), "bi": ("bi", "bee"), "bo": ("bo", "boh"), "bu": ("bu", "boo"),
-    "da": ("da", "dah"), "de": ("de", "deh"), "di": ("di", "dee"), "do": ("do", "doh"), "du": ("du", "doo"),
-    "ga": ("ga", "gah"), "ge": ("ge", "geh"), "gi": ("gi", "gee"), "go": ("go", "goh"), "gu": ("gu", "goo"),
-    "sa": ("sa", "sah"), "se": ("se", "seh"), "si": ("si", "see"), "so": ("so", "soh"), "su": ("su", "soo"),
-    "fa": ("fa", "fah"), "fe": ("fe", "feh"), "fi": ("fi", "fee"), "fo": ("fo", "foh"), "fu": ("fu", "foo"),
-}
-
-SYLLABLE_INDICES = {key: idx for idx, key in enumerate(sorted(SYLLABLE_MAP.keys()))}
-SYLLABLE_LIST = sorted(SYLLABLE_MAP.keys())
-
-# Consonant-to-consonant and vowel-to-vowel approximation tables
-CONSONANT_MAP = {
-    # Map any consonant to closest in inventory
-    'p': 'p', 'b': 'b', 'm': 'p',      # Bilabials
-    't': 't', 'd': 'd', 'n': 't',      # Alveolars
-    'k': 'k', 'g': 'g',                # Velars
-    'f': 'f', 'v': 'f', 's': 's',      # Fricatives
-    'z': 's', 'x': 's', 'j': 's',      # More fricatives
-    'l': 'p', 'r': 't', 'w': 'b',      # Approximants
-    'y': 'p', 'h': 'f', 'c': 't',      # Special
-}
-
-VOWEL_MAP = {
-    # Map any vowel to closest in inventory (a, e, i, o, u)
-    'a': 'a', 'á': 'a', 'à': 'a',
-    'e': 'e', 'é': 'e', 'è': 'e',
-    'i': 'i', 'í': 'i', 'ì': 'i',
-    'o': 'o', 'ó': 'o', 'ò': 'o',
-    'u': 'u', 'ú': 'u', 'ù': 'u',
-    'y': 'i',  # y → i
-    'w': 'u',  # w → u
-}
+# Fricativas - se copian directamente del RAW
+FRICATIVES = set("STVXZF")
 
 VOICE_TYPES = {
     "woman": {
         "pitch_semitones": +3,
-        "speed_factor_multiplier": 1.0,
-        "volume_change_db": 6,
-        "glitch": 0.03,
-        "distortion": 0.02,
-        "final_volume_db": BASE_VOLUME_REDUCTION_DB,
+        "volume_db": 6,
         "lowpass_cutoff": 3200,
+        "distortion": 0.02,
+        "glitch": 0.03,
+        "reverb_decay": 0.0,
     },
     "man": {
         "pitch_semitones": -2,
-        "speed_factor_multiplier": 1.0,
-        "volume_change_db": 6,
-        "glitch": 0.04,
-        "distortion": 0.03,
-        "final_volume_db": BASE_VOLUME_REDUCTION_DB,
+        "volume_db": 6,
         "lowpass_cutoff": 3500,
+        "distortion": 0.03,
+        "glitch": 0.04,
+        "reverb_decay": 0.0,
     },
     "deep": {
-        "pitch_semitones": -6,
-        "speed_factor_multiplier": 1.0,
-        "volume_change_db": 7,
-        "glitch": 0.12,
-        "distortion": 0.06,
-        "final_volume_db": BASE_VOLUME_REDUCTION_DB,
-        "lowpass_cutoff": 3800,
+        "pitch_semitones": -5,
+        "volume_db": 3,
+        "lowpass_cutoff": 2800,
+        "distortion": 0.01,
+        "glitch": 0.02,
+        "reverb_decay": 0.4,
     },
 }
 
 TEST_SENTENCES = [
     {
         "id": "test_1_overslept",
-        "es": "Creo que he dormido demasiado",
-        "en": "I think I've overslept",
-        "voice": "man",
+        "es": "creo que he dormido demasiado",
+        "en": "i think ive overslept",
     },
     {
         "id": "test_2_mother",
-        "es": "Perdóname maestro",
-        "en": "Forgive me master",
-        "voice": "man",
+        "es": "perdoname maestro",
+        "en": "forgive me master",
     },
     {
         "id": "test_3_island",
-        "es": "La isla del Gremio de los Tejedores",
-        "en": "The Weavers guild island",
-        "voice": "deep",
+        "es": "la isla del gremio de los tejedores",
+        "en": "the weavers guild island",
+    },
+    {
+        "id": "test_4_weave",
+        "es": "esto es una prueba de sonido animalés para el juego the weave",
+        "en": "this is a sound test animalese for the game the weave",
     },
 ]
 
 # ============================================================
-# PHONETIC APPROXIMATION FUNCTIONS
+# STEP 1: DESCARGAR ANIMALESE.WAV
 # ============================================================
 
-def approximate_syllable_phonetic(syllable):
-    """
-    Maps any syllable to closest CV pair in inventory using phonetic rules.
+def download_animalese_wav():
+    DOWNLOAD_DIR.mkdir(exist_ok=True)
+    wav_path = DOWNLOAD_DIR / "animalese.wav"
     
-    Example:
-        "cre" → "ka" (c→k, e→e, ignore r)
-        "que" → "ke" (q→k, u→e, u→e)
-        "don" → "do" (d→d, o→o, ignore n)
-        "rmi" → "pi" (r→p, m→p, i→i)
-    """
+    if wav_path.exists():
+        print(f"[SKIP] {wav_path} ya existe")
+        return wav_path
     
-    if len(syllable) == 0:
-        return "pa"  # Default fallback
+    print(f"[DL] Descargando animalese.wav desde GitHub...")
+    print(f"     URL: {ANIMALESE_WAV_URL}\n")
     
-    syllable = syllable.lower()
-    
-    # Extract first consonant and first vowel from the syllable
-    consonant = None
-    vowel = None
-    
-    for char in syllable:
-        if consonant is None and char in CONSONANT_MAP:
-            consonant = CONSONANT_MAP[char]
-        elif vowel is None and char in VOWEL_MAP:
-            vowel = VOWEL_MAP[char]
-    
-    # If we found both, combine them
-    if consonant and vowel:
-        result = consonant + vowel
-        if result in SYLLABLE_MAP:
-            return result
-    
-    # Fallback 1: consonant + default vowel 'a'
-    if consonant:
-        result = consonant + 'a'
-        if result in SYLLABLE_MAP:
-            return result
-    
-    # Fallback 2: default consonant 'p' + vowel
-    if vowel:
-        result = 'p' + vowel
-        if result in SYLLABLE_MAP:
-            return result
-    
-    # Fallback 3: just use closest match by string similarity
-    closest = min(SYLLABLE_LIST, key=lambda x: SequenceMatcher(None, syllable, x).ratio())
-    return closest
-
-def approximate_syllables_smart(syllables):
-    """
-    Takes a list of syllables from AI and approximates each to inventory.
-    """
-    approximated = []
-    for syl in syllables:
-        if syl in SYLLABLE_MAP:
-            # Already valid
-            approximated.append(syl)
-        else:
-            # Approximate
-            approx = approximate_syllable_phonetic(syl)
-            approximated.append(approx)
-            print(f"      '{syl}' → '{approx}'")
-    
-    return approximated
-
-# ============================================================
-# AI-BASED SYLLABLE MAPPING WITH APPROXIMATION
-# ============================================================
-
-def syllabify_with_ai(text, language='es'):
-    """
-    Uses Mistral 7B to decompose text into syllables,
-    then approximates them to inventory.
-    """
-    
-    available_syllables = ", ".join(sorted(SYLLABLE_MAP.keys()))
-    
-    prompt = f"""You are a phonetic expert. Decompose this {language} text into SYLLABLES (not phonemes, actual syllables as spoken):
-
-"{text}"
-
-Return ONLY a JSON array like: ["syl", "la", "ble"]
-
-Example for "hello": ["hel", "lo"]
-Example for "casa": ["ca", "sa"]
-
-Return ONLY JSON, no explanation:"""
-
     try:
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-        }
+        def reporthook(blocknum, blocksize, totalsize):
+            downloaded = blocknum * blocksize
+            if totalsize > 0:
+                percent = min(100, int(downloaded * 100 / totalsize))
+                print(f"     {percent}%", end='\r')
         
-        payload = {
-            "model": OPENROUTER_MODEL,
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.3,
-            "max_tokens": 256,
-        }
-        
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=30
-        )
-        
-        if response.status_code != 200:
-            print(f"[ERROR] OpenRouter API error: {response.status_code}")
-            return []
-        
-        result = response.json()
-        response_text = result["choices"][0]["message"]["content"].strip()
-        
-        print(f"    AI response: {response_text}")
-        
-        # Extract JSON array
-        try:
-            syllables = json.loads(response_text)
-            if not isinstance(syllables, list):
-                print(f"[ERROR] Not a list: {response_text}")
-                return []
-            
-            # CRITICAL: Approximate each syllable to inventory
-            print(f"    Approximating:")
-            approximated = approximate_syllables_smart(syllables)
-            
-            return [(syl, SYLLABLE_INDICES[syl]) for syl in approximated]
-        
-        except json.JSONDecodeError:
-            print(f"[ERROR] Could not parse JSON: {response_text}")
-            return []
-    
-    except requests.exceptions.RequestException as e:
-        print(f"[ERROR] Request failed: {e}")
-        return []
-
-# ============================================================
-# HELPER FUNCTIONS (same as before)
-# ============================================================
-
-def decode_mp3_basic(mp3_bytes):
-    try:
-        return AudioSegment.from_mp3(io.BytesIO(mp3_bytes))
+        urllib.request.urlretrieve(ANIMALESE_WAV_URL, str(wav_path), reporthook)
+        print(f"\n✓ Descargado a {wav_path}\n")
+        return wav_path
     except Exception as e:
-        print(f"[ERROR] MP3 decoding: {e}")
+        print(f"[ERROR] Descarga falló: {e}")
         return None
 
-def gentle_trim_silence(audio, silence_thresh=SILENCE_THRESHOLD_DB, chunk_size=15):
-    nonsilent_ranges = silence.detect_nonsilent(audio, min_silence_len=chunk_size, silence_thresh=silence_thresh)
-    if not nonsilent_ranges:
-        return audio
-    start_trim, end_trim = nonsilent_ranges[0][0], nonsilent_ranges[-1][1]
-    start_trim = max(0, start_trim - 30)
-    end_trim = min(len(audio), end_trim + 15)
-    audio_core = audio[start_trim:end_trim]
-    return audio_core.fade_in(5).fade_out(5)
+# ============================================================
+# STEP 2: PARSEA WAV RIFF
+# ============================================================
 
-def pitch_shift_librosa(audio_segment, semitones):
-    if semitones == 0:
-        return audio_segment
-    try:
-        samples = np.array(audio_segment.get_array_of_samples(), dtype=np.float32)
-        if audio_segment.channels == 2:
-            samples = samples.reshape((-1, 2)).mean(axis=1)
-        samples = samples / 32768.0
-        sr = audio_segment.frame_rate
-        shifted = librosa.effects.pitch_shift(samples, sr=sr, n_steps=semitones)
-        peak = np.max(np.abs(shifted))
-        if peak > 0:
-            shifted = shifted / peak * NORMALIZATION_PEAK
-        samples_int16 = np.int16(shifted * 32767)
-        return AudioSegment(samples_int16.tobytes(), frame_rate=sr, sample_width=2, channels=1)
-    except Exception as e:
-        print(f"[WARNING] Pitch shift failed: {e}")
-        return audio_segment
-
-def gentle_trim_cv(audio, trim_pct=TRIM_PERCENTAGE, fade_in_ms=FADE_IN_MS):
-    nonsilent_ranges = silence.detect_nonsilent(audio, min_silence_len=MIN_SILENCE_LEN_MS, silence_thresh=SILENCE_THRESHOLD_DB)
-    if not nonsilent_ranges:
-        return audio
-    start_trim = nonsilent_ranges[0][0]
-    end_trim = nonsilent_ranges[-1][1]
-    duration = end_trim - start_trim
-    trim_margin = int(duration * trim_pct)
-    end_trim = max(start_trim + int(duration * 0.3), end_trim - trim_margin)
-    audio_core = audio[start_trim:end_trim]
-    return audio_core.fade_in(fade_in_ms)
-
-def apply_smooth_release(audio, min_factor=SYLLABLE_MIN_VOLUME_FACTOR, fade_length_ms=FADE_OUT_MS):
-    samples = np.array(audio.get_array_of_samples())
-    n_channels = audio.channels
-    sample_count = len(samples) // n_channels if n_channels > 1 else len(samples)
-    sr = audio.frame_rate
-    fade_len = int(sr * fade_length_ms / 1000)
-    max_fade_len = int(sample_count * 0.4)
-    fade_len = min(fade_len, max_fade_len)
-    if fade_len <= 0:
-        return audio
-    for c in range(n_channels):
-        chan_offset = c if n_channels > 1 else 0
-        chan_samples = samples[chan_offset::n_channels].copy()
-        fade_start = len(chan_samples) - fade_len
-        if fade_start < 0:
-            fade_start = 0
-        ramp = np.linspace(1.0, min_factor, fade_len)
-        chan_samples[fade_start:] = (chan_samples[fade_start:] * ramp).astype(chan_samples.dtype)
-        if n_channels > 1:
-            samples[chan_offset::n_channels] = chan_samples
+def parse_wav_riff(wav_file):
+    print(f"[PARSE] Parseando WAV RIFF desde {wav_file.name}...\n")
+    
+    with open(wav_file, 'rb') as f:
+        riff_header = f.read(4)
+        if riff_header != b'RIFF':
+            print(f"[ERROR] No es archivo RIFF válido")
+            return None, None
+        
+        file_size = struct.unpack('<I', f.read(4))[0]
+        wave_header = f.read(4)
+        if wave_header != b'WAVE':
+            print(f"[ERROR] No es archivo WAVE válido")
+            return None, None
+        
+        fmt_data = None
+        audio_data = None
+        
+        while True:
+            chunk_id = f.read(4)
+            if len(chunk_id) < 4:
+                break
+            
+            chunk_size = struct.unpack('<I', f.read(4))[0]
+            
+            if chunk_id == b'fmt ':
+                fmt_data = f.read(chunk_size)
+                print(f"     ✓ Found fmt chunk ({chunk_size} bytes)")
+            elif chunk_id == b'data':
+                audio_data = f.read(chunk_size)
+                print(f"     ✓ Found data chunk ({chunk_size} bytes)\n")
+                break
+            else:
+                f.read(chunk_size)
+        
+        if fmt_data is None or audio_data is None:
+            print(f"[ERROR] WAV incompleto")
+            return None, None
+        
+        audio_format, num_channels, sample_rate, byte_rate, block_align, bits_per_sample = \
+            struct.unpack('<HHIIHH', fmt_data[:16])
+        
+        print(f"     Format: {audio_format}")
+        print(f"     Channels: {num_channels}")
+        print(f"     Sample rate: {sample_rate} Hz")
+        print(f"     Bits per sample: {bits_per_sample}")
+        print(f"     Total audio bytes: {len(audio_data)}\n")
+        
+        if bits_per_sample == 8 and num_channels == 1:
+            samples = np.frombuffer(audio_data, dtype=np.uint8).astype(np.float32)
+            samples = (samples - 128) / 128.0
+            print(f"     Convertido: 8-bit unsigned a float32 [-1, 1]\n")
+        elif bits_per_sample == 16 and num_channels == 1:
+            samples = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+            print(f"     Convertido: 16-bit signed a float32 [-1, 1]\n")
         else:
-            samples = chan_samples
-    return audio._spawn(samples.tobytes())
+            print(f"[ERROR] Formato no soportado")
+            return None, None
+        
+        print(f"     Total samples: {len(samples)}")
+        return samples, sample_rate
 
-def add_lowpass_filter(audio, cutoff_freq=LOWPASS_CUTOFF_HZ):
-    try:
-        return audio.low_pass_filter(cutoff_freq)
-    except:
+# ============================================================
+# STEP 3: EXTRAE 26 LETRAS DEL ORIGINAL
+# ============================================================
+
+def extract_letters(samples, sr):
+    print(f"[EXTRACT] Extrayendo 26 letras del original...\n")
+    
+    letters = {}
+    for letter_idx, letter in enumerate("ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
+        start_sample = letter_idx * LIBRARY_SAMPLES_PER_LETTER
+        end_sample = start_sample + LIBRARY_SAMPLES_PER_LETTER
+        
+        if end_sample <= len(samples):
+            segment = samples[start_sample:end_sample]
+            letters[letter] = segment
+            print(f"  ✓ {letter}: {len(segment):5d} muestras")
+    
+    print()
+    return letters
+
+# ============================================================
+# STEP 4: GENERA FONEMAS PARA CADA VOZ
+# ============================================================
+
+def pitch_shift_librosa(audio, sr, semitones):
+    if semitones == 0:
         return audio
+    try:
+        return librosa.effects.pitch_shift(audio, sr=sr, n_steps=semitones)
+    except Exception:
+        return audio
+
+def apply_simple_reverb(audio, decay=0.3, delay_ms=50):
+    if decay <= 0:
+        return audio
+    
+    delay_samples = int(delay_ms * SAMPLE_FREQ / 1000)
+    decay_factor = 1 - decay
+    padded = np.zeros(len(audio) + delay_samples)
+    padded[:len(audio)] = audio
+    
+    for i in range(len(audio)):
+        if i + delay_samples < len(padded):
+            padded[i + delay_samples] += audio[i] * decay_factor
+    
+    return padded[:len(audio)]
 
 def add_distortion(audio, amount):
     if amount <= 0:
         return audio
-    try:
-        samples = np.array(audio.get_array_of_samples(), dtype=np.float32)
-        if audio.channels == 2:
-            samples = samples.reshape((-1, 2)).mean(axis=1)
-        samples /= 32768.0
-        distorted = np.tanh(samples * (1 + amount * 3)) * 0.85
-        blended = samples * (1 - amount * 0.5) + distorted * (amount * 0.5)
-        samples_int16 = np.int16(blended * 32767)
-        return AudioSegment(samples_int16.tobytes(), frame_rate=audio.frame_rate, sample_width=2, channels=1)
-    except:
-        return audio
+    audio_f = audio.astype(np.float32)
+    distorted = np.tanh(audio_f * (1 + amount * 3)) * 0.85
+    blended = audio_f * (1 - amount * 0.5) + distorted * (amount * 0.5)
+    return blended
 
 def add_glitch(audio, amount):
     if amount <= 0:
         return audio
-    try:
-        samples = np.array(audio.get_array_of_samples(), dtype=np.float32)
-        if audio.channels == 2:
-            samples = samples.reshape((-1, 2)).mean(axis=1)
-        np.random.seed(42)
-        mask = np.random.random(len(samples)) < (amount * 0.02)
-        samples[mask] *= 0.7
-        samples_int16 = np.int16(samples)
-        return AudioSegment(samples_int16.tobytes(), frame_rate=audio.frame_rate, sample_width=2, channels=1)
-    except:
-        return audio
+    audio_f = audio.astype(np.float32).copy()
+    np.random.seed(42)
+    mask = np.random.random(len(audio)) < (amount * 0.02)
+    audio_f[mask] *= 0.7
+    return audio_f
 
-def create_silence(duration_ms, frame_rate=44100):
-    num_samples = int(frame_rate * duration_ms / 1000)
-    samples = np.zeros(num_samples, dtype=np.int16)
-    return AudioSegment(samples.tobytes(), frame_rate=frame_rate, sample_width=2, channels=1)
+def normalize_audio(audio):
+    """Normaliza audio sin cambiar el rango dinámico significativamente"""
+    peak = np.max(np.abs(audio))
+    if peak > 1.0:
+        # Solo normaliza si está clipped
+        return audio / peak * 0.99
+    return audio
 
-def concatenate_syllables_with_gaps(syllable_list, all_syllables, voice_type, inter_silence_ms=INTER_SYLLABLE_SILENCE_MS):
-    result = AudioSegment.empty()
-    silence_gap = create_silence(inter_silence_ms)
-    for i, (syl_text, syl_idx) in enumerate(syllable_list):
-        if syl_text in all_syllables and voice_type in all_syllables[syl_text]:
-            syl_audio = all_syllables[syl_text][voice_type]
-            result += syl_audio
-            if i < len(syllable_list) - 1:
-                result += silence_gap
-    return result
+def generate_phoneme(audio, sr, params):
+    """Genera UN fonema procesado (para no-fricativas)"""
+    
+    audio = pitch_shift_librosa(audio, sr, params["pitch_semitones"])
+    audio = add_distortion(audio, params["distortion"])
+    audio = add_glitch(audio, params["glitch"])
+    
+    if params["reverb_decay"] > 0:
+        audio = apply_simple_reverb(audio, decay=params["reverb_decay"], delay_ms=40)
+    
+    db_factor = 10 ** (params["volume_db"] / 20)
+    audio = audio * db_factor
+    audio = normalize_audio(audio)
+    
+    return audio
+
+def generate_all_phonemes(raw_letters, sr):
+    """
+    Genera todos los fonemas.
+    RAW: SIN PROCESAR, exactamente como viene del original
+    FRICATIVAS: Se copian directamente del RAW
+    OTRAS: Se procesan normalmente
+    """
+    
+    phonemes = {"raw": {}}
+    
+    # RAW: Copiar EXACTAMENTE como viene, SIN normalización
+    print("[GEN] Generando fonemas RAW...\n")
+    for letter, audio in raw_letters.items():
+        # CRÍTICO: Sin normalize_audio() para RAW
+        phonemes["raw"][letter] = audio.astype(np.float32)
+    print("✓ RAW completo (sin procesar)\n")
+    
+    # Voces modificadas
+    for voice_name, params in VOICE_TYPES.items():
+        print(f"[GEN] Generando fonemas {voice_name.upper()}...\n")
+        phonemes[voice_name] = {}
+        
+        for letter, audio in raw_letters.items():
+            if letter in FRICATIVES:
+                # FRICATIVAS: Copiar exactamente del RAW sin modificar
+                phonemes[voice_name][letter] = audio.astype(np.float32)
+            else:
+                # OTRAS: Procesar normalmente
+                phonemes[voice_name][letter] = generate_phoneme(audio, sr, params)
+        
+        print(f"✓ {voice_name.upper()} completo (fricativas copiadas del RAW)\n")
+    
+    return phonemes
 
 # ============================================================
-# MAIN EXECUTION
+# STEP 5: GUARDA FONEMAS EN DISCO (FINALES)
+# ============================================================
+
+def save_all_phonemes(phonemes, sr):
+    """Guarda TODOS los fonemas generados"""
+    
+    print("[SAVE] Guardando fonemas generados...\n")
+    
+    for voice_name in phonemes.keys():
+        voice_dir = PHONEMES_DIR / voice_name
+        voice_dir.mkdir(parents=True, exist_ok=True)
+        
+        for letter, audio in phonemes[voice_name].items():
+            out_path = voice_dir / f"{letter}.wav"
+            sf.write(str(out_path), audio, sr)
+        
+        print(f"✓ {voice_name.upper()}: 26 fonemas guardados en {voice_dir}/")
+    
+    print()
+
+# ============================================================
+# STEP 6: PRUEBA DE SÍNTESIS (SOLO LECTURA DE FONEMAS)
+# ============================================================
+
+def text_to_letters(text):
+    """Convierte texto a secuencia de letras"""
+    letters = []
+    for char in text.upper():
+        if 'A' <= char <= 'Z':
+            letters.append(char)
+    return letters
+
+def synthesize_from_phonemes(letter_seq, phonemes, voice_name):
+    """Sintetiza una frase LEYENDO los fonemas guardados"""
+    
+    frames = []
+    bank = phonemes[voice_name]
+    
+    for letter in letter_seq:
+        if letter not in bank:
+            continue
+        
+        full_audio = bank[letter].astype(np.float32)
+        interpolated = np.zeros(OUTPUT_SAMPLES_PER_LETTER, dtype=np.float32)
+        
+        for i in range(OUTPUT_SAMPLES_PER_LETTER):
+            source_idx = int(i * 1.0)  # pitch = 1.0
+            if source_idx >= len(full_audio):
+                source_idx = len(full_audio) - 1
+            interpolated[i] = full_audio[source_idx]
+        
+        frames.append(interpolated)
+    
+    if not frames:
+        return np.array([], dtype=np.float32)
+    
+    return np.concatenate(frames)
+
+# ============================================================
+# MAIN PIPELINE
 # ============================================================
 
 def main():
-    SYLLABLES_FOLDER.mkdir(exist_ok=True)
-    VOICES_FOLDER.mkdir(exist_ok=True)
-    SYNTHESIS_FOLDER.mkdir(exist_ok=True)
+    print("\n" + "="*70)
+    print("ANIMALESE PHONEME GENERATOR FOR MEGADRIVE")
+    print("="*70)
+    print("\nOBJETIVO: Generar 26 fonemas × 4 voces")
+    print("RAW: Exactamente como viene del original, SIN PROCESAR")
+    print("FRICATIVAS: Copiadas directamente del RAW a cada voz")
+    print("OTRAS: Procesadas normalmente por voz\n")
+    print("="*70 + "\n")
     
-    print("\n" + "="*60)
-    print("SYLLABLE SYNTHESIS - AI + PHONETIC APPROXIMATION")
-    print("="*60 + "\n")
+    PHONEMES_DIR.mkdir(exist_ok=True)
+    SYNTHESIS_DIR.mkdir(exist_ok=True)
     
-    # STEP 1: Generate base syllables
-    print("[1/4] Generating base syllables (40 total)...\n")
-    for syl_text in sorted(SYLLABLE_MAP.keys()):
-        output_path = SYLLABLES_FOLDER / f"{syl_text}.wav"
-        if output_path.exists():
-            continue
-        try:
-            _, phonetic = SYLLABLE_MAP[syl_text]
-            print(f"  [GEN] {syl_text} ({phonetic})...", end=" ", flush=True)
-            tts = gTTS(text=phonetic, lang="en", slow=False)
-            mp3_buffer = io.BytesIO()
-            tts.write_to_fp(mp3_buffer)
-            mp3_buffer.seek(0)
-            audio = decode_mp3_basic(mp3_buffer.getvalue())
-            if audio is None:
-                print("[ERROR]")
-                continue
-            audio = gentle_trim_silence(audio)
-            audio = audio.normalize()
-            audio.export(str(output_path), format="wav")
-            print(f"[OK]")
-        except Exception as e:
-            print(f"[ERROR] {e}")
+    # STEP 1: Descarga
+    print("[1/6] Downloading animalese.wav...\n")
+    wav_file = download_animalese_wav()
+    if not wav_file:
+        return
     
-    # STEP 2: Process syllables for all voices
-    print("\n[2/4] Processing syllables for 3 voices...\n")
-    all_syllables = {}
+    # STEP 2: Parsea WAV RIFF
+    print("[2/6] Parsing WAV RIFF...\n")
+    samples, sr = parse_wav_riff(wav_file)
+    if samples is None:
+        return
     
-    for voice_type, params in VOICE_TYPES.items():
-        print(f"  Processing {voice_type.upper()}...")
-        for syl_text in sorted(SYLLABLE_MAP.keys()):
-            in_path = SYLLABLES_FOLDER / f"{syl_text}.wav"
-            if not in_path.exists():
-                continue
-            
-            audio = AudioSegment.from_wav(str(in_path))
-            speed_factor = GLOBAL_SPEED_MULTIPLIER * params.get("speed_factor_multiplier", 1.0)
-            if speed_factor != 1.0:
-                audio = audio.speedup(playback_speed=speed_factor)
-            
-            audio = pitch_shift_librosa(audio, params.get("pitch_semitones", 0))
-            audio = gentle_trim_cv(audio)
-            audio += params.get("volume_change_db", 0)
-            audio = add_distortion(audio, params.get("distortion", 0))
-            audio = add_glitch(audio, params.get("glitch", 0))
-            audio = add_lowpass_filter(audio, params.get("lowpass_cutoff", LOWPASS_CUTOFF_HZ))
-            audio = apply_smooth_release(audio)
-            audio = audio.normalize()
-            
-            final_db = params.get("final_volume_db", BASE_VOLUME_REDUCTION_DB)
-            if final_db != 0:
-                audio = audio + final_db
-            
-            if syl_text not in all_syllables:
-                all_syllables[syl_text] = {}
-            all_syllables[syl_text][voice_type] = audio
-            
-            out_path = VOICES_FOLDER / f"{voice_type}_{syl_text}.wav"
-            audio.export(str(out_path), format="wav")
+    # STEP 3: Extrae letras
+    print("[3/6] Extracting 26 letters...\n")
+    raw_letters = extract_letters(samples, sr)
     
-    print(f"  ✓ Generated {len(all_syllables)} syllables × {len(VOICE_TYPES)} voices")
+    # STEP 4: Genera fonemas
+    print("[4/6] Generating phonemes for all voices...\n")
+    phonemes = generate_all_phonemes(raw_letters, sr)
     
-    # STEP 3: Syllabify with AI + approximation
-    print("\n[3/4] Syllabifying with AI + Approximation...\n")
+    # STEP 5: Guarda fonemas
+    print("[5/6] Saving generated phonemes...\n")
+    save_all_phonemes(phonemes, sr)
+    
+    # STEP 6: Pruebas de síntesis
+    print("[6/6] Testing synthesis (READ-ONLY)...\n")
     
     for test in TEST_SENTENCES:
         print(f"  {test['id']}:")
-        print(f"    ES: {test['es']}")
-        syl_es = syllabify_with_ai(test['es'], 'Spanish')
-        print(f"    → {' + '.join(s[0] for s in syl_es)}")
         
-        print(f"    EN: {test['en']}")
-        syl_en = syllabify_with_ai(test['en'], 'English')
-        print(f"    → {' + '.join(s[0] for s in syl_en)}\n")
+        for lang_key in ["es", "en"]:
+            text = test[lang_key]
+            letter_seq = text_to_letters(text)
+            
+            if not letter_seq:
+                print(f"    {lang_key.upper()}: vacío")
+                continue
+            
+            for voice in ["raw", "woman", "man", "deep"]:
+                audio = synthesize_from_phonemes(letter_seq, phonemes, voice)
+                out_path = SYNTHESIS_DIR / f"{test['id']}_{lang_key}_{voice}.wav"
+                sf.write(str(out_path), audio, sr)
+                duration_ms = len(audio) / sr * 1000
+                print(f"    {voice.upper()} {lang_key}: {duration_ms:6.0f}ms")
         
-        time.sleep(1)
+        print()
     
-    # STEP 4: Synthesize
-    print("[4/4] Synthesizing...\n")
-    
-    for test in TEST_SENTENCES:
-        voice = test['voice']
-        print(f"  Synthesizing {test['id']} ({voice})...")
-        
-        syl_es = syllabify_with_ai(test['es'], 'Spanish')
-        audio_es = concatenate_syllables_with_gaps(syl_es, all_syllables, voice)
-        out_path_es = SYNTHESIS_FOLDER / f"{test['id']}_es.wav"
-        audio_es.export(str(out_path_es), format="wav")
-        print(f"    ✓ {out_path_es} ({len(audio_es)}ms)")
-        
-        syl_en = syllabify_with_ai(test['en'], 'English')
-        audio_en = concatenate_syllables_with_gaps(syl_en, all_syllables, voice)
-        out_path_en = SYNTHESIS_FOLDER / f"{test['id']}_en.wav"
-        audio_en.export(str(out_path_en), format="wav")
-        print(f"    ✓ {out_path_en} ({len(audio_en)}ms)")
-        
-        time.sleep(1)
-    
-    print("\n" + "="*60)
-    print("✓ SYNTHESIS COMPLETE")
-    print("="*60 + "\n")
+    print("="*70)
+    print("✓ PHONEME GENERATION COMPLETE")
+    print("="*70)
+    print(f"\nFonemas guardados en: {PHONEMES_DIR}/")
+    print(f"  - raw/       (26 fonemas originales, SIN PROCESAR)")
+    print(f"  - woman/     (26 fonemas mujer + fricativas RAW)")
+    print(f"  - man/       (26 fonemas hombre + fricativas RAW)")
+    print(f"  - deep/      (26 fonemas grave + fricativas RAW)")
+    print(f"\nFricativas (S,T,V,X,Z,F): Idénticas al RAW en todas las voces\n")
 
 if __name__ == "__main__":
     main()
