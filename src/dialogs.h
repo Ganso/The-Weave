@@ -11,7 +11,7 @@
 #define VOICE_TYPEWRITER 3
 
 #define MAX_VOICE 4 // Total number of voice types
-#define MAX_DIALOG_SOUNDS 8 // Maximum number of dialog sounds per voice
+#define MAX_DIALOG_SOUNDS 26 // Maximum number of dialog sounds per voice
 
 // Voice sample arrays (numeric indices)
 extern const u8 *voice_sample[MAX_VOICE][MAX_DIALOG_SOUNDS]; // Character voice samples
