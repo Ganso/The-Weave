@@ -8,7 +8,7 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
 
     //geesebumps_logo(); // GeeseBumps Logo
     //theweave_intro();  // Game intro
-    //game_language = LANG_SPANISH; // Definir idioma a español para pruebas
+    game_language = LANG_ENGLISH; // Definir idioma para pruebas
 
     initialize(true);
 

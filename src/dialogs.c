@@ -4,6 +4,15 @@ const u8 *voice_sample[MAX_VOICE][MAX_DIALOG_SOUNDS]; // Character voice samples
 u32 voice_sample_size[MAX_VOICE][MAX_DIALOG_SOUNDS]; // Size of each character voice sample
 u8 voice_numsamples[MAX_VOICE]; // Number of samples per voice
 
+// HELPERS
+
+static inline u8 letter_index_from_char(char c) {
+    if (c >= 'A' && c <= 'Z') return (u8)(c - 'A');
+    if (c >= 'a' && c <= 'z') return (u8)(c - 'a');
+    return 255; // not a letter
+}
+
+// FUNCTIONS
 
 void talk(u8 nface, bool isinleft, char *text, u16 max_seconds, bool sound_on)    // Display dialog with optional face portrait and timed text
 {
@@ -147,125 +156,122 @@ void split_text(char *text, char *line1, char *line2, char *line3)    // Break t
 }
 
 
-void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool sound_on)    // Display text line with character-by-character animation
+void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool sound_on) // Display text line with character-by-character animation
 {
     int i = 0, pos = 0;
     u16 joy_state;
-    char temp[2] = {0, 0};  // Temporary one character storage
+    char temp[2] = {0, 0}; // Temporary one character storage
     char *encoded_text = NULL;
-    Sprite *spr_fadein;
-    u8 voice_talking, dialog_sound;
+    Sprite *spr_fadein = NULL;
+    u8 voice_talking;
 
-    // Load Fade-in sprite
-    if (spr_fadein == NULL)
-        spr_fadein = SPR_addSprite(&int_fadein_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
+    // Fade-in sprite
+    spr_fadein = SPR_addSprite(&int_fadein_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
     SPR_setVisibility(spr_fadein, HIDDEN);
     SPR_setAnimationLoop(spr_fadein, false);
 
-    // Code Spanish text
+    // Encode Spanish text if needed
     if (game_language == LANG_SPANISH) {
         encoded_text = encode_spanish_text(text);
-        if (encoded_text != NULL) {
-            text = encoded_text;
-        }
+        if (encoded_text != NULL) text = encoded_text;
     }
 
     VDP_setTextPalette(PAL2);
-    
+
     // Print the text, character by character, handling palette escape codes
     while (text[i] != '\0') {
+
+        // Color start @[  -> switch to PAL1
         if (text[i] == '@' && text[i + 1] == '[') {
             VDP_setTextPalette(PAL1);
             i += 2;
             continue;
         }
+        // Color end @] -> back to PAL2
         if (text[i] == '@' && text[i + 1] == ']') {
             VDP_setTextPalette(PAL2);
             i += 2;
             continue;
         }
+
         temp[0] = text[i];
-        
-        // Draw the fade-in sprite over the character position
+
+        // Position and show fade-in sprite over the character position
         SPR_setPosition(spr_fadein, (x + pos) * 8, y * 8);
         SPR_setVisibility(spr_fadein, VISIBLE);
         SPR_setAnimAndFrame(spr_fadein, 0, 0); // Reset animation
-       
-        // Draw text behind the fade-in sprite
+
+        // Draw the character behind the fade-in sprite
         VDP_drawTextBG(WINDOW, temp, x + pos, y);
 
-        // Find appropiate voice sample for character
+        // Decide voice from face
         if (sound_on && text[i] != ' ') {
             switch (nface) {
-                case FACE_clio:
-                    voice_talking = VOICE_WOMAN;
-                    break;
-                case FACE_linus:
-                    voice_talking = VOICE_MAN;
-                    break;
-                case FACE_xander:
-                    voice_talking = VOICE_DEEP;
-                    break;
-                case FACE_swan:
-                    voice_talking = VOICE_DEEP;
-                    break;
-                default:
-                    voice_talking = VOICE_TYPEWRITER;
-                    break;
+                case FACE_clio:   voice_talking = VOICE_WOMAN; break;
+                case FACE_linus:  voice_talking = VOICE_MAN;   break;
+                case FACE_xander: voice_talking = VOICE_DEEP;  break;
+                case FACE_swan:   voice_talking = VOICE_DEEP;  break;
+                default:          voice_talking = VOICE_TYPEWRITER; break;
             }
-            dialog_sound = (random() % voice_numsamples[voice_talking]);
-            dprintf(3, "Playing voice sample %d for voice %d\n", dialog_sound, voice_talking);
+
+            if (voice_talking == VOICE_TYPEWRITER) {
+                // Random typewriter tick for any non-space character
+                u8 idx = (u8)(random() % voice_numsamples[VOICE_TYPEWRITER]);
+                XGM2_playPCM(voice_sample[VOICE_TYPEWRITER][idx],
+                             voice_sample_size[VOICE_TYPEWRITER][idx],
+                             SOUND_PCM_CH3);
+            } else {
+                // Map A..Z / a..z to 0..25 and play exact phoneme
+                u8 idx = 255;
+                char c = text[i];
+                if (c >= 'A' && c <= 'Z') idx = (u8)(c - 'A');
+                else if (c >= 'a' && c <= 'z') idx = (u8)(c - 'a');
+
+                if (idx < 26) {
+                    play_sample(voice_sample[voice_talking][idx], voice_sample_size[voice_talking][idx]);
+                }
+                // Non-letter: no sound
+            }
         }
 
-        // Wait for fade-in animation to complete or skip everything if button A is pressed
+        // Optionally wait for fade-in animation (skippable with A)
         bool animation_done = false;
-
-        // Wait for fade-in animation to complete, while playing voice samples
         if (wait_for_frame) {
             while (!animation_done) {
-
-                // Only play if channel 3 is not already playing
-                // TODO: Implement it as a function in the sound library
-                if (sound_on) {
-                    if (! (XGM2_isPlayingPCM(SOUND_PCM_CH3_MSK) & SOUND_PCM_CH3_MSK) ) {
-                        if (random() % 2 == 0) { // Random pauses between syllables
-                            XGM2_playPCM(voice_sample[voice_talking][dialog_sound], 
-                                    voice_sample_size[voice_talking][dialog_sound], 
-                                    SOUND_PCM_CH3);
-                        }
-                    }
-                }
-
                 joy_state = JOY_readJoypad(JOY_ALL);
                 if ((joy_state & BUTTON_A) == 0) {
-                        // If button A is not being pressed, update frame
-                        next_frame(false);
-                        animation_done = SPR_isAnimationDone(spr_fadein);
-                } else animation_done = true; // Skip animation if button A is pressed
+                    next_frame(false);
+                    animation_done = SPR_isAnimationDone(spr_fadein);
+                } else {
+                    animation_done = true; // Skip on A
+                }
             }
         }
+
         pos++;
         i++;
     }
-    VDP_setTextPalette(PAL2); // Ensure palette reset before exit
 
+    VDP_setTextPalette(PAL2); // Ensure palette reset
+
+    // If waiting, also wait for A release to avoid accidental skips on next text
     if (wait_for_frame) {
         joy_state = JOY_readJoypad(JOY_ALL);
-        while ((joy_state & BUTTON_A) != 0)
-        {
+        while ((joy_state & BUTTON_A) != 0) {
             joy_state = JOY_readJoypad(JOY_ALL);
-            next_frame(false); // If button A is being pressed, wait until release
+            next_frame(false);
         }
     }
 
-    // Free the encoded text if it was allocated
     if (encoded_text != NULL) {
         free(encoded_text);
     }
 
-    // Free the fade-in sprite
+    // Hide and release fade-in sprite
+    SPR_setVisibility(spr_fadein, HIDDEN);
     SPR_releaseSprite(spr_fadein);
 }
+
 
 u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_seconds)    // Display dialog with multiple choice options
 {
@@ -445,36 +451,177 @@ u8 choice_dialog(const ChoiceItem *item)    // Display a predefined choice dialo
     return result;
 }
 
-void init_voice_samples(void) // Initialize character voice samples
+void init_voice_samples(void)
 {
-    // Initialize voice_sample array (pointers)
-    voice_sample[VOICE_WOMAN][0] = snd_dialog_woman_0;
-    voice_sample[VOICE_WOMAN][1] = snd_dialog_woman_1;
-    voice_sample[VOICE_WOMAN][2] = snd_dialog_woman_2;
-    voice_sample[VOICE_WOMAN][3] = snd_dialog_woman_3;
-    voice_sample[VOICE_WOMAN][4] = snd_dialog_woman_4;
-    voice_sample[VOICE_WOMAN][5] = snd_dialog_woman_5;
-    voice_sample[VOICE_WOMAN][6] = snd_dialog_woman_6;
-    voice_sample[VOICE_WOMAN][7] = snd_dialog_woman_7;
+    // WOMAN A-Z
+    voice_sample[VOICE_WOMAN][0]  = snd_dialog_woman_A;
+    voice_sample[VOICE_WOMAN][1]  = snd_dialog_woman_B;
+    voice_sample[VOICE_WOMAN][2]  = snd_dialog_woman_C;
+    voice_sample[VOICE_WOMAN][3]  = snd_dialog_woman_D;
+    voice_sample[VOICE_WOMAN][4]  = snd_dialog_woman_E;
+    voice_sample[VOICE_WOMAN][5]  = snd_dialog_woman_F;
+    voice_sample[VOICE_WOMAN][6]  = snd_dialog_woman_G;
+    voice_sample[VOICE_WOMAN][7]  = snd_dialog_woman_H;
+    voice_sample[VOICE_WOMAN][8]  = snd_dialog_woman_I;
+    voice_sample[VOICE_WOMAN][9]  = snd_dialog_woman_J;
+    voice_sample[VOICE_WOMAN][10] = snd_dialog_woman_K;
+    voice_sample[VOICE_WOMAN][11] = snd_dialog_woman_L;
+    voice_sample[VOICE_WOMAN][12] = snd_dialog_woman_M;
+    voice_sample[VOICE_WOMAN][13] = snd_dialog_woman_N;
+    voice_sample[VOICE_WOMAN][14] = snd_dialog_woman_O;
+    voice_sample[VOICE_WOMAN][15] = snd_dialog_woman_P;
+    voice_sample[VOICE_WOMAN][16] = snd_dialog_woman_Q;
+    voice_sample[VOICE_WOMAN][17] = snd_dialog_woman_R;
+    voice_sample[VOICE_WOMAN][18] = snd_dialog_woman_S;
+    voice_sample[VOICE_WOMAN][19] = snd_dialog_woman_T;
+    voice_sample[VOICE_WOMAN][20] = snd_dialog_woman_U;
+    voice_sample[VOICE_WOMAN][21] = snd_dialog_woman_V;
+    voice_sample[VOICE_WOMAN][22] = snd_dialog_woman_W;
+    voice_sample[VOICE_WOMAN][23] = snd_dialog_woman_X;
+    voice_sample[VOICE_WOMAN][24] = snd_dialog_woman_Y;
+    voice_sample[VOICE_WOMAN][25] = snd_dialog_woman_Z;
 
-    voice_sample[VOICE_MAN][0] = snd_dialog_man_0;
-    voice_sample[VOICE_MAN][1] = snd_dialog_man_1;
-    voice_sample[VOICE_MAN][2] = snd_dialog_man_2;
-    voice_sample[VOICE_MAN][3] = snd_dialog_man_3;
-    voice_sample[VOICE_MAN][4] = snd_dialog_man_4;
-    voice_sample[VOICE_MAN][5] = snd_dialog_man_5;
-    voice_sample[VOICE_MAN][6] = snd_dialog_man_6;
-    voice_sample[VOICE_MAN][7] = snd_dialog_man_7;
+    // WOMAN sizes
+    voice_sample_size[VOICE_WOMAN][0]  = sizeof(snd_dialog_woman_A);
+    voice_sample_size[VOICE_WOMAN][1]  = sizeof(snd_dialog_woman_B);
+    voice_sample_size[VOICE_WOMAN][2]  = sizeof(snd_dialog_woman_C);
+    voice_sample_size[VOICE_WOMAN][3]  = sizeof(snd_dialog_woman_D);
+    voice_sample_size[VOICE_WOMAN][4]  = sizeof(snd_dialog_woman_E);
+    voice_sample_size[VOICE_WOMAN][5]  = sizeof(snd_dialog_woman_F);
+    voice_sample_size[VOICE_WOMAN][6]  = sizeof(snd_dialog_woman_G);
+    voice_sample_size[VOICE_WOMAN][7]  = sizeof(snd_dialog_woman_H);
+    voice_sample_size[VOICE_WOMAN][8]  = sizeof(snd_dialog_woman_I);
+    voice_sample_size[VOICE_WOMAN][9]  = sizeof(snd_dialog_woman_J);
+    voice_sample_size[VOICE_WOMAN][10] = sizeof(snd_dialog_woman_K);
+    voice_sample_size[VOICE_WOMAN][11] = sizeof(snd_dialog_woman_L);
+    voice_sample_size[VOICE_WOMAN][12] = sizeof(snd_dialog_woman_M);
+    voice_sample_size[VOICE_WOMAN][13] = sizeof(snd_dialog_woman_N);
+    voice_sample_size[VOICE_WOMAN][14] = sizeof(snd_dialog_woman_O);
+    voice_sample_size[VOICE_WOMAN][15] = sizeof(snd_dialog_woman_P);
+    voice_sample_size[VOICE_WOMAN][16] = sizeof(snd_dialog_woman_Q);
+    voice_sample_size[VOICE_WOMAN][17] = sizeof(snd_dialog_woman_R);
+    voice_sample_size[VOICE_WOMAN][18] = sizeof(snd_dialog_woman_S);
+    voice_sample_size[VOICE_WOMAN][19] = sizeof(snd_dialog_woman_T);
+    voice_sample_size[VOICE_WOMAN][20] = sizeof(snd_dialog_woman_U);
+    voice_sample_size[VOICE_WOMAN][21] = sizeof(snd_dialog_woman_V);
+    voice_sample_size[VOICE_WOMAN][22] = sizeof(snd_dialog_woman_W);
+    voice_sample_size[VOICE_WOMAN][23] = sizeof(snd_dialog_woman_X);
+    voice_sample_size[VOICE_WOMAN][24] = sizeof(snd_dialog_woman_Y);
+    voice_sample_size[VOICE_WOMAN][25] = sizeof(snd_dialog_woman_Z);
 
-    voice_sample[VOICE_DEEP][0] = snd_dialog_deep_0;
-    voice_sample[VOICE_DEEP][1] = snd_dialog_deep_1;
-    voice_sample[VOICE_DEEP][2] = snd_dialog_deep_2;
-    voice_sample[VOICE_DEEP][3] = snd_dialog_deep_3;
-    voice_sample[VOICE_DEEP][4] = snd_dialog_deep_4;
-    voice_sample[VOICE_DEEP][5] = snd_dialog_deep_5;
-    voice_sample[VOICE_DEEP][6] = snd_dialog_deep_6;
-    voice_sample[VOICE_DEEP][7] = snd_dialog_deep_7;
+    // MAN A-Z
+    voice_sample[VOICE_MAN][0]  = snd_dialog_man_A;
+    voice_sample[VOICE_MAN][1]  = snd_dialog_man_B;
+    voice_sample[VOICE_MAN][2]  = snd_dialog_man_C;
+    voice_sample[VOICE_MAN][3]  = snd_dialog_man_D;
+    voice_sample[VOICE_MAN][4]  = snd_dialog_man_E;
+    voice_sample[VOICE_MAN][5]  = snd_dialog_man_F;
+    voice_sample[VOICE_MAN][6]  = snd_dialog_man_G;
+    voice_sample[VOICE_MAN][7]  = snd_dialog_man_H;
+    voice_sample[VOICE_MAN][8]  = snd_dialog_man_I;
+    voice_sample[VOICE_MAN][9]  = snd_dialog_man_J;
+    voice_sample[VOICE_MAN][10] = snd_dialog_man_K;
+    voice_sample[VOICE_MAN][11] = snd_dialog_man_L;
+    voice_sample[VOICE_MAN][12] = snd_dialog_man_M;
+    voice_sample[VOICE_MAN][13] = snd_dialog_man_N;
+    voice_sample[VOICE_MAN][14] = snd_dialog_man_O;
+    voice_sample[VOICE_MAN][15] = snd_dialog_man_P;
+    voice_sample[VOICE_MAN][16] = snd_dialog_man_Q;
+    voice_sample[VOICE_MAN][17] = snd_dialog_man_R;
+    voice_sample[VOICE_MAN][18] = snd_dialog_man_S;
+    voice_sample[VOICE_MAN][19] = snd_dialog_man_T;
+    voice_sample[VOICE_MAN][20] = snd_dialog_man_U;
+    voice_sample[VOICE_MAN][21] = snd_dialog_man_V;
+    voice_sample[VOICE_MAN][22] = snd_dialog_man_W;
+    voice_sample[VOICE_MAN][23] = snd_dialog_man_X;
+    voice_sample[VOICE_MAN][24] = snd_dialog_man_Y;
+    voice_sample[VOICE_MAN][25] = snd_dialog_man_Z;
 
+    // MAN sizes
+    voice_sample_size[VOICE_MAN][0]  = sizeof(snd_dialog_man_A);
+    voice_sample_size[VOICE_MAN][1]  = sizeof(snd_dialog_man_B);
+    voice_sample_size[VOICE_MAN][2]  = sizeof(snd_dialog_man_C);
+    voice_sample_size[VOICE_MAN][3]  = sizeof(snd_dialog_man_D);
+    voice_sample_size[VOICE_MAN][4]  = sizeof(snd_dialog_man_E);
+    voice_sample_size[VOICE_MAN][5]  = sizeof(snd_dialog_man_F);
+    voice_sample_size[VOICE_MAN][6]  = sizeof(snd_dialog_man_G);
+    voice_sample_size[VOICE_MAN][7]  = sizeof(snd_dialog_man_H);
+    voice_sample_size[VOICE_MAN][8]  = sizeof(snd_dialog_man_I);
+    voice_sample_size[VOICE_MAN][9]  = sizeof(snd_dialog_man_J);
+    voice_sample_size[VOICE_MAN][10] = sizeof(snd_dialog_man_K);
+    voice_sample_size[VOICE_MAN][11] = sizeof(snd_dialog_man_L);
+    voice_sample_size[VOICE_MAN][12] = sizeof(snd_dialog_man_M);
+    voice_sample_size[VOICE_MAN][13] = sizeof(snd_dialog_man_N);
+    voice_sample_size[VOICE_MAN][14] = sizeof(snd_dialog_man_O);
+    voice_sample_size[VOICE_MAN][15] = sizeof(snd_dialog_man_P);
+    voice_sample_size[VOICE_MAN][16] = sizeof(snd_dialog_man_Q);
+    voice_sample_size[VOICE_MAN][17] = sizeof(snd_dialog_man_R);
+    voice_sample_size[VOICE_MAN][18] = sizeof(snd_dialog_man_S);
+    voice_sample_size[VOICE_MAN][19] = sizeof(snd_dialog_man_T);
+    voice_sample_size[VOICE_MAN][20] = sizeof(snd_dialog_man_U);
+    voice_sample_size[VOICE_MAN][21] = sizeof(snd_dialog_man_V);
+    voice_sample_size[VOICE_MAN][22] = sizeof(snd_dialog_man_W);
+    voice_sample_size[VOICE_MAN][23] = sizeof(snd_dialog_man_X);
+    voice_sample_size[VOICE_MAN][24] = sizeof(snd_dialog_man_Y);
+    voice_sample_size[VOICE_MAN][25] = sizeof(snd_dialog_man_Z);
+
+    // DEEP A-Z
+    voice_sample[VOICE_DEEP][0]  = snd_dialog_deep_A;
+    voice_sample[VOICE_DEEP][1]  = snd_dialog_deep_B;
+    voice_sample[VOICE_DEEP][2]  = snd_dialog_deep_C;
+    voice_sample[VOICE_DEEP][3]  = snd_dialog_deep_D;
+    voice_sample[VOICE_DEEP][4]  = snd_dialog_deep_E;
+    voice_sample[VOICE_DEEP][5]  = snd_dialog_deep_F;
+    voice_sample[VOICE_DEEP][6]  = snd_dialog_deep_G;
+    voice_sample[VOICE_DEEP][7]  = snd_dialog_deep_H;
+    voice_sample[VOICE_DEEP][8]  = snd_dialog_deep_I;
+    voice_sample[VOICE_DEEP][9]  = snd_dialog_deep_J;
+    voice_sample[VOICE_DEEP][10] = snd_dialog_deep_K;
+    voice_sample[VOICE_DEEP][11] = snd_dialog_deep_L;
+    voice_sample[VOICE_DEEP][12] = snd_dialog_deep_M;
+    voice_sample[VOICE_DEEP][13] = snd_dialog_deep_N;
+    voice_sample[VOICE_DEEP][14] = snd_dialog_deep_O;
+    voice_sample[VOICE_DEEP][15] = snd_dialog_deep_P;
+    voice_sample[VOICE_DEEP][16] = snd_dialog_deep_Q;
+    voice_sample[VOICE_DEEP][17] = snd_dialog_deep_R;
+    voice_sample[VOICE_DEEP][18] = snd_dialog_deep_S;
+    voice_sample[VOICE_DEEP][19] = snd_dialog_deep_T;
+    voice_sample[VOICE_DEEP][20] = snd_dialog_deep_U;
+    voice_sample[VOICE_DEEP][21] = snd_dialog_deep_V;
+    voice_sample[VOICE_DEEP][22] = snd_dialog_deep_W;
+    voice_sample[VOICE_DEEP][23] = snd_dialog_deep_X;
+    voice_sample[VOICE_DEEP][24] = snd_dialog_deep_Y;
+    voice_sample[VOICE_DEEP][25] = snd_dialog_deep_Z;
+
+    // DEEP sizes
+    voice_sample_size[VOICE_DEEP][0]  = sizeof(snd_dialog_deep_A);
+    voice_sample_size[VOICE_DEEP][1]  = sizeof(snd_dialog_deep_B);
+    voice_sample_size[VOICE_DEEP][2]  = sizeof(snd_dialog_deep_C);
+    voice_sample_size[VOICE_DEEP][3]  = sizeof(snd_dialog_deep_D);
+    voice_sample_size[VOICE_DEEP][4]  = sizeof(snd_dialog_deep_E);
+    voice_sample_size[VOICE_DEEP][5]  = sizeof(snd_dialog_deep_F);
+    voice_sample_size[VOICE_DEEP][6]  = sizeof(snd_dialog_deep_G);
+    voice_sample_size[VOICE_DEEP][7]  = sizeof(snd_dialog_deep_H);
+    voice_sample_size[VOICE_DEEP][8]  = sizeof(snd_dialog_deep_I);
+    voice_sample_size[VOICE_DEEP][9]  = sizeof(snd_dialog_deep_J);
+    voice_sample_size[VOICE_DEEP][10] = sizeof(snd_dialog_deep_K);
+    voice_sample_size[VOICE_DEEP][11] = sizeof(snd_dialog_deep_L);
+    voice_sample_size[VOICE_DEEP][12] = sizeof(snd_dialog_deep_M);
+    voice_sample_size[VOICE_DEEP][13] = sizeof(snd_dialog_deep_N);
+    voice_sample_size[VOICE_DEEP][14] = sizeof(snd_dialog_deep_O);
+    voice_sample_size[VOICE_DEEP][15] = sizeof(snd_dialog_deep_P);
+    voice_sample_size[VOICE_DEEP][16] = sizeof(snd_dialog_deep_Q);
+    voice_sample_size[VOICE_DEEP][17] = sizeof(snd_dialog_deep_R);
+    voice_sample_size[VOICE_DEEP][18] = sizeof(snd_dialog_deep_S);
+    voice_sample_size[VOICE_DEEP][19] = sizeof(snd_dialog_deep_T);
+    voice_sample_size[VOICE_DEEP][20] = sizeof(snd_dialog_deep_U);
+    voice_sample_size[VOICE_DEEP][21] = sizeof(snd_dialog_deep_V);
+    voice_sample_size[VOICE_DEEP][22] = sizeof(snd_dialog_deep_W);
+    voice_sample_size[VOICE_DEEP][23] = sizeof(snd_dialog_deep_X);
+    voice_sample_size[VOICE_DEEP][24] = sizeof(snd_dialog_deep_Y);
+    voice_sample_size[VOICE_DEEP][25] = sizeof(snd_dialog_deep_Z);
+
+    // TYPEWRITER (se mantiene igual, 8 sonidos)
     voice_sample[VOICE_TYPEWRITER][0] = snd_dialog_typewriter1;
     voice_sample[VOICE_TYPEWRITER][1] = snd_dialog_typewriter2;
     voice_sample[VOICE_TYPEWRITER][2] = snd_dialog_typewriter3;
@@ -483,34 +630,6 @@ void init_voice_samples(void) // Initialize character voice samples
     voice_sample[VOICE_TYPEWRITER][5] = snd_dialog_typewriter6;
     voice_sample[VOICE_TYPEWRITER][6] = snd_dialog_typewriter7;
     voice_sample[VOICE_TYPEWRITER][7] = snd_dialog_typewriter8;
-
-    // Initialize voice_sample_size array (sizes)
-    voice_sample_size[VOICE_WOMAN][0] = sizeof(snd_dialog_woman_0);
-    voice_sample_size[VOICE_WOMAN][1] = sizeof(snd_dialog_woman_1);
-    voice_sample_size[VOICE_WOMAN][2] = sizeof(snd_dialog_woman_2);
-    voice_sample_size[VOICE_WOMAN][3] = sizeof(snd_dialog_woman_3);
-    voice_sample_size[VOICE_WOMAN][4] = sizeof(snd_dialog_woman_4);
-    voice_sample_size[VOICE_WOMAN][5] = sizeof(snd_dialog_woman_5);
-    voice_sample_size[VOICE_WOMAN][6] = sizeof(snd_dialog_woman_6);
-    voice_sample_size[VOICE_WOMAN][7] = sizeof(snd_dialog_woman_7);
-
-    voice_sample_size[VOICE_MAN][0] = sizeof(snd_dialog_man_0);
-    voice_sample_size[VOICE_MAN][1] = sizeof(snd_dialog_man_1);
-    voice_sample_size[VOICE_MAN][2] = sizeof(snd_dialog_man_2);
-    voice_sample_size[VOICE_MAN][3] = sizeof(snd_dialog_man_3);
-    voice_sample_size[VOICE_MAN][4] = sizeof(snd_dialog_man_4);
-    voice_sample_size[VOICE_MAN][5] = sizeof(snd_dialog_man_5);
-    voice_sample_size[VOICE_MAN][6] = sizeof(snd_dialog_man_6);
-    voice_sample_size[VOICE_MAN][7] = sizeof(snd_dialog_man_7);
-
-    voice_sample_size[VOICE_DEEP][0] = sizeof(snd_dialog_deep_0);
-    voice_sample_size[VOICE_DEEP][1] = sizeof(snd_dialog_deep_1);
-    voice_sample_size[VOICE_DEEP][2] = sizeof(snd_dialog_deep_2);
-    voice_sample_size[VOICE_DEEP][3] = sizeof(snd_dialog_deep_3);
-    voice_sample_size[VOICE_DEEP][4] = sizeof(snd_dialog_deep_4);
-    voice_sample_size[VOICE_DEEP][5] = sizeof(snd_dialog_deep_5);
-    voice_sample_size[VOICE_DEEP][6] = sizeof(snd_dialog_deep_6);
-    voice_sample_size[VOICE_DEEP][7] = sizeof(snd_dialog_deep_7);
 
     voice_sample_size[VOICE_TYPEWRITER][0] = sizeof(snd_dialog_typewriter1);
     voice_sample_size[VOICE_TYPEWRITER][1] = sizeof(snd_dialog_typewriter2);
@@ -521,9 +640,9 @@ void init_voice_samples(void) // Initialize character voice samples
     voice_sample_size[VOICE_TYPEWRITER][6] = sizeof(snd_dialog_typewriter7);
     voice_sample_size[VOICE_TYPEWRITER][7] = sizeof(snd_dialog_typewriter8);
 
-    // Initialize voice_numsamples
-    voice_numsamples[VOICE_WOMAN] = MAX_DIALOG_SOUNDS;
-    voice_numsamples[VOICE_MAN] = MAX_DIALOG_SOUNDS;
-    voice_numsamples[VOICE_DEEP] = MAX_DIALOG_SOUNDS;
-    voice_numsamples[VOICE_TYPEWRITER] = MAX_DIALOG_SOUNDS;
+    // Número de muestras por voz
+    voice_numsamples[VOICE_WOMAN]      = 26;
+    voice_numsamples[VOICE_MAN]        = 26;
+    voice_numsamples[VOICE_DEEP]       = 26;
+    voice_numsamples[VOICE_TYPEWRITER] = 8;
 }
