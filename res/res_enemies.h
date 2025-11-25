@@ -1,3 +1,4 @@
+#include <genesis.h>
 #ifndef _RES_RES_ENEMIES_H_
 #define _RES_RES_ENEMIES_H_
 

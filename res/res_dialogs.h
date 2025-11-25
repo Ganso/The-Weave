@@ -1,3 +1,4 @@
+#include <genesis.h>
 #ifndef _RES_RES_DIALOGS_H_
 #define _RES_RES_DIALOGS_H_
 

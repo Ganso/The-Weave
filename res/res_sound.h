@@ -1,3 +1,4 @@
+#include <genesis.h>
 #ifndef _RES_RES_SOUND_H_
 #define _RES_RES_SOUND_H_
 

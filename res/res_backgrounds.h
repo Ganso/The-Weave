@@ -1,3 +1,4 @@
+#include <genesis.h>
 #ifndef _RES_RES_BACKGROUNDS_H_
 #define _RES_RES_BACKGROUNDS_H_
 

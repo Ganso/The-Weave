@@ -1,3 +1,4 @@
+#include <genesis.h>
 #ifndef _RES_RES_INTERFACE_H_
 #define _RES_RES_INTERFACE_H_
 

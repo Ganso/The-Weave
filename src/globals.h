@@ -14,7 +14,7 @@
 #define dprintf(level, ...) ((void)0)
 #if DEBUG_LEVEL > 0
   #undef dprintf
-  #include "KDebug.h"
+  #include "kdebug.h"
   #include "tools.h"
   #include "timer.h"
   #define dprintf(level, ...) do { if ((level) <= DEBUG_LEVEL) kprintf(__VA_ARGS__); } while (0)
