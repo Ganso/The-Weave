@@ -39,14 +39,15 @@ static inline EnemyPattern* get_enemy_pattern(u8 slot, u8 pslot)
            : NULL;
 }
 
-// Find the enemy pattern currently active in combat, by its id (B2/B3: no hardcoded slot)
+// Enemy pattern currently active in combat (B2/B3: no hardcoded slot).
+// Uses the dedicated activeEnemyPatternSlot: combatContext.activePattern is shared
+// with player patterns and their ids overlap (THUNDER==EN_THUNDER, HIDE==EN_BITE),
+// so a lookup by id could resolve to the wrong pattern while the player casts.
 EnemyPattern* get_active_enemy_pattern(u8 enemySlot)
 {
     if (enemySlot >= MAX_ENEMIES) return NULL;
-    for (u8 p = 0; p < MAX_PATTERN_ENEMY; ++p)
-        if (enemyPatterns[enemySlot][p].id == combatContext.activePattern)
-            return &enemyPatterns[enemySlot][p];
-    return NULL;
+    if (combatContext.activeEnemyPatternSlot >= MAX_PATTERN_ENEMY) return NULL;
+    return &enemyPatterns[enemySlot][combatContext.activeEnemyPatternSlot];
 }
 
 static inline bool player_pattern_enabled(u16 id)
@@ -525,6 +526,7 @@ void launch_enemy_pattern(u8 enemySlot, u16 patternSlot)
 
     // Set combat context
     combatContext.activePattern = pat->id;
+    combatContext.activeEnemyPatternSlot = patternSlot; // B2: track the slot explicitly
     combatContext.effectTimer   = 0;
     combatContext.activeEnemy   = enemySlot;
     combatContext.enemyNoteIndex = 0;
@@ -662,6 +664,7 @@ void cancel_enemy_pattern(u8 enemyId)
     // Reset combat context
     combatContext.activePattern = PATTERN_PLAYER_NONE;
     combatContext.activeEnemy = ENEMY_NONE;
+    combatContext.activeEnemyPatternSlot = 0;
     combatContext.enemyNoteIndex = 0;
     combatContext.enemyNoteTimer = 0;
     combatContext.effectTimer = 0;

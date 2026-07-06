@@ -93,6 +93,7 @@ void combat_init(void)
     combatContext.playerNotes = 0;
     combatContext.enemyNoteIndex  = 0;
     combatContext.enemyNoteTimer  = 0;
+    combatContext.activeEnemyPatternSlot = 0;
 
     player_scroll_active = false; // Disable player scroll during combat
 

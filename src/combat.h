@@ -30,6 +30,9 @@ typedef struct {
     u16 patternLockTimer; // frames until the next pattern can be played
     /* attacker id (relevant only during enemy phases) ------------------- */
     u8          activeEnemy;  // ENEMY_NONE = none
+    u8 activeEnemyPatternSlot; // pattern slot the active enemy is using (B2 fix: activePattern
+                               // is shared with player patterns and their ids overlap, so the
+                               // enemy side needs its own slot tracking)
 } CombatContext;
 extern CombatContext combatContext; // Combat context
 

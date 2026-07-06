@@ -251,11 +251,15 @@ void update_enemy_animations(void)
 
         Entity *en = &obj_enemy[e].obj_character;        // shorthand
 
-        // B4: dying enemy (0 HP) — wait for the death animation to end, then release.
-        // Replaces the blocking while() that lived in hit_enemy.
+        // B4: dying enemy (0 HP) — let the death animation play for a fixed time, then release.
+        // Replaces the blocking while() that lived in hit_enemy. Deterministic timer instead of
+        // SPR_isAnimationDone: queried on the same frame the animation changes (before SPR_update
+        // processes it) that function reads stale state and could release the sprite too early.
         if (obj_enemy[e].hitpoints == 0) {
-            if (spr_enemy[e] == NULL || SPR_isAnimationDone(spr_enemy[e]))
-                release_enemy(e);
+            if (obj_enemy[e].modeTimer > 0)
+                --obj_enemy[e].modeTimer;   // death animation still running
+            else
+                release_enemy(e);           // fixed duration elapsed → free the enemy
             continue;
         }
 
