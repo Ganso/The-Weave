@@ -55,13 +55,13 @@
 
 ## Fase 5 — VM de escenas
 
-- [ ] `scene_vm` + `scene_api` + `scene_hooks` (+ tabla lateral de puzzles)
-- [ ] `gen_scenes.py` con validación fatal
-- [ ] Migradas una a una: scene1 (hook items), scene2 (hook items), scene3 (op combat), scene5
-- [ ] `choices.csv` + `gen_choices.py`
-- [ ] `main.c` usa `scene_run()`
-- [ ] `act_1.*`, `globals.*` y `add_texts_comments.py` eliminados
-- [ ] Playtest juego completo contra baseline (ambas rutas, win y lose)
+- [x] `scene_vm` + `scene_hooks` (AJUSTE: sin scene_api — la VM llama las primitivas directamente; puzzles diseñados en fase5_design.md §7, se implementan cuando el guion los pida)
+- [x] `gen_scenes.py` con validación fatal (probada con referencias rotas)
+- [x] Migradas las 4: scene1/2 (DSL + hooks), scene3 (DSL casi puro, 19 steps), scene5 (DSL + op combat)
+- [x] `choices.csv` + `gen_choices.py`
+- [x] `main.c` usa `scene_lookup()` + `scene_run()`
+- [x] `act_1.*`, `globals.h` y `add_texts_comments.py` eliminados
+- [ ] Playtest juego completo contra baseline (pendiente del usuario)
 
 ## Fase 6 — Documentación
 

@@ -19,10 +19,6 @@ enum Languages {
 };
 extern u8 game_language;
 
-
-// Choices
-#define ACT1_CHOICE1    0
-
 typedef struct {
     u8 face;
     u8 side;          // SIDE_LEFT / SIDE_RIGHT / SIDE_NONE (B12: was bool)
@@ -41,7 +37,7 @@ typedef struct {
 
 // Game texts
 extern const DialogItem *dialogs[];
-extern const ChoiceItem *choices[];
+// (la tabla choices[] vive en narrative/choices_data.h, generada de data/choices.csv)
 
 // Functions
 u16 calculate_text_position(const char *text, bool is_face_left, bool has_face); // Calculate centered text position

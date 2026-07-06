@@ -1179,7 +1179,16 @@ atasca, commit intermedio con ese módulo aún en `globals.h` transicional.
 act1_scene5 (combate) idéntico al baseline.
 **Rollback**: reset al fin de Fase 3.
 
-### Fase 5 — Sistema de cutscenes
+### ~~Fase 5 — Sistema de cutscenes~~ ✔ COMPLETADA (código, 2026-07-06; pendiente playtest)
+
+> Hecho según docs/refactor/fase5_design.md (documento de detalle previo, pedido por
+> el usuario): VM (scene_vm) + 12 hooks C (scene_hooks, trasplante literal de act_1.c)
+> + gen_scenes.py y gen_choices.py con validación fatal probada + 4 escenas en DSL
+> (scene3 = 19 steps casi puro DSL) + choices.csv. main.c = bucle sobre scene_lookup.
+> ELIMINADOS: act_1.*, globals.h (ya sin consumidores), add_texts_comments.py.
+> Ajustes documentados: sin scene_api.c (la VM llama las primitivas directamente);
+> ops de puzzle diseñados pero diferidos hasta que el guion los pida; op say_response
+> nuevo (respuestas correlativas a choices).
 
 1. Structs y VM (§4.2, §4.6): `scene_vm.c/.h`, estado en RAM, tabla lateral de puzzles.
 2. API (`scene_api.c/.h`): wrappers sobre funciones existentes.

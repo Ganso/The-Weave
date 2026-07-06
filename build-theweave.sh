@@ -97,7 +97,8 @@ fi
 if [ "$MODE" != "clean" ]; then
     echo -e "${BLUE}⚙️  Generando datos (tools/gen_*.py)...${NC}"
     python3 tools/gen_texts.py
-    # Fase 5 añadirá aquí: gen_choices.py y gen_scenes.py
+    python3 tools/gen_choices.py
+    python3 tools/gen_scenes.py
 fi
 
 # --- 3. COMPILACIÓN ---

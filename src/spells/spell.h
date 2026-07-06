@@ -133,6 +133,7 @@ void spell_engine_reset(void);     // Libera slots y resetea input (new_level/en
 u8   spell_validate(const u8 *notes, bool *reversed); // 4 notas → SPELL_* del jugador o SPELL_NONE
 bool spell_can_use(u8 spellId, bool reversed);        // Evalúa canUse con un contexto temporal
 void spell_player_cast(u8 spellId, bool reversed);    // Lanza (o contrarresta) un hechizo del jugador
+void spell_narrative_cast(u8 spellId, bool reversed); // Cast scripted desde una escena (origin NARRATIVE, sin canUse)
 void spell_reject(u8 spellId, bool reversed);         // Feedback de "no puedo usarlo ahora" + resume del enemigo
 void spell_update(void);           // Avanza ambos slots; llamar cada frame desde update_combat
 bool spell_try_counter(void);      // Intenta contrarrestar el hechizo del slot ENEMY
@@ -147,7 +148,7 @@ SpellContext* spell_ctx(SpellSlot s);      // contexto del slot (NULL si libre)
 
 // --- Desbloqueo (jugador) ---
 void spell_enable(u8 spellId);     // Desbloquea sin feedback
-void activate_spell(u16 spellId);  // Desbloquea con jingle + notas en el HUD (lo usa act_1)
+void activate_spell(u16 spellId);  // Desbloquea con jingle + notas en el HUD (cutscenes)
 
 // --- Lado enemigo (lo llama el FSM de combate) ---
 void init_enemy_spells(u8 enemyId);        // Resetea recargas del enemigo (combat_init)

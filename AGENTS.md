@@ -9,8 +9,7 @@
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
 - C plano compilado con **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
 - Estado: demo técnica (acto 1, 4 escenas) en pleno **refactor** (plan en `refactorizar.md`,
-  bitácora en `docs/refactor/`). Fases 0-4 completadas; pendientes: 5 (VM de escenas),
-  6 (docs), 7 (smoke ROM + merge).
+  bitácora en `docs/refactor/`). Fases 0-5 completadas; pendientes: 6 (docs), 7 (smoke ROM + merge).
 
 ## 2. Cómo se compila y ejecuta
 
@@ -45,7 +44,7 @@
 ## 3. Estructura de directorios
 
 ```
-data/            → autoría editable: texts.csv (diálogos; futura choices.csv, scenes/)
+data/            → autoría editable: texts.csv (diálogos), choices.csv, scenes/*.scene
 tools/           → codegen y utilidades python (gen_texts.py; voice/ = animalese)
 src/
   boot/          → rom_head.c, sega.s
@@ -54,14 +53,15 @@ src/
   actors/        → entity (base), characters, enemies, items, collisions
   combat/        → FSM de combate (combat_state, hit_enemy/hit_player)
   spells/        → MOTOR DE HECHIZOS (ver §5)
-  narrative/     → texts, texts_data (GENERADO), dialogs, encode
-  scenes/        → intro, geesebumps (C); act_1.c aún en src/ (muere en Fase 5)
+  narrative/     → texts, texts_data (GEN), choices_data (GEN), dialogs, encode
+  scenes/        → scene_vm (intérprete), scene_hooks (lógica C), scene_data (GEN),
+                   intro, geesebumps (C)
   interface/     → HUD, pausa, contador de vida
   audio/         → sound (XGM2; jingles por spell id)
-  globals.h      → umbrella TRANSICIONAL: solo lo usa act_1.c; muere en Fase 5
 res/             → recursos SGDK (res_*.res/.h generados por rescomp) y arte fuente
 smoke/           → (Fase 7) ROM de smoke test
 ```
+(globals.h y act_1.c ya NO existen — eliminados en la Fase 5)
 
 ## 4. Trampas y datos duros (leer antes de tocar nada)
 
@@ -133,8 +133,44 @@ EN_BITE 6; `SPELL_NONE` 254) + motor con **dos slots** (`SPELL_SLOT_PLAYER`,
 
 1. Fila en `data/texts.csv` (`set,id,face,side,time,es,en`; side: SIDE_LEFT/RIGHT/NONE).
 2. `python3 tools/gen_texts.py` (o compilar: el build lo lanza) → `narrative/texts_data.*`.
-3. Usar `talk_dialog(&dialogs[SET][ID], wait)` / `talk_cluster` (encadena hasta `TERM_*`).
-- Los choices siguen hardcoded en `narrative/texts.c` (migran a `choices.csv` en Fase 5).
+3. En una escena: `say SET ID sound|silent` en el `.scene`. En un hook C:
+   `talk_dialog(&dialogs[SET][ID], sound)` / `talk_cluster` (encadena hasta `TERM_*`).
+
+## 5b. Sistema de escenas (scenes/) — desde la Fase 5
+
+**Diseño completo**: `docs/refactor/fase5_design.md`. Filosofía HÍBRIDA: el DSL
+(`data/scenes/actN_sceneM.scene`) expresa la SECUENCIA narrativa (say/say_cluster/
+say_response, choice+branch, move/look/show, wait, set, combat, cast, fade_out,
+next_scene); la LÓGICA (setup con punteros a recursos, bucles de items, cinemáticas
+de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
+
+- `gen_scenes.py` valida TODO en fatal (labels, diálogos contra texts.csv, choices
+  contra choices.csv, hooks contra el enum HOOK_* de scene_hooks.h, spells/zonas) y
+  emite `scene_data.c` con las constantes C verbatim — el compilador es la 2ª red.
+- La VM (`scene_vm.c`) nunca escribe en los steps (ROM); `last_choice` en RAM; sin
+  next_frame entre steps (los ops bloqueantes gestionan sus frames).
+- `main.c` = bucle infinito sobre `scene_lookup(current_act, current_scene)`.
+- Ops de puzzle (secuencias de hechizos): DISEÑADOS en fase5_design.md §7, no
+  implementados aún (no hay puzzles en el guion). `cast/wait_spell/zone` sí están.
+- `say_response` responde con `dialogs[set][base + last_choice]` (respuestas a choices).
+- `set interface off` solo oculta el HUD (NO toca interface_active — asimetría
+  deliberada, ver scene_vm.h).
+
+### Receta: añadir una cutscene
+
+1. Crear `data/scenes/actN_sceneM.scene` (copiar act1_scene3.scene como referencia
+   de escena narrativa; act1_scene5.scene como referencia con combate).
+2. Si necesita setup o lógica: añadir hook(s) en `scene_hooks.c` + entrada en el
+   enum `HOOK_*` de `scene_hooks.h` + la tabla `scene_hook_table[]`.
+3. Compilar (el build corre gen_scenes.py; valida referencias en fatal).
+4. La escena entra al flujo por su nombre: `next_scene N M` desde otra escena la
+   invoca vía `scene_lookup`. (Fase 7: añadir caso a la smoke ROM.)
+
+### Receta: añadir un choice
+
+1. Filas en `data/choices.csv` (set,item,face,side,time,es_1..4,en_1..4).
+2. En el `.scene`: `choice MI_SET <item>` + `branch <n> goto <label>` o
+   `say_response SET BASE_ID` si las respuestas son texto correlativo.
 
 ## 6. Reglas de codificación
 
@@ -145,10 +181,10 @@ EN_BITE 6; `SPELL_NONE` 254) + motor con **dos slots** (`SPELL_SLOT_PLAYER`,
   inicio de cabeceras de subsistema. Sin plantillas Doxygen.
 - **Includes explícitos** relativos a `-Isrc -Ires` (`"spells/spell.h"`, `"res_sound.h"`).
   Orden: `<genesis.h>`, config/hack, cabecera propia, módulos, recursos.
-  PROHIBIDO añadir consumidores a `globals.h` (transicional, muere en Fase 5).
 - Sin malloc/free: pools y buffers estáticos. `static const` para datos inmutables.
 - Guards `_FOO_H_`. Funciones privadas `static`. Designated initializers en tablas.
-- No editar generados: `narrative/texts_data.*`, `res/*.h` de rescomp.
+- No editar generados: `narrative/texts_data.*`, `narrative/choices_data.*`,
+  `scenes/scene_data.*`, `res/*.h` de rescomp.
 
 ## 7. Pendientes conocidos
 
@@ -156,8 +192,9 @@ EN_BITE 6; `SPELL_NONE` 254) + motor con **dos slots** (`SPELL_SLOT_PLAYER`,
 - "Better enemy defeat handling" (B16): la muerte actual es anim hurt 1s + release;
   mejorarla (anim propia, recompensas) es diseño de juego — el motor lo soporta vía
   `onFinish`/`hit_enemy`.
-- act1_scene4 no existe (hueco intencional en el guion).
-- Fase 5 pendiente: act_1.c → DSL de escenas + VM + hooks; choices.csv; muere globals.h.
+- act1_scene4 no existe (hueco intencional en el guion; el DSL permite añadirla sin C
+  si es lineal).
+- Ops de puzzle de la VM pendientes de implementar cuando el guion los pida (§5b).
 
 ## 8. Voces y arte
 

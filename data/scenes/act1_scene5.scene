@@ -1,0 +1,25 @@
+# Acto 1, Escena 5 — Bosque: tutorial de hechizos y combate contra los WeaverGhosts
+scene act1_scene5
+
+call act1_scene5_setup       # nivel del bosque, items, personajes, vara + 4 hechizos
+
+say_cluster ACT1_DIALOG3 A1D3_SOME_TIME_LATER sound
+call act1_scene5_pad_hint    # aviso si el mando es de 3 botones
+call act1_scene5_day         # fade a la paleta de día
+
+# Control al jugador: pasear hasta la zona del combate
+set scroll on
+set movement on
+set interface on
+set spells on
+wait_scroll 360
+
+# COMBATE
+call act1_scene5_enemies     # aparecen los dos WeaverGhosts
+combat
+
+# Final de la demo
+set interface off
+say_cluster ACT1_DIALOG3 A1D3_THATS_ALL sound
+fade_out 120
+hard_reset

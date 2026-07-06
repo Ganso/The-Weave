@@ -5,7 +5,8 @@
 #include "core/init.h"
 #include "scenes/geesebumps.h"
 #include "scenes/intro.h"
-#include "act_1.h"
+#include "scenes/scene_vm.h"
+#include "scenes/scene_data.h"
 #include "narrative/texts.h"
 
 
@@ -35,29 +36,12 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
 
     dprintf(2,"Loading Act %d, Scene %d\n", current_act, current_scene);
     while (true) { // MAIN LOOP
-        switch (current_act)
-        {
-        case 1: // FIRST ACT
-            switch (current_scene)
-            {
-            case 1:
-                act_1_scene_1(); // ACT 1 - scene 1
-                break;
-            case 2:
-                act_1_scene_2(); // ACT 1 - scene 2
-                break;
-            case 3:
-                act_1_scene_3(); // ACT 1 - scene 3
-                break;
-            case 5:
-                act_1_scene_5(); // ACT 1 - scene 5
-                break;
-            default:
-                break;
-            }
-            break;
-        default:
-            break;
+        const SceneScript *scene = scene_lookup(current_act, current_scene);
+        if (scene == NULL) {
+            dprintf(1,"No scene for act %d scene %d", current_act, current_scene);
+            SYS_doVBlankProcess(); // no hay escena: esperar (no debería pasar)
+            continue;
         }
+        scene_run(scene); // ejecuta la escena; deja current_act/scene apuntando a la siguiente
     }
 }

@@ -10,19 +10,7 @@
 // Global variable definitions
 u8 game_language=LANG_ENGLISH;
 
-const ChoiceItem act1_choice1[] = {
-    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 3,
-        {{ "¿Los Tejedores?", "Era mi leyenda favorita", "¿Qué pasó con ellos?"},
-        { "The Weavers?", "It was my favourite legend", "What happened to them?"}}},
-    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 2,
-        {{ "Tengo que ir a la isla", "¿Vendrías conmigo?"},
-        { "I have to go to the island", "Would you come with me?"}}},
-    {0, false, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
-};
-
-const ChoiceItem *choices[] = {
-    act1_choice1,   // 0
-};
+// (Los choices viven ahora en data/choices.csv → narrative/choices_data.c, generado)
 
  // Code Spanish text in the game font charset
 // SPANISH CHARSET

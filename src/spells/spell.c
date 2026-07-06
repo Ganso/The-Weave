@@ -158,6 +158,25 @@ void spell_player_cast(u8 spellId, bool reversed)    // Lanza (o contrarresta) u
     obj_character[active_character].state = STATE_PATTERN_EFFECT;
 }
 
+void spell_narrative_cast(u8 spellId, bool reversed)    // Cast scripted desde la VM de escenas (sin canUse: el guion manda)
+{
+    const SpellDef *d = &spell_defs[spellId];
+
+    dprintf(2,"Narrative cast of spell %d (reversed=%d)", spellId, reversed);
+
+    slots[SPELL_SLOT_PLAYER].def = d;
+    slots[SPELL_SLOT_PLAYER].ctx = (SpellContext){
+        .spellId = spellId, .origin = SPELL_ORIGIN_NARRATIVE, .reversed = reversed,
+        .frameCounter = 0, .enemyId = spell_enemy_caster(), .zoneId = spell_zone
+    };
+    slots[SPELL_SLOT_PLAYER].phase = SLOT_EFFECT;
+
+    if (d->onLaunch) d->onLaunch(&slots[SPELL_SLOT_PLAYER].ctx);
+
+    combat_state = COMBAT_STATE_PLAYER_EFFECT;
+    obj_character[active_character].state = STATE_PATTERN_EFFECT;
+}
+
 // ---------------------------------------------------------------------
 // Rechazo con feedback ("no puedo usar ese hechizo ahora")
 // ---------------------------------------------------------------------
