@@ -27,11 +27,11 @@
 
 ## Fase 2 — Directorios, Makefile y build script
 
-- [ ] `gibberish/` → `tools/voice/`; scripts → `tools/`; `texts.csv` → `data/`
-- [ ] `Makefile` propio (wildcards + codegen)
-- [ ] `build-theweave.sh` (estilo RedPlanet: backup rotatorio + MiSTer/BlastEm)
-- [ ] `.vscode/tasks.json` y `.gitignore` actualizados
-- [ ] Build pasa desde el repo sin `~/codigo/build-sgdk.sh`
+- [x] `gibberish/` → `tools/voice/`; scripts → `tools/`; `texts.csv` → `data/`
+- [x] `Makefile` propio (wildcards + codegen)
+- [x] `build-theweave.sh` (estilo RedPlanet: backup rotatorio + MiSTer/BlastEm)
+- [x] `.vscode/tasks.json` y `.gitignore` actualizados
+- [x] Build pasa desde el repo sin `~/codigo/build-sgdk.sh`
 
 ## Fase 3 — Partición de src/ + includes explícitos
 

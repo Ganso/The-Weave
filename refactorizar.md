@@ -880,32 +880,37 @@ compartido entre proyectos, invocado desde `.vscode/tasks.json`. Usa el `makefil
 de SGDK (`~/sgdk`). No hay Makefile en el repo. La Fase 0 debe anotar la invocación
 exacta y sus flags antes de tocar nada.
 
-### 7.2 `Makefile` nuevo (propio del repo)
+### 7.2 `Makefile` nuevo (propio del repo) — IMPLEMENTADO en Fase 2
 
-Basado en el `makefile.gen` de SGDK, con:
+Ajuste sobre el plan original: en vez de reimplementar el makefile.gen, el `Makefile`
+del repo **lo envuelve** (`include $(GDK)/makefile.gen`), porque makefile.gen ya hace
+todo lo que D7 pedía: wildcard discovery de `src/*.c`, `src/*/*.c` y `res/*.res`,
+include paths `-Isrc -Ires`, targets `release`/`debug`/`clean` y los warnings del
+proyecto. Menos código propio que mantener y cero divergencia con SGDK.
 
-- **Wildcard discovery**: `SRC_C := $(wildcard src/*.c src/*/*.c)` — añadir un `.c` no
-  requiere editar el Makefile. `RES := $(wildcard res/*.res)`.
-- **Include paths**: `-Isrc -Ires` (D1).
-- **Pre-build codegen**: target `codegen` que ejecuta `tools/gen_texts.py`,
-  `tools/gen_choices.py`, `tools/gen_scenes.py`. Encadenado: `all: codegen compile`.
-  (No hay `gen_spells.py` — D2.)
-- **Target `smoke`**: compila `smoke/*.c` + el código del juego **excluyendo
-  `src/core/main.c`** (`SRC_SMOKE := $(filter-out src/core/main.c,$(SRC_C)) $(wildcard smoke/*.c)`),
-  con `-DHACK_SMOKE_BUILD`, y produce `out/smoke.bin`.
-- **Targets**: `release` (default), `debug`, `clean`, `smoke`, `codegen`.
-- **Warnings**: `-Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter`.
+- El Makefile corre **dentro del contenedor** (la imagen aporta el toolchain):
+  `docker run ... --entrypoint make <imagen> GDK=/sgdk -f /src/Makefile <target>`.
+- **El codegen corre en el HOST** (la imagen SGDK no incluye python3): lo lanza
+  `build-theweave.sh` antes de compilar (`tools/gen_texts.py`; la Fase 5 añade
+  `gen_choices.py` y `gen_scenes.py`).
+- **Target `smoke`** (Fase 7): se añadirá al Makefile del repo tras el include;
+  si el filtrado de `main.c` resulta incómodo envolviendo makefile.gen, la
+  alternativa es `#ifndef HACK_SMOKE_BUILD` alrededor del `main()` del juego.
 
 ### 7.3 `build-theweave.sh`
 
-Wrapper propio del repo (sustituye a `build-sgdk.sh` para este proyecto). **Decidido**:
-replica el alcance de `build-RedPlanet.sh`:
+Wrapper propio del repo (sustituye a `build-sgdk.sh`) — IMPLEMENTADO en Fase 2,
+adaptado de `build-RedPlanet.sh`:
 
-- Modos: `build` (incremental), `release` (clean+release), `clean`, `smoke`.
-- Flag `--no-run` / `-n` (no lanza emulador; para verificación desatendida).
-- Backup rotatorio de ROMs: `out/TheWeave_YYYYMMDD_HHMMSS.bin` (mantiene los 5 últimos).
-- Si hay MiSTer online → subida FTP; si no → lanza BlastEm (salvo `--no-run`).
-- Tomar `build-RedPlanet.sh` como referencia de implementación (mismo autor, mismo flujo).
+- Modos: `build` (incremental), `release`/`full` (clean+release), `clean`
+  (`smoke` se añade en Fase 7). Flag `--no-run` / `-n`.
+- Pipeline: codegen en host → make en contenedor → backup rotatorio
+  `out/TheWeave_YYYYMMDD_HHMMSS.bin` (mantiene 5) → MiSTer (FTP + Remote API) si
+  está online, si no BlastEm.
+- SGDK: por defecto el de la imagen (`/sgdk`, lo que se ha usado y validado hasta
+  ahora); `SGDK_LOCAL=~/sgdk` lo monta readonly y lo usa en su lugar.
+- Configuración personal (IP/credenciales MiSTer, BlastEm, SGDK local) en
+  `.build-theweave.local.sh`, no versionado (gitignored).
 
 ### 7.4 Integración con VS Code
 
@@ -1089,7 +1094,13 @@ Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + sm
 `baseline.md` describe el comportamiento de referencia.
 **Rollback**: reset al commit de fin de Fase 0.
 
-### Fase 2 — Reestructuración de directorios (sin tocar `src/`)
+### ~~Fase 2 — Reestructuración de directorios (sin tocar `src/`)~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: `gibberish/`→`tools/voice/` (139 ficheros con `git mv`), scripts a `tools/`,
+> `texts.csv`→`data/` (gen_texts.py regenera output idéntico), Makefile propio
+> envolviendo makefile.gen, build-theweave.sh estilo RedPlanet (codegen + backup +
+> MiSTer/BlastEm), .vscode/tasks.json y .gitignore actualizados. Build release
+> verificado end-to-end con el pipeline nuevo, sin warnings.
 
 1. `mkdir -p tools data/scenes smoke docs/refactor`.
 2. `git mv gibberish tools/voice`.

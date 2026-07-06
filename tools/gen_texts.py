@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-# generate_texts.py – convierte texts.csv (+ clusters.csv) en texts_generated.{h,c}
+# gen_texts.py – convierte data/texts.csv (+ data/clusters.csv) en src/texts_generated.{h,c}
+# Ejecutar desde la raíz del repo: python3 tools/gen_texts.py
 import csv
 import os
 import re
 from collections import OrderedDict, defaultdict
 
-CSV_FILE      = 'texts.csv'
-CLUSTERS_FILE = 'clusters.csv'
+CSV_FILE      = 'data/texts.csv'
+CLUSTERS_FILE = 'data/clusters.csv'
 HEADER_FILE   = 'src/texts_generated.h'
 SOURCE_FILE   = 'src/texts_generated.c'
 
