@@ -72,10 +72,9 @@ bool try_counter_spell(void)
     if (!combatContext.patternReversed ||
         combat_state != COMBAT_STATE_ENEMY_EFFECT) return false;
 
-    EnemyPattern* ep = // Search active pattern
-        &enemyPatterns[combatContext.activeEnemy][0]; // slot 0 = thunder
+    EnemyPattern* ep = get_active_enemy_pattern(combatContext.activeEnemy); // B3: was hardcoded slot 0
 
-    if (!ep->counterable || !ep->onCounter) return false;
+    if (!ep || !ep->counterable || !ep->onCounter) return false;
 
     // Cancel enemy effect
     ep->onCounter(combatContext.activeEnemy);
