@@ -30,3 +30,4 @@
 | B23 | A (latente) | `src/act_1.c:64` | `bool scene_timeout` como contador de frames (funciona porque bool=u8 en SGDK) | cambiar a `u16` | **corregido** (Fase 1, commit A) |
 | B24 | A | `src/characters.c:301` | variable `dy` asignada y nunca leída (warning en build release) | eliminada | **corregido** (Fase 1, commit A) |
 | B25 | A | `src/combat.c:128` | `hitpoints` es u16: `hitpoints -= damage` con daño > HP hacía underflow (enemigo inmortal con HP gigante) | comparar antes de restar | **corregido** (Fase 1, con B4) |
+| B26 | A | `src/interface.c:578-604` | `update_life_counter`: escaneo de heridos sin check de `active`, y `hitpoints-1` con enemigo moribundo (0 HP) → underflow a anim 255 → corrupción del sprite engine y cuelgue del VDP (aflorado por B4; el check de `active` era un latente preexistente) | exigir `active && hitpoints>0` + validar candidato | **corregido** (Fase 1, post-test) |
