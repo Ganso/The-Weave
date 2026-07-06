@@ -1,3 +1,4 @@
+// texts.h — tipos de diálogo/choice, idiomas y utilidades de texto
 #ifndef _TXT_H_
 #define _TXT_H_
 

@@ -1,3 +1,4 @@
+// dialogs.h — mostrar diálogos: talk, talk_dialog, talk_cluster, choice_dialog
 #ifndef _DIALOGS_H_
 #define _DIALOGS_H_
 

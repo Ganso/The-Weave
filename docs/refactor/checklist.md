@@ -65,10 +65,10 @@
 
 ## Fase 6 — Documentación
 
-- [ ] `AGENTS.md` reescrito (11 secciones)
-- [ ] `docs/spells.md`, `docs/scenes.md`, `docs/texts.md`, `docs/build.md`, `docs/testing.md`
-- [ ] Comentarios `//` completados en los `.h`
-- [ ] Cabecera de una línea en cada archivo
+- [x] `AGENTS.md` reescrito (11 secciones)
+- [x] `docs/spells.md`, `docs/scenes.md`, `docs/texts.md`, `docs/build.md`, `docs/testing.md`
+- [x] Comentarios `//` completados en los `.h`
+- [x] Cabecera de una línea en cada archivo
 
 ## Fase 7 — Smoke ROM + verificación final
 

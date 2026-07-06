@@ -1,3 +1,4 @@
+// characters.c — personajes: init, movimiento, animaciones, sombras y depth
 #include <genesis.h>
 #include "core/config.h"
 #include "actors/characters.h"

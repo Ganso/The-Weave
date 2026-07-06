@@ -1,3 +1,4 @@
+// items.h — objetos interactuables del escenario
 #ifndef _ITEMS_H_
 #define _ITEMS_H_
 

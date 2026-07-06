@@ -1,3 +1,4 @@
+// sound.h — música (XGM2), samples PCM, notas y jingles de hechizo
 #ifndef _SOUNDS_H_
 #define _SOUNDS_H_
 

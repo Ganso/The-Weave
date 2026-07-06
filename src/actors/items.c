@@ -1,3 +1,4 @@
+// items.c — items: init, visibilidad y detección de interacción
 #include <genesis.h>
 #include "core/config.h"
 #include "actors/items.h"

@@ -1209,7 +1209,12 @@ act1_scene5 (combate) idéntico al baseline.
 choice, win y lose del combate) idéntico al baseline. `globals.h` no existe.
 **Rollback**: reset al fin de Fase 4.
 
-### Fase 6 — Documentación
+### ~~Fase 6 — Documentación~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: docs/{build,spells,scenes,texts,testing}.md escritas (guías de autoría y
+> operación; la arquitectura vive en AGENTS.md y en las cabeceras de subsistema);
+> cabeceras de archivo completadas en los módulos antiguos. AGENTS.md se ha ido
+> manteniendo al día fase a fase (regla de sync en su cabecera).
 
 1. Reescribir `AGENTS.md` (11 secciones de §9.1) — es la fuente de verdad y la usan
    las herramientas: máxima prioridad de exactitud.

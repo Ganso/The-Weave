@@ -1,3 +1,4 @@
+// sound.c — sonido: XGM2, PCM, notas y jingles
 #include <genesis.h>
 #include "core/config.h"
 #include "core/hack.h"

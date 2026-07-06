@@ -1,3 +1,4 @@
+// controller.c — procesado del pad por frame
 #include <genesis.h>
 #include "core/config.h"
 #include "core/controller.h"

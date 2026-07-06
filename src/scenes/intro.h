@@ -1,3 +1,4 @@
+// intro.h — intro del juego (logo, selección de idioma)
 #ifndef _INTRO_H_
 #define _INTRO_H_
 

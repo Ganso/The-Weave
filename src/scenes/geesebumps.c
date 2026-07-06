@@ -1,3 +1,4 @@
+// geesebumps.c — logo animado de GeeseBumps
 #include <genesis.h>
 #include "core/config.h"
 #include "scenes/geesebumps.h"

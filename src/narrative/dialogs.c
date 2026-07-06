@@ -1,3 +1,4 @@
+// dialogs.c — render de diálogos, voces y choices
 #include <genesis.h>
 #include "core/config.h"
 #include "core/hack.h"

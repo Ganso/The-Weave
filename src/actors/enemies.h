@@ -1,3 +1,4 @@
+// enemies.h — clases e instancias de enemigo (HP, IA de follow, hechizos)
 #ifndef _ENEMIES_H_
 #define _ENEMIES_H_
 

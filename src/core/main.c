@@ -1,3 +1,4 @@
+// main.c — bucle principal: intro + bucle de escenas por nombre (scene_vm)
 #include <genesis.h>
 #include "core/config.h"
 #include "core/hack.h"

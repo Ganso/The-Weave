@@ -1,3 +1,4 @@
+// texts.c — idioma activo y utilidades de posicionado de texto
 #include <genesis.h>
 #include "core/config.h"
 #include "narrative/texts.h"

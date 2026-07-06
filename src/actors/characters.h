@@ -1,3 +1,4 @@
+// characters.h — personajes controlables, caras de diálogo y followers
 #ifndef _CHARACTERS_H_
 #define _CHARACTERS_H_
 

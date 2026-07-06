@@ -1,3 +1,4 @@
+// interface.c — HUD y pausa
 #include <genesis.h>
 #include "core/config.h"
 #include "interface/interface.h"

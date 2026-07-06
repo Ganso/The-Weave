@@ -1,3 +1,4 @@
+// init.h — inicialización del motor y ciclo de vida de niveles
 #ifndef _INIT_H_
 #define _INIT_H_
 

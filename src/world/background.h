@@ -1,3 +1,4 @@
+// background.h — scroll del fondo, límites del escenario y offset de cámara
 #ifndef _BACKGROUND_H_
 #define _BACKGROUND_H_
 

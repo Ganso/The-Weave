@@ -1,3 +1,4 @@
+// controller.h — input del pad: movimiento, notas, interacción y pausa
 #ifndef _CONTROLLER_H_
 #define _CONTROLLER_H_
 

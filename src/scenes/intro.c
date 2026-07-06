@@ -1,3 +1,4 @@
+// intro.c — intro del juego
 #include <genesis.h>
 #include "core/config.h"
 #include "scenes/intro.h"

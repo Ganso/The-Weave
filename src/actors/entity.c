@@ -1,3 +1,4 @@
+// entity.c — movimiento base de entidades (bloqueante por diseño, ver B5)
 #include <genesis.h>
 #include "core/config.h"
 #include "actors/entity.h"

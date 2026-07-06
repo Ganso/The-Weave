@@ -1,3 +1,4 @@
+// collisions.h — detección de colisiones y distancias entre entidades
 #ifndef _COLLISIONS_H_
 #define _COLLISIONS_H_
 

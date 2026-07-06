@@ -1,3 +1,4 @@
+// background.c — scroll del fondo, límites y dibujo incremental del mapa
 #include <genesis.h>
 #include "core/config.h"
 #include "world/background.h"

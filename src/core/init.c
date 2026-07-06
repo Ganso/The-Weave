@@ -1,3 +1,4 @@
+// init.c — initialize (motor, PAL/NTSC, drivers), new_level y end_level
 #include <genesis.h>
 #include "core/config.h"
 #include "core/init.h"

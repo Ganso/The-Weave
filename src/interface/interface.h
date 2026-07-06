@@ -1,3 +1,4 @@
+// interface.h — HUD (notas, iconos, vida) y pantalla de pausa
 #ifndef _INTERFACE_H_
 #define _INTERFACE_H_
 
