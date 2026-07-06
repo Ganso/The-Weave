@@ -5,16 +5,16 @@
 #include "scenes/scene_vm.h"
 
 typedef enum {
-    SCENE_ACT1_SCENE1 = 0,
-    SCENE_ACT1_SCENE2 = 1,
-    SCENE_ACT1_SCENE3 = 2,
-    SCENE_ACT1_SCENE5 = 3,
+    SCENE_ACT1_BEDROOM = 0,
+    SCENE_ACT1_CORRIDOR = 1,
+    SCENE_ACT1_FOREST = 2,
+    SCENE_ACT1_HALL = 3,
     SCENE_COUNT_TOTAL = 4
 } SceneId;
 
 extern const SceneScript scenes[];
 extern const u8 scene_count;
 
-const SceneScript* scene_lookup(u8 act, u8 scene); // NULL si no existe
+s16 scene_id_by_name(const char *name); // SceneId, o -1 si no existe (para hacks/smoke)
 
 #endif // _SCENE_DATA_H_

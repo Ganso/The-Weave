@@ -18,7 +18,8 @@
 #include "spells/notes.h"
 #include "interface/interface.h"
 
-u8 last_choice; // resultado del último CHOICE
+u8 last_choice;       // resultado del último CHOICE
+u8 current_scene_id;  // SceneId en curso (interno; las transiciones son por nombre)
 
 // Espera N décimas de segundo con frames no-interactivos (equivale a wait_seconds)
 static void wait_tenths(u16 tenths)
@@ -133,9 +134,8 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
 
             case SCENE_OP_NEXT_SCENE:
                 end_level();                    // libera recursos del nivel
-                current_act = st->a;
-                current_scene = st->b;
-                dprintf(2,"Scene end: %s -> act %d scene %d", s->name, st->a, st->b);
+                current_scene_id = st->a;       // SceneId (emitido por nombre en el DSL)
+                dprintf(2,"Scene end: %s -> scene id %d", s->name, st->a);
                 return;
 
             case SCENE_OP_HARD_RESET:

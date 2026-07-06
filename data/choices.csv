@@ -1,3 +1,3 @@
 set,item,face,side,time,es_1,es_2,es_3,es_4,en_1,en_2,en_3,en_4
-act1_choice1,0,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,¿Los Tejedores?,Era mi leyenda favorita,¿Qué pasó con ellos?,,The Weavers?,It was my favourite legend,What happened to them?,
-act1_choice1,1,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Tengo que ir a la isla,¿Vendrías conmigo?,,,I have to go to the island,Would you come with me?,,
+act1_hall_choice,0,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,¿Los Tejedores?,Era mi leyenda favorita,¿Qué pasó con ellos?,,The Weavers?,It was my favourite legend,What happened to them?,
+act1_hall_choice,1,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Tengo que ir a la isla,¿Vendrías conmigo?,,,I have to go to the island,Would you come with me?,,

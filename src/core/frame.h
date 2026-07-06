@@ -9,8 +9,6 @@
 
 extern u16 tile_ind;       // Current tile index for VDP tile loading
 extern u16 frame_counter;  // Counter incremented each frame for RNG and timing
-extern u8 current_act;     // Current game act number
-extern u8 current_scene;   // Current scene number within act
 extern u8 SCREEN_FPS;      // Screen refresh rate, runtime detected (50 PAL, 60 NTSC)
 
 void next_frame(bool interactive); // Wait for next frame and do each-frame actions, including interactive actions if selected

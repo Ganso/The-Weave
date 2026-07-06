@@ -9,9 +9,10 @@
 
 // --- Game hacks (set to TRUE / value to enable) ---
 
-// N != 0: saltar logo/intro y arrancar directamente en act 1, escena N
-// (5 = bosque con el combate contra los WeaverGhosts)
-#define HACK_START_SCENE        0
+// Nombre de escena para saltar logo/intro y arrancar directamente en ella
+// ("" = flujo normal). Ej: "act1_forest" = directo al combate del bosque.
+// Nombres = data/scenes/<acto>/<escena>.scene → "<acto>_<escena>"
+#define HACK_START_SCENE        ""
 
 // 0 = normal (menú de la intro) · 1 = forzar español · 2 = forzar inglés
 #define HACK_FORCE_LANGUAGE     0

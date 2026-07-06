@@ -1,0 +1,12 @@
+# Acto 1 — Dormitorio: la visita del cisne y el primer patrón
+scene act1_bedroom
+
+call act1_bedroom_setup      # nivel nocturno, personajes, items
+call act1_bedroom_swan       # cinemática del cisne (flash + diálogo + flash)
+call act1_bedroom_wake       # amanece, Linus se levanta, control al jugador
+call act1_bedroom_items      # bucle de items: cama, silla, ventana, armario (aprende sleep)
+
+say ACT1_BEDROOM A1_BEDROOM_MOTHER_CALLS sound
+say ACT1_BEDROOM A1_BEDROOM_TOO_LATE silent
+
+next_scene act1_corridor

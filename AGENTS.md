@@ -30,7 +30,8 @@
 
 ### Cómo debugear (flujo probado)
 
-1. Editar **solo** `src/core/hack.h`: `HACK_START_SCENE 5` (directo al combate),
+1. Editar **solo** `src/core/hack.h`: `HACK_START_SCENE "act1_forest"` (directo al
+   combate; escenas SIEMPRE por nombre),
    `DEBUG_LEVEL 2-3` (trazas KDebug → consola de BlastEm), `HACK_ENEMIES_ONE_HP`,
    `HACK_FAST_DIALOGS`, `HACK_ALL_SPELLS`, `HACK_PLAYER_INVULNERABLE`,
    `HACK_FORCE_LANGUAGE`, `HACK_MUTE_MUSIC/SFX`.
@@ -44,7 +45,8 @@
 ## 3. Estructura de directorios
 
 ```
-data/            → autoría editable: texts.csv (diálogos), choices.csv, scenes/*.scene
+data/            → autoría editable: texts.csv (diálogos), choices.csv,
+                   scenes/<acto>/<escena>.scene
 tools/           → codegen y utilidades python (gen_texts.py; voice/ = animalese)
 src/
   boot/          → rom_head.c, sega.s
@@ -54,8 +56,8 @@ src/
   combat/        → FSM de combate (combat_state, hit_enemy/hit_player)
   spells/        → MOTOR DE HECHIZOS (ver §5)
   narrative/     → texts, texts_data (GEN), choices_data (GEN), dialogs, encode
-  scenes/        → scene_vm (intérprete), scene_hooks (lógica C), scene_data (GEN),
-                   intro, geesebumps (C)
+  scenes/        → scene_vm (intérprete), scene_hooks (enum+tabla), scene_data (GEN),
+                   <acto>/<escena>.c/.h (hooks por escena), intro, geesebumps (C)
   interface/     → HUD, pausa, contador de vida
   audio/         → sound (XGM2; jingles por spell id)
 res/             → recursos SGDK (res_*.res/.h generados por rescomp) y arte fuente
@@ -138,6 +140,13 @@ EN_BITE 6; `SPELL_NONE` 254) + motor con **dos slots** (`SPELL_SLOT_PLAYER`,
 
 ## 5b. Sistema de escenas (scenes/) — desde la Fase 5
 
+**LAS ESCENAS NO TIENEN NÚMERO**: se nombran `<acto>_<nombre>` (act1_bedroom,
+act1_corridor, act1_hall, act1_forest) para poder intercalar escenas sin renombrar
+nada. El SceneId numérico es un identificador INTERNO generado; en código, DSL,
+textos y hacks se habla siempre por nombre. Los diálogos siguen la misma filosofía:
+sets `act1_bedroom`... (defines ACT1_BEDROOM...) e ids `A1_BEDROOM_*`; choices
+`act1_hall_choice` (ACT1_HALL_CHOICE).
+
 **Diseño completo**: `docs/refactor/fase5_design.md`. Filosofía HÍBRIDA: el DSL
 (`data/scenes/actN_sceneM.scene`) expresa la SECUENCIA narrativa (say/say_cluster/
 say_response, choice+branch, move/look/show, wait, set, combat, cast, fade_out,
@@ -158,13 +167,15 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
 
 ### Receta: añadir una cutscene
 
-1. Crear `data/scenes/actN_sceneM.scene` (copiar act1_scene3.scene como referencia
-   de escena narrativa; act1_scene5.scene como referencia con combate).
-2. Si necesita setup o lógica: añadir hook(s) en `scene_hooks.c` + entrada en el
-   enum `HOOK_*` de `scene_hooks.h` + la tabla `scene_hook_table[]`.
-3. Compilar (el build corre gen_scenes.py; valida referencias en fatal).
-4. La escena entra al flujo por su nombre: `next_scene N M` desde otra escena la
-   invoca vía `scene_lookup`. (Fase 7: añadir caso a la smoke ROM.)
+1. Crear `data/scenes/<acto>/<nombre>.scene` (copiar act1/hall.scene como referencia
+   narrativa; act1/forest.scene como referencia con combate). El nombre interno es
+   `<acto>_<nombre>` y la directiva `scene` debe coincidir.
+2. Si necesita setup o lógica: crear `src/scenes/<acto>/<nombre>.c/.h` con sus hooks
+   + añadirlos al enum `HOOK_*` de `scene_hooks.h` y a la tabla de `scene_hooks.c`.
+3. Sus textos: set `<acto>_<nombre>` en texts.csv, ids `A<n>_<NOMBRE>_*`.
+4. Compilar (el build corre gen_scenes.py; valida referencias en fatal).
+5. Enlazarla: `next_scene <acto>_<nombre>` desde la escena anterior. (Fase 7:
+   añadir caso a la smoke ROM.)
 
 ### Receta: añadir un choice
 

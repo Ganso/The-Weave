@@ -11,8 +11,6 @@
 
 u16 tile_ind;        // Current tile index for VDP tile loading
 u16 frame_counter;   // Counter incremented each frame for RNG and timing
-u8 current_act;      // Current game act number
-u8 current_scene;    // Current scene number within act
 u8 SCREEN_FPS;       // Screen refresh rate (50 for PAL, 60 for NTSC)
 
 void wait_seconds(int sec)    // Pause execution for specified number of seconds

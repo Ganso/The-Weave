@@ -47,7 +47,7 @@ typedef enum {
     SCENE_OP_WAIT_SPELL   = 16,  // espera a que el slot PLAYER quede libre
     SCENE_OP_ZONE         = 17,  // a=ZONE_* — fija spell_zone
     SCENE_OP_FADE_OUT     = 18,  // a=frames — PAL_fadeOutAll
-    SCENE_OP_NEXT_SCENE   = 19,  // a=act, b=scene — end_level + transición + return
+    SCENE_OP_NEXT_SCENE   = 19,  // a=SceneId (SCENE_*) — end_level + transición + return
     SCENE_OP_HARD_RESET   = 20,  // SYS_hardReset (final de la demo)
     SCENE_OP_END          = 21   // return (sin end_level)
 } SceneOp;
@@ -68,12 +68,14 @@ typedef struct {
 } SceneStep;
 
 typedef struct {
-    const char *name;          // "act1_scene1" (logs / smoke ROM)
+    const char *name;          // "act1_bedroom" (transiciones por nombre, logs, smoke ROM)
     const SceneStep *steps;    // en ROM — solo lectura estricta
     u16 stepCount;
 } SceneScript;
 
-extern u8 last_choice;   // resultado del último CHOICE (RAM de la VM)
+extern u8 last_choice;       // resultado del último CHOICE (RAM de la VM)
+extern u8 current_scene_id;  // SceneId de la escena en curso (identificador INTERNO;
+                             // el juego siempre habla de escenas por NOMBRE)
 
 void scene_run(const SceneScript *s); // Ejecuta una escena completa (bloquea hasta END/NEXT_SCENE)
 

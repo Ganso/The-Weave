@@ -51,14 +51,14 @@ static void thunder_on_rejected(SpellContext *ctx)
         {
             if (!ctx->reversed)
             {
-                dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_NOTES_COUNTER]; // pista: tócalo al revés
+                dialog = &dialogs[ACT1_FOREST][A1_FOREST_REVERSE_NOTES_COUNTER]; // pista: tócalo al revés
                 break;
             }
             if (ctx->reversed &&
                 (combat_state != COMBAT_STATE_ENEMY_EFFECT ||
                  spell_active_id(SPELL_SLOT_ENEMY) != SPELL_EN_THUNDER))
             {
-                dialog = &dialogs[ACT1_DIALOG3][A1D3_REVERSE_HINT]; // pista: espera su momento
+                dialog = &dialogs[ACT1_FOREST][A1_FOREST_REVERSE_HINT]; // pista: espera su momento
                 break;
             }
         }
@@ -115,7 +115,7 @@ static void hide_on_launch(SpellContext *ctx)
     if (spell_active_id(SPELL_SLOT_ENEMY) == SPELL_EN_THUNDER)
     {
         show_or_hide_interface(false);
-        talk_dialog(&dialogs[ACT1_DIALOG3][A1D3_GOOD_IDEA_HIDE], false); // (ES) "Buena idea. Así no me verán" - (EN) "Good idea. They won't see me"
+        talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_GOOD_IDEA_HIDE], false); // (ES) "Buena idea. Así no me verán" - (EN) "Good idea. They won't see me"
         show_or_hide_interface(true);
         spell_cancel(SPELL_SLOT_ENEMY);
     }

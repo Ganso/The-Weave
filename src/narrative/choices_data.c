@@ -5,7 +5,7 @@
 #include "narrative/dialogs.h"
 #include "actors/characters.h"
 
-const ChoiceItem act1_choice1[] = {
+const ChoiceItem act1_hall_choice[] = {
     {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 3,
         {{ "¿Los Tejedores?", "Era mi leyenda favorita", "¿Qué pasó con ellos?"},
         { "The Weavers?", "It was my favourite legend", "What happened to them?"}}},
@@ -16,5 +16,5 @@ const ChoiceItem act1_choice1[] = {
 };
 
 const ChoiceItem *choices[] = {
-    act1_choice1,   // 0
+    act1_hall_choice,   // 0
 };

@@ -1,10 +1,10 @@
 #ifndef _SCENE_HOOKS_H_
 #define _SCENE_HOOKS_H_
 
-// Hooks C de las escenas: la LÓGICA que el DSL no debe expresar (setup con
-// punteros a recursos, bucles de interacción con items, cinemáticas de paleta).
+// Registro central de hooks de escena. Los hooks viven en src/scenes/<acto>/<escena>.c
+// (un par .c/.h por escena); aquí solo el enum y la tabla de despacho.
 // El DSL los invoca con `call <nombre>` (op SCENE_OP_CALL); gen_scenes.py valida
-// los nombres contra el enum HOOK_* de este archivo (nombre DSL = minúsculas).
+// los nombres contra el enum HOOK_* (nombre DSL = minúsculas, sin el prefijo HOOK_).
 // Un hook puede bloquear usando next_frame(), igual que el código de escena de siempre.
 
 #include <genesis.h>
@@ -13,18 +13,18 @@ typedef void (*SceneHook)(void);
 
 // IMPORTANTE: gen_scenes.py parsea este enum. Formato: HOOK_<NOMBRE>, uno por línea.
 typedef enum {
-    HOOK_ACT1_SCENE1_SETUP = 0,
-    HOOK_ACT1_SCENE1_SWAN,
-    HOOK_ACT1_SCENE1_WAKE,
-    HOOK_ACT1_SCENE1_ITEMS,
-    HOOK_ACT1_SCENE2_SETUP,
-    HOOK_ACT1_SCENE2_ENTRY,
-    HOOK_ACT1_SCENE2_ITEMS,
-    HOOK_ACT1_SCENE3_SETUP,
-    HOOK_ACT1_SCENE5_SETUP,
-    HOOK_ACT1_SCENE5_PAD_HINT,
-    HOOK_ACT1_SCENE5_DAY,
-    HOOK_ACT1_SCENE5_ENEMIES,
+    HOOK_ACT1_BEDROOM_SETUP = 0,
+    HOOK_ACT1_BEDROOM_SWAN,
+    HOOK_ACT1_BEDROOM_WAKE,
+    HOOK_ACT1_BEDROOM_ITEMS,
+    HOOK_ACT1_CORRIDOR_SETUP,
+    HOOK_ACT1_CORRIDOR_ENTRY,
+    HOOK_ACT1_CORRIDOR_ITEMS,
+    HOOK_ACT1_HALL_SETUP,
+    HOOK_ACT1_FOREST_SETUP,
+    HOOK_ACT1_FOREST_PAD_HINT,
+    HOOK_ACT1_FOREST_DAY,
+    HOOK_ACT1_FOREST_ENEMIES,
     HOOK_COUNT
 } SceneHookId;
 

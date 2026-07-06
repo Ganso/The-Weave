@@ -199,3 +199,22 @@ es lógica, no secuencia.
   choice, combate win) contra `baseline.md`. La lógica portada a hooks es
   copy-paste del original → el riesgo se concentra en el orden de steps del DSL.
 ```
+
+## 11. Adenda (2026-07-06): escenas por NOMBRE, no por número
+
+A petición del usuario tras la implementación inicial:
+
+- Escenas nombradas `<acto>_<nombre>` (act1_bedroom/corridor/hall/forest); ficheros en
+  `data/scenes/<acto>/<nombre>.scene`. El SceneId numérico es un detalle interno del
+  generador: NADA en el código habla de números de escena. `next_scene <nombre>`.
+  `current_act`/`current_scene` eliminados → `current_scene_id` (SceneId) en la VM.
+- Hooks divididos por acto y escena: `src/scenes/<acto>/<escena>.c/.h` (un par por
+  escena, con su nombre — mejor que N ficheros homónimos scene_hooks.c por directorio);
+  `scene_hooks.c/h` queda como enum + tabla de despacho.
+- Textos renombrados con la misma filosofía: sets `act1_bedroom`... → defines
+  `ACT1_BEDROOM`...; ids `A1_BEDROOM_*`, `A1_CORRIDOR_*`, `A1_HALL_*`, `A1_FOREST_*`.
+  Choices: `act1_hall_choice` → `ACT1_HALL_CHOICE`. gen_texts deriva ahora el prefijo
+  de TERM/COUNT de los dos primeros tokens (`A1_BEDROOM`), no del primero.
+- `HACK_START_SCENE` pasa a ser un string con el nombre de escena ("" = off).
+- El makefile.gen de SGDK 2.12 ya wildcardea hasta 5 niveles: src/scenes/act1/ compila
+  sin tocar el Makefile.

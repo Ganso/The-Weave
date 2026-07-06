@@ -5,7 +5,7 @@
 #include "narrative/texts.h"
 
 // Choice sets (índices en choices[])
-#define ACT1_CHOICE1    0
+#define ACT1_HALL_CHOICE    0
 
 extern const ChoiceItem *choices[];
 

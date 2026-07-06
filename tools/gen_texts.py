@@ -19,8 +19,10 @@ def enum_name(set_name: str) -> str:
     return ''.join(part.capitalize() for part in set_name.split('_')) + 'Id'
 
 def prefix(id_name: str) -> str:
-    """SYSTEM_DIALOG → SYSMSG, ACT1_DIALOG1 → A1D1, etc."""
-    return id_name.split('_')[0]
+    """Prefijo de TERM/COUNT: todo salvo el último token del primer id del set.
+    SYSMSG_DEMO_TITLE → SYSMSG; A1_BEDROOM_SLEPT_BAD → A1_BEDROOM."""
+    parts = id_name.split('_')
+    return '_'.join(parts[:2]) if parts[0] in ('A1', 'A2', 'A3', 'A4') else parts[0]
 
 # ------------------------------------------------------------
 # 1. Leer texts.csv
