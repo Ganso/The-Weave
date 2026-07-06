@@ -144,6 +144,12 @@ void init_player_patterns(void)
         .icon     = NULL // Will load on demand
     };
 
+    if (HACK_ALL_SPELLS) { // Dev hack (core/hack.h): todos los hechizos + vara desde el principio
+        for (u8 i = 0; i < PATTERN_PLAYER_COUNT; i++) playerPatterns[i].enabled = true;
+        player_has_rod = true;
+        player_patterns_enabled = true;
+    }
+
     dprintf(2,"Player patterns ready: E=%d H=%d O=%d S=%d",
             playerPatterns[PATTERN_THUNDER].enabled,
             playerPatterns[PATTERN_HIDE].enabled,

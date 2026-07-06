@@ -1,5 +1,6 @@
 #include <genesis.h>
 #include "core/config.h"
+#include "core/hack.h"
 #include "combat/combat.h"
 #include "patterns.h"
 #include "actors/entity.h"
@@ -134,6 +135,8 @@ void hit_enemy(u8 enemyId, u8 damage)
 
     dprintf(2, "Hit enemy %d for %d damage", enemyId, damage);
 
+    if (HACK_ENEMIES_ONE_HP) damage = obj_enemy[enemyId].hitpoints; // Dev hack (core/hack.h)
+
     // Reduce enemy HP (B25: compare first — hitpoints is u16 and would underflow if damage > HP)
     if (damage >= obj_enemy[enemyId].hitpoints) { // If enemy is defeated
         // TODO: Better enemy defeat handling (pospuesto a Fase 4, decisión refactorizar.md §15)
@@ -161,6 +164,8 @@ void hit_enemy(u8 enemyId, u8 damage)
 // Hit the player
 void hit_player(u8 damage)
 {
+    if (HACK_PLAYER_INVULNERABLE) return; // Dev hack (core/hack.h)
+
     // Ignore if the hero is already hurt
     if (obj_character[active_character].state == STATE_HIT) return;
 

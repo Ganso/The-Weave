@@ -5,6 +5,7 @@
 // SCREEN_FPS is NOT here: it's a runtime variable (PAL/NTSC detection) in core/frame.h.
 
 #include <genesis.h>
+#include "core/hack.h"   // DEBUG_LEVEL y toggles de desarrollo
 
 // Global definitions (NTSC)
 #define SCREEN_WIDTH 320
@@ -13,9 +14,7 @@
 // Create version using compile date
 #define GAMEVERSION ({ static char version[20]; sprintf(version, "v%c%c%c%c%c%c%c", (__DATE__[4] == ' ' ? '0' : __DATE__[4]), __DATE__[5], __DATE__[0], __DATE__[1], __DATE__[2], __DATE__[9], __DATE__[10]); version; })
 
-// Debug
-#define DEBUG_LEVEL 1  // 0: no debug, 1: easter eggs & errors, 2: debug messages, 3: verbose debug messages
-
+// Debug (DEBUG_LEVEL se configura en core/hack.h)
 #define dprintf(level, ...) ((void)0)
 #if DEBUG_LEVEL > 0
   #undef dprintf

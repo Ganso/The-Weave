@@ -1,5 +1,6 @@
 #include <genesis.h>
 #include "core/config.h"
+#include "core/hack.h"
 #include "narrative/dialogs.h"
 #include "narrative/texts.h"
 #include "narrative/texts_data.h"
@@ -28,6 +29,7 @@ static inline u8 letter_index_from_char(char c) {
 
 void talk(u8 nface, bool isinleft, char *text, u16 max_seconds, bool sound_on)    // Display dialog with optional face portrait and timed text
 {
+    if (HACK_FAST_DIALOGS && max_seconds > 1) max_seconds = 1; // Dev hack (core/hack.h)
     u16 faceposx,buttonposx;
     u16 textposx_line1=0, textposx_line2=0, textposx_line3=0;
     u16 joy_state;

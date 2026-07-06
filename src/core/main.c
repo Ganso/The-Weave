@@ -6,6 +6,7 @@
 #include "scenes/geesebumps.h"
 #include "scenes/intro.h"
 #include "act_1.h"
+#include "narrative/texts.h"
 
 
 int main(bool hard)    // Main game loop - handles initialization and scene transitions
@@ -17,7 +18,11 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
     geesebumps_logo(); // GeeseBumps Logo
     theweave_intro();  // Game intro
 #endif
-    // game_language = LANG_ENGLISH; // Debug: force English language
+#if HACK_FORCE_LANGUAGE == 1
+    game_language = LANG_SPANISH;  // Dev hack (core/hack.h)
+#elif HACK_FORCE_LANGUAGE == 2
+    game_language = LANG_ENGLISH;  // Dev hack (core/hack.h)
+#endif
 
     initialize(true);
 
