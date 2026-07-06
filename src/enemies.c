@@ -251,6 +251,14 @@ void update_enemy_animations(void)
 
         Entity *en = &obj_enemy[e].obj_character;        // shorthand
 
+        // B4: dying enemy (0 HP) — wait for the death animation to end, then release.
+        // Replaces the blocking while() that lived in hit_enemy.
+        if (obj_enemy[e].hitpoints == 0) {
+            if (spr_enemy[e] == NULL || SPR_isAnimationDone(spr_enemy[e]))
+                release_enemy(e);
+            continue;
+        }
+
         switch (en->state)
         {
             case STATE_HIT:

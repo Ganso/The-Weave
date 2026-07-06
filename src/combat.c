@@ -123,21 +123,21 @@ void hit_enemy(u8 enemyId, u8 damage)
 
     dprintf(2, "Hit enemy %d for %d damage", enemyId, damage);
 
-    // Reduce enemy HP
-    obj_enemy[enemyId].hitpoints -= damage;
-    if (obj_enemy[enemyId].hitpoints <= 0) { // If enemy is defeated
-        // TODO: Better enemy defeat handling
+    // Reduce enemy HP (B25: compare first — hitpoints is u16 and would underflow if damage > HP)
+    if (damage >= obj_enemy[enemyId].hitpoints) { // If enemy is defeated
+        // TODO: Better enemy defeat handling (pospuesto a Fase 4, decisión refactorizar.md §15)
         dprintf(2, "Enemy %d defeated", enemyId);
+        obj_enemy[enemyId].hitpoints = 0; // Marks the enemy as dying
         SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter sprite
-        SPR_setAnim(spr_enemy[enemyId], ANIM_HURT); // Show hurt animation
+        anim_enemy(enemyId, ANIM_HURT); // Death animation (via entity field so update_enemy keeps it)
         play_sample(snd_effect_magic_disappear, sizeof(snd_effect_magic_disappear)); // Play hit sound
-        while (!SPR_isAnimationDone(spr_enemy[enemyId])) {
-            SPR_update(); // Update sprite animations
-            SYS_doVBlankProcess(); // Wait for animation to finish
-        }
-        release_enemy(enemyId); // Enemy defeated
+        // B4: no blocking wait here. STATE_HIT pauses AI/pattern launches; the release
+        // happens in update_enemy_animations when the death animation finishes.
+        obj_enemy[enemyId].obj_character.state = STATE_HIT;
+        obj_enemy[enemyId].modeTimer = ENEMY_HURT_DURATION;
     }
     else {
+        obj_enemy[enemyId].hitpoints -= damage;
         dprintf(2, "Enemy %d hit for %d damage, remaining HP: %d", enemyId, damage, obj_enemy[enemyId].hitpoints);
         SPR_setAnim(spr_enemy[enemyId], ANIM_HURT); // Show hurt animation
         play_sample(snd_player_hit_enemy, sizeof(snd_player_hit_enemy));
