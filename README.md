@@ -26,6 +26,39 @@ A first playable version of Act One (with both English and Spanish text) is hope
 
 WANTED: Graphic artists who can handle Sega Megadrive hardware limitations.
 
+## Acknowledgements
+
+The Weave stands on the shoulders of many wonderful projects and creators. Thank you all!
+
+### Original inspiration
+
+- **[Loom](https://en.wikipedia.org/wiki/Loom_(video_game))** by **LucasArts**, designed by **Brian Moriarty** — the masterpiece this fangame is a loving tribute to. *The Weave* is a free, non-commercial fan project, not affiliated with or endorsed by LucasArts, Lucasfilm Games or Disney.
+- The character voices are inspired by the iconic *Animalese* gibberish from Nintendo's **Animal Crossing** series.
+
+### Engine and development tools
+
+- **[SGDK](https://github.com/Stephane-D/SGDK)** by **Stéphane Dallongeville** — the Sega Mega Drive Development Kit the whole engine is built on, including its `rescomp` resource compiler and the XGM2 sound driver. This game would simply not exist without it.
+- **[SGDK official Docker image](https://github.com/Stephane-D/SGDK)** (`ghcr.io/stephane-d/sgdk`) — used to build the ROM reproducibly.
+- **[BlastEm](https://www.retrodev.com/blastem/)** by **Michael Pavone** — the highly accurate Mega Drive emulator used for day-to-day testing and debugging.
+- **[Aseprite](https://www.aseprite.org/)** — all the pixel art is drawn and animated with it.
+- **[Visual Studio Code](https://code.visualstudio.com/)** — development environment.
+- **[Python 3](https://www.python.org/)** — all the data-generation and audio tooling scripts.
+
+### Character voices ("gibberish") pipeline
+
+- **[animalese.js](https://github.com/Acedio/animalese.js)** by **Acedio** — the original `animalese.wav` phoneme library our voice generator downloads and processes to synthesize the in-game character voices.
+- **[librosa](https://librosa.org/)** — audio analysis and pitch-shifting for the voice profiles.
+- **[NumPy](https://numpy.org/)** and **[SciPy](https://scipy.org/)** — signal processing backbone.
+- **[SoundFile](https://github.com/bastibe/python-soundfile)** — audio file reading/writing.
+- **[pydub](https://github.com/jiaaro/pydub)** and **[gTTS](https://github.com/pndurette/gTTS)** — used by earlier iterations of the voice generator.
+
+### Sound effects
+
+- Magic sound effect by **[hjohnl](https://freesound.org/people/hjohnl/sounds/61521/)** on **Freesound**.
+- Typewriter sound effect from **[Pixabay](https://pixabay.com/sound-effects/typewriter-typing-68696/)**.
+
+If you believe you should be credited here and are not, please open an issue — it will be an honest mistake and we will be happy to fix it.
+
 ## Follow the project
 
 - [Twitter/X @GeeseBumpsGames](https://x.com/GeeseBumpsGames)
