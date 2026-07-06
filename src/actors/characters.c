@@ -8,7 +8,9 @@
 #include "core/frame.h"
 #include "world/background.h"
 #include "combat/combat.h"
-#include "patterns.h"
+#include "spells/spell.h"
+#include "spells/notes.h"
+#include "interface/interface.h"
 #include "narrative/dialogs.h"
 #include "narrative/texts_data.h"
 #include "res_characters.h"
@@ -422,7 +424,7 @@ void update_character_animations(void) {
         // even if the character is not in PATTERN_EFFECT state (solo protagonista)
         if (chr == active_character &&
             combat_state == COMBAT_STATE_PLAYER_EFFECT &&
-            combatContext.activePattern != PATTERN_HIDE)
+            spell_active_id(SPELL_SLOT_PLAYER) != SPELL_HIDE)
         {
             if (obj_character[chr].animation != ANIM_MAGIC) {
                 anim_character(chr, ANIM_MAGIC);
@@ -452,7 +454,7 @@ void update_character_animations(void) {
                 }
                 break;
             case STATE_PATTERN_EFFECT:
-                if (chr == active_character && combatContext.activePattern == PATTERN_HIDE) {
+                if (chr == active_character && spell_active_id(SPELL_SLOT_PLAYER) == SPELL_HIDE) {
                     // Keep current animation (idle or walking) while hidden
                 } else if (obj_character[chr].animation != ANIM_MAGIC) {
                     anim_character(chr, ANIM_MAGIC);

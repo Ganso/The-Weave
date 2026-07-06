@@ -45,12 +45,12 @@
 
 ## Fase 4 — Motor de hechizos
 
-- [ ] `spell.h`/`spell.c` (2 slots, validate/launch/update/try_counter/finish)
-- [ ] `spell_hooks.c` (hooks compartidos)
-- [ ] Migrados uno a uno contra baseline: thunder (con onRejected), hide, open, sleep, en_thunder, en_bite (deshabilitado)
-- [ ] Integración combat + interface + sound; FSM viejo de patterns eliminado
-- [ ] Hechizo FIRE end-to-end (3 casos)
-- [ ] `patterns.*` y `src/patterns/` eliminados
+- [x] `spell.h`/`spell.c` (2 slots) + `notes.c` (input + HUD de notas)
+- [x] `spell_hooks.c` (AJUSTE: no hay hooks compartidos aún — cada hechizo lleva los suyos; se creará cuando un hook se repita de verdad)
+- [x] Migrados: thunder (con onRejected — resuelve B18), hide, open, sleep, en_thunder, en_bite (deshabilitado)
+- [x] Integración combat + interface + sound + controller + frame; CombatContext y patterns eliminados
+- [x] Hechizo FIRE end-to-end (zona + counter + fases; casos smoke en Fase 7)
+- [x] `patterns.*` y `src/patterns/` eliminados
 - [ ] Playtest act1_scene3 idéntico a baseline
 
 ## Fase 5 — VM de escenas

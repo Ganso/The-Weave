@@ -4,7 +4,10 @@
 #include "actors/entity.h"
 #include "actors/characters.h"
 #include "combat/combat.h"
-#include "patterns.h"
+#include "spells/spell.h"
+#include "spells/notes.h"
+#include "actors/collisions.h"
+#include "interface/interface.h"
 #include "core/frame.h"
 #include "world/background.h"
 #include "res_enemies.h"
@@ -31,9 +34,9 @@ void update_enemy_shadow(u16 nenemy)    // Update shadow sprite position based o
 
 void init_enemy_classes(void)    // Setup enemy class definitions with HP, patterns, and behavior
 {
-    obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, false, 0, {true, false}}; // 2 HP, can use electric pattern, don't follow
-    // Note (B2, decision refactorizar.md §15): no class enables the bite pattern for now.
-    // Enabling it back is a game-design decision: set has_pattern[PATTERN_EN_BITE] and playtest recharge.
+    obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_NONE}}; // 2 HP, lanza thunder, no sigue
+    // Note (B2, decision refactorizar.md §15): ninguna clase lleva SPELL_EN_BITE por ahora.
+    // Activarlo es decisión de diseño: añadirlo a la lista spell[] y ajustar rechargeInit con playtest.
 }
 
 
@@ -103,24 +106,18 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     // Initially hide enemy sprites
     SPR_setVisibility(spr_enemy[numenemy], HIDDEN);
     
-    init_enemy_patterns(numenemy); // Initialize enemy patterns
-
-    for (i = 0; i < MAX_PATTERN_ENEMY; i++)
-        obj_enemy[numenemy].last_pattern_time[i] = 0;
+    init_enemy_spells(numenemy); // Recargas iniciales de sus hechizos
+    (void)i;
 }
 
 void release_enemy(u16 nenemy)    // Free enemy resources and reset related combat state
 {
 
-    /* If this enemy was the active one in combat, reset the state */
-    if (combatContext.activeEnemy == nenemy) {
-        combatContext.activeEnemy = ENEMY_NONE;
-        combat_state       = COMBAT_STATE_IDLE;
-        combatContext.effectTimer = 0;
-    }
+    /* Si este enemigo estaba lanzando, el motor libera su slot y resetea el estado */
+    spell_notify_enemy_released(nenemy);
 
     /* Hide any note indicators (through interface) */
-    pattern_enemy_clear_notes();
+    enemy_notes_clear();
 
     /* Deactivate entity */
     obj_enemy[nenemy].obj_character.active = false;
@@ -216,7 +213,7 @@ void approach_enemies(void)    // Update enemy positions to follow player during
     u16 collision_result;
     bool has_moved;
 
-    if (combat_state == COMBAT_STATE_IDLE && combatContext.activePattern != PATTERN_HIDE) { // Only move enemies during combat when the player is not hidden
+    if (combat_state == COMBAT_STATE_IDLE && spell_active_id(SPELL_SLOT_PLAYER) != SPELL_HIDE) { // Only move enemies during combat when the player is not hidden
         for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
             has_moved = false;
             if (obj_enemy[nenemy].obj_character.follows_character) {
@@ -235,7 +232,7 @@ void approach_enemies(void)    // Update enemy positions to follow player during
                 collision_result = detect_enemy_char_collision(nenemy, newx, newy);
 
                 // Move the enemy if there's no collision and it's not currently attacking
-                if (collision_result == CHR_NONE && combatContext.activeEnemy == ENEMY_NONE) {
+                if (collision_result == CHR_NONE && spell_enemy_caster() == ENEMY_NONE) {
                     obj_enemy[nenemy].obj_character.x = newx_fixed;
                     obj_enemy[nenemy].obj_character.y = newy_fixed;
                     obj_enemy[nenemy].obj_character.animation = ANIM_WALK;
@@ -243,7 +240,7 @@ void approach_enemies(void)    // Update enemy positions to follow player during
                     update_enemy(nenemy);
                     has_moved = true;
                 }
-                if (!has_moved && combatContext.activeEnemy != nenemy)
+                if (!has_moved && spell_enemy_caster() != nenemy)
                     anim_enemy(nenemy, ANIM_IDLE); // Set to idle if not moved and not attacking
             }
         }

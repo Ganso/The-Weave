@@ -88,7 +88,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
             talk_dialog(&dialogs[ACT1_DIALOG4][A1D4_LULLABY], false); // (ES) "Esta es la @[nana@] que me|cantaban cada noche" - (EN) "That's the @[lullaby@] they used|to sing to me every night"
             last_interacted_item=ITEM_NONE;
             if (item_interacted[3]==false) { // If not already interacted
-                activate_spell(PATTERN_SLEEP); // Activate sleep pattern
+                activate_spell(SPELL_SLEEP); // Activate sleep spell
                 talk_cluster(&dialogs[ACT1_DIALOG4][A1D4_LEARNED_PATTERN], true); // (ES) "Has aprendido|tu primer @[patrón@]" - (EN) "You have learned|your first @[pattern@]", (ES) "Entra en el menú de|pausa para verlo" - (EN) "Enter the pause menu|to check it out"
              }
             item_interacted[3]=true;
@@ -282,10 +282,10 @@ void act_1_scene_5(void)    // Combat tutorial scene with pattern demonstrations
     follow_active_character(CHR_clio, true); // Clio follows Linus
 
     // Initialize spells
-    playerPatterns[PATTERN_THUNDER].enabled = true;
-    playerPatterns[PATTERN_HIDE   ].enabled = true;
-    playerPatterns[PATTERN_OPEN   ].enabled = true;
-    playerPatterns[PATTERN_SLEEP  ].enabled = true;
+    spell_enable(SPELL_THUNDER);
+    spell_enable(SPELL_HIDE);
+    spell_enable(SPELL_OPEN);
+    spell_enable(SPELL_SLEEP);
 
     move_character(CHR_linus, SCROLL_START_DISTANCE+10, 154);
 

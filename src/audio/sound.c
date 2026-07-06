@@ -2,7 +2,7 @@
 #include "core/config.h"
 #include "core/hack.h"
 #include "audio/sound.h"
-#include "patterns.h"
+#include "spells/constants_spells.h"
 #include "core/frame.h"
 #include "res_sound.h"
 
@@ -74,45 +74,28 @@ void play_enemy_note(u8 noteCode)
 
 
 // ------------------------------------------------------------------
-// Spell jingle (player side)
+// Spell jingle (unificado: espacio de ids único, ver constants_spells.h)
 // ------------------------------------------------------------------
-void play_player_pattern_sound(u16 patternId)
+void play_spell_jingle(u16 spellId)
 {
-    switch (patternId)
+    switch (spellId)
     {
-        case PATTERN_THUNDER:
+        case SPELL_THUNDER:
+        case SPELL_EN_THUNDER:
             play_sample(snd_pattern_thunder, sizeof(snd_pattern_thunder));
             break;
-        case PATTERN_HIDE:
+        case SPELL_HIDE:
             play_sample(snd_pattern_hide, sizeof(snd_pattern_hide));
             break;
-        case PATTERN_OPEN:
+        case SPELL_OPEN:
+        case SPELL_FIRE:
             play_sample(snd_pattern_open, sizeof(snd_pattern_open));
             break;
-        case PATTERN_SLEEP:
-            // TODO
-            break;           
-        default:
-            play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+        case SPELL_SLEEP:
+        case SPELL_EN_BITE:
+            // TODO: jingles propios pendientes (decisión refactorizar.md §15 / AGENTS.md)
             break;
-    }
-}
-
-
-// ------------------------------------------------------------------
-// Spell jingle (enemy side)
-// ------------------------------------------------------------------
-void play_enemy_pattern_sound(u16 patternId)
-{
-    switch (patternId)
-    {
-        case PATTERN_EN_THUNDER:
-            play_sample(snd_pattern_thunder, sizeof(snd_pattern_thunder));
-            break;
-        case PATTERN_EN_BITE:
-            // TODO
-            break;
-        default:
+        default: // SPELL_NONE u otro: sonido de "patrón inválido"
             play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
             break;
     }

@@ -10,7 +10,7 @@
 // Enemies
 #define MAX_ENEMIES 3
 #define ENEMY_NONE 254
-#define MAX_PATTERN_ENEMY 2
+#define MAX_SPELLS_PER_ENEMY 2   // huecos de hechizo por clase de enemigo
 
 // Enemy classes (B21: removed unimplemented 3-head-monkey class; re-add classes here when their art exists)
 #define MAX_ENEMY_CLASSES 10
@@ -30,7 +30,7 @@ typedef struct
     u16 max_hitpoints;
     bool follows_character; // If true, the enemy will follow the character
     u8 follow_speed;
-    bool has_pattern[MAX_PATTERN_ENEMY]; // If true, the enemy has a particular pattern
+    u8 spell[MAX_SPELLS_PER_ENEMY]; // SPELL_* que puede lanzar (SPELL_NONE = hueco vacío)
 } Enemy_Class;
 extern Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object
 
@@ -41,7 +41,6 @@ typedef struct
     u16 class_id;
     Entity obj_character;
     u16 hitpoints;
-    u16 last_pattern_time[MAX_PATTERN_ENEMY]; // Last time a particular pattern was used (in frames)
     EnemyMode mode; // What's the enemy doing?
     u16 modeTimer; // Timer for the current mode (in frames)
 } Enemy;

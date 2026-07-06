@@ -14,8 +14,7 @@ void play_sample(const u8 *sample, u32 len); // Play a sound sample
 // Notes and patterns sound effects
 void play_player_note(u8 nnote); // Play a note (player)
 void play_enemy_note(u8 nnote); // Play a note (enemy)
-void play_player_pattern_sound(u16 npattern); // Play the sound of a pattern spell (player)
-void play_enemy_pattern_sound(u16 npattern); // Play the sound of a pattern spell (enemy)
+void play_spell_jingle(u16 spellId); // Play the jingle of a spell (SPELL_NONE = invalid-pattern sound)
 
 
 #endif

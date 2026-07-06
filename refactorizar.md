@@ -1149,7 +1149,17 @@ playtest de las 4 escenas idéntico al baseline.
 **Rollback**: reset al fin de Fase 2. Si la conversión de includes de un módulo se
 atasca, commit intermedio con ese módulo aún en `globals.h` transicional.
 
-### Fase 4 — Sistema de hechizos
+### ~~Fase 4 — Sistema de hechizos~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: motor de 2 slots en spells/ (spell.c + notes.c + player_spells + enemy_spells
+> + fire como ejemplo canónico), espacio de ids UNIFICADO (el solape player/enemy del
+> sistema viejo causó el cuelgue de la Fase 1), hooks incl. onRejected (B18 resuelto:
+> los hints de thunder salen del flujo de notas), fases declarativas (FLASH + DAMAGE),
+> CombatContext eliminado (el estado vive en el motor), patterns.* borrado. Ajustes:
+> notes.c añadido (input/HUD separado del motor); sin spell_hooks.c (no hay hooks
+> compartidos reales aún); jingle unificado play_spell_jingle. La retirada de
+> patterns.h destapó includes enmascarados (los pattern_*.h arrastraban globals.h) —
+> corregidos. AGENTS.md reescrito con la arquitectura y las recetas.
 
 1. Structs y motor (§3.2, §3.3): `spell.h`, `spell.c` con los **dos slots**.
    Diagrama de arquitectura en la cabecera.

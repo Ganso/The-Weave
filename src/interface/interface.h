@@ -41,7 +41,6 @@ void pause_screen(void); // Pause / State screen
 void show_pause_pattern_list(bool show, u8 active_pattern); // Show or hide pattern list (Pause screen)
 void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show); // Show one of the notes of a pattern in the pattern list (Pause screen)
 void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool priority); // Show one of the notes of a pattern in the pattern list (Pause screen)
-void check_pattern_status(void); // Check the status of the current pattern, including note playing and expiration
 void update_life_counter(void); // Update the life counter sprite
 
 #endif

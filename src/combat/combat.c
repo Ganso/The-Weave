@@ -2,67 +2,22 @@
 #include "core/config.h"
 #include "core/hack.h"
 #include "combat/combat.h"
-#include "patterns.h"
+#include "spells/spell.h"
+#include "spells/notes.h"
 #include "actors/entity.h"
 #include "actors/characters.h"
 #include "actors/enemies.h"
 #include "core/frame.h"
+#include "world/background.h"
 #include "interface/interface.h"
 #include "audio/sound.h"
 #include "res_sound.h"
 
 CombatState combat_state; // Current combat state
-CombatContext combatContext; // Combat context
 
 // --------------------------------
 // LOCAL HELPERS
 // --------------------------------
-
-// Returns TRUE if pattern slot pslot for enemy eid can be launched
-static inline bool enemy_pattern_ready(u8 eid, u8 pslot)
-{
-    EnemyPattern *p = &enemyPatterns[eid][pslot];
-    dprintf(3, "Checking enemy pattern %d:%d: enabled=%d, rechargeFrames=%d",
-            eid, pslot, p->enabled, p->rechargeFrames);
-    return p->enabled && (p->rechargeFrames == 0);
-}
-
-// Decrements cooldowns and launches the first ready pattern.
-// Returns TRUE when a launch happened this frame.
-static bool enemy_choose_and_launch(void)
-{
-    dprintf(3, "Checking enemy patterns to launch");
-
-    // Suspend launches while the player is recovering
-    if (obj_character[active_character].state == STATE_HIT)
-        return FALSE;
-
-    // If any enemy is hit, we cannot launch a patterns -------------------
-    for (u8 e = 0; e < MAX_ENEMIES; ++e)
-        if (obj_enemy[e].obj_character.active &&
-            obj_enemy[e].obj_character.state == STATE_HIT)
-            return false; 
-
-    // Tick all cooldowns ------------------------------------------------
-    for (u8 e = 0; e < MAX_ENEMIES; ++e)
-        if (obj_enemy[e].obj_character.active)
-            for (u8 p = 0; p < MAX_PATTERN_ENEMY; ++p)
-                if (enemyPatterns[e][p].rechargeFrames)
-                    --enemyPatterns[e][p].rechargeFrames;
-
-    // Launch first available pattern -----------------------------------
-    for (u8 e = 0; e < MAX_ENEMIES; ++e)
-        if (obj_enemy[e].obj_character.active)
-            for (u8 p = 0; p < MAX_PATTERN_ENEMY; ++p)
-                if (enemy_pattern_ready(e, p))
-                {
-                    dprintf(2, "Enemy %d launching pattern %d", e, p);
-                    launch_enemy_pattern(e, p);          // switches combat_state
-                    return TRUE;
-                }
-
-    return FALSE;   // nobody ready yet
-}
 
 // Returns TRUE if at least one enemy entity is still active
 static bool any_enemy_active(void)
@@ -77,41 +32,20 @@ static bool any_enemy_active(void)
 // Combat functions
 // --------------------------------
 
-// Try to counter an enemy spell
-bool try_counter_spell(void)
-{
-    if (!combatContext.patternReversed ||
-        combat_state != COMBAT_STATE_ENEMY_EFFECT) return false;
-
-    EnemyPattern* ep = get_active_enemy_pattern(combatContext.activeEnemy); // B3: was hardcoded slot 0
-
-    if (!ep || !ep->counterable || !ep->onCounter) return false;
-
-    // Cancel enemy effect
-    ep->onCounter(combatContext.activeEnemy);
-    combatContext.effectTimer = 0;
-    return true;
-}
-
 // Start combat phase
 void combat_init(void)
 {
     dprintf(2,"Starting combat phase");
 
     combat_state = COMBAT_STATE_IDLE; // Set initial state;
-    combatContext.effectTimer = 0;
-    combatContext.patternReversed = false;
-    combatContext.playerNotes = 0;
-    combatContext.enemyNoteIndex  = 0;
-    combatContext.enemyNoteTimer  = 0;
-    combatContext.activeEnemyPatternSlot = 0;
+    spell_engine_reset();
 
     player_scroll_active = false; // Disable player scroll during combat
 
-    // Initialize every active enemy's patterns
+    // Initialize every active enemy's spell recharges
     for (u8 id = 0; id < MAX_ENEMIES; id++)
-        if (obj_enemy[id].obj_character.active)   
-            init_enemy_patterns(id);
+        if (obj_enemy[id].obj_character.active)
+            init_enemy_spells(id);
 
     show_or_hide_interface(true);
 }
@@ -180,7 +114,7 @@ void hit_player(u8 damage)
     obj_character[active_character].modeTimer = PLAYER_HURT_DURATION;
 
     // Block any new player pattern during the stun
-    combatContext.patternLockTimer = PLAYER_HURT_DURATION;
+    notes_set_lock(PLAYER_HURT_DURATION);
 }
 
 
@@ -188,18 +122,13 @@ void hit_player(u8 damage)
 // Call once per frame when combat_state != COMBAT_STATE_NO
 void update_combat(void)
 {
-    // --- A) Count down global pattern lock --------------------------
-    if (combatContext.patternLockTimer)
-        --combatContext.patternLockTimer;
+    // --- A) El motor avanza ambos slots (y el lock de input) ----------
+    spell_update();
 
-    // --- B) Always advance the enemy pattern (notes or flash) -------
-    if (combatContext.activeEnemy != ENEMY_NONE)
-        update_enemy_pattern(combatContext.activeEnemy);
-
-    // --- C) FSM ------------------------------------------------------
+    // --- B) FSM -------------------------------------------------------
     switch (combat_state)
     {
-    case COMBAT_NO: 
+    case COMBAT_NO:
         break; // No combat active, nothing to do
 
     case COMBAT_STATE_IDLE:
@@ -208,19 +137,13 @@ void update_combat(void)
             set_idle();
             break;
         }
-       enemy_choose_and_launch(); // Otherwise let enemies try to launch a pattern
-       break;
-
-    case COMBAT_STATE_PLAYER_PLAYING:  break;       // input handled elsewhere
-
-    case COMBAT_STATE_PLAYER_EFFECT:
-        if (update_player_pattern())                   // pattern finished
-            combat_state = COMBAT_STATE_IDLE;
+        spell_enemy_try_launch(); // Otherwise let enemies try to launch a spell
         break;
 
-    case COMBAT_STATE_ENEMY_PLAYING:  break;        // logic runs in B
-
-    case COMBAT_STATE_ENEMY_EFFECT:   break;        // idem
+    case COMBAT_STATE_PLAYER_PLAYING:  break;   // input handled elsewhere (notes.c)
+    case COMBAT_STATE_PLAYER_EFFECT:   break;   // el motor gestiona el efecto y el fin
+    case COMBAT_STATE_ENEMY_PLAYING:   break;   // idem (cadencia de notas del enemigo)
+    case COMBAT_STATE_ENEMY_EFFECT:    break;   // idem
 
     default: break;
     }

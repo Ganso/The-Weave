@@ -8,7 +8,13 @@
 #include "actors/enemies.h"
 #include "actors/items.h"
 #include "interface/interface.h"
-#include "patterns.h"
+#include "spells/spell.h"
+#include "combat/combat.h"
+#include "narrative/dialogs.h"
+#include "resources.h"
+#include "res_characters.h"
+#include "res_faces.h"
+#include "res_interface.h"
 #include "audio/sound.h"
 
 void initialize(bool first_time)    // Initialize system hardware, sprites, controllers and global game state
@@ -76,20 +82,14 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Patterns & combat context
     if (first_time) {
-        dprintf(2,"Initializing patterns\n");
-        init_player_patterns();
+        dprintf(2,"Initializing spells\n");
+        init_spells();
         dprintf(2,"Initializing enemy classes\n");
         init_enemy_classes();
     }
-    dprintf(2,"Initializing combat context\n");
-    combat_state          = COMBAT_NO;
-    combatContext.frameInState   = 0;
-    combatContext.activePattern  = PATTERN_PLAYER_NONE;
-    combatContext.effectTimer    = 0;
-    combatContext.patternReversed= FALSE;
-    combatContext.noteTimer      = 0;
-    combatContext.playerNotes    = 0;
-    combatContext.activeEnemy    = ENEMY_NONE;
+    dprintf(2,"Resetting combat/spell state\n");
+    combat_state = COMBAT_NO;
+    spell_engine_reset();
 
     // Items
     last_interacted_item=ITEM_NONE;
@@ -210,17 +210,9 @@ void end_level() {    // Clean up level resources and reset game state
         }
     }
 
-    // Reset combat context
-    combatContext = (CombatContext){
-        .frameInState    = 0,
-        .activePattern   = PATTERN_PLAYER_NONE,
-        .effectTimer     = 0,
-        .patternReversed = FALSE,
-        .noteTimer       = 0,
-        .playerNotes     = 0,
-        .activeEnemy     = ENEMY_NONE
-    };
+    // Reset combat/spell state
     combat_state = COMBAT_NO;
+    spell_engine_reset();
 
     // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos
 

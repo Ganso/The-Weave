@@ -7,7 +7,7 @@
 #include "actors/enemies.h"
 #include "actors/items.h"
 #include "combat/combat.h"
-#include "patterns.h"
+#include "spells/notes.h"
 
 u16 tile_ind;        // Current tile index for VDP tile loading
 u16 frame_counter;   // Counter incremented each frame for RNG and timing
@@ -32,7 +32,7 @@ void next_frame(bool interactive)    // Process next frame with optional interac
         // Check controller
         if (movement_active==true) {
             joy_check();
-            if (player_patterns_enabled) check_pattern_status();
+            if (player_patterns_enabled) spell_input_update();
         }
 
         // Approach other characters

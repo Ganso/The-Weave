@@ -1,7 +1,8 @@
 #include <genesis.h>
 #include "core/config.h"
 #include "interface/interface.h"
-#include "patterns.h"
+#include "spells/spell.h"
+#include "spells/notes.h"
 #include "actors/characters.h"
 #include "actors/enemies.h"
 #include "combat/combat.h"
@@ -209,10 +210,10 @@ void hide_pattern_icons(void)    // Remove all pattern spell icons from interfac
 {
     u16 npattern;
 
-    for (npattern=0;npattern<MAX_PLAYER_PATTERNS;npattern++) {
-    if (playerPatterns[npattern].icon!=NULL) {
-            SPR_releaseSprite(playerPatterns[npattern].icon);
-            playerPatterns[npattern].icon=NULL;
+    for (npattern=0;npattern<SPELL_PLAYER_COUNT;npattern++) {
+    if (spell_defs[npattern].icon!=NULL) {
+            SPR_releaseSprite(spell_defs[npattern].icon);
+            spell_defs[npattern].icon=NULL;
         }
     }
 }
@@ -224,19 +225,19 @@ void show_pattern_icon(u16 npattern, bool show, bool priority)    // Display or 
 
     if (show==TRUE) {
         // Select the appropriate sprite based on the pattern
-        if (npattern==PATTERN_THUNDER) nsprite = &int_pattern_thunder;
-        if (npattern==PATTERN_HIDE) nsprite = &int_pattern_hide;
-        if (npattern==PATTERN_OPEN) nsprite = &int_pattern_open;
-        if (npattern==PATTERN_SLEEP) nsprite = &int_pattern_sleep;
+        if (npattern==SPELL_THUNDER) nsprite = &int_pattern_thunder;
+        if (npattern==SPELL_HIDE) nsprite = &int_pattern_hide;
+        if (npattern==SPELL_OPEN) nsprite = &int_pattern_open;
+        if (npattern==SPELL_SLEEP) nsprite = &int_pattern_sleep;
         
         // Add the sprite if it doesn't exist
-        if (playerPatterns[npattern].icon==NULL) playerPatterns[npattern].icon = SPR_addSpriteSafe(nsprite, SCREEN_WIDTH-40, 4, TILE_ATTR(npal, priority, false, false));
-        SPR_setAlwaysOnTop(playerPatterns[npattern].icon);
+        if (spell_defs[npattern].icon==NULL) spell_defs[npattern].icon = SPR_addSpriteSafe(nsprite, SCREEN_WIDTH-40, 4, TILE_ATTR(npal, priority, false, false));
+        SPR_setAlwaysOnTop(spell_defs[npattern].icon);
     }
     else {
         // Release the sprite if it exists
-        SPR_releaseSprite(playerPatterns[npattern].icon);
-        playerPatterns[npattern].icon=NULL;
+        SPR_releaseSprite(spell_defs[npattern].icon);
+        spell_defs[npattern].icon=NULL;
     }
 }
 
@@ -281,7 +282,7 @@ SpriteState* hide_all_sprites(u16* count)    // Hide all active sprites and save
 SpriteState* hide_interface_sprites(void)    // Hide HUD/interface sprites only
 {
     u16 index = 0;
-    const u16 spriteCount = 1 + 6 + 6 + 6 + 1 + MAX_PLAYER_PATTERNS; // button + rods + enemy rods + pents + life + icons
+    const u16 spriteCount = 1 + 6 + 6 + 6 + 1 + SPELL_PLAYER_COUNT; // button + rods + enemy rods + pents + life + icons
     SpriteState* states = MEM_alloc(spriteCount * sizeof(SpriteState));
     if (states == NULL) { // B9: out of memory, leave HUD untouched
         interface_sprite_count = 0;
@@ -328,10 +329,10 @@ SpriteState* hide_interface_sprites(void)    // Hide HUD/interface sprites only
     index++;
 
     // Pattern icons
-    for (u16 p=0; p<MAX_PLAYER_PATTERNS; p++) {
-        states[index].sprite = playerPatterns[p].icon;
-        states[index].visibility = playerPatterns[p].icon ? SPR_getVisibility(playerPatterns[p].icon) : HIDDEN;
-        if (playerPatterns[p].icon) SPR_setVisibility(playerPatterns[p].icon, HIDDEN);
+    for (u16 p=0; p<SPELL_PLAYER_COUNT; p++) {
+        states[index].sprite = spell_defs[p].icon;
+        states[index].visibility = spell_defs[p].icon ? SPR_getVisibility(spell_defs[p].icon) : HIDDEN;
+        if (spell_defs[p].icon) SPR_setVisibility(spell_defs[p].icon, HIDDEN);
         index++;
     }
 
@@ -390,8 +391,8 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
 
     // Find the first active pattern
     selected_pattern=254;
-    for (npattern=0;npattern<MAX_PLAYER_PATTERNS;npattern++) {
-        if (playerPatterns[npattern].enabled==true) {
+    for (npattern=0;npattern<SPELL_PLAYER_COUNT;npattern++) {
+        if (spell_defs[npattern].enabled==true) {
             #ifdef DEBUG_ON
              dprintf(2,"Patron %d activo", npattern);
             #endif
@@ -412,8 +413,8 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
                 selected_pattern++;
                 while (next_pattern_found==false)
                 {
-                    if (selected_pattern==MAX_PLAYER_PATTERNS) selected_pattern=0;
-                    if (playerPatterns[selected_pattern].enabled==true) next_pattern_found=true;
+                    if (selected_pattern==SPELL_PLAYER_COUNT) selected_pattern=0;
+                    if (spell_defs[selected_pattern].enabled==true) next_pattern_found=true;
                     else selected_pattern++;
                 }
                 show_pause_pattern_list(false,old_pattern); // Hide previous pattern
@@ -425,8 +426,8 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
                 selected_pattern--;
                 while (next_pattern_found==false)
                 {
-                    if (selected_pattern==255) selected_pattern=MAX_PLAYER_PATTERNS-1;
-                    if (playerPatterns[selected_pattern].enabled==true) next_pattern_found=true;
+                    if (selected_pattern==255) selected_pattern=SPELL_PLAYER_COUNT-1;
+                    if (spell_defs[selected_pattern].enabled==true) next_pattern_found=true;
                     else selected_pattern--;
                 }            
                 show_pause_pattern_list(false,old_pattern); // Hide previous pattern
@@ -473,15 +474,15 @@ void show_pause_pattern_list(bool show, u8 active_pattern)    // Display pattern
     u8 nnote, npattern, num_active_patterns=0;
     bool priority;
 
-    for (npattern=0;npattern<MAX_PLAYER_PATTERNS;npattern++) // Count active patterns
-        if (playerPatterns[npattern].enabled==true) num_active_patterns++;
+    for (npattern=0;npattern<SPELL_PLAYER_COUNT;npattern++) // Count active patterns
+        if (spell_defs[npattern].enabled==true) num_active_patterns++;
 
     x_initial = (134 - 24 * num_active_patterns); // Calculate initial X position
     x = x_initial;
     nicon = 0;
 
-    for (npattern=0;npattern<MAX_PLAYER_PATTERNS;npattern++) {
-        if (playerPatterns[npattern].enabled==true) {
+    for (npattern=0;npattern<SPELL_PLAYER_COUNT;npattern++) {
+        if (spell_defs[npattern].enabled==true) {
             priority = (npattern==active_pattern); // Highlight active pattern
             show_icon_in_pause_list(npattern, nicon, x, show, priority); // Show or hide pattern icon
             x+=48;
@@ -500,7 +501,7 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)    // Dis
     u8 note;
     u16 x;
 
-    note=playerPatterns[npattern].notes[nnote]; // Get the note for this pattern 
+    note=spell_defs[npattern].notes[nnote]; // Get the note for this pattern 
 
     // Select the appropriate pentagram sprite based on the note
     switch (note) 
@@ -544,10 +545,10 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
 
     if (show==TRUE) {
         // Select the appropriate sprite based on the pattern
-        if (npattern==PATTERN_THUNDER) nsprite = &int_pattern_thunder;
-        if (npattern==PATTERN_HIDE) nsprite = &int_pattern_hide;
-        if (npattern==PATTERN_OPEN) nsprite = &int_pattern_open;
-        if (npattern==PATTERN_SLEEP) nsprite = &int_pattern_sleep;
+        if (npattern==SPELL_THUNDER) nsprite = &int_pattern_thunder;
+        if (npattern==SPELL_HIDE) nsprite = &int_pattern_hide;
+        if (npattern==SPELL_OPEN) nsprite = &int_pattern_open;
+        if (npattern==SPELL_SLEEP) nsprite = &int_pattern_sleep;
 
         if (spr_pause_icon[nicon]==NULL) spr_pause_icon[nicon] = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false));
     }
@@ -560,27 +561,6 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
 }
 
 // Check the status of the current pattern, including note playing and expiration
-void check_pattern_status(void)
-{
-    // Increment “time since last key”
-    ++combatContext.noteTimer;
-
-    // Abort if player started a pattern but then paused too long
-    if (combatContext.playerNotes &&
-        combatContext.noteTimer > calc_ticks(MAX_PATTERN_WAIT_TIME))
-    {
-        dprintf(1,"Pattern aborted after %u ticks", combatContext.noteTimer);
-
-        reset_note_queue();                            // hide all 4 icons
-        obj_character[active_character].state = STATE_IDLE;
-        play_player_pattern_sound(PATTERN_PLAYER_NONE); // play invalid sound
-
-        // Start global lock so the user cannot mash immediately
-        combatContext.patternLockTimer = MIN_TIME_BETWEEN_PATTERNS;
-        set_idle(); // Reset combat state
-    }
-}
-
 // Update the face and life counter sprite for the enemies
 void update_life_counter(void) {
     u16 life_counter = 0;
@@ -599,7 +579,7 @@ void update_life_counter(void) {
     }
     if (nenemy == ENEMY_NONE) {
         // If no enemy is hit, use the active enemy from combat context
-        nenemy = combatContext.activeEnemy;
+        nenemy = spell_enemy_caster();
     }
 
     // If there's no attackers (or the candidate is gone or dying), release the sprite and return

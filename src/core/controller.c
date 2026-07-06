@@ -8,7 +8,8 @@
 #include "actors/collisions.h"
 #include "world/background.h"
 #include "combat/combat.h"
-#include "patterns.h"
+#include "spells/spell.h"
+#include "spells/notes.h"
 #include "interface/interface.h"
 
 void joy_check(void)    // Process joystick input each frame for movement, actions, and pause
@@ -22,7 +23,7 @@ void joy_check(void)    // Process joystick input each frame for movement, actio
         if (obj_character[active_character].state == STATE_IDLE ||
             obj_character[active_character].state == STATE_WALKING ||
         (obj_character[active_character].state == STATE_PATTERN_EFFECT &&
-            combatContext.activePattern == PATTERN_HIDE))
+            spell_active_id(SPELL_SLOT_PLAYER) == SPELL_HIDE))
         {
             dprintf(3,"Handling movement");
             handle_movement(joy_value);
@@ -212,12 +213,12 @@ void handle_action_buttons(u16 joy_value)    // Process action buttons for item 
         combat_state != COMBAT_STATE_PLAYER_EFFECT)
     {
         dprintf(3,"  - Checking buttons. Player pressed action button(s): joy_value=0x%04X", joy_value);
-        if (joy_value & BUTTON_A) { pattern_player_add_note(NOTE_MI);  }
-        if (joy_value & BUTTON_B) { pattern_player_add_note(NOTE_FA);  }
-        if (joy_value & BUTTON_C) { pattern_player_add_note(NOTE_SOL); }
-        if (joy_value & BUTTON_X) { pattern_player_add_note(NOTE_LA);  }
-        if (joy_value & BUTTON_Y) { pattern_player_add_note(NOTE_SI);  }
-        if (joy_value & BUTTON_Z) { pattern_player_add_note(NOTE_DO);  }
+        if (joy_value & BUTTON_A) { spell_note_input(NOTE_MI);  }
+        if (joy_value & BUTTON_B) { spell_note_input(NOTE_FA);  }
+        if (joy_value & BUTTON_C) { spell_note_input(NOTE_SOL); }
+        if (joy_value & BUTTON_X) { spell_note_input(NOTE_LA);  }
+        if (joy_value & BUTTON_Y) { spell_note_input(NOTE_SI);  }
+        if (joy_value & BUTTON_Z) { spell_note_input(NOTE_DO);  }
     }
 }
 

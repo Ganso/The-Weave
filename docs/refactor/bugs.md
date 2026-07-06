@@ -22,7 +22,7 @@
 | B15 | A | `src/items.h:29` | idem | idem | **corregido** (Fase 1, commit A) |
 | B16 | (→F4) | `src/combat.c:130` | TODO better defeat handling | pospuesto a Fase 4 (decisión §15) | pospuesto |
 | B17 | doc | `src/sound.c:85,105` | TODO jingles SLEEP/EN_BITE | documentar como pendiente en AGENTS.md (decisión §15) | pendiente |
-| B18 | (→F4) | `pattern_thunder.c:13-27`, `patterns.c:302-345` | callbacks muestran diálogos (acoplamiento) | hook `onRejected` del motor nuevo | pospuesto |
+| B18 | (→F4) | `pattern_thunder.c:13-27`, `patterns.c:302-345` | callbacks muestran diálogos (acoplamiento) | hook `onRejected` del motor nuevo | **corregido** (Fase 4) |
 | B19 | A | `pattern_thunder.c:3-4`, `pattern_en_thunder.c:7-8` | macros PAL_* duplicadas | mover a `patterns.h` (Fase 1) → `constants_spells.h` (Fase 4) | **corregido** (Fase 1, commit A) |
 | B20 | A | `src/entity.h:19-30` | valores de `GameState` presuntamente muertos | verificar con grep; eliminar o documentar | **corregido** (Fase 1, commit A) |
 | B21 | A | `src/enemies.c:53-54` | clase 3-head-monkey sin sprite | **eliminar la clase** (decisión §15) | **corregido** (Fase 1, commit A) |
