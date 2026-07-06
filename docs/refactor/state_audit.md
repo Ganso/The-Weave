@@ -80,10 +80,13 @@ necesita 2 slots (decisión D12).
   flags por item, activación única de sleep al tocar el cabinet, timeout de 3 s que solo
   corre si `item_interacted[3] && player_has_paused` y se resetea al interactuar
   (`act_1.c:63-101`). **No expresable en un DSL lineal** → hook C en el refactor.
-- `act_1_scene_2`: bosque, movimiento + items.
-- `act_1_scene_3`: combate **interactivo** contra WeaverGhost (el jugador toca notas
-  libremente) con branches win/lose. → op `combat` en la VM, no `cast`.
-- `act_1_scene_5`: finale con `SYS_hardReset`.
+- `act_1_scene_2`: pasillo de los historiadores; bucle de items (libros, puertas,
+  mapas) con condición de salida (haber leído ambos libros).
+- `act_1_scene_3`: hall con Clio y Xander; diálogos + 2 choices con respuesta
+  ramificada. Sin combate ni items.
+- `act_1_scene_5`: bosque; tutorial de hechizos + **combate interactivo** contra DOS
+  WeaverGhosts (el jugador toca notas libremente) y finale con `SYS_hardReset`.
+  → op `combat` en la VM, no `cast`.
 
 ## Deuda y smells transversales
 

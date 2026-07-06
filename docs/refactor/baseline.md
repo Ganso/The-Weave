@@ -1,45 +1,59 @@
 # Baseline de comportamiento — referencia del refactor (post-Fase-1)
 
-> Este build (rama `refactor`, fin de Fase 1) es la **referencia de comportamiento**
-> para todas las fases siguientes (decisión D10 de `refactorizar.md`). La comparación
-> es funcional/visual, nunca binaria.
+> Este build (rama `refactor`, fin de Fase 1, commit del cierre de fase) es la
+> **referencia de comportamiento** para todas las fases siguientes (decisión D10 de
+> `refactorizar.md`). La comparación es funcional/visual, nunca binaria.
 >
-> PENDIENTE: playtest de validación del usuario (checklist abajo). Al completarlo,
-> anotar aquí cualquier desviación observada y marcar la Fase 1 como cerrada.
+> **VALIDADO por el usuario el 2026-07-06**: el combate de la escena 5 (el punto que
+> destapó los bugs B26 y las regresiones de B2/B4) fue re-testeado con un ROM de test
+> que arrancaba directamente en el combate, matando a ambos WeaverGhosts sin cuelgues.
+> El resto del juego confirmado funcionando.
 
-## Cambios de comportamiento introducidos por los fixes de Fase 1
+## Mapa real de escenas (corregido durante la Fase 1)
 
-Todo lo demás debe comportarse exactamente como el build pre-refactor
-(`docs/refactor/rom_pre_refactor.bin`).
-
-| Fix | Cambio observable esperado |
+| Escena | Contenido |
 |---|---|
-| B4 (derrota sin bloqueo) | Al derrotar al WeaverGhost (counter con thunder invertido), la animación de muerte se reproduce **sin congelar el resto de la pantalla**: los sprites de fondo/HUD siguen animándose durante ~1s. Antes, todo se congelaba salvo el enemigo. El resultado final (enemigo desaparece, combate termina) es el mismo. |
-| B12 (side de diálogo) | Ninguno esperado. Todos los diálogos y choices deben verse idénticos (posición de texto y cara). |
-| B1, B2, B3 | Ninguno observable (sleep no es lanzable; bite sigue deshabilitado; solo hay un hechizo enemigo counterable). |
-| B25 (underflow HP) | Ninguno con el balance actual (daño siempre 1). |
+| `act_1_scene_1` | Dormitorio: visita del cisne, bucle de 4 items, aprendizaje del patrón sleep |
+| `act_1_scene_2` | Pasillo de los historiadores: libros/puertas/mapas, salida al leer ambos libros |
+| `act_1_scene_3` | Hall con Clio y Xander: diálogos + 2 choices ramificados (sin combate) |
+| `act_1_scene_5` | Bosque: tutorial de hechizos + **combate contra 2 WeaverGhosts** + finale |
 
-## Checklist de playtest (validación del baseline)
+## Cambios de comportamiento respecto al build pre-refactor
 
-Ejecutar `out/rom.bin` en BlastEm y verificar:
+Todo lo demás se comporta exactamente como `docs/refactor/rom_pre_refactor.bin`.
 
-- [ ] **Intro + logo**: GeeseBumps y la intro se ven como siempre.
-- [ ] **Escena 1 (dormitorio)**: los 4 items responden en cualquier orden y son
-      repetibles; el cabinet enseña el patrón sleep una sola vez; la escena termina
-      ~3 s después de interactuar con el cabinet Y haber abierto la pausa.
-- [ ] **Pausa**: el menú de pausa muestra el patrón aprendido; entrar/salir no rompe HUD.
-- [ ] **Escena 2 (bosque)**: movimiento, followers e items como siempre.
-- [ ] **Escena 3 (combate)**:
-  - [ ] El WeaverGhost lanza thunder (notas + flash) con su cadencia habitual.
-  - [ ] Thunder directo contra el ghost muestra el hint "pensar al revés".
-  - [ ] El counter (thunder invertido durante el efecto enemigo) funciona.
-  - [ ] Al morir el ghost: animación de muerte fluida (ver B4 arriba), el combate
-        termina y la escena continúa.
-  - [ ] Perder el combate (dejarse golpear) lleva a su rama correspondiente.
-- [ ] **Escena 5 (finale)**: diálogos y cierre como siempre.
-- [ ] **Diálogos ES y EN**: caracteres especiales españoles (ñ, tildes, ¿¡) se ven
-      bien (B7 cambió el buffer de encoding); posiciones de texto idénticas (B12).
+| Fix | Cambio observable |
+|---|---|
+| B4 (derrota sin bloqueo) | Al derrotar a un WeaverGhost, la animación de muerte (1 s, `ENEMY_HURT_DURATION`) se reproduce sin congelar el resto de la pantalla. El resultado final es el mismo. |
+| B26 (contador de vida) | El contador de vida desaparece al morir el enemigo en vez de parpadear con valores basura (antes del fix esto colgaba la consola). |
+| B12 (side de diálogo) | Ninguno. |
+| B1, B2, B3, B25 | Ninguno observable (sleep no lanzable; bite deshabilitado; un solo hechizo counterable; daño siempre 1). |
 
-## Notas del playtest
+## Incidencias del cierre de fase (histórico)
 
-(rellenar al validar)
+1. **Cuelgue al matar al primer enemigo** (reportado por el usuario): tres causas
+   encadenadas, todas corregidas —
+   - `get_active_enemy_pattern` resolvía por `activePattern`, campo compartido con los
+     patterns del jugador (ids solapados) → nuevo campo `activeEnemyPatternSlot`.
+   - La liberación del moribundo usaba `SPR_isAnimationDone` el mismo frame del cambio
+     de animación → muerte por timer determinista.
+   - **B26** (la causa directa del cuelgue): `update_life_counter` calculaba
+     `hitpoints - 1` con el moribundo (0 HP) → underflow a anim 255 → `SPR_setAnim`
+     corrompía el sprite engine y `SPR_update` congelaba el VDP.
+2. La auditoría situaba el combate en la escena 3; está en la **escena 5**. Corregido
+   en `state_audit.md` y `refactorizar.md`.
+
+## Referencia de playtest para fases siguientes
+
+Verificar contra este baseline tras cada fase:
+
+- Intro + logo GeeseBumps.
+- Escena 1: 4 items en cualquier orden y repetibles; sleep una sola vez en el cabinet;
+  salida ~3 s tras cabinet + pausa abierta.
+- Escena 2: libros (texto largo la 1.ª vez, corto después), puertas, mapas; no deja
+  salir sin leer ambos libros.
+- Escena 3: diálogos del hall, 2 choices, respuesta acorde a la elección.
+- Escena 5: tutorial, pausa con inventario de hechizos, combate contra 2 ghosts
+  (hint al lanzar thunder directo, counter con thunder invertido, muerte fluida de
+  cada ghost, contador de vida correcto), mensaje final y reset.
+- Diálogos ES/EN: caracteres especiales (ñ, tildes, ¿¡) y posiciones correctas.

@@ -496,7 +496,7 @@ puzzles y su comprobación viven en la VM (§4.8).
   hook C corto en `scene_hooks.c` y el `.scene` lo invoca con `call <hook>`. Es
   explícitamente **mejor** un hook C de 30 líneas que un DSL con variables,
   condicionales y timers — eso sería un lenguaje de programación malo.
-- **El combate interactivo no se scriptea.** El combate de act1_scene3 es el jugador
+- **El combate interactivo no se scriptea.** El combate de act1_scene5 es el jugador
   tocando notas libremente contra la IA; eso no es un `cast`. El DSL tiene un op
   `combat` que cede el control al FSM de combate hasta victoria/derrota, y ops de salto
   según el resultado.
@@ -582,7 +582,7 @@ typedef void (*SceneHook)(void);
    contra ella parseando este archivo (o un listado hooks.txt junto a él). */
 const SceneHook scene_hook_table[] = {
     [HOOK_ACT1_BEDROOM_ITEMS] = act1_bedroom_items,
-    [HOOK_ACT1_FOREST_ITEMS]  = act1_forest_items,
+    [HOOK_ACT1_CORRIDOR_ITEMS] = act1_corridor_items,
 };
 ```
 
@@ -706,9 +706,9 @@ va al DSL y qué parte queda como hook C:
 | Escena | DSL | Hooks C (`scene_hooks.c`) |
 |---|---|---|
 | `act1_scene1` | setup, diálogos, fade, next_scene | `act1_bedroom_items` (bucle de items con flags, sleep una sola vez, timeout condicionado a pausa — `act_1.c:63-101`) |
-| `act1_scene2` | setup, movimientos, diálogos, fade | `act1_forest_items` (interacciones de items del bosque) |
-| `act1_scene3` | setup, diálogos, `combat`, branches win/lose | ninguno previsto (el combate lo lleva el FSM vía `SCENE_OP_COMBAT`) |
-| `act1_scene5` | diálogos, finale (`SYS_hardReset` → `end`) | ninguno |
+| `act1_scene2` | setup, movimientos, diálogos, fade | `act1_corridor_items` (bucle de libros/puertas/mapas del pasillo + condición de salida, `act_1.c:146-200`) |
+| `act1_scene3` | setup, diálogos, choices con branch (hall de Clio/Xander) | ninguno |
+| `act1_scene5` | setup del bosque, tutorial, `combat`, finale (`SYS_hardReset` → `end`) | posible hook para el setup de enemigos/scroll previo al combate (`act_1.c:313-339`) |
 
 `act_1_scene_4` se deja pendiente; el DSL permite añadirla después sin C (si es lineal)
 o con un hook (si no).
@@ -1064,7 +1064,11 @@ Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + sm
 **Verificación**: rama creada, `docs/refactor/` poblado, build actual funciona.
 **Rollback**: `git checkout master`.
 
-### Fase 1 — Corrección de bugs y baseline
+### ~~Fase 1 — Corrección de bugs y baseline~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: B1-B15 y B19-B26 corregidos (6 commits + 3 de fixes post-test), B16-B18
+> pospuestos según lo decidido, baseline validado por el usuario (incluido re-test
+> dirigido del combate de la escena 5 tras corregir el cuelgue B26).
 
 **Objetivo**: corregir §6 en dos tandas y **fijar el baseline** de comportamiento.
 
@@ -1141,7 +1145,7 @@ atasca, commit intermedio con ese módulo aún en `globals.h` transicional.
 7. Eliminar `patterns.c/.h` y `src/patterns/`.
 
 **Verificación**: los 6 hechizos + fire correctos contra baseline; playtest de
-act1_scene3 (combate) idéntico al baseline.
+act1_scene5 (combate) idéntico al baseline.
 **Rollback**: reset al fin de Fase 3.
 
 ### Fase 5 — Sistema de cutscenes
@@ -1149,11 +1153,11 @@ act1_scene3 (combate) idéntico al baseline.
 1. Structs y VM (§4.2, §4.6): `scene_vm.c/.h`, estado en RAM, tabla lateral de puzzles.
 2. API (`scene_api.c/.h`): wrappers sobre funciones existentes.
 3. Hooks (`scene_hooks.c/.h`): `act1_bedroom_items` (traslada `act_1.c:63-101`),
-   `act1_forest_items`, tabla `scene_hook_table[]`.
+   `act1_corridor_items`, tabla `scene_hook_table[]`.
 4. `gen_scenes.py` (§4.9) con validación fatal de referencias.
 5. Migrar escenas **una a una** con playtest completo tras cada una:
-   scene1 (DSL + hook items), scene2 (DSL + hook items), scene3 (DSL + op `combat` +
-   branches win/lose), scene5 (DSL puro).
+   scene1 (DSL + hook items), scene2 (DSL + hook items), scene3 (DSL puro con
+   choices/branch), scene5 (DSL + op `combat` + hook de setup si hace falta).
 6. `choices.csv` + `gen_choices.py`: mover `act1_choice1[]` de `texts.c` al pipeline.
 7. `main.c`: sustituir el doble `switch` por `scene_run()` según `current_act/scene`.
 8. Eliminar `act_1.c/.h`. Mover `intro` y `geesebumps` a `src/scenes/` como C normal.

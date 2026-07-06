@@ -13,7 +13,7 @@
 - [x] `state_audit.md` generado
 - [x] `bugs.md` generado (B1-B23 con grupos y decisiones)
 - [x] `checklist.md` generado
-- [ ] Playtest inicial del usuario (notas/capturas para baseline.md — puede hacerse durante la Fase 1)
+- [x] Playtest inicial del usuario (notas/capturas para baseline.md — puede hacerse durante la Fase 1)
 
 ## Fase 1 — Bugs y baseline
 
@@ -23,7 +23,7 @@
 - [x] Commit B4 (defeat anim → FSM) + playtest combate
 - [x] Commit B12 (SIDE_* a 3 valores) + playtest diálogos
 - [x] B5/B6 documentados como bloqueantes intencionales
-- [ ] `baseline.md` cerrado (comportamiento de referencia + capturas)
+- [x] `baseline.md` cerrado (comportamiento de referencia + capturas)
 
 ## Fase 2 — Directorios, Makefile y build script
 
