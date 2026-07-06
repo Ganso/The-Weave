@@ -117,7 +117,7 @@ void talk_dialog(const DialogItem *dialog, bool sound_on)    // Display a predef
 {
     reset_character_animations();
     dprintf(2, "Reading text: %s", (char *)dialog->text[game_language]);
-    talk(dialog->face, dialog->side, (char *)dialog->text[game_language], dialog->max_seconds, sound_on);
+    talk(dialog->face, dialog->side != SIDE_RIGHT, (char *)dialog->text[game_language], dialog->max_seconds, sound_on); // B12: LEFT and NONE position left
 }
 
 void talk_cluster(const DialogItem *start, bool sound_on)    // Display several dialog lines
@@ -439,7 +439,7 @@ u8 choice_dialog(const ChoiceItem *item)    // Display a predefined choice dialo
 {
     reset_character_animations();
     dprintf(2, "Displaying choice dialog with %d options\n", item->num_options);
-    u8 result = choice(item->face, item->side, (char **)item->options[game_language], item->num_options, item->max_seconds);
+    u8 result = choice(item->face, item->side != SIDE_RIGHT, (char **)item->options[game_language], item->num_options, item->max_seconds); // B12: LEFT and NONE position left
     return result;
 }
 

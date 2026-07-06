@@ -17,10 +17,7 @@
 #define FACE_swan     3
 #define FACE_none     250
 
-// Sides
-#define SIDE_left     true
-#define SIDE_right    false
-#define SIDE_none     true
+// (B12: removed dead SIDE_left/SIDE_right/SIDE_none — the dialog side vocabulary lives in texts.h)
 
 // Distances for following characters
 #define MAX_FOLLOW_DISTANCE 40

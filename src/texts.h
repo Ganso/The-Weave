@@ -8,9 +8,11 @@
 // Max length of an encoded text line (static buffer in encode_spanish_text)
 #define MAX_ENCODED_TEXT_LEN 256
 
-// Sides
-#define SIDE_LEFT true
-#define SIDE_RIGHT false
+// Dialog side (B12: single 3-value vocabulary; replaces two sets of bool defines
+// where SIDE_none was accidentally equal to SIDE_left)
+#define SIDE_LEFT  0
+#define SIDE_RIGHT 1
+#define SIDE_NONE  2   // positions like LEFT; reserved for dialogs with no speaker side
 
 enum Languages {
     LANG_SPANISH,
@@ -24,7 +26,7 @@ extern u8 game_language;
 
 typedef struct {
     u8 face;
-    bool side;
+    u8 side;          // SIDE_LEFT / SIDE_RIGHT / SIDE_NONE (B12: was bool)
     u16 max_seconds;
     const char *text[NUM_LANGUAGES];
 } DialogItem;
@@ -32,7 +34,7 @@ typedef struct {
 
 typedef struct {
     u8 face;
-    bool side;
+    u8 side;          // SIDE_LEFT / SIDE_RIGHT / SIDE_NONE (B12: was bool)
     u16 max_seconds;
     u8 num_options;
     const char *options[NUM_LANGUAGES][MAX_CHOICES];
