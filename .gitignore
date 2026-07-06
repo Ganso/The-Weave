@@ -61,3 +61,6 @@ Temporary Items
 # Custom
 ff*.exe
 out/*
+
+# Refactor: ROM de referencia local (no versionar binarios)
+docs/refactor/*.bin

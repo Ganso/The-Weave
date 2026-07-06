@@ -1041,9 +1041,14 @@ Se mantiene el estilo vigente del proyecto:
 Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + smoke
 (desde que exista) deben pasar. Si una fase rompe el build, se arregla antes de avanzar.
 
-### Fase 0 — Preparación
+### ~~Fase 0 — Preparación~~ ✔ COMPLETADA (2026-07-06)
 
 **Objetivo**: dejar el terreno listo sin perder el estado actual.
+
+> Hecho: rama `refactor`, build documentado y verificado (Docker SGDK, sin warnings),
+> ROM de referencia en `docs/refactor/rom_pre_refactor.bin` (gitignored), bitácora
+> completa en `docs/refactor/`. Pendiente no bloqueante: playtest inicial del usuario
+> (alimenta `baseline.md` durante la Fase 1).
 
 1. `git checkout -b refactor`.
 2. **Anotar el build actual**: comando exacto de `~/codigo/build-sgdk.sh` que usan las
