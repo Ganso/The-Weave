@@ -8,7 +8,7 @@ void player_sleep_launch(void)
 // Update callback
 bool player_sleep_update(void)
 {
-    const u16 duration = playerPatterns[PATTERN_HIDE].baseDuration;
+    const u16 duration = playerPatterns[PATTERN_SLEEP].baseDuration; // B1: was PATTERN_HIDE (copy-paste)
 
     if (combatContext.effectTimer >= duration)
         return true;        // finished
