@@ -17,12 +17,12 @@
 
 ## Fase 1 — Bugs y baseline
 
-- [ ] Commit A (grupo A): B2*, B7, B8, B9, B10, B11, B13, B14, B15, B19, B20, B21, B22, B23
-- [ ] Commit B1 (duration de sleep) + playtest
-- [ ] Commit B3 (slot del counter) + playtest combate
-- [ ] Commit B4 (defeat anim → FSM) + playtest combate
-- [ ] Commit B12 (SIDE_* a 3 valores) + playtest diálogos
-- [ ] B5/B6 documentados como bloqueantes intencionales
+- [x] Commit A (grupo A): B2*, B7, B8, B9, B10, B11, B13, B14, B15, B19, B20, B21, B22, B23
+- [x] Commit B1 (duration de sleep) + playtest
+- [x] Commit B3 (slot del counter) + playtest combate
+- [x] Commit B4 (defeat anim → FSM) + playtest combate
+- [x] Commit B12 (SIDE_* a 3 valores) + playtest diálogos
+- [x] B5/B6 documentados como bloqueantes intencionales
 - [ ] `baseline.md` cerrado (comportamiento de referencia + capturas)
 
 ## Fase 2 — Directorios, Makefile y build script
