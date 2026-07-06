@@ -573,10 +573,14 @@ void check_pattern_status(void)
 void update_life_counter(void) {
     u16 life_counter = 0;
 
-    // Check if there's a hurt enemy
+    // Check if there's a hurt enemy (must be alive: a dying enemy has 0 HP and STATE_HIT
+    // while its death animation plays — hitpoints-1 would underflow to anim 255 and
+    // corrupt the sprite engine. Also require active to ignore stale released slots.)
     u8 nenemy = ENEMY_NONE;
     for (u8 i = 0; i < MAX_ENEMIES; i++) {
-        if (obj_enemy[i].obj_character.state == STATE_HIT) {
+        if (obj_enemy[i].obj_character.active &&
+            obj_enemy[i].hitpoints > 0 &&
+            obj_enemy[i].obj_character.state == STATE_HIT) {
             nenemy = i; // Found an enemy that is hit
             break;
         }
@@ -585,9 +589,11 @@ void update_life_counter(void) {
         // If no enemy is hit, use the active enemy from combat context
         nenemy = combatContext.activeEnemy;
     }
-    
-    // If there's no attackers, release the sprites if it exists and return
-    if (nenemy == ENEMY_NONE) {
+
+    // If there's no attackers (or the candidate is gone or dying), release the sprite and return
+    if (nenemy == ENEMY_NONE ||
+        !obj_enemy[nenemy].obj_character.active ||
+        obj_enemy[nenemy].hitpoints == 0) {
         if (spr_int_life_counter != NULL) {
             SPR_releaseSprite(spr_int_life_counter);
             spr_int_life_counter = NULL;
