@@ -26,7 +26,7 @@ extern u16 last_interacted_item; // The item currently interacted by the player
 
 void init_item(u16 nitem, const SpriteDefinition *spritedef, u8 npal, u16 x_in_background, u8 y, u16 collision_width, u16 collision_x_offset, u16 collision_height, u16 collision_y_offset, u8 check_depth); // Initialize an item
 void release_item(u16 nitem); // Release an item
-void display_item_if_visible(u16 nitem); // Hide or display an item deTODO if the X coordinate is visible in the screen
+void display_item_if_visible(u16 nitem); // Hide or display an item depending on whether the X coordinate is visible in the screen
 void check_items_visibility(void); // Check visibility of every item in screen
 u16 detect_nearby_item(); // Detect if the active character would collide with an object in a nearby position
 

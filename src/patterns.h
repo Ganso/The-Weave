@@ -1,5 +1,5 @@
-#ifndef PATTERNS_H
-#define PATTERNS_H
+#ifndef _PATTERNS_H_
+#define _PATTERNS_H_
 
 #include "globals.h"
 
@@ -13,7 +13,6 @@
 
 /* Max */
 #define MAX_PLAYER_PATTERNS   6   /* maximum slots for player spells     */
-#define MAX_ENEMY_PATTERNS    8   /* maximum slots for enemy spells      */
 
 /* Player patterns  */
 #define PATTERN_THUNDER   0
@@ -29,6 +28,10 @@
 
 #define PATTERN_ENEMY_COUNT   2
 #define PATTERN_ENEMY_NONE    254
+
+// Palette entry helpers shared by pattern effects (B19: were duplicated per pattern file)
+#define PAL_ENTRY(pal,col)  (((pal)<<4)|(col))
+#define PAL0_COL4           PAL_ENTRY(0,4)
 
 // Notes
 #define NOTE_NONE 0
@@ -115,10 +118,11 @@ void hide_enemy_notes(void);          // Temporarily hide enemy note sprites
 void show_enemy_notes(void);          // Restore enemy note sprites
 void init_enemy_patterns(u8 enemyId); // Initialize enemy patterns for a specific enemy slot
 void cancel_enemy_pattern(u8 enemyId); // Reset enemy state after a pattern is finished
+EnemyPattern* get_active_enemy_pattern(u8 enemySlot); // Pattern active in combat for this enemy, by id (no hardcoded slot)
 
 u16 get_last_enemy_pattern(void); // Retrieve the enemy pattern active before player spell
 
 // Note validation
 u16 validate_pattern(const u8 notes[4], bool* reversed); // Cancel an enemy pattern (e.g. if the player counters it)
 
-#endif // PATTERNS_H
+#endif // _PATTERNS_H_

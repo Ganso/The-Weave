@@ -68,22 +68,22 @@ u16 calculate_text_position(const char *text, bool is_face_left, bool has_face)
     else if (!has_face)
         base_pos = 0; // No face, full width centering
 
-    if (encoded_text != NULL)
-        free(encoded_text);
-
     return base_pos + centered_pos;
 }
 
 char* encode_spanish_text(const char* input) {
+    // Static buffer: no malloc/free on the 64KB RAM (B7). The encoded text is never
+    // longer than the input, so len+1 bytes are always enough. Each call overwrites
+    // the previous result: consume it before encoding another text.
+    static char encoded[MAX_ENCODED_TEXT_LEN];
+
     if (input == NULL) {
         return NULL;
     }
 
     size_t len = strlen(input);
-    char* result = (char*)malloc(len + 1); // +1 for the null terminator
-    if (result == NULL) {
-        return NULL; // Memory allocation failed
-    }
+    if (len >= MAX_ENCODED_TEXT_LEN) len = MAX_ENCODED_TEXT_LEN - 1; // Defensive truncation
+    char* result = encoded;
 
     size_t i = 0;
     size_t j = 0;

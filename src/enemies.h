@@ -9,10 +9,9 @@
 #define ENEMY_NONE 254
 #define MAX_PATTERN_ENEMY 2
 
-// Enemy classes
+// Enemy classes (B21: removed unimplemented 3-head-monkey class; re-add classes here when their art exists)
 #define MAX_ENEMY_CLASSES 10
 #define ENEMY_CLS_WEAVERGHOST    0
-#define ENEMY_CLS_3HEADMONKEY  1
 
 // Enemy modes
 typedef enum {

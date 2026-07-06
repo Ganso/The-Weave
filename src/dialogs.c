@@ -263,10 +263,6 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool so
         }
     }
 
-    if (encoded_text != NULL) {
-        free(encoded_text);
-    }
-
     // Hide and release fade-in sprite
     SPR_setVisibility(spr_fadein, HIDDEN);
     SPR_releaseSprite(spr_fadein);
@@ -332,10 +328,6 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
             if (encoded_text != NULL) len_text = encoded_text;
         }
         choice_lenght[i] = visible_length(len_text);
-        if (encoded_text != NULL) {
-            free(encoded_text);
-            encoded_text = NULL;
-        }
 
         // Center text (calculate position based on plain text)
         if(nface != FACE_none) {

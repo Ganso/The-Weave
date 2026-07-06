@@ -23,7 +23,8 @@ void update_enemy_shadow(u16 nenemy)    // Update shadow sprite position based o
 void init_enemy_classes(void)    // Setup enemy class definitions with HP, patterns, and behavior
 {
     obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, false, 0, {true, false}}; // 2 HP, can use electric pattern, don't follow
-    obj_enemy_class[ENEMY_CLS_3HEADMONKEY]=(Enemy_Class) {3, true, 3, {false, true}}; // 3 HP, can use bite pattern, follows at speed 3
+    // Note (B2, decision refactorizar.md §15): no class enables the bite pattern for now.
+    // Enabling it back is a game-design decision: set has_pattern[PATTERN_EN_BITE] and playtest recharge.
 }
 
 
@@ -48,10 +49,6 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
         nsprite = &weaver_ghost_sprite;
         nsprite_shadow = NULL;
         drops_shadow=false;
-        break;
-    case ENEMY_CLS_3HEADMONKEY:
-        // nsprite = &three_head_monkey_sprite;
-        // nsprite_shadow = &three_head_monkey_sprite_shadow;
         break;
     default:
         return;

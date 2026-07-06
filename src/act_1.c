@@ -61,7 +61,7 @@ void act_1_scene_1(void)    // Bedroom scene with swan's visit and pattern learn
     movement_active=true;
 
     bool item_interacted[4]={false,false,false,false};
-    bool scene_timeout=0;
+    u16 scene_timeout=0; // Frame counter (B23: was bool, worked only because SGDK bool is u8)
     while (scene_timeout<(SCREEN_FPS*3)) // Scene ends 3 seconds after interacting the cabinet
     {
         switch (last_interacted_item) // Process item interactions

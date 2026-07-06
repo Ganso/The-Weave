@@ -1,5 +1,5 @@
-#ifndef PATTERN_OPEN_H
-#define PATTERN_OPEN_H
+#ifndef _PATTERN_OPEN_H_
+#define _PATTERN_OPEN_H_
 
 #include "globals.h"
 
@@ -13,4 +13,4 @@ bool player_open_update(void);
 // Check if the pattern can be used
 bool player_open_can_use(void);
 
-#endif // PATTERN_OPEN_H
+#endif // _PATTERN_OPEN_H_

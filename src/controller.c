@@ -2,8 +2,6 @@
 
 void joy_check(void)    // Process joystick input each frame for movement, actions, and pause
 {
-    static u16 frame_counter = 0;
-    frame_counter++;
     
     // Read the current state of the joystick
     u16 joy_value = JOY_readJoypad(JOY_ALL);
@@ -225,6 +223,8 @@ void handle_pause_button(u16 joy_value)    // Handle START button press to show 
 }
 
 // Check follower distance when scrolling and wait if they lag behind
+// NOTE (B6): this function BLOCKS, calling next_frame() while waiting.
+// This is intentional: it runs inside the interactive movement flow and relies on it.
 void wait_for_followers(s16 dx)
 {
     for (u16 chr = 0; chr < MAX_CHR; chr++)

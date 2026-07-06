@@ -298,7 +298,7 @@ void approach_characters(void)    // Move NPCs that follow the hero
 {
     u16 nchar;
     s16 newx, newy;
-    s16 dx, dy;
+    s16 dx; // B24: removed dead 'dy' (was set but never read)
     bool has_moved;
     u16 distance;
 
@@ -334,7 +334,6 @@ void approach_characters(void)    // Move NPCs that follow the hero
                                (dy_fixed > 0 ? step : (dy_fixed < 0 ? -step : 0));
         // Use integer coordinates for distance check and logs
         dx = FASTFIX32_TO_INT(dx_fixed);
-        dy = FASTFIX32_TO_INT(dy_fixed);
         newx = FASTFIX32_TO_INT(newx_fixed);
         newy = FASTFIX32_TO_INT(newy_fixed);
 

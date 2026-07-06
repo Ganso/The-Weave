@@ -241,7 +241,11 @@ SpriteState* hide_all_sprites(u16* count)    // Hide all active sprites and save
     
     // Allocate memory for the state array
     SpriteState* states = MEM_alloc(spriteCount * sizeof(SpriteState));
-    
+    if (states == NULL) { // B9: out of memory, leave sprites untouched
+        *count = 0;
+        return NULL;
+    }
+
     // Return to the first sprite
     currentSprite = firstSprite;
     u16 index = 0;
@@ -267,6 +271,10 @@ SpriteState* hide_interface_sprites(void)    // Hide HUD/interface sprites only
     u16 index = 0;
     const u16 spriteCount = 1 + 6 + 6 + 6 + 1 + MAX_PLAYER_PATTERNS; // button + rods + enemy rods + pents + life + icons
     SpriteState* states = MEM_alloc(spriteCount * sizeof(SpriteState));
+    if (states == NULL) { // B9: out of memory, leave HUD untouched
+        interface_sprite_count = 0;
+        return NULL;
+    }
 
     // Button A
     states[index].sprite = spr_int_button_A;
@@ -321,6 +329,8 @@ SpriteState* hide_interface_sprites(void)    // Hide HUD/interface sprites only
 
 void show_interface_sprites(SpriteState* states)    // Restore HUD/interface sprites
 {
+    if (states == NULL) return; // B9: nothing was saved (alloc failed)
+
     for (u16 i = 0; i < interface_sprite_count; i++)
     {
         if (states[i].sprite != NULL)
@@ -334,6 +344,8 @@ void show_interface_sprites(SpriteState* states)    // Restore HUD/interface spr
 
 void restore_sprites_visibility(SpriteState* states, u16 count)    // Restore previously saved sprite visibility states
 {
+    if (states == NULL) return; // B9: nothing was saved (alloc failed)
+
     for (u16 i = 0; i < count; i++) {
         if (states[i].sprite != NULL) {
             SPR_setVisibility(states[i].sprite, states[i].visibility);

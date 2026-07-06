@@ -1,7 +1,6 @@
 #include "globals.h"
 
-#define PAL_ENTRY(pal, col)   (((pal) << 4) | (col)) 
-#define PAL0_COL4             PAL_ENTRY(0, 4)
+// PAL_ENTRY / PAL0_COL4 now live in patterns.h (B19)
 #define COLOR_WHITE_VDP  RGB24_TO_VDPCOLOR(0xFFFFFF)
 
 static u16 savedColor; // original colour in CRAM before the flash

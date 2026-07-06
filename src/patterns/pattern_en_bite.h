@@ -1,5 +1,5 @@
-#ifndef PATTERN_EN_BITE_H
-#define PATTERN_EN_BITE_H
+#ifndef _PATTERN_EN_BITE_H_
+#define _PATTERN_EN_BITE_H_
 
 #include "globals.h"
 

@@ -5,6 +5,9 @@
 #define NUM_LANGUAGES 2
 #define MAX_CHOICES 4
 
+// Max length of an encoded text line (static buffer in encode_spanish_text)
+#define MAX_ENCODED_TEXT_LEN 256
+
 // Sides
 #define SIDE_LEFT true
 #define SIDE_RIGHT false

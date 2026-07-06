@@ -39,6 +39,16 @@ static inline EnemyPattern* get_enemy_pattern(u8 slot, u8 pslot)
            : NULL;
 }
 
+// Find the enemy pattern currently active in combat, by its id (B2/B3: no hardcoded slot)
+EnemyPattern* get_active_enemy_pattern(u8 enemySlot)
+{
+    if (enemySlot >= MAX_ENEMIES) return NULL;
+    for (u8 p = 0; p < MAX_PATTERN_ENEMY; ++p)
+        if (enemyPatterns[enemySlot][p].id == combatContext.activePattern)
+            return &enemyPatterns[enemySlot][p];
+    return NULL;
+}
+
 static inline bool player_pattern_enabled(u16 id)
 {
     PlayerPattern* p = get_player_pattern(id);
@@ -544,9 +554,9 @@ void launch_enemy_pattern(u8 enemySlot, u16 patternSlot)
 // ---------------------------------------------------------------------
 bool update_enemy_pattern(u8 enemySlot)
 {
-    EnemyPattern *pat = &enemyPatterns[enemySlot][0]; // Active pattern in slot 0
+    EnemyPattern *pat = get_active_enemy_pattern(enemySlot); // B2: was hardcoded slot 0
 
-    if (!pat->enabled) return true;
+    if (!pat || !pat->enabled) return true;
 
     switch (combat_state)
     {

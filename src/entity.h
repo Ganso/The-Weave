@@ -15,17 +15,13 @@ typedef s32 fastfix32;                       // 16.16 fixed point value
 #define FASTFIX32_FROM_INT(v) ((fastfix32)((v) << 16))
 #define FASTFIX32_TO_INT(v)   ((s16)((v) >> 16))
 
-// Entities states
+// Entities states (B20: removed unused values PATTERN_FINISHED, PATTERN_CHECK, ATTACK_FINISHED, FOLLOWING)
 typedef enum {
     STATE_IDLE,
     STATE_WALKING,
     STATE_PLAYING_NOTE,
-    STATE_PATTERN_FINISHED,
-    STATE_PATTERN_CHECK,
     STATE_PATTERN_EFFECT,
     STATE_PATTERN_EFFECT_FINISH,
-    STATE_ATTACK_FINISHED,
-    STATE_FOLLOWING,
     STATE_HIT,
 } GameState;
 

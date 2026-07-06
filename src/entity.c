@@ -2,6 +2,8 @@
 
 bool movement_active;    // Whether entity movement is currently allowed
 
+// NOTE (B5): this function BLOCKS, calling next_frame() once per movement step.
+// This is intentional: cutscene code invokes it in a blocking context and relies on it.
 void move_entity(Entity *entity, Sprite *sprite, fastfix32 newx, fastfix32 newy)    // Move entity to new position with smooth animation and shadow updates
 {
     u16 nchar = CHR_NONE;

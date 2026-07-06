@@ -1,5 +1,5 @@
-#ifndef PATTERN_SLEEP_H
-#define PATTERN_SLEEP_H
+#ifndef _PATTERN_SLEEP_H_
+#define _PATTERN_SLEEP_H_
 
 #include "globals.h"
 
@@ -13,4 +13,4 @@ bool player_sleep_update(void);
 // Check if the pattern can be used
 bool player_sleep_can_use(void);
 
-#endif // PATTERN_SLEEP_H
+#endif // _PATTERN_SLEEP_H_

@@ -45,7 +45,7 @@ void next_frame(bool interactive)    // Process next frame with optional interac
     update_sprites_depth();
     SPR_update();
 
-    // Create an RNG seed deTODO of the number of frames
+    // Create an RNG seed depending on the number of frames
     frame_counter++;
     
     // Wait for next frame

@@ -3,9 +3,7 @@
 // Local data
 static bool flashOn;        // TRUE = CRAM entry is white, FALSE = original
 
-// Macro helpers
-#define PAL_ENTRY(pal,col)  (((pal)<<4)|(col))
-#define PAL0_COL4           PAL_ENTRY(0,4)
+// Macro helpers (PAL_ENTRY / PAL0_COL4 now live in patterns.h — B19)
 #define COLOR_INITIAL_SKY     RGB24_TO_VDPCOLOR(0x1585c2) // Initial sky color
 #define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0x4444a3) // Flash color for enemy thunder
 
