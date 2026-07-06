@@ -1,7 +1,9 @@
 #ifndef _PATTERNS_H_
 #define _PATTERNS_H_
 
-#include "globals.h"
+#include <genesis.h>
+#include "actors/enemies.h"   // MAX_ENEMIES, MAX_PATTERN_ENEMY
+#include "core/frame.h"       // SCREEN_FPS (macros de timing)
 
 // Include all patern headers
 #include "patterns/pattern_open.h"

@@ -51,7 +51,7 @@ Usage:
     python add_texts_comments.py <file>  
     python add_texts_comments.py *  
 
-This script reads the dialog texts from texts.c and texts_generated.c and adds
+This script reads the dialog texts from texts.c and texts_data.c and adds
 comments to talk_dialog(), talk_cluster() and choice_dialog() calls.
 """)  
 
@@ -332,10 +332,10 @@ def process_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values,
 def process_all_files():
     """Process all C source files and report orphan texts."""
     dialog_texts, choice_texts, cluster_texts = parse_texts([
-        "src/texts.c",
-        "src/texts_generated.c",
+        "src/narrative/texts.c",
+        "src/narrative/texts_data.c",
     ])
-    enum_values = parse_enum_values("src/texts_generated.h")
+    enum_values = parse_enum_values("src/narrative/texts_data.h")
     used = set()
 
     for root, _, files in os.walk("src"):
@@ -369,10 +369,10 @@ def main():
             print(f"Error: File {c_file} not found")  
             return  
         dialog_texts, choice_texts, cluster_texts = parse_texts([
-            "src/texts.c",
-            "src/texts_generated.c",
+            "src/narrative/texts.c",
+            "src/narrative/texts_data.c",
         ])
-        enum_values = parse_enum_values("src/texts_generated.h")
+        enum_values = parse_enum_values("src/narrative/texts_data.h")
         dummy_used = set()
         process_file(c_file, dialog_texts, choice_texts, cluster_texts, enum_values, dummy_used)
 

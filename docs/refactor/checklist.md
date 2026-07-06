@@ -35,13 +35,13 @@
 
 ## Fase 3 — Partición de src/ + includes explícitos
 
-- [ ] Subcarpetas por dominio; `git mv` de todos los módulos
-- [ ] `frame.c/.h`, `config.h`, `hack.h` extraídos de globals
-- [ ] `constants_*.h` por dominio
-- [ ] `encode.c/.h` extraído de texts; `texts_generated` → `texts_data`
-- [ ] Includes explícitos en todo salvo `patterns*`/`act_1*` (globals.h transicional)
-- [ ] Diagramas de arquitectura en `entity.h` y `combat.h`
-- [ ] Build + playtest de las 4 escenas contra baseline
+- [x] Subcarpetas por dominio; `git mv` de todos los módulos
+- [x] `frame.c/.h`, `config.h`, `hack.h` extraídos de globals
+- [x] `constants_*.h` por dominio (AJUSTE: las constantes ya viven agrupadas en el .h de cada módulo — estilo del autor; se crean constants_*.h solo si un dominio lo pide en Fases 4-5)
+- [x] `encode.c/.h` extraído de texts; `texts_generated` → `texts_data`
+- [x] Includes explícitos en todo salvo `patterns*`/`act_1*` (globals.h transicional)
+- [x] Diagramas de arquitectura en `entity.h` y `combat.h`
+- [x] Build + playtest de las 4 escenas contra baseline
 
 ## Fase 4 — Motor de hechizos
 

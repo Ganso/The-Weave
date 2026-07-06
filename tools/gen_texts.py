@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# gen_texts.py – convierte data/texts.csv (+ data/clusters.csv) en src/texts_generated.{h,c}
+# gen_texts.py – convierte data/texts.csv (+ data/clusters.csv) en src/narrative/texts_data.{h,c}
 # Ejecutar desde la raíz del repo: python3 tools/gen_texts.py
 import csv
 import os
@@ -8,8 +8,8 @@ from collections import OrderedDict, defaultdict
 
 CSV_FILE      = 'data/texts.csv'
 CLUSTERS_FILE = 'data/clusters.csv'
-HEADER_FILE   = 'src/texts_generated.h'
-SOURCE_FILE   = 'src/texts_generated.c'
+HEADER_FILE   = 'src/narrative/texts_data.h'
+SOURCE_FILE   = 'src/narrative/texts_data.c'
 
 # ------------------------------------------------------------
 # Utilidades
@@ -74,11 +74,12 @@ if os.path.exists(CLUSTERS_FILE):
         clusters = list(csv.DictReader(f))
 
 # ------------------------------------------------------------
-# 3. Generar texts_generated.h
+# 3. Generar texts_data.h
 # ------------------------------------------------------------
 with open(HEADER_FILE, 'w', encoding='utf-8') as h:
     h.write('// Auto-generated from texts.csv and clusters.csv – DO NOT EDIT\n')
-    h.write('#ifndef TEXTS_GENERATED_H\n#define TEXTS_GENERATED_H\n\n')
+    h.write('#ifndef _TEXTS_DATA_H_\n#define _TEXTS_DATA_H_\n\n')
+    h.write('#include "narrative/texts.h"\n\n')
 
     # 3a. Enum de IDs por set
     for s, rows in sets.items():
@@ -110,14 +111,14 @@ with open(HEADER_FILE, 'w', encoding='utf-8') as h:
             h.write(f'    {cl["cluster"]},\n')
         h.write('    CLUSTER_COUNT\n};\n\n')
 
-    h.write('#endif // TEXTS_GENERATED_H\n')
+    h.write('#endif // _TEXTS_DATA_H_\n')
 
 # ------------------------------------------------------------
-# 4. Generar texts_generated.c
+# 4. Generar texts_data.c
 # ------------------------------------------------------------
 with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
     c.write('// Auto-generated from texts.csv and clusters.csv – DO NOT EDIT\n')
-    c.write('#include "globals.h"\n#include "texts_generated.h"\n\n')
+    c.write('#include <genesis.h>\n#include "narrative/texts.h"\n#include "narrative/texts_data.h"\n#include "actors/characters.h"\n#include "narrative/dialogs.h"\n\n')
 
     # 4a. Arrays de cada set ---------------------------------------------------
     for s, rows in sets.items():

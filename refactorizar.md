@@ -1117,7 +1117,17 @@ Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + sm
 `tools/`, `gibberish/` no existe.
 **Rollback**: reset al commit de fin de Fase 1.
 
-### Fase 3 — Partición de `src/` + includes explícitos (salvo módulos condenados)
+### ~~Fase 3 — Partición de `src/` + includes explícitos (salvo módulos condenados)~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: src/ particionado en core/world/actors/combat/narrative/scenes/interface/audio
+> (git mv, historia conservada); globals.c partido en core/frame.c + core/config.h +
+> core/hack.h (con HACK_START_SCENE, el toggle que nació en la caza del cuelgue);
+> encode.c/.h extraído de texts.c; texts_generated → narrative/texts_data (generador
+> y add_texts_comments.py actualizados); 16 .c con includes explícitos y 14 .h
+> auto-contenidos; globals.h reducido a umbrella transicional solo para patterns*/act_1*;
+> diagramas de arquitectura en entity.h y combat.h. Ajuste documentado: sin
+> constants_*.h por dominio (las constantes ya viven en el .h de cada módulo, estilo
+> del autor). Build release limpio, 0 warnings.
 
 **La fase más larga.** Sub-commits por módulo, build tras cada uno.
 
