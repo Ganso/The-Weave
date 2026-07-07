@@ -6,7 +6,7 @@
 # Salida: out/rom.bin
 #
 # Uso:
-#   ./build-theweave.sh [build|release|full|clean] [--no-run|-n]
+#   ./build-theweave.sh [build|release|full|clean|smoke] [--no-run|-n]
 #
 #   --no-run / -n  →  Compila (y hace backup) pero NO lanza MiSTer ni BlastEm.
 #                     Pensado para pruebas automatizadas / CI / verificación de build.
@@ -71,7 +71,7 @@ RUN_EMULATOR=true
 for arg in "$@"; do
     case "$arg" in
         --no-run|-n|norun|no-run) RUN_EMULATOR=false ;;
-        clean|release|full|build) MODE="$arg" ;;
+        clean|release|full|build|smoke) MODE="$arg" ;;
     esac
 done
 
@@ -114,6 +114,14 @@ case "$MODE" in
         echo -e "${YELLOW}🔨 Compilando (release)...${NC}"
         $DOCKER_RUN clean && $DOCKER_RUN release
         ;;
+    smoke)
+        # El flag cambia el binario entero: siempre clean + release
+        echo -e "${YELLOW}🔨 Compilando smoke ROM (-DHACK_SMOKE_BUILD)...${NC}"
+        $DOCKER_RUN clean && $DOCKER_RUN release EXTRA_FLAGS=-DHACK_SMOKE_BUILD
+        mv out/rom.bin out/smoke.bin
+        echo -e "${GREEN}📦 Smoke ROM: out/smoke.bin${NC}"
+        echo -e "${YELLOW}⚠ out/ contiene objetos smoke: haz 'release' antes del siguiente build normal.${NC}"
+        ;;
     build|*)
         echo -e "${YELLOW}🔨 Compilando (incremental)...${NC}"
         $DOCKER_RUN release
@@ -121,7 +129,11 @@ case "$MODE" in
 esac
 
 # --- 4. GESTIÓN DE BINARIOS LOCALES (Backup con fecha, mantiene 5) ---
-if [ -f "out/rom.bin" ]; then
+ROM_FILE="out/rom.bin"
+if [ "$MODE" = "smoke" ]; then ROM_FILE="out/smoke.bin"; fi
+if [ "$MODE" = "smoke" ] && [ -f "$ROM_FILE" ]; then
+    : # sin backup rotatorio para la smoke ROM
+elif [ -f "out/rom.bin" ]; then
     ROM_SIZE=$(du -h out/rom.bin | cut -f1)
     echo -e "${GREEN}📦 ROM generada: out/rom.bin ($ROM_SIZE)${NC}"
 
@@ -144,6 +156,10 @@ fi
 if [ "$RUN_EMULATOR" = false ]; then
     echo -e "${GREEN}✓ Build completado (--no-run). Sin ejecutar emulador/MiSTer.${NC}"
     exit 0
+fi
+
+if [ "$MODE" = "smoke" ]; then
+    MISTER_ONLINE=false   # la smoke ROM siempre a BlastEm
 fi
 
 if [ "$MISTER_ONLINE" = true ]; then
@@ -173,6 +189,6 @@ else
         exit 1
     fi
     echo -e "${CYAN}🕹 Lanzando BlastEm ($BLASTEM_CMD)...${NC}"
-    "$BLASTEM_CMD" "out/rom.bin"
+    "$BLASTEM_CMD" "$ROM_FILE"
     echo -e "${GREEN}✨ ¡The Weave en BlastEm!${NC}"
 fi

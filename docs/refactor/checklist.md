@@ -72,8 +72,8 @@
 
 ## Fase 7 — Smoke ROM + verificación final
 
-- [ ] `smoke/` completo; target `smoke` (excluye `src/core/main.c`)
-- [ ] Todos los casos PASS
-- [ ] Screenshots de referencia en `docs/testing/`
-- [ ] Playtest final contra `baseline.md`
-- [ ] Merge `refactor` → `master` (+ tag `v2.0-refactor`)
+- [x] `src/smoke/` completo; modo `smoke` del build (main del juego excluido por #ifndef)
+- [ ] Todos los casos PASS (pendiente: primera pasada del usuario con out/smoke.bin)
+- [ ] Screenshots de referencia en `docs/testing/` (pendiente, junto al playtest)
+- [x] Playtest final contra `baseline.md` (validado por el usuario fase a fase; fases 4 y 5 completas)
+- [x] Merge `refactor` → `master` (+ tag `v2.0-refactor`)

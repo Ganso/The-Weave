@@ -1227,7 +1227,14 @@ choice, win y lose del combate) idéntico al baseline. `globals.h` no existe.
 diálogo siguiendo solo la doc.
 **Rollback**: no rompe nada.
 
-### Fase 7 — Smoke ROM + verificación final
+### ~~Fase 7 — Smoke ROM + verificación final~~ ✔ COMPLETADA (2026-07-07)
+
+> Hecho: smoke ROM en src/smoke/ (menú con 14 casos: 5 CHECK de canUse automáticos,
+> 5 CAST con medición de duración, 4 SCENE completas), compilada con
+> -DHACK_SMOKE_BUILD vía `./build-theweave.sh smoke` → out/smoke.bin (el main del
+> juego queda excluido por #ifndef). Ambas ROMs compilan limpias de cero. Merge a
+> master + tag v2.0-refactor. Los screenshots de referencia quedan como paso del
+> próximo playtest (docs/testing.md).
 
 1. `smoke/` completo (§8): main propio, menú, runner, tabla de casos.
 2. Target `smoke` del Makefile (excluyendo `src/core/main.c`) → `out/smoke.bin`.

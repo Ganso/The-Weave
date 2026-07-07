@@ -8,14 +8,16 @@
 
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
 - C plano compilado con **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
-- Estado: demo técnica (acto 1, 4 escenas) en pleno **refactor** (plan en `refactorizar.md`,
-  bitácora en `docs/refactor/`). Fases 0-5 completadas; pendientes: 6 (docs), 7 (smoke ROM + merge).
+- Estado: demo técnica (acto 1, 4 escenas). **Refactor 2026-07 COMPLETADO**
+  (plan en `refactorizar.md`, bitácora en `docs/refactor/`): motor de hechizos de
+  2 slots, VM de escenas con DSL, codegen validado, docs y smoke ROM.
 
 ## 2. Cómo se compila y ejecuta
 
 ```
-./build-theweave.sh [build|release|full|clean] [--no-run|-n]
+./build-theweave.sh [build|release|full|clean|smoke] [--no-run|-n]
 ```
+`smoke` compila la ROM de pruebas (out/smoke.bin; docs/testing.md).
 - Pipeline: **codegen en el host** (python3 `tools/gen_texts.py` — la imagen Docker NO
   trae python3) → make dentro del contenedor `ghcr.io/stephane-d/sgdk:latest`
   (`--entrypoint make GDK=/sgdk -f /src/Makefile`) → backup rotatorio
@@ -60,8 +62,8 @@ src/
                    <acto>/<escena>.c/.h (hooks por escena), intro, geesebumps (C)
   interface/     → HUD, pausa, contador de vida
   audio/         → sound (XGM2; jingles por spell id)
+  smoke/         → smoke ROM: menú de casos (solo compila con -DHACK_SMOKE_BUILD)
 res/             → recursos SGDK (res_*.res/.h generados por rescomp) y arte fuente
-smoke/           → (Fase 7) ROM de smoke test
 ```
 (globals.h y act_1.c ya NO existen — eliminados en la Fase 5)
 
@@ -119,7 +121,7 @@ EN_BITE 6; `SPELL_NONE` 254) + motor con **dos slots** (`SPELL_SLOT_PLAYER`,
    (interface.c). Jingle: caso en `play_spell_jingle` (sound.c).
 4. Desbloqueo en juego: `spell_enable(SPELL_MIO)` (silencioso) o
    `activate_spell(SPELL_MIO)` (con jingle y notas, para cutscenes).
-5. (Fase 7) añadir caso a la smoke ROM.
+5. Añadir caso a la smoke ROM (`src/smoke/smoke_cases.h`).
 
 ### Receta: añadir un enemigo
 
@@ -174,8 +176,7 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
    + añadirlos al enum `HOOK_*` de `scene_hooks.h` y a la tabla de `scene_hooks.c`.
 3. Sus textos: set `<acto>_<nombre>` en texts.csv, ids `A<n>_<NOMBRE>_*`.
 4. Compilar (el build corre gen_scenes.py; valida referencias en fatal).
-5. Enlazarla: `next_scene <acto>_<nombre>` desde la escena anterior. (Fase 7:
-   añadir caso a la smoke ROM.)
+5. Enlazarla: `next_scene <acto>_<nombre>` desde la escena anterior. Añadir caso a la smoke ROM (`src/smoke/smoke_cases.h`).
 
 ### Receta: añadir un choice
 

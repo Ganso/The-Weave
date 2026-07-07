@@ -11,6 +11,8 @@
 #include "narrative/texts.h"
 
 
+#ifndef HACK_SMOKE_BUILD // en la smoke ROM el main vive en src/smoke/smoke_main.c
+
 int main(bool hard)    // Main game loop - handles initialization and scene transitions
 {
     dprintf(1,"The Weave - %s",GAMEVERSION);
@@ -40,3 +42,5 @@ int main(bool hard)    // Main game loop - handles initialization and scene tran
         scene_run(&scenes[current_scene_id]);
     }
 }
+
+#endif // HACK_SMOKE_BUILD
