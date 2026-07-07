@@ -69,7 +69,7 @@ OPS = {
     'say_cluster':  ('SCENE_OP_SAY_CLUSTER',  ['dialogset', 'dialogid', 'sound?']),
     'say_response': ('SCENE_OP_SAY_RESPONSE', ['dialogset', 'dialogid', 'sound?']),
     'choice':       ('SCENE_OP_CHOICE',       ['choiceset', 'int']),
-    'branch':       ('SCENE_OP_BRANCH',       ['int', 'label']),
+    'branch':       ('SCENE_OP_BRANCH',       ['int', 'kwgoto', 'label']),
     'goto':         ('SCENE_OP_GOTO',         ['label']),
     'move':         ('SCENE_OP_MOVE',         ['verbatim', 'int', 'int']),
     'move_instant': ('SCENE_OP_MOVE_INSTANT', ['verbatim', 'int', 'int']),
@@ -86,7 +86,10 @@ OPS = {
     'next_scene':   ('SCENE_OP_NEXT_SCENE',   ['scene']),
     'hard_reset':   ('SCENE_OP_HARD_RESET',   []),
     'end':          ('SCENE_OP_END',          []),
+    'wait_puzzle':  ('SCENE_OP_WAIT_PUZZLE',  ['puzzletag']),
+    'if_puzzle_solved': ('SCENE_OP_IF_PUZZLE_SOLVED', ['puzzletag', 'kwgoto', 'label']),
 }
+PUZZLE_SEQ_MAX = 4
 FLAGS = {'movement': 'SCENE_FLAG_MOVEMENT', 'scroll': 'SCENE_FLAG_SCROLL',
          'interface': 'SCENE_FLAG_INTERFACE', 'spells': 'SCENE_FLAG_SPELLS'}
 
@@ -99,11 +102,14 @@ def scene_name_of(path):
     base = os.path.splitext(os.path.basename(path))[0]
     return f"{actdir}_{base}"
 
+puzzle_seqs = []   # global: cada entrada es {'spells': [(SPELL_X, 0|1), ...]}
+
 def parse_scene(path, all_scene_names):
     fname = scene_name_of(path)
     scene_name = None
     steps = []      # (opcode, [args C], línea, label_pendiente_en_b)
     labels = {}     # nombre -> índice de step
+    puzzle_tags = {}  # nombre de tag (local a la escena) -> índice en puzzle_seqs
 
     for lineno, raw in enumerate(open(path, encoding='utf-8'), 1):
         line = raw.split('#', 1)[0].strip()
@@ -122,6 +128,25 @@ def parse_scene(path, all_scene_names):
             if len(tok) != 2: die(f"{where}: label necesita un nombre")
             if tok[1] in labels: die(f"{where}: label '{tok[1]}' duplicado")
             labels[tok[1]] = len(steps)   # apunta al siguiente step
+            continue
+
+        if tok[0] == 'puzzle_sequence':
+            # puzzle_sequence <tag> <spell:dir> <spell:dir> ... (2..PUZZLE_SEQ_MAX pasos)
+            if len(tok) < 4: die(f"{where}: puzzle_sequence necesita un tag y al menos 2 pasos spell:dir")
+            tag = tok[1]
+            pairs = tok[2:]
+            if len(pairs) > PUZZLE_SEQ_MAX: die(f"{where}: máximo {PUZZLE_SEQ_MAX} pasos por puzzle")
+            seq = []
+            for pair in pairs:
+                if ':' not in pair: die(f"{where}: '{pair}' debe ser spell:direct|reversed")
+                sp, direc = pair.split(':', 1)
+                spell_c = 'SPELL_' + sp.upper()
+                if spell_c not in valid_spells: die(f"{where}: '{spell_c}' no existe en {SPELLS_HEADER}")
+                if direc not in ('direct', 'reversed'): die(f"{where}: dirección '{direc}' inválida (direct/reversed)")
+                seq.append((spell_c, 1 if direc == 'reversed' else 0))
+            puzzle_tags[tag] = len(puzzle_seqs)
+            puzzle_seqs.append({'spells': seq, 'where': where, 'tag': f"{fname}:{tag}"})
+            steps.append({'op': 'SCENE_OP_PUZZLE_SEQ', 'args': [str(puzzle_tags[tag])], 'label': None, 'where': where})
             continue
 
         if tok[0] not in OPS:
@@ -172,6 +197,13 @@ def parse_scene(path, all_scene_names):
                 if val not in all_scene_names:
                     die(f"{where}: la escena '{val}' no existe en data/scenes/ ({', '.join(sorted(all_scene_names))})")
                 args.append('SCENE_' + val.upper())
+            elif spec_base == 'kwgoto':
+                if val != 'goto': die(f"{where}: se esperaba la palabra 'goto', no '{val}'")
+                # palabra clave sintáctica: no emite argumento
+            elif spec_base == 'puzzletag':
+                if val not in puzzle_tags:
+                    die(f"{where}: el tag de puzzle '{val}' no está definido antes con puzzle_sequence")
+                args.append(str(puzzle_tags[val]))
             elif spec_base == 'zone':
                 if val not in valid_zones: die(f"{where}: '{val}' no existe en {SPELLS_HEADER}")
                 args.append(val)
@@ -234,7 +266,8 @@ with open(HEADER_FILE, 'w', encoding='utf-8') as h:
     h.write('} SceneId;\n\n')
     h.write('extern const SceneScript scenes[];\n')
     h.write('extern const u8 scene_count;\n\n')
-    h.write('s16 scene_id_by_name(const char *name); // SceneId, o -1 si no existe (para hacks/smoke)\n')
+    h.write('s16 scene_id_by_name(const char *name); // SceneId, o -1 si no existe (para hacks/smoke)\n\n')
+    h.write('extern const PuzzleSeq puzzle_seqs[]; // secuencias de puzzle (indexadas por los ops PUZZLE_*)\n')
     h.write('\n#endif // _SCENE_DATA_H_\n')
 
 with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
@@ -261,6 +294,15 @@ with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
     c.write('};\n\n')
     c.write(f'const u8 scene_count = {len(scenes)};\n\n')
 
+    c.write('const PuzzleSeq puzzle_seqs[] = {\n')
+    if puzzle_seqs:
+        for i, pz in enumerate(puzzle_seqs):
+            spells = ', '.join(sp for sp, _ in pz['spells'])
+            revs   = ', '.join(str(r) for _, r in pz['spells'])
+            c.write(f"    {{ {len(pz['spells'])}, {{{spells}}}, {{{revs}}} }}, // {i}: {pz['tag']}\n")
+    else:
+        c.write('    { 0, {0}, {0} } // (sin puzzles definidos)\n')
+    c.write('};\n\n')
     c.write('s16 scene_id_by_name(const char *name)    // SceneId, o -1 si no existe\n{\n')
     c.write('    for (u8 i = 0; i < scene_count; i++)\n')
     c.write('        if (strcmp(scenes[i].name, name) == 0) return i;\n')

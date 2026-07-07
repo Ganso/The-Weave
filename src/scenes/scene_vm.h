@@ -49,7 +49,10 @@ typedef enum {
     SCENE_OP_FADE_OUT     = 18,  // a=frames — PAL_fadeOutAll
     SCENE_OP_NEXT_SCENE   = 19,  // a=SceneId (SCENE_*) — end_level + transición + return
     SCENE_OP_HARD_RESET   = 20,  // SYS_hardReset (final de la demo)
-    SCENE_OP_END          = 21   // return (sin end_level)
+    SCENE_OP_END          = 21,  // return (sin end_level)
+    SCENE_OP_PUZZLE_SEQ   = 22,  // a=índice en puzzle_seqs — activa el puzzle (progreso a 0)
+    SCENE_OP_WAIT_PUZZLE  = 23,  // a=índice — espera interactiva hasta resolverlo
+    SCENE_OP_IF_PUZZLE_SOLVED = 24 // a=índice, b=stepIdx — salta si está resuelto
 } SceneOp;
 
 // Flags del op SET
@@ -61,6 +64,15 @@ typedef enum {
                                 //  a mitad de escena, y los rechazos de hechizo dependen de él)
     SCENE_FLAG_SPELLS    = 3    // player_patterns_enabled
 } SceneFlag;
+
+// Secuencia esperada de un puzzle de hechizos (tabla lateral GENERADA por
+// gen_scenes.py: los pasos no caben en los 4 args s16 de un SceneStep)
+#define PUZZLE_SEQ_MAX 4
+typedef struct {
+    u8 len;                      // nº de pasos de la secuencia (2..PUZZLE_SEQ_MAX)
+    u8 spell[PUZZLE_SEQ_MAX];    // SPELL_* esperado en cada paso
+    u8 reversed[PUZZLE_SEQ_MAX]; // 0=directo, 1=invertido
+} PuzzleSeq;
 
 typedef struct {
     u8  op;         // SceneOp
@@ -78,5 +90,6 @@ extern u8 current_scene_id;  // SceneId de la escena en curso (identificador INT
                              // el juego siempre habla de escenas por NOMBRE)
 
 void scene_run(const SceneScript *s); // Ejecuta una escena completa (bloquea hasta END/NEXT_SCENE)
+void scene_puzzle_notify(u8 spellId, bool reversed); // Lo llama el motor de hechizos al TERMINAR un cast (progreso del puzzle activo)
 
 #endif

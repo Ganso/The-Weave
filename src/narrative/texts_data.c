@@ -240,10 +240,53 @@ const DialogItem act1_bedroom[] = {
     [A1_BEDROOM_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 
+const DialogItem act1_test[] = {
+    [A1_TEST_INTRO] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: Escena de prueba|del motor de escenas",
+         "TEST: Scene engine|test scene"} },
+    [A1_TEST_INTRO_2] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: Se probarán diálogos,|choices, puzzle y combate",
+         "TEST: Dialogs, choices,|puzzle and combat ahead"} },
+    [A1_TEST_TERM_1] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } },
+    [A1_TEST_DEMO_CAST] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: Cast scripted de @[sleep@]|(solo posible por guion)",
+         "TEST: Scripted @[sleep@] cast|(script-only spell)"} },
+    [A1_TEST_CHOICE_R] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: Has elegido|probar el @[puzzle@]",
+         "TEST: You chose|to try the @[puzzle@]"} },
+    [A1_TEST_CHOICE_R2] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: Has elegido|saltar al @[combate@]",
+         "TEST: You chose|to skip to @[combat@]"} },
+    [A1_TEST_PUZZLE_INTRO] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: La puerta pide una|secuencia de tres hechizos",
+         "TEST: The door demands a|three-spell sequence"} },
+    [A1_TEST_PUZZLE_INTRO_2] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: @[Trueno@], luego @[fuego@]|y por último @[esconderse@]",
+         "TEST: @[Thunder@], then @[fire@]|and finally @[hide@]"} },
+    [A1_TEST_TERM_2] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } },
+    [A1_TEST_NEVER] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: ERROR|esto no debería verse",
+         "TEST: ERROR|you should never see this"} },
+    [A1_TEST_PUZZLE_OK] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: ¡Secuencia correcta!|La puerta se abre",
+         "TEST: Correct sequence!|The door opens"} },
+    [A1_TEST_WALK] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: Camina a la derecha|hasta que avance el scroll",
+         "TEST: Walk right until|the screen scrolls"} },
+    [A1_TEST_COMBAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: ¡Un fantasma!|Contrarresta su trueno",
+         "TEST: A ghost!|Counter its thunder"} },
+    [A1_TEST_VICTORY] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEST: Todo probado|Fin de la escena de test",
+         "TEST: All mechanics tested|End of test scene"} },
+    [A1_TEST_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
 const DialogItem *dialogs[] = {
     system_dialog,  // 0
     act1_corridor,  // 1
     act1_hall,  // 2
     act1_forest,  // 3
     act1_bedroom,  // 4
+    act1_test,  // 5
 };

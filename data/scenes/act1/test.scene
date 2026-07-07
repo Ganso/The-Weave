@@ -1,0 +1,66 @@
+# ============================================================================
+# Escena de PRUEBA del motor de escenas — NO enlazada desde el flujo del juego.
+# Se llega con HACK_START_SCENE "act1_test" (core/hack.h) o desde la smoke ROM.
+# Ejercita TODOS los ops del DSL: say/say_cluster/say_response, choice+branch,
+# label/goto, move/move_instant/show/look, wait, set, cast+wait_spell, zone,
+# puzzle (secuencia de 3 hechizos), wait_scroll, combat, fade_out y next_scene.
+# Reutiliza los recursos del pasillo; textos y choices marcados como TEST.
+# ============================================================================
+scene act1_test
+
+call act1_test_setup         # nivel del pasillo + items + Linus/Clio + vara y hechizos
+
+say_cluster ACT1_TEST A1_TEST_INTRO sound
+
+# --- Movimientos, orientación y visibilidad de personajes ---
+move_instant CHR_linus 300 154
+show CHR_linus on
+look CHR_linus left
+move CHR_linus 120 154
+look CHR_linus right
+move_instant CHR_clio 40 154
+show CHR_clio on            # Clio aparece...
+wait 10
+show CHR_clio off           # ...y desaparece (prueba de show on/off)
+
+# --- Cast scripted + wait_spell (sleep SOLO existe por guion) ---
+say ACT1_TEST A1_TEST_DEMO_CAST silent
+cast SPELL_SLEEP direct
+wait_spell
+
+# --- Choice + say_response + branch a label ---
+choice ACT1_TEST_CHOICE 0
+say_response ACT1_TEST A1_TEST_CHOICE_R sound   # respuesta correlativa a la opción
+set movement on
+set scroll on
+set interface on
+branch 1 goto skip_puzzle    # opción 2 = saltar el puzzle e ir directo al combate
+
+# --- PUZZLE: secuencia de 3 hechizos casteados por el jugador ---
+say_cluster ACT1_TEST A1_TEST_PUZZLE_INTRO sound
+zone ZONE_CAULDRON           # fire solo es casteable en esta zona
+set spells on
+puzzle_sequence puerta_test thunder:direct fire:direct hide:direct
+wait_puzzle puerta_test      # el jugador toca las notas; fallar reinicia la secuencia
+if_puzzle_solved puerta_test goto puzzle_ok
+say ACT1_TEST A1_TEST_NEVER silent   # inalcanzable: wait_puzzle ya garantiza resuelto
+label puzzle_ok
+zone ZONE_NONE
+say ACT1_TEST A1_TEST_PUZZLE_OK sound
+
+label skip_puzzle
+# --- Scroll controlado por el jugador ---
+say ACT1_TEST A1_TEST_WALK silent
+set spells on               # (por si se llegó por el atajo del branch)
+wait_scroll 60
+
+# --- COMBATE ---
+say ACT1_TEST A1_TEST_COMBAT sound
+call act1_test_ghost         # aparece un WeaverGhost (recursos del bosque)
+combat
+
+# --- Cierre ---
+set interface off
+say ACT1_TEST A1_TEST_VICTORY sound
+fade_out 60
+next_scene act1_bedroom      # tras el test, el juego continúa en el dormitorio

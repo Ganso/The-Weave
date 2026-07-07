@@ -161,11 +161,17 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
 - La VM (`scene_vm.c`) nunca escribe en los steps (ROM); `last_choice` en RAM; sin
   next_frame entre steps (los ops bloqueantes gestionan sus frames).
 - `main.c` = bucle infinito sobre `scene_lookup(current_act, current_scene)`.
-- Ops de puzzle (secuencias de hechizos): DISEÑADOS en fase5_design.md §7, no
-  implementados aún (no hay puzzles en el guion). `cast/wait_spell/zone` sí están.
+- Puzzles de secuencia: `puzzle_sequence <tag> <spell:dir>...` + `wait_puzzle` +
+  `if_puzzle_solved` (tabla lateral PuzzleSeq generada; el motor de hechizos
+  notifica a la VM en cada cast que termina — scene_puzzle_notify).
 - `say_response` responde con `dialogs[set][base + last_choice]` (respuestas a choices).
 - `set interface off` solo oculta el HUD (NO toca interface_active — asimetría
   deliberada, ver scene_vm.h).
+
+**Escena de test del motor**: `act1_test` (data/scenes/act1/test.scene) ejercita
+TODOS los ops — diálogos, choice+branch, cast scripted, puzzle de 3 hechizos
+(thunder→fire→hide en ZONE_CAULDRON), scroll y combate. No enlazada desde el
+juego: `HACK_START_SCENE "act1_test"` o smoke ROM. Es la chuleta canónica del DSL.
 
 ### Receta: añadir una cutscene
 
@@ -206,7 +212,7 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
   `onFinish`/`hit_enemy`.
 - act1_scene4 no existe (hueco intencional en el guion; el DSL permite añadirla sin C
   si es lineal).
-- Ops de puzzle de la VM pendientes de implementar cuando el guion los pida (§5b).
+- (los ops de puzzle de la VM ya están implementados — escena act1_test como referencia)
 
 ## 8. Voces y arte
 

@@ -33,7 +33,7 @@ verbatim (el compilador valida). `sound`/`silent` opcional en los say (def. sile
 | `say_cluster SET ID [sound]` | | encadena diálogos hasta el TERM |
 | `say_response SET BASE [sound]` | | diálogo `BASE + last_choice` (respuestas) |
 | `choice SET item` | `choice ACT1_HALL_CHOICE 0` | muestra opciones → `last_choice` |
-| `branch n goto <label>` | | salta si `last_choice == n` |
+| `branch <n> goto <label>` | `branch 1 goto atajo` | salta si `last_choice == n` |
 | `label <nombre>` / `goto <nombre>` | | puntos de salto (resueltos por el generador) |
 | `move CHR x y` | `move CHR_linus 200 174` | movimiento andado (bloquea) |
 | `move_instant CHR x y` | | teletransporte |
@@ -46,6 +46,9 @@ verbatim (el compilador valida). `sound`/`silent` opcional en los say (def. sile
 | `cast SPELL [direct/reversed]` | `cast SPELL_OPEN` | cast scripted (sin canUse) |
 | `wait_spell` | | espera a que el hechizo del jugador termine |
 | `zone ZONE_X` | | fija la zona narrativa (canUse de puzzles) |
+| `puzzle_sequence <tag> <spell:dir>...` | `puzzle_sequence puerta thunder:direct fire:direct hide:direct` | define y activa un puzzle de secuencia (2-4 pasos) |
+| `wait_puzzle <tag>` | | el jugador castea libremente hasta completar la secuencia (fallar reinicia) |
+| `if_puzzle_solved <tag> goto <label>` | | salta si el puzzle está resuelto |
 | `fade_out <frames>` | `fade_out 120` | fundido a negro |
 | `next_scene <escena>` | `next_scene act1_hall` | end_level + transición (por NOMBRE) |
 | `hard_reset` | | reset de consola (final de demo) |
@@ -68,3 +71,20 @@ promoverlo a opcode (la VM es extensible: op nuevo = case + entrada en
 labels · sets/ids de diálogo contra texts.csv · choices contra choices.csv ·
 hooks contra scene_hooks.h · spells/zonas contra constants_spells.h · escenas
 de next_scene contra data/scenes/. Todo error corta el build con archivo:línea.
+
+## Puzzles de secuencia de hechizos
+
+`puzzle_sequence` define la secuencia esperada y la activa (un puzzle activo a la
+vez; se resetea al entrar en cualquier escena). Cada cast del jugador (o narrativo)
+que TERMINA de forma natural avanza el progreso si coincide con el paso esperado;
+un cast equivocado reinicia la secuencia (contando como paso 1 si coincide con el
+inicio). Counter y cancelaciones no cuentan. Recuerda habilitar los hechizos
+necesarios en el hook de setup (`spell_enable`) y fijar la zona si algún canUse
+la exige (`zone ZONE_X`).
+
+## Escena de referencia: act1_test
+
+`data/scenes/act1/test.scene` ejercita TODOS los ops del motor (diálogos, choice
+con branch, cast scripted, puzzle de 3 hechizos, scroll, combate). No está
+enlazada desde el juego: se llega con `HACK_START_SCENE "act1_test"` o desde la
+smoke ROM. Úsala como chuleta del DSL y como test de regresión del motor.

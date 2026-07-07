@@ -6,6 +6,7 @@
 
 // Choice sets (índices en choices[])
 #define ACT1_HALL_CHOICE    0
+#define ACT1_TEST_CHOICE    1
 
 extern const ChoiceItem *choices[];
 

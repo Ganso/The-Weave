@@ -6,6 +6,7 @@
 #include "scenes/act1/corridor.h"
 #include "scenes/act1/hall.h"
 #include "scenes/act1/forest.h"
+#include "scenes/act1/test.h"
 
 const SceneHook scene_hook_table[HOOK_COUNT] = {
     [HOOK_ACT1_BEDROOM_SETUP]    = act1_bedroom_setup,

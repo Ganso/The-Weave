@@ -15,6 +15,14 @@ const ChoiceItem act1_hall_choice[] = {
     {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
 };
 
+const ChoiceItem act1_test_choice[] = {
+    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 2,
+        {{ "TEST: Probar el puzzle", "TEST: Saltar al combate"},
+        { "TEST: Try the puzzle", "TEST: Skip to combat"}}},
+    {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
+};
+
 const ChoiceItem *choices[] = {
     act1_hall_choice,   // 0
+    act1_test_choice,   // 1
 };

@@ -9,12 +9,15 @@ typedef enum {
     SCENE_ACT1_CORRIDOR = 1,
     SCENE_ACT1_FOREST = 2,
     SCENE_ACT1_HALL = 3,
-    SCENE_COUNT_TOTAL = 4
+    SCENE_ACT1_TEST = 4,
+    SCENE_COUNT_TOTAL = 5
 } SceneId;
 
 extern const SceneScript scenes[];
 extern const u8 scene_count;
 
 s16 scene_id_by_name(const char *name); // SceneId, o -1 si no existe (para hacks/smoke)
+
+extern const PuzzleSeq puzzle_seqs[]; // secuencias de puzzle (indexadas por los ops PUZZLE_*)
 
 #endif // _SCENE_DATA_H_

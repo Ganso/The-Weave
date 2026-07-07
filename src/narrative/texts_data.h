@@ -105,12 +105,31 @@ enum Act1BedroomId {
     A1_BEDROOM_COUNT = 14
 };
 
+enum Act1TestId {
+    A1_TEST_INTRO = 0,
+    A1_TEST_INTRO_2 = 1,
+    A1_TEST_TERM_1 = 2,
+    A1_TEST_DEMO_CAST = 3,
+    A1_TEST_CHOICE_R = 4,
+    A1_TEST_CHOICE_R2 = 5,
+    A1_TEST_PUZZLE_INTRO = 6,
+    A1_TEST_PUZZLE_INTRO_2 = 7,
+    A1_TEST_TERM_2 = 8,
+    A1_TEST_NEVER = 9,
+    A1_TEST_PUZZLE_OK = 10,
+    A1_TEST_WALK = 11,
+    A1_TEST_COMBAT = 12,
+    A1_TEST_VICTORY = 13,
+    A1_TEST_COUNT = 14
+};
+
 enum DialogSetId {
     SYSTEM_DIALOG,  // 0
     ACT1_CORRIDOR,  // 1
     ACT1_HALL,  // 2
     ACT1_FOREST,  // 3
     ACT1_BEDROOM,  // 4
+    ACT1_TEST,  // 5
     DIALOG_SET_COUNT
 };
 

@@ -145,7 +145,7 @@ act1_choice1,1,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Tengo que ir a la isla,
   `choices_data.h` (`#define ACT1_CHOICE1 0`, movido desde texts.h).
 - `narrative/texts.c` pierde los arrays hardcoded (B-pendiente del plan).
 
-## 7. Puzzles de secuencia (diseñado, se implementa cuando el guion lo pida)
+## 7. Puzzles de secuencia — IMPLEMENTADO (2026-07-07, escena act1_test)
 
 Tabla lateral generada (los pasos no caben en 4 args s16):
 ```c

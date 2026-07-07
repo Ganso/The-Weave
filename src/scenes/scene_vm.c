@@ -6,6 +6,7 @@
 #include "core/init.h"
 #include "scenes/scene_vm.h"
 #include "scenes/scene_hooks.h"
+#include "scenes/scene_data.h"
 #include "narrative/texts.h"
 #include "narrative/texts_data.h"
 #include "narrative/choices_data.h"
@@ -20,6 +21,38 @@
 
 u8 last_choice;       // resultado del último CHOICE
 u8 current_scene_id;  // SceneId en curso (interno; las transiciones son por nombre)
+
+// Puzzle de secuencia de hechizos activo (uno a la vez; -1 = ninguno)
+static s16 active_puzzle = -1;   // índice en puzzle_seqs[] (scene_data, generado)
+static u8  puzzle_progress;      // pasos acertados consecutivos
+
+static bool puzzle_solved(s16 idx)
+{
+    return idx >= 0 && idx == active_puzzle &&
+           puzzle_progress >= puzzle_seqs[idx].len;
+}
+
+// El motor de hechizos llama aquí cuando un cast (jugador o narrativo) termina
+// de forma natural. Acierto → avanza; fallo → reinicia (contando el paso 1 si
+// el hechizo fallido coincide con el inicio de la secuencia).
+void scene_puzzle_notify(u8 spellId, bool reversed)
+{
+    if (active_puzzle < 0) return;
+    const PuzzleSeq *p = &puzzle_seqs[active_puzzle];
+    if (puzzle_progress >= p->len) return;   // ya resuelto
+
+    if (p->spell[puzzle_progress] == spellId &&
+        p->reversed[puzzle_progress] == (reversed ? 1 : 0))
+    {
+        puzzle_progress++;
+        dprintf(2,"Puzzle %d: paso %d/%d OK (spell %d)", active_puzzle, puzzle_progress, p->len, spellId);
+    }
+    else
+    {
+        puzzle_progress = (p->spell[0] == spellId && p->reversed[0] == (reversed ? 1 : 0)) ? 1 : 0;
+        dprintf(2,"Puzzle %d: secuencia rota (spell %d), progreso=%d", active_puzzle, spellId, puzzle_progress);
+    }
+}
 
 // Espera N décimas de segundo con frames no-interactivos (equivale a wait_seconds)
 static void wait_tenths(u16 tenths)
@@ -46,6 +79,9 @@ static void set_scene_flag(u8 flag, bool on)
 void scene_run(const SceneScript *s)    // Ejecuta una escena completa
 {
     u16 pc = 0;
+
+    active_puzzle = -1;   // los puzzles no sobreviven entre escenas
+    puzzle_progress = 0;
 
     dprintf(2,"Scene start: %s (%d steps)", s->name, s->stepCount);
 
@@ -137,6 +173,19 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
                 current_scene_id = st->a;       // SceneId (emitido por nombre en el DSL)
                 dprintf(2,"Scene end: %s -> scene id %d", s->name, st->a);
                 return;
+
+            case SCENE_OP_PUZZLE_SEQ: // activa (o reinicia) el puzzle del índice a
+                active_puzzle = st->a;
+                puzzle_progress = 0;
+                break;
+
+            case SCENE_OP_WAIT_PUZZLE: // el jugador castea libremente hasta resolverlo
+                while (!puzzle_solved(st->a)) next_frame(true);
+                break;
+
+            case SCENE_OP_IF_PUZZLE_SOLVED:
+                if (puzzle_solved(st->a)) { pc = st->b; continue; }
+                break;
 
             case SCENE_OP_HARD_RESET:
                 SYS_hardReset();

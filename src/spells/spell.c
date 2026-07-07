@@ -18,6 +18,7 @@
 #include "audio/sound.h"
 #include "narrative/dialogs.h"
 #include "narrative/texts_data.h"
+#include "scenes/scene_vm.h"   // scene_puzzle_notify (progreso de puzzles narrativos)
 
 SpellDef spell_defs[SPELL_COUNT];
 u8 spell_zone = ZONE_NONE;
@@ -370,6 +371,7 @@ static void update_player_slot(void)
     {
         dprintf(2,"Player spell %d finished", pl->ctx.spellId);
         if (pl->def->onFinish) pl->def->onFinish(&pl->ctx);
+        scene_puzzle_notify(pl->ctx.spellId, pl->ctx.reversed); // solo fin NATURAL cuenta para puzzles
         slot_free(SPELL_SLOT_PLAYER);
         obj_character[active_character].state = STATE_PATTERN_EFFECT_FINISH;
 
