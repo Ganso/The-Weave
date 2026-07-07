@@ -92,7 +92,13 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
         switch (st->op)
         {
             case SCENE_OP_CALL:
-                scene_hook_table[st->a]();
+                // Un hueco NULL en la tabla (hook en el enum pero sin registrar en
+                // scene_hooks.c) saltaría a la dirección 0 y colgaría la consola:
+                // mejor avisar por KDebug y seguir.
+                if (st->a < HOOK_COUNT && scene_hook_table[st->a] != NULL)
+                    scene_hook_table[st->a]();
+                else
+                    dprintf(1,"Scene %s: hook %d SIN REGISTRAR en scene_hook_table", s->name, st->a);
                 break;
 
             case SCENE_OP_SAY:

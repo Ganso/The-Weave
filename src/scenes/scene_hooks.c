@@ -21,4 +21,6 @@ const SceneHook scene_hook_table[HOOK_COUNT] = {
     [HOOK_ACT1_FOREST_PAD_HINT]  = act1_forest_pad_hint,
     [HOOK_ACT1_FOREST_DAY]       = act1_forest_day,
     [HOOK_ACT1_FOREST_ENEMIES]   = act1_forest_enemies,
+    [HOOK_ACT1_TEST_SETUP]       = act1_test_setup,
+    [HOOK_ACT1_TEST_GHOST]       = act1_test_ghost,
 };
