@@ -81,16 +81,20 @@ act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,A1_BEDROOM_MOTHER_CALLS,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"@[Linus@], ¿dónde estás?","@[Linus@], where are you?"
 act1_bedroom,A1_BEDROOM_TOO_LATE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Se me ha hecho demasiado tarde|tengo que ir al salón,It's gotten too late|I need to go the hall
 act1_test,A1_TEST_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Escena de prueba|del motor de escenas,TEST: Scene engine|test scene
-act1_test,A1_TEST_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"TEST: Se probarán diálogos,|choices, puzzle y combate","TEST: Dialogs, choices,|puzzle and combat ahead"
+act1_test,A1_TEST_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Verás diálogos encadenados,|movimientos y un cast|automático de @[sleep@]","You will see chained dialogs,|movements and a scripted|@[sleep@] cast"
+act1_test,A1_TEST_INTRO_3,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Después, un @[choice@]:|probar el puzzle o|saltar directo al combate",Then a @[choice@]:|try the puzzle or|skip straight to combat
+act1_test,A1_TEST_INTRO_4,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"El @[puzzle@] pide lanzar|@[trueno@], @[fuego@] y @[esconderse@]|en ese orden","The @[puzzle@] asks you to cast|@[thunder@], @[fire@] and @[hide@]|in that order"
+act1_test,A1_TEST_INTRO_5,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Fallar un hechizo|reinicia la secuencia|desde el principio,Casting the wrong spell|restarts the sequence|from the beginning
+act1_test,A1_TEST_INTRO_6,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Al final: camina a la|derecha y vence al fantasma|con el @[counter@],At the end: walk right|and defeat the ghost|with the @[counter@]
 act1_test,NULL,,,,,
 act1_test,A1_TEST_DEMO_CAST,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Cast scripted de @[sleep@]|(solo posible por guion),TEST: Scripted @[sleep@] cast|(script-only spell)
 act1_test,A1_TEST_CHOICE_R,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Has elegido|probar el @[puzzle@],TEST: You chose|to try the @[puzzle@]
 act1_test,A1_TEST_CHOICE_R2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Has elegido|saltar al @[combate@],TEST: You chose|to skip to @[combat@]
-act1_test,A1_TEST_PUZZLE_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: La puerta pide una|secuencia de tres hechizos,TEST: The door demands a|three-spell sequence
-act1_test,A1_TEST_PUZZLE_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"TEST: @[Trueno@], luego @[fuego@]|y por último @[esconderse@]","TEST: @[Thunder@], then @[fire@]|and finally @[hide@]"
+act1_test,A1_TEST_PUZZLE_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"TEST: La puerta pide una|secuencia de tres hechizos:|@[trueno@], @[fuego@], @[esconderse@]","TEST: The door demands a|three-spell sequence:|@[thunder@], @[fire@], @[hide@]"
+act1_test,A1_TEST_PUZZLE_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Consulta las notas de cada|hechizo en el menú de pausa|(botón @[START@]),Check each spell's notes|in the pause menu|(@[START@] button)
 act1_test,NULL,,,,,
 act1_test,A1_TEST_NEVER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ERROR|esto no debería verse,TEST: ERROR|you should never see this
 act1_test,A1_TEST_PUZZLE_OK,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¡Secuencia correcta!|La puerta se abre,TEST: Correct sequence!|The door opens
 act1_test,A1_TEST_WALK,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Camina a la derecha|hasta que avance el scroll,TEST: Walk right until|the screen scrolls
-act1_test,A1_TEST_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¡Un fantasma!|Contrarresta su trueno,TEST: A ghost!|Counter its thunder
+act1_test,A1_TEST_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¡Un fantasma!|Contrarresta su trueno|con las notas invertidas,TEST: A ghost!|Counter its thunder|with the reversed notes
 act1_test,A1_TEST_VICTORY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Todo probado|Fin de la escena de test,TEST: All mechanics tested|End of test scene
