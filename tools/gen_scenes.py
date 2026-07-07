@@ -87,6 +87,8 @@ OPS = {
     'hard_reset':   ('SCENE_OP_HARD_RESET',   []),
     'end':          ('SCENE_OP_END',          []),
     'wait_puzzle':  ('SCENE_OP_WAIT_PUZZLE',  ['puzzletag']),
+    'anim':         ('SCENE_OP_ANIM',         ['verbatim', 'verbatim']),
+    'wait_press':   ('SCENE_OP_WAIT_PRESS',   []),
     'if_puzzle_solved': ('SCENE_OP_IF_PUZZLE_SOLVED', ['puzzletag', 'kwgoto', 'label']),
 }
 PUZZLE_SEQ_MAX = 4

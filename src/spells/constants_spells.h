@@ -11,13 +11,14 @@
 #define SPELL_OPEN         2
 #define SPELL_SLEEP        3
 #define SPELL_FIRE         4
-#define SPELL_PLAYER_COUNT 5
+#define SPELL_LIGHT        5
+#define SPELL_PLAYER_COUNT 6
 
 // Enemy spells
-#define SPELL_EN_THUNDER   5
-#define SPELL_EN_BITE      6
+#define SPELL_EN_THUNDER   6
+#define SPELL_EN_BITE      7
 
-#define SPELL_COUNT        7
+#define SPELL_COUNT        8
 #define SPELL_NONE         254
 
 // Notas musicales (botones A B C X Y Z)

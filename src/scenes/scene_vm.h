@@ -52,7 +52,9 @@ typedef enum {
     SCENE_OP_END          = 21,  // return (sin end_level)
     SCENE_OP_PUZZLE_SEQ   = 22,  // a=índice en puzzle_seqs — activa el puzzle (progreso a 0)
     SCENE_OP_WAIT_PUZZLE  = 23,  // a=índice — espera interactiva hasta resolverlo
-    SCENE_OP_IF_PUZZLE_SOLVED = 24 // a=índice, b=stepIdx — salta si está resuelto
+    SCENE_OP_IF_PUZZLE_SOLVED = 24, // a=índice, b=stepIdx — salta si está resuelto
+    SCENE_OP_ANIM         = 25,  // a=chr, b=ANIM_* — anim_character
+    SCENE_OP_WAIT_PRESS   = 26   // pausa de cutscene hasta pulsar A (frames no-interactivos)
 } SceneOp;
 
 // Flags del op SET

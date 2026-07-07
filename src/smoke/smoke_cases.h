@@ -30,6 +30,8 @@ static const SmokeCase smoke_cases[] = {
     {"CHK thunder inv    - NO",  SMOKE_CHECK, SPELL_THUNDER, true,  ZONE_NONE,     false, NULL}, // sin ventana de counter
     {"CHK hide directo   - SI",  SMOKE_CHECK, SPELL_HIDE,    false, ZONE_NONE,     true,  NULL},
     {"CHK open directo   - NO",  SMOKE_CHECK, SPELL_OPEN,    false, ZONE_NONE,     false, NULL}, // solo scripted
+    {"CHK light directo  - SI",  SMOKE_CHECK, SPELL_LIGHT,   false, ZONE_NONE,     true,  NULL},
+    {"CHK light inverso  - SI",  SMOKE_CHECK, SPELL_LIGHT,   true,  ZONE_NONE,     true,  NULL}, // único invertido libre
 
     // --- Casts scripted (duración medida + efecto visual a ojo) ---
     {"CAST thunder (4s flash)",   SMOKE_CAST,  SPELL_THUNDER, false, 0, false, NULL},
@@ -37,6 +39,7 @@ static const SmokeCase smoke_cases[] = {
     {"CAST open (0.75s)",         SMOKE_CAST,  SPELL_OPEN,    false, 0, false, NULL},
     {"CAST sleep (1.25s)",        SMOKE_CAST,  SPELL_SLEEP,   false, 0, false, NULL},
     {"CAST fire (2s naranja)",    SMOKE_CAST,  SPELL_FIRE,    false, 0, false, NULL},
+    {"CAST light (cian-blanco)",  SMOKE_CAST,  SPELL_LIGHT,   false, 0, false, NULL},
 
     // --- Escenas completas (interactivas; forest acaba en reset: es su final) ---
     {"SCENE act1_bedroom",        SMOKE_SCENE, 0, false, 0, false, "act1_bedroom"},

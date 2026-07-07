@@ -10,6 +10,7 @@
 #include "spells/player_spells.h"
 #include "spells/enemy_spells.h"
 #include "spells/fire.h"
+#include "spells/light.h"
 #include "actors/entity.h"
 #include "actors/characters.h"
 #include "actors/enemies.h"
@@ -77,6 +78,7 @@ void init_spells(void)    // Rellena la tabla (runtime: baseDuration escala con 
     init_player_spells();   // thunder, hide, open, sleep
     init_enemy_spell_defs();// en_thunder, en_bite
     fire_init();            // ejemplo end-to-end
+    light_init();           // showcase de fases (test)
 
     if (HACK_ALL_SPELLS) { // Dev hack (core/hack.h): todos los hechizos + vara desde el principio
         for (u8 i = 0; i < SPELL_PLAYER_COUNT; i++) spell_defs[i].enabled = true;

@@ -36,6 +36,7 @@ void update_enemy_shadow(u16 nenemy)    // Update shadow sprite position based o
 void init_enemy_classes(void)    // Setup enemy class definitions with HP, patterns, and behavior
 {
     obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_NONE}}; // 2 HP, lanza thunder, no sigue
+    obj_enemy_class[ENEMY_CLS_TESTGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_EN_BITE}}; // SOLO TEST: multi-hechizo (recargas alternas)
     // Note (B2, decision refactorizar.md §15): ninguna clase lleva SPELL_EN_BITE por ahora.
     // Activarlo es decisión de diseño: añadirlo a la lista spell[] y ajustar rechargeInit con playtest.
 }
@@ -59,6 +60,7 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     switch (class)
     {
     case ENEMY_CLS_WEAVERGHOST:
+    case ENEMY_CLS_TESTGHOST:   // la clase de test reutiliza el sprite del ghost
         nsprite = &weaver_ghost_sprite;
         nsprite_shadow = NULL;
         drops_shadow=false;

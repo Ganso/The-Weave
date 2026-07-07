@@ -16,6 +16,7 @@
 // Enemy classes (B21: removed unimplemented 3-head-monkey class; re-add classes here when their art exists)
 #define MAX_ENEMY_CLASSES 10
 #define ENEMY_CLS_WEAVERGHOST    0
+#define ENEMY_CLS_TESTGHOST      1   // SOLO para act1_test: dos hechizos (thunder + bite); no usar en el juego
 
 // Enemy modes
 typedef enum {

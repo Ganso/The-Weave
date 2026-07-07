@@ -90,6 +90,7 @@ void play_spell_jingle(u16 spellId)
             break;
         case SPELL_OPEN:
         case SPELL_FIRE:
+        case SPELL_LIGHT:
             play_sample(snd_pattern_open, sizeof(snd_pattern_open));
             break;
         case SPELL_SLEEP:

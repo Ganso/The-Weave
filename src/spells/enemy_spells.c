@@ -67,11 +67,17 @@ static void en_thunder_on_cancel(SpellContext *ctx)    // cancelado (hide, recha
 }
 
 // =====================================================================
-// EN_BITE — mordisco; deshabilitado por decisión de diseño (bugs.md B2)
+// EN_BITE — mordisco; sin clase en el JUEGO por decisión de diseño (bugs.md B2)
 // =====================================================================
-// Para activarlo: añadir SPELL_EN_BITE a la lista de spells de una Enemy_Class
-// (actors/enemies.c, init_enemy_classes) y ajustar rechargeInit con playtest.
-// Nota fiel al comportamiento heredado: bite no aplicaba daño al terminar.
+// La clase de TEST (ENEMY_CLS_TESTGHOST) sí lo usa: es el primer hechizo
+// enemigo NO counterable funcional. Para el juego: añadir SPELL_EN_BITE a la
+// lista spell[] de una clase y ajustar rechargeInit con playtest.
+
+static void en_bite_on_finish(SpellContext *ctx)    // fin natural: el mordisco alcanza al jugador
+{
+    SPR_setAnim(spr_enemy[ctx->enemyId], ANIM_IDLE);
+    hit_player(1);
+}
 
 // =====================================================================
 // Registro en la tabla
@@ -100,6 +106,6 @@ void init_enemy_spell_defs(void)    // Registra los hechizos de enemigo (llamado
         .counterable = false,
         .baseDuration = SCREEN_FPS,
         .rechargeInit = SCREEN_FPS * 2,
-        // Sin hooks: auto-fin por duración (comportamiento heredado: sin daño)
+        .onFinish = en_bite_on_finish,   // daño al jugador (antes heredaba un no-op)
     };
 }

@@ -193,6 +193,17 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
                 if (puzzle_solved(st->a)) { pc = st->b; continue; }
                 break;
 
+            case SCENE_OP_ANIM:
+                anim_character(st->a, st->b);
+                break;
+
+            case SCENE_OP_WAIT_PRESS: { // pausa de cutscene: esperar pulsación de A (con release previo)
+                u16 joy;
+                do { next_frame(false); joy = JOY_readJoypad(JOY_1); } while (joy & BUTTON_A);
+                do { next_frame(false); joy = JOY_readJoypad(JOY_1); } while (!(joy & BUTTON_A));
+                break;
+            }
+
             case SCENE_OP_HARD_RESET:
                 SYS_hardReset();
                 return; // no se alcanza
