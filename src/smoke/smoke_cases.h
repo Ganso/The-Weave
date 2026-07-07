@@ -25,11 +25,11 @@ typedef struct {
 
 static const SmokeCase smoke_cases[] = {
     // --- Invariantes de canUse (instantáneos) ---
-    {"CHK fire sin zona  -> NO",  SMOKE_CHECK, SPELL_FIRE,    false, ZONE_NONE,     false, NULL},
-    {"CHK fire caldero   -> SI",  SMOKE_CHECK, SPELL_FIRE,    false, ZONE_CAULDRON, true,  NULL},
-    {"CHK thunder inv    -> NO",  SMOKE_CHECK, SPELL_THUNDER, true,  ZONE_NONE,     false, NULL}, // sin ventana de counter
-    {"CHK hide directo   -> SI",  SMOKE_CHECK, SPELL_HIDE,    false, ZONE_NONE,     true,  NULL},
-    {"CHK open directo   -> NO",  SMOKE_CHECK, SPELL_OPEN,    false, ZONE_NONE,     false, NULL}, // solo scripted
+    {"CHK fire sin zona  - NO",  SMOKE_CHECK, SPELL_FIRE,    false, ZONE_NONE,     false, NULL},
+    {"CHK fire caldero   - SI",  SMOKE_CHECK, SPELL_FIRE,    false, ZONE_CAULDRON, true,  NULL},
+    {"CHK thunder inv    - NO",  SMOKE_CHECK, SPELL_THUNDER, true,  ZONE_NONE,     false, NULL}, // sin ventana de counter
+    {"CHK hide directo   - SI",  SMOKE_CHECK, SPELL_HIDE,    false, ZONE_NONE,     true,  NULL},
+    {"CHK open directo   - NO",  SMOKE_CHECK, SPELL_OPEN,    false, ZONE_NONE,     false, NULL}, // solo scripted
 
     // --- Casts scripted (duración medida + efecto visual a ojo) ---
     {"CAST thunder (4s flash)",   SMOKE_CAST,  SPELL_THUNDER, false, 0, false, NULL},

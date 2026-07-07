@@ -85,13 +85,13 @@ act1_test,A1_TEST_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Verás diálog
 act1_test,A1_TEST_INTRO_3,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Después, un @[choice@]:|probar el puzzle o|saltar directo al combate",Then a @[choice@]:|try the puzzle or|skip straight to combat
 act1_test,A1_TEST_INTRO_4,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"El @[puzzle@] pide lanzar|@[trueno@], @[fuego@] y @[esconderse@]|en ese orden","The @[puzzle@] asks you to cast|@[thunder@], @[fire@] and @[hide@]|in that order"
 act1_test,A1_TEST_INTRO_5,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Fallar un hechizo|reinicia la secuencia|desde el principio,Casting the wrong spell|restarts the sequence|from the beginning
-act1_test,A1_TEST_INTRO_6,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Al final: camina a la|derecha y vence al fantasma|con el @[counter@],At the end: walk right|and defeat the ghost|with the @[counter@]
+act1_test,A1_TEST_INTRO_6,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Botones: A=MI B=FA C=SOL|X=LA Y=SI Z=DO,Buttons: A=MI B=FA C=SOL|X=LA Y=SI Z=DO
 act1_test,NULL,,,,,
 act1_test,A1_TEST_DEMO_CAST,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Cast scripted de @[sleep@]|(solo posible por guion),TEST: Scripted @[sleep@] cast|(script-only spell)
 act1_test,A1_TEST_CHOICE_R,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Has elegido|probar el @[puzzle@],TEST: You chose|to try the @[puzzle@]
 act1_test,A1_TEST_CHOICE_R2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Has elegido|saltar al @[combate@],TEST: You chose|to skip to @[combat@]
 act1_test,A1_TEST_PUZZLE_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"TEST: La puerta pide una|secuencia de tres hechizos:|@[trueno@], @[fuego@], @[esconderse@]","TEST: The door demands a|three-spell sequence:|@[thunder@], @[fire@], @[hide@]"
-act1_test,A1_TEST_PUZZLE_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Consulta las notas de cada|hechizo en el menú de pausa|(botón @[START@]),Check each spell's notes|in the pause menu|(@[START@] button)
+act1_test,A1_TEST_PUZZLE_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Notas: trueno MI FA SOL SOL|fuego MI FA SOL LA|esconderse FA SOL SOL FA,Notes: thunder MI FA SOL SOL|fire MI FA SOL LA|hide FA SOL SOL FA
 act1_test,NULL,,,,,
 act1_test,A1_TEST_NEVER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ERROR|esto no debería verse,TEST: ERROR|you should never see this
 act1_test,A1_TEST_PUZZLE_OK,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¡Secuencia correcta!|La puerta se abre,TEST: Correct sequence!|The door opens
