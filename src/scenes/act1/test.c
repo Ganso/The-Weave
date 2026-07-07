@@ -18,7 +18,10 @@
 
 void act1_test_setup(void)    // Fondo de bosque + personajes visibles + vara y hechizos del test
 {
-    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
+    // Misma config que act1_forest: anchura real del mapa (1440) y scroll por el
+    // jugador (USER_RIGHT). El AUTO_RIGHT con anchura 320 derivaba fuera del tilemap
+    // y provocaba una lectura no mapeada (cuelgue "unmapped read").
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
     set_limits(0,134,275,172);
 
     init_character(CHR_linus);

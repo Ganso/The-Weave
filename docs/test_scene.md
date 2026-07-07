@@ -20,6 +20,13 @@
   el overscan NTSC recortaba. Menú compactado (empieza en fila 0/1, casos desde
   la fila 3) y nombre acortado a "SCENE act1_test".
 - **Fondo**: el test usa ahora el fondo de BOSQUE (antes el pasillo).
+- **Cuelgue al tocar la primera nota del puzzle** ("unmapped read from B96608"):
+  el setup cargaba el bosque con anchura 320 y `BG_SCRL_AUTO_RIGHT`; el
+  auto-scroll deriva cada frame y, sobre un mapa pensado para 1440 px, acaba
+  leyendo fuera del tilemap (memoria no mapeada). Coincidió con la nota solo por
+  el tiempo transcurrido. Arreglado replicando la config de forest:
+  `new_level(..., 1440, BG_SCRL_USER_RIGHT, 3)` — sin auto-scroll, el fondo solo
+  se mueve cuando camina el jugador y dentro de los límites del mapa.
 
 ## Estructura: intro + HUB de secciones
 

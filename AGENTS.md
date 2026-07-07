@@ -171,6 +171,10 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
   hechizos mientras hablan y lo restauran si estaba activo (así el HUD no se
   solapa con el texto). `show_or_hide_interface()` no toca `interface_active`.
 - Ops nuevos (sesión test): `anim <chr> <ANIM_*>` y `wait_press` (pausa hasta A).
+- **TRAMPA de scroll**: la anchura y el modo de `new_level` deben cuadrar con el
+  mapa. `BG_SCRL_AUTO_*` sobre una anchura menor que el mapa deriva cada frame y
+  acaba leyendo fuera del tilemap → cuelgue "unmapped read". Para fondos anchos
+  usa `BG_SCRL_USER_*` con la anchura real (p.ej. forest = 1440, USER_RIGHT).
 - **TRAMPA de la fuente en UI de texto crudo** (VDP_drawText, no diálogos): la
   fuente del juego tiene los glifos españoles EN las posiciones ASCII de
   `/ < > ^ # $ % *` (ú ¿ ¡ ñ á é í ó). En menús/HUD crudos evita esos caracteres.
