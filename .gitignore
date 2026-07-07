@@ -61,3 +61,14 @@ Temporary Items
 # Custom
 ff*.exe
 out/*
+
+# Refactor: ROM de referencia local (no versionar binarios)
+docs/refactor/*.bin
+
+# Entornos y caches de Python
+venv/
+__pycache__/
+*.pyc
+
+# Configuración local del build (no versionar credenciales MiSTer)
+.build-theweave.local.sh

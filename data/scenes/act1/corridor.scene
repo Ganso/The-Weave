@@ -1,0 +1,17 @@
+# Acto 1 — Pasillo de los historiadores: los libros y los recuerdos
+scene act1_corridor
+
+call act1_corridor_setup     # nivel del pasillo, items, Linus
+
+say_cluster SYSTEM_DIALOG SYSMSG_DEMO_TITLE sound   # aviso de demo técnica
+
+call act1_corridor_entry     # entrada de Linus por la derecha
+
+say_cluster ACT1_CORRIDOR A1_CORRIDOR_OVERSLEPT silent
+
+set scroll on
+set movement on
+
+call act1_corridor_items     # bucle de libros/puertas/mapas + salida al leer ambos libros
+
+next_scene act1_hall

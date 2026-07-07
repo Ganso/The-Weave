@@ -496,7 +496,7 @@ puzzles y su comprobación viven en la VM (§4.8).
   hook C corto en `scene_hooks.c` y el `.scene` lo invoca con `call <hook>`. Es
   explícitamente **mejor** un hook C de 30 líneas que un DSL con variables,
   condicionales y timers — eso sería un lenguaje de programación malo.
-- **El combate interactivo no se scriptea.** El combate de act1_scene3 es el jugador
+- **El combate interactivo no se scriptea.** El combate de act1_scene5 es el jugador
   tocando notas libremente contra la IA; eso no es un `cast`. El DSL tiene un op
   `combat` que cede el control al FSM de combate hasta victoria/derrota, y ops de salto
   según el resultado.
@@ -582,7 +582,7 @@ typedef void (*SceneHook)(void);
    contra ella parseando este archivo (o un listado hooks.txt junto a él). */
 const SceneHook scene_hook_table[] = {
     [HOOK_ACT1_BEDROOM_ITEMS] = act1_bedroom_items,
-    [HOOK_ACT1_FOREST_ITEMS]  = act1_forest_items,
+    [HOOK_ACT1_CORRIDOR_ITEMS] = act1_corridor_items,
 };
 ```
 
@@ -706,9 +706,9 @@ va al DSL y qué parte queda como hook C:
 | Escena | DSL | Hooks C (`scene_hooks.c`) |
 |---|---|---|
 | `act1_scene1` | setup, diálogos, fade, next_scene | `act1_bedroom_items` (bucle de items con flags, sleep una sola vez, timeout condicionado a pausa — `act_1.c:63-101`) |
-| `act1_scene2` | setup, movimientos, diálogos, fade | `act1_forest_items` (interacciones de items del bosque) |
-| `act1_scene3` | setup, diálogos, `combat`, branches win/lose | ninguno previsto (el combate lo lleva el FSM vía `SCENE_OP_COMBAT`) |
-| `act1_scene5` | diálogos, finale (`SYS_hardReset` → `end`) | ninguno |
+| `act1_scene2` | setup, movimientos, diálogos, fade | `act1_corridor_items` (bucle de libros/puertas/mapas del pasillo + condición de salida, `act_1.c:146-200`) |
+| `act1_scene3` | setup, diálogos, choices con branch (hall de Clio/Xander) | ninguno |
+| `act1_scene5` | setup del bosque, tutorial, `combat`, finale (`SYS_hardReset` → `end`) | posible hook para el setup de enemigos/scroll previo al combate (`act_1.c:313-339`) |
 
 `act_1_scene_4` se deja pendiente; el DSL permite añadirla después sin C (si es lineal)
 o con un hook (si no).
@@ -880,32 +880,37 @@ compartido entre proyectos, invocado desde `.vscode/tasks.json`. Usa el `makefil
 de SGDK (`~/sgdk`). No hay Makefile en el repo. La Fase 0 debe anotar la invocación
 exacta y sus flags antes de tocar nada.
 
-### 7.2 `Makefile` nuevo (propio del repo)
+### 7.2 `Makefile` nuevo (propio del repo) — IMPLEMENTADO en Fase 2
 
-Basado en el `makefile.gen` de SGDK, con:
+Ajuste sobre el plan original: en vez de reimplementar el makefile.gen, el `Makefile`
+del repo **lo envuelve** (`include $(GDK)/makefile.gen`), porque makefile.gen ya hace
+todo lo que D7 pedía: wildcard discovery de `src/*.c`, `src/*/*.c` y `res/*.res`,
+include paths `-Isrc -Ires`, targets `release`/`debug`/`clean` y los warnings del
+proyecto. Menos código propio que mantener y cero divergencia con SGDK.
 
-- **Wildcard discovery**: `SRC_C := $(wildcard src/*.c src/*/*.c)` — añadir un `.c` no
-  requiere editar el Makefile. `RES := $(wildcard res/*.res)`.
-- **Include paths**: `-Isrc -Ires` (D1).
-- **Pre-build codegen**: target `codegen` que ejecuta `tools/gen_texts.py`,
-  `tools/gen_choices.py`, `tools/gen_scenes.py`. Encadenado: `all: codegen compile`.
-  (No hay `gen_spells.py` — D2.)
-- **Target `smoke`**: compila `smoke/*.c` + el código del juego **excluyendo
-  `src/core/main.c`** (`SRC_SMOKE := $(filter-out src/core/main.c,$(SRC_C)) $(wildcard smoke/*.c)`),
-  con `-DHACK_SMOKE_BUILD`, y produce `out/smoke.bin`.
-- **Targets**: `release` (default), `debug`, `clean`, `smoke`, `codegen`.
-- **Warnings**: `-Wall -Wextra -Wno-shift-negative-value -Wno-main -Wno-unused-parameter`.
+- El Makefile corre **dentro del contenedor** (la imagen aporta el toolchain):
+  `docker run ... --entrypoint make <imagen> GDK=/sgdk -f /src/Makefile <target>`.
+- **El codegen corre en el HOST** (la imagen SGDK no incluye python3): lo lanza
+  `build-theweave.sh` antes de compilar (`tools/gen_texts.py`; la Fase 5 añade
+  `gen_choices.py` y `gen_scenes.py`).
+- **Target `smoke`** (Fase 7): se añadirá al Makefile del repo tras el include;
+  si el filtrado de `main.c` resulta incómodo envolviendo makefile.gen, la
+  alternativa es `#ifndef HACK_SMOKE_BUILD` alrededor del `main()` del juego.
 
 ### 7.3 `build-theweave.sh`
 
-Wrapper propio del repo (sustituye a `build-sgdk.sh` para este proyecto). **Decidido**:
-replica el alcance de `build-RedPlanet.sh`:
+Wrapper propio del repo (sustituye a `build-sgdk.sh`) — IMPLEMENTADO en Fase 2,
+adaptado de `build-RedPlanet.sh`:
 
-- Modos: `build` (incremental), `release` (clean+release), `clean`, `smoke`.
-- Flag `--no-run` / `-n` (no lanza emulador; para verificación desatendida).
-- Backup rotatorio de ROMs: `out/TheWeave_YYYYMMDD_HHMMSS.bin` (mantiene los 5 últimos).
-- Si hay MiSTer online → subida FTP; si no → lanza BlastEm (salvo `--no-run`).
-- Tomar `build-RedPlanet.sh` como referencia de implementación (mismo autor, mismo flujo).
+- Modos: `build` (incremental), `release`/`full` (clean+release), `clean`
+  (`smoke` se añade en Fase 7). Flag `--no-run` / `-n`.
+- Pipeline: codegen en host → make en contenedor → backup rotatorio
+  `out/TheWeave_YYYYMMDD_HHMMSS.bin` (mantiene 5) → MiSTer (FTP + Remote API) si
+  está online, si no BlastEm.
+- SGDK: por defecto el de la imagen (`/sgdk`, lo que se ha usado y validado hasta
+  ahora); `SGDK_LOCAL=~/sgdk` lo monta readonly y lo usa en su lugar.
+- Configuración personal (IP/credenciales MiSTer, BlastEm, SGDK local) en
+  `.build-theweave.local.sh`, no versionado (gitignored).
 
 ### 7.4 Integración con VS Code
 
@@ -1041,9 +1046,14 @@ Se mantiene el estilo vigente del proyecto:
 Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + smoke
 (desde que exista) deben pasar. Si una fase rompe el build, se arregla antes de avanzar.
 
-### Fase 0 — Preparación
+### ~~Fase 0 — Preparación~~ ✔ COMPLETADA (2026-07-06)
 
 **Objetivo**: dejar el terreno listo sin perder el estado actual.
+
+> Hecho: rama `refactor`, build documentado y verificado (Docker SGDK, sin warnings),
+> ROM de referencia en `docs/refactor/rom_pre_refactor.bin` (gitignored), bitácora
+> completa en `docs/refactor/`. Pendiente no bloqueante: playtest inicial del usuario
+> (alimenta `baseline.md` durante la Fase 1).
 
 1. `git checkout -b refactor`.
 2. **Anotar el build actual**: comando exacto de `~/codigo/build-sgdk.sh` que usan las
@@ -1059,7 +1069,11 @@ Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + sm
 **Verificación**: rama creada, `docs/refactor/` poblado, build actual funciona.
 **Rollback**: `git checkout master`.
 
-### Fase 1 — Corrección de bugs y baseline
+### ~~Fase 1 — Corrección de bugs y baseline~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: B1-B15 y B19-B26 corregidos (6 commits + 3 de fixes post-test), B16-B18
+> pospuestos según lo decidido, baseline validado por el usuario (incluido re-test
+> dirigido del combate de la escena 5 tras corregir el cuelgue B26).
 
 **Objetivo**: corregir §6 en dos tandas y **fijar el baseline** de comportamiento.
 
@@ -1080,7 +1094,13 @@ Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + sm
 `baseline.md` describe el comportamiento de referencia.
 **Rollback**: reset al commit de fin de Fase 0.
 
-### Fase 2 — Reestructuración de directorios (sin tocar `src/`)
+### ~~Fase 2 — Reestructuración de directorios (sin tocar `src/`)~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: `gibberish/`→`tools/voice/` (139 ficheros con `git mv`), scripts a `tools/`,
+> `texts.csv`→`data/` (gen_texts.py regenera output idéntico), Makefile propio
+> envolviendo makefile.gen, build-theweave.sh estilo RedPlanet (codegen + backup +
+> MiSTer/BlastEm), .vscode/tasks.json y .gitignore actualizados. Build release
+> verificado end-to-end con el pipeline nuevo, sin warnings.
 
 1. `mkdir -p tools data/scenes smoke docs/refactor`.
 2. `git mv gibberish tools/voice`.
@@ -1097,7 +1117,17 @@ Cada fase es un commit (o varios) en la rama `refactor`. Entre fases: build + sm
 `tools/`, `gibberish/` no existe.
 **Rollback**: reset al commit de fin de Fase 1.
 
-### Fase 3 — Partición de `src/` + includes explícitos (salvo módulos condenados)
+### ~~Fase 3 — Partición de `src/` + includes explícitos (salvo módulos condenados)~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: src/ particionado en core/world/actors/combat/narrative/scenes/interface/audio
+> (git mv, historia conservada); globals.c partido en core/frame.c + core/config.h +
+> core/hack.h (con HACK_START_SCENE, el toggle que nació en la caza del cuelgue);
+> encode.c/.h extraído de texts.c; texts_generated → narrative/texts_data (generador
+> y add_texts_comments.py actualizados); 16 .c con includes explícitos y 14 .h
+> auto-contenidos; globals.h reducido a umbrella transicional solo para patterns*/act_1*;
+> diagramas de arquitectura en entity.h y combat.h. Ajuste documentado: sin
+> constants_*.h por dominio (las constantes ya viven en el .h de cada módulo, estilo
+> del autor). Build release limpio, 0 warnings.
 
 **La fase más larga.** Sub-commits por módulo, build tras cada uno.
 
@@ -1119,7 +1149,17 @@ playtest de las 4 escenas idéntico al baseline.
 **Rollback**: reset al fin de Fase 2. Si la conversión de includes de un módulo se
 atasca, commit intermedio con ese módulo aún en `globals.h` transicional.
 
-### Fase 4 — Sistema de hechizos
+### ~~Fase 4 — Sistema de hechizos~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: motor de 2 slots en spells/ (spell.c + notes.c + player_spells + enemy_spells
+> + fire como ejemplo canónico), espacio de ids UNIFICADO (el solape player/enemy del
+> sistema viejo causó el cuelgue de la Fase 1), hooks incl. onRejected (B18 resuelto:
+> los hints de thunder salen del flujo de notas), fases declarativas (FLASH + DAMAGE),
+> CombatContext eliminado (el estado vive en el motor), patterns.* borrado. Ajustes:
+> notes.c añadido (input/HUD separado del motor); sin spell_hooks.c (no hay hooks
+> compartidos reales aún); jingle unificado play_spell_jingle. La retirada de
+> patterns.h destapó includes enmascarados (los pattern_*.h arrastraban globals.h) —
+> corregidos. AGENTS.md reescrito con la arquitectura y las recetas.
 
 1. Structs y motor (§3.2, §3.3): `spell.h`, `spell.c` con los **dos slots**.
    Diagrama de arquitectura en la cabecera.
@@ -1136,19 +1176,28 @@ atasca, commit intermedio con ese módulo aún en `globals.h` transicional.
 7. Eliminar `patterns.c/.h` y `src/patterns/`.
 
 **Verificación**: los 6 hechizos + fire correctos contra baseline; playtest de
-act1_scene3 (combate) idéntico al baseline.
+act1_scene5 (combate) idéntico al baseline.
 **Rollback**: reset al fin de Fase 3.
 
-### Fase 5 — Sistema de cutscenes
+### ~~Fase 5 — Sistema de cutscenes~~ ✔ COMPLETADA (código, 2026-07-06; pendiente playtest)
+
+> Hecho según docs/refactor/fase5_design.md (documento de detalle previo, pedido por
+> el usuario): VM (scene_vm) + 12 hooks C (scene_hooks, trasplante literal de act_1.c)
+> + gen_scenes.py y gen_choices.py con validación fatal probada + 4 escenas en DSL
+> (scene3 = 19 steps casi puro DSL) + choices.csv. main.c = bucle sobre scene_lookup.
+> ELIMINADOS: act_1.*, globals.h (ya sin consumidores), add_texts_comments.py.
+> Ajustes documentados: sin scene_api.c (la VM llama las primitivas directamente);
+> ops de puzzle diseñados pero diferidos hasta que el guion los pida; op say_response
+> nuevo (respuestas correlativas a choices).
 
 1. Structs y VM (§4.2, §4.6): `scene_vm.c/.h`, estado en RAM, tabla lateral de puzzles.
 2. API (`scene_api.c/.h`): wrappers sobre funciones existentes.
 3. Hooks (`scene_hooks.c/.h`): `act1_bedroom_items` (traslada `act_1.c:63-101`),
-   `act1_forest_items`, tabla `scene_hook_table[]`.
+   `act1_corridor_items`, tabla `scene_hook_table[]`.
 4. `gen_scenes.py` (§4.9) con validación fatal de referencias.
 5. Migrar escenas **una a una** con playtest completo tras cada una:
-   scene1 (DSL + hook items), scene2 (DSL + hook items), scene3 (DSL + op `combat` +
-   branches win/lose), scene5 (DSL puro).
+   scene1 (DSL + hook items), scene2 (DSL + hook items), scene3 (DSL puro con
+   choices/branch), scene5 (DSL + op `combat` + hook de setup si hace falta).
 6. `choices.csv` + `gen_choices.py`: mover `act1_choice1[]` de `texts.c` al pipeline.
 7. `main.c`: sustituir el doble `switch` por `scene_run()` según `current_act/scene`.
 8. Eliminar `act_1.c/.h`. Mover `intro` y `geesebumps` a `src/scenes/` como C normal.
@@ -1160,7 +1209,12 @@ act1_scene3 (combate) idéntico al baseline.
 choice, win y lose del combate) idéntico al baseline. `globals.h` no existe.
 **Rollback**: reset al fin de Fase 4.
 
-### Fase 6 — Documentación
+### ~~Fase 6 — Documentación~~ ✔ COMPLETADA (2026-07-06)
+
+> Hecho: docs/{build,spells,scenes,texts,testing}.md escritas (guías de autoría y
+> operación; la arquitectura vive en AGENTS.md y en las cabeceras de subsistema);
+> cabeceras de archivo completadas en los módulos antiguos. AGENTS.md se ha ido
+> manteniendo al día fase a fase (regla de sync en su cabecera).
 
 1. Reescribir `AGENTS.md` (11 secciones de §9.1) — es la fuente de verdad y la usan
    las herramientas: máxima prioridad de exactitud.
@@ -1173,7 +1227,14 @@ choice, win y lose del combate) idéntico al baseline. `globals.h` no existe.
 diálogo siguiendo solo la doc.
 **Rollback**: no rompe nada.
 
-### Fase 7 — Smoke ROM + verificación final
+### ~~Fase 7 — Smoke ROM + verificación final~~ ✔ COMPLETADA (2026-07-07)
+
+> Hecho: smoke ROM en src/smoke/ (menú con 14 casos: 5 CHECK de canUse automáticos,
+> 5 CAST con medición de duración, 4 SCENE completas), compilada con
+> -DHACK_SMOKE_BUILD vía `./build-theweave.sh smoke` → out/smoke.bin (el main del
+> juego queda excluido por #ifndef). Ambas ROMs compilan limpias de cero. Merge a
+> master + tag v2.0-refactor. Los screenshots de referencia quedan como paso del
+> próximo playtest (docs/testing.md).
 
 1. `smoke/` completo (§8): main propio, menú, runner, tabla de casos.
 2. Target `smoke` del Makefile (excluyendo `src/core/main.c`) → `out/smoke.bin`.

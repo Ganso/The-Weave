@@ -1,0 +1,273 @@
+#!/usr/bin/env python3
+# gen_scenes.py – convierte data/scenes/*.scene en src/scenes/scene_data.{h,c}
+# Ejecutar desde la raíz del repo: python3 tools/gen_scenes.py
+#
+# Diseño: docs/refactor/fase5_design.md. Validación FATAL (nunca warnings):
+#  - sintaxis y aridad de cada op
+#  - labels de goto/branch existen (dos pasadas)
+#  - say*: set + id existen en data/texts.csv
+#  - choice: set + item existen en data/choices.csv
+#  - call: el hook existe en src/scenes/scene_hooks.h (enum HOOK_*)
+#  - cast/zone: la constante existe en src/spells/constants_spells.h
+# Las constantes C (CHR_*, ACT1_DIALOG*, SPELL_*, HOOK_*) se emiten VERBATIM:
+# el compilador C es la segunda red de validación.
+import csv
+import glob
+import os
+import re
+import sys
+from collections import OrderedDict
+
+SCENES_GLOB   = 'data/scenes/*/*.scene'
+TEXTS_CSV     = 'data/texts.csv'
+CHOICES_CSV   = 'data/choices.csv'
+HOOKS_HEADER  = 'src/scenes/scene_hooks.h'
+SPELLS_HEADER = 'src/spells/constants_spells.h'
+HEADER_FILE   = 'src/scenes/scene_data.h'
+SOURCE_FILE   = 'src/scenes/scene_data.c'
+
+def die(msg):
+    print(f"gen_scenes.py: ERROR: {msg}", file=sys.stderr)
+    sys.exit(1)
+
+# ---------------------------------------------------------------------------
+# Cargar referencias válidas
+# ---------------------------------------------------------------------------
+
+# Diálogos: set (upper) -> set de ids válidos
+dialog_ids = {}
+with open(TEXTS_CSV, newline='', encoding='utf-8') as f:
+    for row in csv.DictReader(f):
+        dialog_ids.setdefault(row['set'].strip().upper(), set()).add(row['id'].strip())
+
+# Choices: set (upper) -> número de items
+choice_items = {}
+with open(CHOICES_CSV, newline='', encoding='utf-8') as f:
+    for row in csv.DictReader(f):
+        name = row['set'].strip().upper()
+        choice_items[name] = max(choice_items.get(name, 0), int(row['item']) + 1)
+
+# Hooks: nombres del enum HOOK_* (sin el prefijo, en minúsculas)
+hooks = set()
+for m in re.finditer(r'\bHOOK_([A-Z0-9_]+)', open(HOOKS_HEADER, encoding='utf-8').read()):
+    if m.group(1) != 'COUNT':
+        hooks.add(m.group(1).lower())
+
+# Spells y zonas válidos
+spells_src = open(SPELLS_HEADER, encoding='utf-8').read()
+valid_spells = set(re.findall(r'#define (SPELL_[A-Z0-9_]+)', spells_src))
+valid_zones  = set(re.findall(r'#define (ZONE_[A-Z0-9_]+)', spells_src))
+
+# ---------------------------------------------------------------------------
+# Definición de ops: nombre DSL -> (opcode, [tipos de args])
+# tipos: chr=verbatim, int, set+id (dialogo), choiceset, label, hook, spell,
+#        zone, flag, onoff, sound
+# ---------------------------------------------------------------------------
+OPS = {
+    'call':         ('SCENE_OP_CALL',         ['hook']),
+    'say':          ('SCENE_OP_SAY',          ['dialogset', 'dialogid', 'sound?']),
+    'say_cluster':  ('SCENE_OP_SAY_CLUSTER',  ['dialogset', 'dialogid', 'sound?']),
+    'say_response': ('SCENE_OP_SAY_RESPONSE', ['dialogset', 'dialogid', 'sound?']),
+    'choice':       ('SCENE_OP_CHOICE',       ['choiceset', 'int']),
+    'branch':       ('SCENE_OP_BRANCH',       ['int', 'label']),
+    'goto':         ('SCENE_OP_GOTO',         ['label']),
+    'move':         ('SCENE_OP_MOVE',         ['verbatim', 'int', 'int']),
+    'move_instant': ('SCENE_OP_MOVE_INSTANT', ['verbatim', 'int', 'int']),
+    'show':         ('SCENE_OP_SHOW',         ['verbatim', 'onoff']),
+    'look':         ('SCENE_OP_LOOK',         ['verbatim', 'leftright']),
+    'wait':         ('SCENE_OP_WAIT',         ['int']),
+    'wait_scroll':  ('SCENE_OP_WAIT_SCROLL',  ['int']),
+    'set':          ('SCENE_OP_SET',          ['flag', 'onoff']),
+    'combat':       ('SCENE_OP_COMBAT',       []),
+    'cast':         ('SCENE_OP_CAST',         ['spell', 'direction?']),
+    'wait_spell':   ('SCENE_OP_WAIT_SPELL',   []),
+    'zone':         ('SCENE_OP_ZONE',         ['zone']),
+    'fade_out':     ('SCENE_OP_FADE_OUT',     ['int']),
+    'next_scene':   ('SCENE_OP_NEXT_SCENE',   ['scene']),
+    'hard_reset':   ('SCENE_OP_HARD_RESET',   []),
+    'end':          ('SCENE_OP_END',          []),
+}
+FLAGS = {'movement': 'SCENE_FLAG_MOVEMENT', 'scroll': 'SCENE_FLAG_SCROLL',
+         'interface': 'SCENE_FLAG_INTERFACE', 'spells': 'SCENE_FLAG_SPELLS'}
+
+# ---------------------------------------------------------------------------
+# Parseo de una escena
+# ---------------------------------------------------------------------------
+def scene_name_of(path):
+    # data/scenes/<acto>/<escena>.scene → "<acto>_<escena>" (p.ej. act1_bedroom)
+    actdir = os.path.basename(os.path.dirname(path))
+    base = os.path.splitext(os.path.basename(path))[0]
+    return f"{actdir}_{base}"
+
+def parse_scene(path, all_scene_names):
+    fname = scene_name_of(path)
+    scene_name = None
+    steps = []      # (opcode, [args C], línea, label_pendiente_en_b)
+    labels = {}     # nombre -> índice de step
+
+    for lineno, raw in enumerate(open(path, encoding='utf-8'), 1):
+        line = raw.split('#', 1)[0].strip()
+        if not line:
+            continue
+        tok = line.split()
+        where = f"{path}:{lineno}"
+
+        if tok[0] == 'scene':
+            scene_name = tok[1]
+            if scene_name != fname:
+                die(f"{where}: el nombre de escena '{scene_name}' no coincide con la ruta ('{fname}')")
+            continue
+
+        if tok[0] == 'label':
+            if len(tok) != 2: die(f"{where}: label necesita un nombre")
+            if tok[1] in labels: die(f"{where}: label '{tok[1]}' duplicado")
+            labels[tok[1]] = len(steps)   # apunta al siguiente step
+            continue
+
+        if tok[0] not in OPS:
+            die(f"{where}: op desconocido '{tok[0]}'")
+
+        opcode, argspec = OPS[tok[0]]
+        args, argi = [], 1
+        pending_label = None
+        dialog_set = None
+
+        for spec in argspec:
+            optional = spec.endswith('?')
+            spec_base = spec.rstrip('?')
+            if argi >= len(tok):
+                if optional:
+                    # defaults de los args opcionales
+                    if spec_base == 'sound': args.append('0')
+                    elif spec_base == 'direction': args.append('0')
+                    continue
+                die(f"{where}: '{tok[0]}' espera más argumentos ({argspec})")
+            val = tok[argi]; argi += 1
+
+            if spec_base == 'int':
+                try: int(val)
+                except ValueError: die(f"{where}: '{val}' no es un número")
+                args.append(val)
+            elif spec_base == 'verbatim':
+                args.append(val)
+            elif spec_base == 'dialogset':
+                if val not in dialog_ids: die(f"{where}: set de diálogo '{val}' no existe en {TEXTS_CSV}")
+                dialog_set = val; args.append(val)
+            elif spec_base == 'dialogid':
+                if val not in dialog_ids[dialog_set]:
+                    die(f"{where}: id '{val}' no existe en el set '{dialog_set}' de {TEXTS_CSV}")
+                args.append(val)
+            elif spec_base == 'choiceset':
+                if val not in choice_items: die(f"{where}: choice set '{val}' no existe en {CHOICES_CSV}")
+                args.append(val)
+            elif spec_base == 'label':
+                pending_label = val; args.append(None)  # se resuelve en la 2ª pasada
+            elif spec_base == 'hook':
+                if val not in hooks: die(f"{where}: hook '{val}' no existe en {HOOKS_HEADER}")
+                args.append('HOOK_' + val.upper())
+            elif spec_base == 'spell':
+                if val not in valid_spells: die(f"{where}: '{val}' no existe en {SPELLS_HEADER}")
+                args.append(val)
+            elif spec_base == 'scene':
+                if val not in all_scene_names:
+                    die(f"{where}: la escena '{val}' no existe en data/scenes/ ({', '.join(sorted(all_scene_names))})")
+                args.append('SCENE_' + val.upper())
+            elif spec_base == 'zone':
+                if val not in valid_zones: die(f"{where}: '{val}' no existe en {SPELLS_HEADER}")
+                args.append(val)
+            elif spec_base == 'flag':
+                if val not in FLAGS: die(f"{where}: flag '{val}' desconocido ({', '.join(FLAGS)})")
+                args.append(FLAGS[val])
+            elif spec_base == 'onoff':
+                if val not in ('on', 'off'): die(f"{where}: se esperaba on/off, no '{val}'")
+                args.append('1' if val == 'on' else '0')
+            elif spec_base == 'leftright':
+                # semántica de look_left(chr, direction_right): right=true
+                if val not in ('left', 'right'): die(f"{where}: se esperaba left/right, no '{val}'")
+                args.append('1' if val == 'right' else '0')
+            elif spec_base == 'sound':
+                if val not in ('sound', 'silent'): die(f"{where}: se esperaba sound/silent, no '{val}'")
+                args.append('1' if val == 'sound' else '0')
+            elif spec_base == 'direction':
+                if val not in ('direct', 'reversed'): die(f"{where}: se esperaba direct/reversed, no '{val}'")
+                args.append('1' if val == 'reversed' else '0')
+
+        if argi < len(tok):
+            die(f"{where}: argumentos de más en '{line}'")
+
+        # choice item en rango
+        if tok[0] == 'choice' and int(args[1]) >= choice_items[args[0]]:
+            die(f"{where}: item {args[1]} fuera de rango en '{args[0]}'")
+
+        steps.append({'op': opcode, 'args': args, 'label': pending_label, 'where': where})
+
+    if scene_name is None:
+        die(f"{path}: falta la directiva 'scene <nombre>'")
+
+    # 2ª pasada: resolver labels
+    for st in steps:
+        if st['label'] is not None:
+            if st['label'] not in labels:
+                die(f"{st['where']}: label '{st['label']}' no existe en la escena")
+            idx = labels[st['label']]
+            st['args'] = [str(idx) if a is None else a for a in st['args']]
+
+    return {'name': scene_name, 'steps': steps}
+
+# ---------------------------------------------------------------------------
+# Generación
+# ---------------------------------------------------------------------------
+scene_paths = sorted(glob.glob(SCENES_GLOB))
+if not scene_paths:
+    die(f"no hay escenas en {SCENES_GLOB}")
+all_scene_names = {scene_name_of(p) for p in scene_paths}
+scenes = [parse_scene(p, all_scene_names) for p in scene_paths]
+
+with open(HEADER_FILE, 'w', encoding='utf-8') as h:
+    h.write('// Generated by tools/gen_scenes.py from data/scenes/*.scene — DO NOT EDIT\n')
+    h.write('#ifndef _SCENE_DATA_H_\n#define _SCENE_DATA_H_\n\n')
+    h.write('#include "scenes/scene_vm.h"\n\n')
+    h.write('typedef enum {\n')
+    for i, sc in enumerate(scenes):
+        h.write(f"    SCENE_{sc['name'].upper()} = {i},\n")
+    h.write(f'    SCENE_COUNT_TOTAL = {len(scenes)}\n')
+    h.write('} SceneId;\n\n')
+    h.write('extern const SceneScript scenes[];\n')
+    h.write('extern const u8 scene_count;\n\n')
+    h.write('s16 scene_id_by_name(const char *name); // SceneId, o -1 si no existe (para hacks/smoke)\n')
+    h.write('\n#endif // _SCENE_DATA_H_\n')
+
+with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
+    c.write('// Generated by tools/gen_scenes.py from data/scenes/*.scene — DO NOT EDIT\n')
+    c.write('#include <genesis.h>\n')
+    c.write('#include "scenes/scene_vm.h"\n')
+    c.write('#include "scenes/scene_data.h"\n')
+    c.write('#include "scenes/scene_hooks.h"\n')
+    c.write('#include "narrative/texts_data.h"\n')
+    c.write('#include "narrative/choices_data.h"\n')
+    c.write('#include "actors/characters.h"\n')
+    c.write('#include "spells/constants_spells.h"\n\n')
+
+    for sc in scenes:
+        c.write(f"static const SceneStep {sc['name']}_steps[] = {{\n")
+        for i, st in enumerate(sc['steps']):
+            a = (st['args'] + ['0', '0', '0', '0'])[:4]
+            c.write(f"    {{ {st['op']}, {a[0]}, {a[1]}, {a[2]}, {a[3]} }}, // {i}\n")
+        c.write('};\n\n')
+
+    c.write('const SceneScript scenes[] = {\n')
+    for sc in scenes:
+        c.write(f'    {{ "{sc["name"]}", {sc["name"]}_steps, {len(sc["steps"])} }},\n')
+    c.write('};\n\n')
+    c.write(f'const u8 scene_count = {len(scenes)};\n\n')
+
+    c.write('s16 scene_id_by_name(const char *name)    // SceneId, o -1 si no existe\n{\n')
+    c.write('    for (u8 i = 0; i < scene_count; i++)\n')
+    c.write('        if (strcmp(scenes[i].name, name) == 0) return i;\n')
+    c.write('    return -1;\n}\n')
+
+print('✓ Archivos generados:')
+print(f'  • {HEADER_FILE}')
+print(f'  • {SOURCE_FILE}')
+for sc in scenes:
+    print(f"    - {sc['name']}: {len(sc['steps'])} steps")
