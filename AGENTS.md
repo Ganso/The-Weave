@@ -167,6 +167,14 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
 - `say_response` responde con `dialogs[set][base + last_choice]` (respuestas a choices).
 - `set interface off` solo oculta el HUD (NO toca interface_active — asimetría
   deliberada, ver scene_vm.h).
+- Los ops de diálogo (SAY/SAY_CLUSTER/SAY_RESPONSE/CHOICE) ocultan el HUD de
+  hechizos mientras hablan y lo restauran si estaba activo (así el HUD no se
+  solapa con el texto). `show_or_hide_interface()` no toca `interface_active`.
+- Ops nuevos (sesión test): `anim <chr> <ANIM_*>` y `wait_press` (pausa hasta A).
+- **TRAMPA de la fuente en UI de texto crudo** (VDP_drawText, no diálogos): la
+  fuente del juego tiene los glifos españoles EN las posiciones ASCII de
+  `/ < > ^ # $ % *` (ú ¿ ¡ ñ á é í ó). En menús/HUD crudos evita esos caracteres.
+  Los diálogos normales no sufren esto (encode_spanish_text ya lo gestiona).
 
 **Escena de test del motor**: `act1_test` (data/scenes/act1/test.scene) ejercita
 TODOS los ops — diálogos, choice+branch, cast scripted, puzzle de 3 hechizos

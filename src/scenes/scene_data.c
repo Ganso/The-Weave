@@ -72,43 +72,76 @@ static const SceneStep act1_hall_steps[] = {
 static const SceneStep act1_test_steps[] = {
     { SCENE_OP_CALL, HOOK_ACT1_TEST_SETUP, 0, 0, 0 }, // 0
     { SCENE_OP_SAY_CLUSTER, ACT1_TEST, A1_TEST_INTRO, 1, 0 }, // 1
-    { SCENE_OP_MOVE_INSTANT, CHR_linus, 300, 154, 0 }, // 2
-    { SCENE_OP_SHOW, CHR_linus, 1, 0, 0 }, // 3
-    { SCENE_OP_LOOK, CHR_linus, 0, 0, 0 }, // 4
-    { SCENE_OP_MOVE, CHR_linus, 120, 154, 0 }, // 5
-    { SCENE_OP_LOOK, CHR_linus, 1, 0, 0 }, // 6
-    { SCENE_OP_MOVE_INSTANT, CHR_clio, 40, 154, 0 }, // 7
-    { SCENE_OP_SHOW, CHR_clio, 1, 0, 0 }, // 8
-    { SCENE_OP_WAIT, 10, 0, 0, 0 }, // 9
-    { SCENE_OP_SHOW, CHR_clio, 0, 0, 0 }, // 10
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_DEMO_CAST, 0, 0 }, // 11
-    { SCENE_OP_CAST, SPELL_SLEEP, 0, 0, 0 }, // 12
-    { SCENE_OP_WAIT_SPELL, 0, 0, 0, 0 }, // 13
-    { SCENE_OP_CHOICE, ACT1_TEST_CHOICE, 0, 0, 0 }, // 14
-    { SCENE_OP_SAY_RESPONSE, ACT1_TEST, A1_TEST_CHOICE_R, 1, 0 }, // 15
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 16
-    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 17
-    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 18
-    { SCENE_OP_BRANCH, 1, 29, 0, 0 }, // 19
-    { SCENE_OP_SAY_CLUSTER, ACT1_TEST, A1_TEST_PUZZLE_INTRO, 1, 0 }, // 20
-    { SCENE_OP_ZONE, ZONE_CAULDRON, 0, 0, 0 }, // 21
-    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 22
-    { SCENE_OP_PUZZLE_SEQ, 0, 0, 0, 0 }, // 23
-    { SCENE_OP_WAIT_PUZZLE, 0, 0, 0, 0 }, // 24
-    { SCENE_OP_IF_PUZZLE_SOLVED, 0, 27, 0, 0 }, // 25
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_NEVER, 0, 0 }, // 26
-    { SCENE_OP_ZONE, ZONE_NONE, 0, 0, 0 }, // 27
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_PUZZLE_OK, 1, 0 }, // 28
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_WALK, 0, 0 }, // 29
-    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 30
-    { SCENE_OP_WAIT_SCROLL, 60, 0, 0, 0 }, // 31
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_COMBAT, 1, 0 }, // 32
-    { SCENE_OP_CALL, HOOK_ACT1_TEST_GHOST, 0, 0, 0 }, // 33
-    { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 34
-    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 0, 0, 0 }, // 35
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_VICTORY, 1, 0 }, // 36
-    { SCENE_OP_FADE_OUT, 60, 0, 0, 0 }, // 37
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_BEDROOM, 0, 0, 0 }, // 38
+    { SCENE_OP_WAIT_PRESS, 0, 0, 0, 0 }, // 2
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 3
+    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 4
+    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 5
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_HUB, 0, 0 }, // 6
+    { SCENE_OP_CHOICE, ACT1_TEST_HUB, 0, 0, 0 }, // 7
+    { SCENE_OP_BRANCH, 0, 14, 0, 0 }, // 8
+    { SCENE_OP_BRANCH, 1, 35, 0, 0 }, // 9
+    { SCENE_OP_BRANCH, 2, 62, 0, 0 }, // 10
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_BYE, 1, 0 }, // 11
+    { SCENE_OP_FADE_OUT, 60, 0, 0, 0 }, // 12
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_BEDROOM, 0, 0, 0 }, // 13
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_DLG_CLIO, 1, 0 }, // 14
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_DLG_XANDER, 1, 0 }, // 15
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_ANIM, 0, 0 }, // 16
+    { SCENE_OP_ANIM, CHR_linus, ANIM_MAGIC, 0, 0 }, // 17
+    { SCENE_OP_WAIT, 15, 0, 0, 0 }, // 18
+    { SCENE_OP_ANIM, CHR_linus, ANIM_IDLE, 0, 0 }, // 19
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_QUIZ_Q1, 0, 0 }, // 20
+    { SCENE_OP_CHOICE, ACT1_TEST_QUIZ, 0, 0, 0 }, // 21
+    { SCENE_OP_BRANCH, 1, 25, 0, 0 }, // 22
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_QUIZ_BAD, 0, 0 }, // 23
+    { SCENE_OP_GOTO, 20, 0, 0, 0 }, // 24
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_QUIZ_Q2, 0, 0 }, // 25
+    { SCENE_OP_CHOICE, ACT1_TEST_QUIZ, 1, 0, 0 }, // 26
+    { SCENE_OP_BRANCH, 2, 30, 0, 0 }, // 27
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_QUIZ_BAD, 0, 0 }, // 28
+    { SCENE_OP_GOTO, 25, 0, 0, 0 }, // 29
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_QUIZ_CONF, 0, 0 }, // 30
+    { SCENE_OP_CHOICE, ACT1_TEST_QUIZ, 2, 0, 0 }, // 31
+    { SCENE_OP_BRANCH, 1, 25, 0, 0 }, // 32
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_QUIZ_OK, 1, 0 }, // 33
+    { SCENE_OP_GOTO, 6, 0, 0, 0 }, // 34
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_DEMO_CAST, 0, 0 }, // 35
+    { SCENE_OP_CAST, SPELL_SLEEP, 0, 0, 0 }, // 36
+    { SCENE_OP_WAIT_SPELL, 0, 0, 0, 0 }, // 37
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_LIGHT_DEMO, 0, 0 }, // 38
+    { SCENE_OP_CAST, SPELL_LIGHT, 0, 0, 0 }, // 39
+    { SCENE_OP_WAIT_SPELL, 0, 0, 0, 0 }, // 40
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_PUZ_CHOICE, 0, 0 }, // 41
+    { SCENE_OP_CHOICE, ACT1_TEST_CHOICE, 0, 0, 0 }, // 42
+    { SCENE_OP_BRANCH, 1, 55, 0, 0 }, // 43
+    { SCENE_OP_SAY_CLUSTER, ACT1_TEST, A1_TEST_PUZZLE_INTRO, 1, 0 }, // 44
+    { SCENE_OP_ZONE, ZONE_CAULDRON, 0, 0, 0 }, // 45
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 46
+    { SCENE_OP_PUZZLE_SEQ, 0, 0, 0, 0 }, // 47
+    { SCENE_OP_WAIT_PUZZLE, 0, 0, 0, 0 }, // 48
+    { SCENE_OP_IF_PUZZLE_SOLVED, 0, 51, 0, 0 }, // 49
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_NEVER, 0, 0 }, // 50
+    { SCENE_OP_ZONE, ZONE_NONE, 0, 0, 0 }, // 51
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 0, 0, 0 }, // 52
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_PUZZLE_OK, 1, 0 }, // 53
+    { SCENE_OP_GOTO, 6, 0, 0, 0 }, // 54
+    { SCENE_OP_SAY_CLUSTER, ACT1_TEST, A1_TEST_PUZ2_INTRO, 1, 0 }, // 55
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 56
+    { SCENE_OP_PUZZLE_SEQ, 1, 0, 0, 0 }, // 57
+    { SCENE_OP_WAIT_PUZZLE, 1, 0, 0, 0 }, // 58
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 0, 0, 0 }, // 59
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_PUZZLE_OK, 1, 0 }, // 60
+    { SCENE_OP_GOTO, 6, 0, 0, 0 }, // 61
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 62
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_COMBAT, 1, 0 }, // 63
+    { SCENE_OP_CALL, HOOK_ACT1_TEST_GHOST, 0, 0, 0 }, // 64
+    { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 65
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_WAVE2, 1, 0 }, // 66
+    { SCENE_OP_CALL, HOOK_ACT1_TEST_GHOST2, 0, 0, 0 }, // 67
+    { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 68
+    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 69
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_VICTORY, 1, 0 }, // 70
+    { SCENE_OP_GOTO, 6, 0, 0, 0 }, // 71
 };
 
 const SceneScript scenes[] = {
@@ -116,13 +149,14 @@ const SceneScript scenes[] = {
     { "act1_corridor", act1_corridor_steps, 8 },
     { "act1_forest", act1_forest_steps, 15 },
     { "act1_hall", act1_hall_steps, 19 },
-    { "act1_test", act1_test_steps, 39 },
+    { "act1_test", act1_test_steps, 72 },
 };
 
 const u8 scene_count = 5;
 
 const PuzzleSeq puzzle_seqs[] = {
     { 3, {SPELL_THUNDER, SPELL_FIRE, SPELL_HIDE}, {0, 0, 0} }, // 0: act1_test:puerta_test
+    { 3, {SPELL_THUNDER, SPELL_LIGHT, SPELL_HIDE}, {0, 1, 0} }, // 1: act1_test:eco_test
 };
 
 s16 scene_id_by_name(const char *name)    // SceneId, o -1 si no existe

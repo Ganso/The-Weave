@@ -80,21 +80,32 @@ act1_bedroom,A1_BEDROOM_ENTER_PAUSE_MENU,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,E
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,A1_BEDROOM_MOTHER_CALLS,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"@[Linus@], ¿dónde estás?","@[Linus@], where are you?"
 act1_bedroom,A1_BEDROOM_TOO_LATE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Se me ha hecho demasiado tarde|tengo que ir al salón,It's gotten too late|I need to go the hall
-act1_test,A1_TEST_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Escena de prueba|del motor de escenas,TEST: Scene engine|test scene
-act1_test,A1_TEST_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Verás diálogos encadenados,|movimientos y un cast|automático de @[sleep@]","You will see chained dialogs,|movements and a scripted|@[sleep@] cast"
-act1_test,A1_TEST_INTRO_3,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Después, un @[choice@]:|probar el puzzle o|saltar directo al combate",Then a @[choice@]:|try the puzzle or|skip straight to combat
-act1_test,A1_TEST_INTRO_4,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"El @[puzzle@] pide lanzar|@[trueno@], @[fuego@] y @[esconderse@]|en ese orden","The @[puzzle@] asks you to cast|@[thunder@], @[fire@] and @[hide@]|in that order"
-act1_test,A1_TEST_INTRO_5,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Fallar un hechizo|reinicia la secuencia|desde el principio,Casting the wrong spell|restarts the sequence|from the beginning
-act1_test,A1_TEST_INTRO_6,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Botones: A=MI B=FA C=SOL|X=LA Y=SI Z=DO,Buttons: A=MI B=FA C=SOL|X=LA Y=SI Z=DO
+act1_test,A1_TEST_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Banco de pruebas|del motor de escenas,TEST: Scene engine|test bench
+act1_test,A1_TEST_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Un menú permite probar|cada sección y volver|Botones: A=MI B=FA C=SOL|X=LA Y=SI Z=DO,A menu lets you test|each section and return|Buttons: A=MI B=FA C=SOL|X=LA Y=SI Z=DO
+act1_test,A1_TEST_INTRO_3,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Pulsa @[A@] para empezar,Press @[A@] to start
 act1_test,NULL,,,,,
+act1_test,A1_TEST_HUB,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¿Qué sección|quieres probar?,TEST: Which section|do you want to test?
+act1_test,A1_TEST_DLG_CLIO,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,TEST: Cara de Clio|a la derecha,TEST: Clio face|on the right
+act1_test,A1_TEST_DLG_XANDER,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Cara de Xander|a la izquierda,TEST: Xander face|on the left
+act1_test,A1_TEST_ANIM,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Animación de magia|lanzada por opcode del DSL,TEST: Magic animation|via DSL opcode
+act1_test,A1_TEST_QUIZ_Q1,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Quiz 1 de 2:|¿Cuántas notas tiene un|patrón del jugador?,TEST Quiz 1 of 2:|How many notes has|a player pattern?
+act1_test,A1_TEST_QUIZ_BAD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Respuesta incorrecta|Inténtalo otra vez,TEST: Wrong answer|Try again
+act1_test,A1_TEST_QUIZ_Q2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Quiz 2 de 2:|¿Qué hechizo es palíndromo|y no puede invertirse?,TEST Quiz 2 of 2:|Which spell is a palindrome|and cannot be reversed?
+act1_test,A1_TEST_QUIZ_CONF,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¿Estás seguro|de tu respuesta?,TEST: Are you sure|about your answer?
+act1_test,A1_TEST_QUIZ_OK,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¡Quiz superado!|Choices anidados y|reintentos funcionan,TEST: Quiz passed!|Nested choices and|retries work
 act1_test,A1_TEST_DEMO_CAST,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Cast scripted de @[sleep@]|(solo posible por guion),TEST: Scripted @[sleep@] cast|(script-only spell)
-act1_test,A1_TEST_CHOICE_R,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Has elegido|probar el @[puzzle@],TEST: You chose|to try the @[puzzle@]
-act1_test,A1_TEST_CHOICE_R2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Has elegido|saltar al @[combate@],TEST: You chose|to skip to @[combat@]
-act1_test,A1_TEST_PUZZLE_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"TEST: La puerta pide una|secuencia de tres hechizos:|@[trueno@], @[fuego@], @[esconderse@]","TEST: The door demands a|three-spell sequence:|@[thunder@], @[fire@], @[hide@]"
+act1_test,A1_TEST_LIGHT_DEMO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Cast scripted de @[luz@]|hechizo nuevo hecho con|fases declarativas,TEST: Scripted @[light@] cast|new spell built from|declarative phases
+act1_test,A1_TEST_PUZ_CHOICE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¿Qué puzzle|quieres probar?,TEST: Which puzzle|do you want to try?
+act1_test,A1_TEST_PUZZLE_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"TEST Puzzle 1: lanza|@[trueno@], @[fuego@] y @[esconderse@]|en ese orden","TEST Puzzle 1: cast|@[thunder@], @[fire@] and @[hide@]|in that order"
 act1_test,A1_TEST_PUZZLE_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Notas: trueno MI FA SOL SOL|fuego MI FA SOL LA|esconderse FA SOL SOL FA,Notes: thunder MI FA SOL SOL|fire MI FA SOL LA|hide FA SOL SOL FA
+act1_test,A1_TEST_PUZZLE_INTRO_3,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Fallar un hechizo reinicia|la secuencia desde cero,A wrong cast restarts|the sequence from zero
+act1_test,NULL,,,,,
+act1_test,A1_TEST_PUZ2_INTRO,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"TEST Puzzle 2: con INVERTIDO|@[trueno@], @[luz invertida@]|y @[esconderse@]","TEST Puzzle 2: with REVERSED|@[thunder@], @[reversed light@]|and @[hide@]"
+act1_test,A1_TEST_PUZ2_INTRO_2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Notas: trueno MI FA SOL SOL|luz invertida DO SI LA SOL|esconderse FA SOL SOL FA,Notes: thunder MI FA SOL SOL|reversed light DO SI LA SOL|hide FA SOL SOL FA
 act1_test,NULL,,,,,
 act1_test,A1_TEST_NEVER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ERROR|esto no debería verse,TEST: ERROR|you should never see this
 act1_test,A1_TEST_PUZZLE_OK,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¡Secuencia correcta!|La puerta se abre,TEST: Correct sequence!|The door opens
-act1_test,A1_TEST_WALK,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Camina a la derecha|hasta que avance el scroll,TEST: Walk right until|the screen scrolls
-act1_test,A1_TEST_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¡Un fantasma!|Contrarresta su trueno|con las notas invertidas,TEST: A ghost!|Counter its thunder|with the reversed notes
-act1_test,A1_TEST_VICTORY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Todo probado|Fin de la escena de test,TEST: All mechanics tested|End of test scene
+act1_test,A1_TEST_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Oleada 1: fantasma|clásico. Contrarresta su|trueno con SOL SOL FA MI,TEST Wave 1: classic ghost|Counter its thunder|with SOL SOL FA MI
+act1_test,A1_TEST_WAVE2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Oleada 2: fantasma con|DOS hechizos. El @[mordisco@]|NO se puede contrarrestar,TEST Wave 2: ghost with|TWO spells. The @[bite@]|cannot be countered
+act1_test,A1_TEST_VICTORY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Combate superado|Volviendo al menú,TEST: Combat cleared|Back to the menu
+act1_test,A1_TEST_BYE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Fin del banco de pruebas|Volviendo al dormitorio,TEST: End of the test bench|Returning to the bedroom

@@ -15,14 +15,36 @@ const ChoiceItem act1_hall_choice[] = {
     {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
 };
 
+const ChoiceItem act1_test_hub[] = {
+    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 4,
+        {{ "Diálogos y quiz", "Hechizos y puzzles", "Combate", "Terminar test"},
+        { "Dialogs and quiz", "Spells and puzzles", "Combat", "End test"}}},
+    {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
+};
+
+const ChoiceItem act1_test_quiz[] = {
+    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 3,
+        {{ "Tres", "Cuatro", "Cinco"},
+        { "Three", "Four", "Five"}}},
+    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 3,
+        {{ "Trueno", "Fuego", "Esconderse"},
+        { "Thunder", "Fire", "Hide"}}},
+    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 2,
+        {{ "Sí, seguro", "No, repetir pregunta"},
+        { "Yes, sure", "No, ask again"}}},
+    {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
+};
+
 const ChoiceItem act1_test_choice[] = {
     {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 2,
-        {{ "TEST: Probar el puzzle", "TEST: Saltar al combate"},
-        { "TEST: Try the puzzle", "TEST: Skip to combat"}}},
+        {{ "Puzzle básico", "Puzzle con invertido"},
+        { "Basic puzzle", "Puzzle with reversed"}}},
     {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
 };
 
 const ChoiceItem *choices[] = {
     act1_hall_choice,   // 0
-    act1_test_choice,   // 1
+    act1_test_hub,   // 1
+    act1_test_quiz,   // 2
+    act1_test_choice,   // 3
 };

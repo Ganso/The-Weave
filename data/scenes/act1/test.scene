@@ -1,66 +1,116 @@
 # ============================================================================
-# Escena de PRUEBA del motor de escenas — NO enlazada desde el flujo del juego.
+# BANCO DE PRUEBAS del motor de escenas — NO enlazado desde el flujo del juego.
 # Se llega con HACK_START_SCENE "act1_test" (core/hack.h) o desde la smoke ROM.
-# Ejercita TODOS los ops del DSL: say/say_cluster/say_response, choice+branch,
-# label/goto, move/move_instant/show/look, wait, set, cast+wait_spell, zone,
-# puzzle (secuencia de 3 hechizos), wait_scroll, combat, fade_out y next_scene.
-# Reutiliza los recursos del pasillo; textos y choices marcados como TEST.
+# Documentación completa de qué prueba cada sección: docs/test_scene.md
+#
+# Estructura: intro corta + HUB (menú de 4 opciones) con secciones que vuelven
+# al hub al terminar. Ejercita TODOS los ops del DSL, incluidos los nuevos
+# anim y wait_press, el hechizo LUZ (fases, invertible) y el fantasma de test
+# con dos hechizos (mordisco no counterable).
 # ============================================================================
 scene act1_test
 
-call act1_test_setup         # nivel del pasillo + items + Linus/Clio + vara y hechizos
+call act1_test_setup         # nivel del pasillo + items + personajes + hechizos del test
 
 say_cluster ACT1_TEST A1_TEST_INTRO sound
+wait_press                   # pausa de cutscene: esperar pulsación de A (op nuevo)
 
-# --- Movimientos, orientación y visibilidad de personajes ---
-move_instant CHR_linus 300 154
-show CHR_linus on
-look CHR_linus left
-move CHR_linus 120 154
-look CHR_linus right
-move_instant CHR_clio 40 154
-show CHR_clio on            # Clio aparece...
-wait 10
-show CHR_clio off           # ...y desaparece (prueba de show on/off)
-
-# --- Cast scripted + wait_spell (sleep SOLO existe por guion) ---
-say ACT1_TEST A1_TEST_DEMO_CAST silent
-cast SPELL_SLEEP direct
-wait_spell
-
-# --- Choice + say_response + branch a label ---
-choice ACT1_TEST_CHOICE 0
-say_response ACT1_TEST A1_TEST_CHOICE_R sound   # respuesta correlativa a la opción
+# Flags base para toda la sesión de test
 set movement on
 set scroll on
 set interface on
-branch 1 goto skip_puzzle    # opción 2 = saltar el puzzle e ir directo al combate
 
-# --- PUZZLE: secuencia de 3 hechizos casteados por el jugador ---
+# ----------------------------------------------------------------------------
+label hub
+say ACT1_TEST A1_TEST_HUB silent
+choice ACT1_TEST_HUB 0
+branch 0 goto sec_dialogos
+branch 1 goto sec_hechizos
+branch 2 goto sec_combate
+# opción 3 (o cualquier otra): terminar
+say ACT1_TEST A1_TEST_BYE sound
+fade_out 60
+next_scene act1_bedroom
+
+# ----------------------------------------------------------------------------
+# SECCIÓN 1 — Diálogos: caras/lados, animación por DSL, quiz anidado con reintentos
+label sec_dialogos
+say ACT1_TEST A1_TEST_DLG_CLIO sound      # cara de Clio a la DERECHA
+say ACT1_TEST A1_TEST_DLG_XANDER sound    # cara de Xander a la IZQUIERDA
+say ACT1_TEST A1_TEST_ANIM silent
+anim CHR_linus ANIM_MAGIC                 # op nuevo: animación desde el DSL
+wait 15
+anim CHR_linus ANIM_IDLE
+
+label quiz_q1
+say ACT1_TEST A1_TEST_QUIZ_Q1 silent
+choice ACT1_TEST_QUIZ 0
+branch 1 goto quiz_q2                     # "Cuatro" es la correcta
+say ACT1_TEST A1_TEST_QUIZ_BAD silent
+goto quiz_q1                              # reintento en bucle
+
+label quiz_q2
+say ACT1_TEST A1_TEST_QUIZ_Q2 silent
+choice ACT1_TEST_QUIZ 1
+branch 2 goto quiz_confirm                # "Esconderse" (FA SOL SOL FA) es palíndromo
+say ACT1_TEST A1_TEST_QUIZ_BAD silent
+goto quiz_q2
+
+label quiz_confirm                        # choice ANIDADO: confirmación con vuelta atrás
+say ACT1_TEST A1_TEST_QUIZ_CONF silent
+choice ACT1_TEST_QUIZ 2
+branch 1 goto quiz_q2                     # "No" → repetir la pregunta 2
+say ACT1_TEST A1_TEST_QUIZ_OK sound
+goto hub
+
+# ----------------------------------------------------------------------------
+# SECCIÓN 2 — Hechizos: casts scripted + dos puzzles de secuencia
+label sec_hechizos
+say ACT1_TEST A1_TEST_DEMO_CAST silent
+cast SPELL_SLEEP direct
+wait_spell
+say ACT1_TEST A1_TEST_LIGHT_DEMO silent
+cast SPELL_LIGHT direct                   # LUZ: efecto 100% por fases (cian→blanco)
+wait_spell
+
+say ACT1_TEST A1_TEST_PUZ_CHOICE silent
+choice ACT1_TEST_CHOICE 0
+branch 1 goto puz2
+
+# Puzzle 1: básico (tres directos, con zona para fire)
 say_cluster ACT1_TEST A1_TEST_PUZZLE_INTRO sound
-zone ZONE_CAULDRON           # fire solo es casteable en esta zona
+zone ZONE_CAULDRON
 set spells on
 puzzle_sequence puerta_test thunder:direct fire:direct hide:direct
-wait_puzzle puerta_test      # el jugador toca las notas; fallar reinicia la secuencia
-if_puzzle_solved puerta_test goto puzzle_ok
-say ACT1_TEST A1_TEST_NEVER silent   # inalcanzable: wait_puzzle ya garantiza resuelto
-label puzzle_ok
+wait_puzzle puerta_test
+if_puzzle_solved puerta_test goto puz1_ok
+say ACT1_TEST A1_TEST_NEVER silent        # inalcanzable (centinela)
+label puz1_ok
 zone ZONE_NONE
+set spells off
 say ACT1_TEST A1_TEST_PUZZLE_OK sound
+goto hub
 
-label skip_puzzle
-# --- Scroll controlado por el jugador ---
-say ACT1_TEST A1_TEST_WALK silent
-set spells on               # (por si se llegó por el atajo del branch)
-wait_scroll 60
+# Puzzle 2: con paso INVERTIDO (luz se puede castear al revés)
+label puz2
+say_cluster ACT1_TEST A1_TEST_PUZ2_INTRO sound
+set spells on
+puzzle_sequence eco_test thunder:direct light:reversed hide:direct
+wait_puzzle eco_test
+set spells off
+say ACT1_TEST A1_TEST_PUZZLE_OK sound
+goto hub
 
-# --- COMBATE ---
+# ----------------------------------------------------------------------------
+# SECCIÓN 3 — Combate: dos oleadas (clásico counterable + multi-hechizo)
+label sec_combate
+set spells on
 say ACT1_TEST A1_TEST_COMBAT sound
-call act1_test_ghost         # aparece un WeaverGhost (recursos del bosque)
+call act1_test_ghost                      # oleada 1: WeaverGhost clásico
 combat
-
-# --- Cierre ---
-set interface off
+say ACT1_TEST A1_TEST_WAVE2 sound
+call act1_test_ghost2                     # oleada 2: TESTGHOST (thunder + mordisco)
+combat
+set interface on                          # combat_init la mostró; asegurar estado
 say ACT1_TEST A1_TEST_VICTORY sound
-fade_out 60
-next_scene act1_bedroom      # tras el test, el juego continúa en el dormitorio
+goto hub

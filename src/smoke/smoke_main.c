@@ -15,13 +15,15 @@ static void menu_draw(void)
 {
     VDP_clearPlane(BG_A, true);
     VDP_clearPlane(BG_B, true);
-    VDP_drawText("THE WEAVE - SMOKE TEST", 8, 1);
-    VDP_drawText("UP-DOWN + A", 14, 3); // la fuente del juego reserva / < > ^ # $ % * para glifos ES
+    VDP_drawText("THE WEAVE - SMOKE TEST", 8, 0);
+    VDP_drawText("UP-DOWN + A", 14, 1); // la fuente del juego reserva / < > ^ # $ % * para glifos ES
 
+    // Menú desde la fila 3: con ~18 casos, la última cae hacia la fila 20, dentro
+    // de la zona segura NTSC (empezar más abajo perdía filas por overscan)
     for (u16 i = 0; i < SMOKE_CASE_COUNT; i++)
     {
-        VDP_drawText(smoke_cases[i].name, 4, 5 + i);
-        VDP_drawText((i == cursor) ? "-" : " ", 2, 5 + i); // cursor: '-' es seguro ('>' saldría como ¡ en la fuente ES)
+        VDP_drawText(smoke_cases[i].name, 4, 3 + i);
+        VDP_drawText((i == cursor) ? "-" : " ", 2, 3 + i); // cursor: '-' es seguro ('>' saldría como ¡ en la fuente ES)
     }
 }
 

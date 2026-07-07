@@ -46,7 +46,7 @@ static const SmokeCase smoke_cases[] = {
     {"SCENE act1_corridor",       SMOKE_SCENE, 0, false, 0, false, "act1_corridor"},
     {"SCENE act1_hall",           SMOKE_SCENE, 0, false, 0, false, "act1_hall"},
     {"SCENE act1_forest",         SMOKE_SCENE, 0, false, 0, false, "act1_forest"},
-    {"SCENE act1_test (motor)",   SMOKE_SCENE, 0, false, 0, false, "act1_test"},
+    {"SCENE act1_test",           SMOKE_SCENE, 0, false, 0, false, "act1_test"},
 };
 
 #define SMOKE_CASE_COUNT (sizeof(smoke_cases)/sizeof(smoke_cases[0]))

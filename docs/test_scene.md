@@ -1,46 +1,102 @@
 # act1_test — banco de pruebas del motor (documento vivo)
 
 > QUÉ ES: inventario de todo lo implementado en la escena de test y CÓMO probarlo.
-> Se actualiza con cada mecánica nueva. Si una sesión se corta a medias, este
-> fichero es la fuente de verdad de lo que hay y lo que falta.
+> Si una sesión se corta a medias, este fichero es la fuente de verdad.
 >
-> CÓMO ENTRAR: `HACK_START_SCENE "act1_test"` en `src/core/hack.h`, o smoke ROM
-> (`./build-theweave.sh smoke` → caso "SCENE act1_test (motor)").
+> CÓMO ENTRAR: `HACK_START_SCENE "act1_test"` en `src/core/hack.h` + build, o
+> smoke ROM (`./build-theweave.sh smoke` → caso "SCENE act1_test (motor)").
+> Tras probar con smoke: `./build-theweave.sh release` para restaurar out/.
 
-## Estado: EN AMPLIACIÓN (sesión 2026-07-07)
+## Estado: ESTABILIZADO (sesión 2026-07-08)
 
-### Estructura objetivo: hub con secciones
+### Bugs reportados por el usuario y su arreglo (2026-07-08)
+- **No se veía al personaje**: `act1_test_setup` hacía `init_character` (crea el
+  sprite OCULTO) pero nunca `show_character` ni lo posicionaba. Arreglado:
+  posiciona y muestra a Linus.
+- **HUD tapaba los diálogos**: ahora los ops SAY/SAY_CLUSTER/SAY_RESPONSE/CHOICE
+  de la VM ocultan el HUD de hechizos al hablar y lo restauran al terminar (solo
+  si `interface_active`). Aplica a TODAS las escenas, no solo al test.
+- **Opción de test en blanco en el menú smoke**: el menú crecía hasta filas que
+  el overscan NTSC recortaba. Menú compactado (empieza en fila 0/1, casos desde
+  la fila 3) y nombre acortado a "SCENE act1_test".
+- **Fondo**: el test usa ahora el fondo de BOSQUE (antes el pasillo).
 
-La escena arranca con una intro corta y un MENÚ (choice de 4 opciones) que
-permite probar cada sección por separado y volver al menú al terminar:
+## Estructura: intro + HUB de secciones
 
-1. **Diálogos y quiz** — caras/lados distintos, animación por DSL, quiz de 2
-   preguntas con reintentos y confirmación anidada (choices dentro de choices).
-2. **Hechizos y puzzles** — casts scripted (sleep y el nuevo LUZ), y a elegir:
-   puzzle básico (trueno→fuego→esconderse) o puzzle con INVERTIDO
-   (trueno→luz invertida→esconderse).
-3. **Combate** — oleada 1: WeaverGhost clásico (counter). Oleada 2: fantasma de
-   TEST con DOS hechizos (trueno counterable + mordisco no-counterable).
-4. **Terminar** — fundido y next_scene al dormitorio.
+Intro corta (cluster + **wait_press**, op nuevo) → menú de 4 opciones que se
+repite al acabar cada sección:
 
-## Mecánicas implementadas y cómo probarlas
+1. **Diálogos y quiz**
+2. **Hechizos y puzzles**
+3. **Combate** (dos oleadas)
+4. **Terminar test** → fade + next_scene al dormitorio
 
-| Mecánica | Dónde | Qué verificar |
+## Qué probar, sección a sección
+
+### Intro
+- [ ] Cluster de 3 pantallas con el mapeo botón→nota.
+- [ ] `wait_press`: la escena espera a que pulses A (op nuevo de la VM).
+
+### 1. Diálogos y quiz
+- [ ] Cara de **Clio a la DERECHA** y de **Xander a la izquierda** (variedad de
+      face/side en DialogItem).
+- [ ] `anim`: Linus hace la animación de MAGIA 1,5 s por opcode del DSL y vuelve a idle.
+- [ ] **Quiz anidado** (choices dentro de choices, con bucles de reintento):
+  - Q1 "¿Cuántas notas tiene un patrón?" → correcta **Cuatro** (opción 2).
+    Fallar → mensaje + repetición de la pregunta (bucle goto).
+  - Q2 "¿Qué hechizo es palíndromo?" → correcta **Esconderse** (opción 3).
+  - Confirmación anidada "¿Estás seguro?" → **No** vuelve a Q2; **Sí** supera el quiz.
+- [ ] Vuelta al hub.
+
+### 2. Hechizos y puzzles
+- [ ] Cast scripted de **sleep** (hechizo solo-guion) con `wait_spell`.
+- [ ] Cast scripted de **LUZ** — hechizo NUEVO definido por fases declarativas:
+      el cielo pasa a **cian** (0,75 s) y luego a **blanco** (0,75 s) y se restaura.
+- [ ] Selector de puzzle (choice de 2):
+  - **Puzzle 1 (básico)**: trueno → fuego → esconderse (directos). Requiere
+    `zone ZONE_CAULDRON` (fire). Notas en el propio diálogo.
+  - **Puzzle 2 (con INVERTIDO)**: trueno → **luz invertida (DO SI LA SOL)** →
+    esconderse. Primera prueba real del matching `reversed` en PuzzleSeq.
+    LUZ es el único hechizo casteable invertido libremente (sin canUse).
+- [ ] Fallar la secuencia la reinicia (con crédito si el fallo es el 1er paso).
+- [ ] `if_puzzle_solved` tras el puzzle 1 (el centinela "ERROR" nunca debe verse).
+- [ ] Vuelta al hub (se puede entrar otra vez y elegir el otro puzzle).
+
+### 3. Combate (dos oleadas en la misma escena)
+- [ ] **Oleada 1**: WeaverGhost clásico — hint al thunder directo, counter
+      (SOL SOL FA MI) durante su efecto, muerte con 2 counters.
+- [ ] **Oleada 2**: **ENEMY_CLS_TESTGHOST** (clase SOLO test, sprite del ghost)
+      con DOS hechizos: thunder (counterable, recarga 3 s) y **mordisco**
+      (MI SOL DO, 3 notas, NO counterable, recarga 2 s, ahora hace 1 de daño).
+      Verificar: alternancia de ataques por recargas, y que el counter solo
+      funciona contra el thunder (contra el mordisco: esconderse o comerse el golpe).
+- [ ] `combat` dos veces en la misma escena (re-init limpio del FSM).
+- [ ] Vuelta al hub.
+
+### Salida
+- [ ] Opción 4 del hub: despedida + fade_out + next_scene al dormitorio.
+- [ ] Desde la smoke ROM: al terminar vuelve al menú de smoke.
+
+## Casos nuevos de smoke ROM (menú)
+- [ ] `CHK light directo - SI` y `CHK light inverso - SI` (único invertido libre).
+- [ ] `CAST light (cian-blanco)`: duración 90/90 frames NTSC + efecto visual.
+
+## Cambios de motor de esta sesión (2026-07-07)
+
+| Cambio | Archivos | Nota |
 |---|---|---|
-| (pendiente de rellenar según se implementen) | | |
+| Op `anim <chr> <ANIM_*>` | scene_vm, gen_scenes | animación de personaje desde DSL |
+| Op `wait_press` | scene_vm, gen_scenes | pausa de cutscene hasta pulsar A (release previo) |
+| `SPELL_LIGHT` | spells/light.c/.h, constants (ids renumerados), sound.c, spell.c | 1er hechizo por fases; 1er invertible libre |
+| Mordisco funcional | enemy_spells.c | onFinish con hit_player(1) (antes no-op heredado) |
+| `ENEMY_CLS_TESTGHOST` | enemies.h/.c | SOLO test; 1er enemigo multi-hechizo (recargas alternas) |
+| Guarda hook NULL | scene_vm.c (op CALL) | hook sin registrar avisa por KDebug, no cuelga |
+| Iconos HUD opcionales | interface.c | hechizo sin icono (FIRE/LUZ) no se dibuja, no crashea |
 
-## Cambios de motor de esta sesión
+## Ideas pendientes (no implementadas)
 
-(pendiente de rellenar)
-
-## Pendiente / ideas no implementadas aún
-
-- Op `anim <chr> <ANIM_*>` (animación de personaje desde DSL)
-- Op `wait_press` (pausa de cutscene hasta pulsar A)
-- Hechizo nuevo SPELL_LIGHT por fases declarativas, casteable directo E invertido
-- Puzzle 2 con paso invertido (ejercita `reversed` en PuzzleSeq de verdad)
-- Quiz con choices anidados y bucles de reintento (branch/goto intensivo)
-- Clase ENEMY_CLS_TESTGHOST con {EN_THUNDER, EN_BITE} — primer enemigo
-  multi-hechizo (recargas alternas) y primer mordisco funcional
-- Segunda oleada de combate en la misma escena (combat ×2)
-- Casos nuevos de smoke ROM para LIGHT
+- Op `music`/`sfx` desde DSL (necesita tabla de recursos: los punteros no caben
+  en los args s16 del SceneStep).
+- Puzzle con pasos de 4 hechizos (PUZZLE_SEQ_MAX ya lo permite).
+- Sección de items interactuables en el test (bucle tipo bedroom con hook).
+- Derrota del jugador en combate (hoy no existe: sin HP de jugador).

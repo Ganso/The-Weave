@@ -61,6 +61,26 @@ static void wait_tenths(u16 tenths)
     while (frames--) next_frame(false);
 }
 
+// Los diálogos y choices ocultan el HUD de hechizos mientras hablan y lo
+// restauran al terminar (solo si estaba activo), para que no se solape con el
+// texto. show_or_hide_interface() no toca interface_active, así que el flag
+// guardado sigue siendo válido tras ocultar.
+static void say_hud(const DialogItem *d, bool sound)
+{
+    bool hud = interface_active;
+    if (hud) show_or_hide_interface(false);
+    talk_dialog(d, sound);
+    if (hud) show_or_hide_interface(true);
+}
+
+static void cluster_hud(const DialogItem *start, bool sound)
+{
+    bool hud = interface_active;
+    if (hud) show_or_hide_interface(false);
+    talk_cluster(start, sound);
+    if (hud) show_or_hide_interface(true);
+}
+
 static void set_scene_flag(u8 flag, bool on)
 {
     switch (flag)
@@ -102,21 +122,25 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
                 break;
 
             case SCENE_OP_SAY:
-                talk_dialog(&dialogs[st->a][st->b], st->c);
+                say_hud(&dialogs[st->a][st->b], st->c);
                 break;
 
             case SCENE_OP_SAY_CLUSTER:
-                talk_cluster(&dialogs[st->a][st->b], st->c);
+                cluster_hud(&dialogs[st->a][st->b], st->c);
                 break;
 
             case SCENE_OP_SAY_RESPONSE: // respuesta a un choice: id = base + last_choice
-                talk_dialog(&dialogs[st->a][st->b + last_choice], st->c);
+                say_hud(&dialogs[st->a][st->b + last_choice], st->c);
                 break;
 
-            case SCENE_OP_CHOICE:
+            case SCENE_OP_CHOICE: {
+                bool hud = interface_active;
+                if (hud) show_or_hide_interface(false);
                 last_choice = choice_dialog(&choices[st->a][st->b]);
+                if (hud) show_or_hide_interface(true);
                 dprintf(2,"Choice %d/%d -> %d", st->a, st->b, last_choice);
                 break;
+            }
 
             case SCENE_OP_BRANCH:
                 if (last_choice == st->a) { pc = st->b; continue; }
