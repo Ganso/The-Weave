@@ -4,6 +4,6 @@
 
 #include "smoke/smoke_cases.h"
 
-void smoke_run_case(const SmokeCase *c); // Ejecuta el caso y deja PASS/FAIL/resultado en pantalla
+bool smoke_run_case(const SmokeCase *c); // Ejecuta el caso; PASS/FAIL en pantalla y por KDebug (SMOKE: ...)
 
 #endif

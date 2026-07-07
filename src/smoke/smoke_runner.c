@@ -23,22 +23,24 @@ static void result_line(const char *label, const char *value, u8 y)
 }
 
 // --- CHECK: invariante de canUse -------------------------------------------
-static void run_check(const SmokeCase *c)
+static bool run_check(const SmokeCase *c)
 {
     u8 old_zone = spell_zone;
     spell_zone = c->zone;
     bool got = spell_can_use(c->spellId, c->reversed);
     spell_zone = old_zone;
+    bool pass = (got == c->expected);
 
     VDP_clearPlane(BG_A, true);
     VDP_drawText(c->name, 4, 8);
     result_line("canUse:", got ? "true" : "false", 10);
-    result_line("resultado:", (got == c->expected) ? "PASS" : "FAIL", 12);
+    result_line("resultado:", pass ? "PASS" : "FAIL", 12);
     VDP_drawText("A = volver al menu", 4, 20);
+    return pass;
 }
 
 // --- CAST: lanzar en un nivel de pruebas y medir frames ---------------------
-static void run_cast(const SmokeCase *c)
+static bool run_cast(const SmokeCase *c)
 {
     // Nivel de pruebas: bosque + Linus visible (los efectos usan paleta y sprite)
     new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
@@ -69,17 +71,18 @@ static void run_cast(const SmokeCase *c)
     result_line("duracion:", buf, 10);
     result_line("resultado:", pass ? "PASS" : "FAIL", 12);
     VDP_drawText("A = volver al menu", 4, 20);
+    return pass;
 }
 
 // --- SCENE: ejecutar la escena completa -------------------------------------
-static void run_scene(const SmokeCase *c)
+static bool run_scene(const SmokeCase *c)
 {
     s16 id = scene_id_by_name(c->sceneName);
     if (id < 0)
     {
         VDP_clearPlane(BG_A, true);
         VDP_drawText("FAIL: escena no existe", 4, 10);
-        return;
+        return false;
     }
 
     scene_run(&scenes[id]);   // interactiva; vuelve al terminar (forest resetea)
@@ -89,18 +92,21 @@ static void run_scene(const SmokeCase *c)
     VDP_drawText(c->name, 4, 8);
     result_line("resultado:", "TERMINADA", 10);
     VDP_drawText("A = volver al menu", 4, 20);
+    return true;
 }
 
-void smoke_run_case(const SmokeCase *c)    // Ejecuta el caso y deja el resultado en pantalla
+bool smoke_run_case(const SmokeCase *c)    // Ejecuta el caso; resultado en pantalla y por KDebug
 {
-    dprintf(1, "SMOKE: %s", c->name);
+    bool pass = false;
     switch (c->kind)
     {
-        case SMOKE_CHECK: run_check(c); break;
-        case SMOKE_CAST:  run_cast(c);  break;
-        case SMOKE_SCENE: run_scene(c); break;
+        case SMOKE_CHECK: pass = run_check(c); break;
+        case SMOKE_CAST:  pass = run_cast(c);  break;
+        case SMOKE_SCENE: pass = run_scene(c); break;
         default: break;
     }
+    dprintf(1, "SMOKE: %s -> %s", c->name, pass ? "PASS" : "FAIL"); // línea parseada por tools/smoke-test.sh
+    return pass;
 }
 
 #endif // HACK_SMOKE_BUILD

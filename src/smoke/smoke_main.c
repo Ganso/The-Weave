@@ -38,6 +38,26 @@ int main(bool hard)
     (void)hard;
     initialize(true);
 
+#ifdef SMOKE_AUTORUN
+    // Modo desatendido (tools/smoke-test.sh): ejecuta los casos automáticos
+    // (CHECK y CAST; las SCENE requieren jugador) y emite el resultado por KDebug.
+    {
+        u16 pass = 0, total = 0;
+        char buf[32];
+        for (u16 i = 0; i < SMOKE_CASE_COUNT; i++)
+        {
+            if (smoke_cases[i].kind == SMOKE_SCENE) continue;
+            total++;
+            if (smoke_run_case(&smoke_cases[i])) pass++;
+        }
+        dprintf(1, "SMOKE RESULT: %d/%d PASS", pass, total); // línea final que espera el script
+        VDP_clearPlane(BG_A, true);
+        sprintf(buf, "AUTORUN: %u/%u PASS", pass, total);
+        VDP_drawText(buf, 10, 12);
+        while (true) SYS_doVBlankProcess();
+    }
+#endif
+
     while (true)
     {
         menu_draw();

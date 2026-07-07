@@ -27,6 +27,24 @@ Tipos de caso (`src/smoke/smoke_cases.h`):
 Una fila en `smoke_cases[]` (`src/smoke/smoke_cases.h`) y rebuild. Sin tocar el
 menú ni el runner.
 
+## Test automatizado: tools/smoke-test.sh
+
+```bash
+./tools/smoke-test.sh        # exit 0 = todos los casos automáticos PASS
+```
+
+Compila la smoke ROM en modo AUTORUN (`-DSMOKE_AUTORUN`): al arrancar ejecuta
+solos los casos CHECK y CAST, emite cada resultado por KDebug y termina con
+`SMOKE RESULT: n/m PASS`. El script lanza BlastEm capturando su stdout, espera
+esa línea (timeout `SMOKE_TIMEOUT`, 120 s por defecto), cierra el emulador y
+devuelve exit code 0/1 con el detalle por caso.
+
+- Ejecutar desde la sesión gráfica: la ventana de BlastEm aparece ~15-20 s y
+  se cierra sola. (BlastEm 0.6.3 no tiene modo headless utilizable — probado
+  SDL dummy, render software y Xvfb sin éxito; detalles en el propio script.)
+- Las escenas (SCENE) no entran en el autorun: requieren jugador — para ellas,
+  `./build-theweave.sh smoke` y el menú interactivo.
+
 ## Checklist de playtest (contra docs/refactor/baseline.md)
 
 - **Intro + logo**: GeeseBumps y la intro, selección de idioma.
