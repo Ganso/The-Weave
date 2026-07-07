@@ -18,10 +18,6 @@
 ./build-theweave.sh [build|release|full|clean|smoke] [--no-run|-n]
 ```
 `smoke` compila la ROM de pruebas (out/smoke.bin; docs/testing.md).
-`./tools/smoke-test.sh` = test DESATENDIDO (autorun + parseo de KDebug, exit 0/1);
-ejecutarlo desde la sesión gráfica — BlastEm 0.6.3 NO tiene headless utilizable
-(probado y fallido: SDL dummy sin GL, render software para la emulación, Xvfb
-cuelga en vsync). No reintentarlo sin cambiar de emulador/versión.
 - Pipeline: **codegen en el host** (python3 `tools/gen_texts.py` — la imagen Docker NO
   trae python3) → make dentro del contenedor `ghcr.io/stephane-d/sgdk:latest`
   (`--entrypoint make GDK=/sgdk -f /src/Makefile`) → backup rotatorio
