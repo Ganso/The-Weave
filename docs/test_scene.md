@@ -21,12 +21,15 @@
   la fila 3) y nombre acortado a "SCENE act1_test".
 - **Fondo**: el test usa ahora el fondo de BOSQUE (antes el pasillo).
 - **Cuelgue al tocar la primera nota del puzzle** ("unmapped read from B96608"):
-  el setup cargaba el bosque con anchura 320 y `BG_SCRL_AUTO_RIGHT`; el
-  auto-scroll deriva cada frame y, sobre un mapa pensado para 1440 px, acaba
-  leyendo fuera del tilemap (memoria no mapeada). Coincidió con la nota solo por
-  el tiempo transcurrido. Arreglado replicando la config de forest:
-  `new_level(..., 1440, BG_SCRL_USER_RIGHT, 3)` — sin auto-scroll, el fondo solo
-  se mueve cuando camina el jugador y dentro de los límites del mapa.
+  causa REAL (el auto-scroll era un problema aparte, ya corregido) — `act1_test_setup`
+  fijaba `player_has_rod = true` DESPUÉS de `init_character(CHR_linus)`. Ese flag
+  decide el sprite de Linus: con vara `linus_sprite` (tiene ANIM_ACTION de tocar
+  notas), sin vara `linus_norod_sprite` (NO la tiene). Al quedar con el sprite sin
+  vara, la primera nota → `STATE_PLAYING_NOTE` → `anim_character(..., ANIM_ACTION)`
+  → `SPR_setAnim` leía una animación inexistente (puntero basura fijo, de ahí la
+  dirección constante). Arreglado moviendo `player_has_rod = true` ANTES de
+  `init_character`, igual que act1_forest_setup. Bisecado con marcas `F:xxx` en
+  next_frame (el crash caía en `F:chranim` = update_character_animations).
 
 ## Estructura: intro + HUB de secciones
 

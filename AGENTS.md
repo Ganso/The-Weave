@@ -175,6 +175,12 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
   mapa. `BG_SCRL_AUTO_*` sobre una anchura menor que el mapa deriva cada frame y
   acaba leyendo fuera del tilemap → cuelgue "unmapped read". Para fondos anchos
   usa `BG_SCRL_USER_*` con la anchura real (p.ej. forest = 1440, USER_RIGHT).
+- **TRAMPA de orden en setup**: fija `player_has_rod` ANTES de
+  `init_character(CHR_linus)` — decide su sprite (con vara `linus_sprite` tiene
+  ANIM_ACTION; sin vara no). Ponerlo después deja a Linus sin la animación de
+  tocar notas y `SPR_setAnim(ANIM_ACTION)` lee basura → cuelgue al tocar la 1ª
+  nota. Regla general: **`SPR_setAnim` con un índice que el sprite no tiene lee
+  un puntero fuera de rango y congela el VDP** (dirección de crash constante).
 - **TRAMPA de la fuente en UI de texto crudo** (VDP_drawText, no diálogos): la
   fuente del juego tiene los glifos españoles EN las posiciones ASCII de
   `/ < > ^ # $ % *` (ú ¿ ¡ ñ á é í ó). En menús/HUD crudos evita esos caracteres.

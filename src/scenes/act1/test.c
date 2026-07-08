@@ -24,6 +24,12 @@ void act1_test_setup(void)    // Fondo de bosque + personajes visibles + vara y 
     new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
     set_limits(0,134,275,172);
 
+    // player_has_rod DEBE fijarse ANTES de init_character(CHR_linus): decide qué
+    // sprite usa Linus. Con vara = linus_sprite (tiene ANIM_ACTION de tocar notas);
+    // sin vara = linus_norod_sprite (sin esa animación → SPR_setAnim leería basura
+    // y colgaría al tocar una nota). Igual que act1_forest_setup.
+    player_has_rod = true;
+
     init_character(CHR_linus);
     init_character(CHR_clio);        // para probar show/hide desde el DSL
     active_character = CHR_linus;
@@ -33,8 +39,7 @@ void act1_test_setup(void)    // Fondo de bosque + personajes visibles + vara y 
     show_character(CHR_linus, true);
     move_character_instant(CHR_clio, 70, 154); // Clio empieza oculta; el DSL la muestra/oculta
 
-    // Vara + hechizos del test (fire y luz: casteables por el jugador solo aquí)
-    player_has_rod = true;
+    // Hechizos del test (fire y luz: casteables por el jugador solo aquí)
     spell_enable(SPELL_THUNDER);
     spell_enable(SPELL_HIDE);
     spell_enable(SPELL_FIRE);

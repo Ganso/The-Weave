@@ -30,7 +30,7 @@
 
 // 0: no debug, 1: easter eggs & errors, 2: debug messages, 3: verbose debug messages
 // Los mensajes salen por KDebug (visibles en la consola de BlastEm)
-#define DEBUG_LEVEL             3
+#define DEBUG_LEVEL             1
 
 // Los diálogos avanzan solos casi al instante (para recorrer escenas rápido)
 #define HACK_FAST_DIALOGS       FALSE
