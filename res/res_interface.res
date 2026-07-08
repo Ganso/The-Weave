@@ -27,6 +27,8 @@ SPRITE int_pattern_thunder "Sprites/Interface/pattern_thunder.png" 4 4 BEST
 SPRITE int_pattern_hide "Sprites/Interface/pattern_hide.png" 4 4 BEST
 SPRITE int_pattern_open "Sprites/Interface/pattern_open.png" 4 4 BEST 
 SPRITE int_pattern_sleep "Sprites/Interface/pattern_sleep.png" 4 4 BEST 
+SPRITE int_pattern_fire "Sprites/Interface/pattern_fire.png" 4 4 BEST
+SPRITE int_pattern_light "Sprites/Interface/pattern_light.png" 4 4 BEST
 
 # Others
 SPRITE int_fadein_sprite "Sprites/Interface/fadein.png" 2 1 BEST 1

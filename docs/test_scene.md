@@ -101,7 +101,7 @@ repite al acabar cada sección:
 | Mordisco funcional | enemy_spells.c | onFinish con hit_player(1) (antes no-op heredado) |
 | `ENEMY_CLS_TESTGHOST` | enemies.h/.c | SOLO test; 1er enemigo multi-hechizo (recargas alternas) |
 | Guarda hook NULL | scene_vm.c (op CALL) | hook sin registrar avisa por KDebug, no cuelga |
-| Iconos HUD opcionales | interface.c | hechizo sin icono (FIRE/LUZ) no se dibuja, no crashea |
+| Iconos HUD opcionales | interface.c | hechizo sin icono no se dibuja, no crashea (FIRE y LUZ ya tienen icono: F y L) |
 
 ## Ideas pendientes (no implementadas)
 

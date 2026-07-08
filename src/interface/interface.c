@@ -230,8 +230,10 @@ void show_pattern_icon(u16 npattern, bool show, bool priority)    // Display or 
         if (npattern==SPELL_HIDE) nsprite = &int_pattern_hide;
         if (npattern==SPELL_OPEN) nsprite = &int_pattern_open;
         if (npattern==SPELL_SLEEP) nsprite = &int_pattern_sleep;
+        if (npattern==SPELL_FIRE) nsprite = &int_pattern_fire;
+        if (npattern==SPELL_LIGHT) nsprite = &int_pattern_light;
 
-        if (nsprite==NULL) return; // Hechizo sin icono de HUD (p.ej. FIRE): no se dibuja (evita SPR_addSpriteSafe(NULL))
+        if (nsprite==NULL) return; // Hechizo sin icono de HUD: no se dibuja (evita SPR_addSpriteSafe(NULL))
 
         // Add the sprite if it doesn't exist
         if (spell_defs[npattern].icon==NULL) spell_defs[npattern].icon = SPR_addSpriteSafe(nsprite, SCREEN_WIDTH-40, 4, TILE_ATTR(npal, priority, false, false));
@@ -552,8 +554,10 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
         if (npattern==SPELL_HIDE) nsprite = &int_pattern_hide;
         if (npattern==SPELL_OPEN) nsprite = &int_pattern_open;
         if (npattern==SPELL_SLEEP) nsprite = &int_pattern_sleep;
+        if (npattern==SPELL_FIRE) nsprite = &int_pattern_fire;
+        if (npattern==SPELL_LIGHT) nsprite = &int_pattern_light;
 
-        if (nsprite==NULL) return; // Hechizo sin icono de HUD (p.ej. FIRE): no se dibuja
+        if (nsprite==NULL) return; // Hechizo sin icono de HUD: no se dibuja
         if (spr_pause_icon[nicon]==NULL) spr_pause_icon[nicon] = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false));
     }
     else {

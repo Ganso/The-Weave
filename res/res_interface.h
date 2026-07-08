@@ -26,6 +26,8 @@ extern const SpriteDefinition int_pattern_thunder;
 extern const SpriteDefinition int_pattern_hide;
 extern const SpriteDefinition int_pattern_open;
 extern const SpriteDefinition int_pattern_sleep;
+extern const SpriteDefinition int_pattern_fire;
+extern const SpriteDefinition int_pattern_light;
 extern const SpriteDefinition int_fadein_sprite;
 extern const SpriteDefinition int_life_counter_sprite;
 extern const SpriteDefinition int_button_A_sprite;
