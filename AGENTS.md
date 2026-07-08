@@ -252,4 +252,8 @@ juego: `HACK_START_SCENE "act1_test"` o smoke ROM. Es la chuleta canónica del D
 - Voces animalese: `tools/voice/generate_animalese_voices.py` (descarga animalese.wav
   de github.com/Acedio/animalese.js, requiere venv con librosa/numpy/soundfile).
   Salida → `res/Sound/Dialogs/`. Perfiles woman/man/deep.
+  - En `tools/voice/` solo se versiona el script y la fuente
+    `animalese_download/animalese.wav`. Los intermedios (`phonemes_animalese/`,
+    `synthesis_animalese/`) son SALIDA regenerable del script y están gitignored:
+    el script los recrea (`mkdir(exist_ok=True)`) al ejecutarse.
 - Arte: Aseprite (`.ase` en res/). Créditos de terceros: sección Acknowledgements del README.

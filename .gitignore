@@ -72,3 +72,8 @@ __pycache__/
 
 # Configuración local del build (no versionar credenciales MiSTer)
 .build-theweave.local.sh
+
+# Voces: artefactos regenerables por tools/voice/generate_animalese_voices.py
+# (la fuente animalese.wav SÍ se versiona; estos son salida)
+tools/voice/phonemes_animalese/
+tools/voice/synthesis_animalese/

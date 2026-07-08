@@ -128,10 +128,8 @@ The-Weave/
 │   ├── consolidate.py         (movido de raíz)
 │   │                          (add_texts_comments.py se mueve aquí en Fase 2 y se retira en Fase 5)
 │   └── voice/                 (movido de gibberish/)
-│       ├── generate_animalese_voices.py
-│       ├── animalese_download/
-│       ├── phonemes_animalese/
-│       └── synthesis_animalese/
+│       ├── generate_animalese_voices.py   (pipeline de voces)
+│       └── animalese_download/animalese.wav (fuente; el resto son salida gitignored)
 │
 ├── src/                       (CÓDIGO DEL JUEGO)
 │   ├── boot/
