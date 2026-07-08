@@ -1,11 +1,9 @@
 // geesebumps.c — logo animado de GeeseBumps
 #include <genesis.h>
-#include "core/config.h"
-#include "scenes/geesebumps.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "audio/sound.h"
-#include "res_geesebumps.h"
+#include "core/core.h"
+#include "scenes/scenes.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 static bool should_exit = false;
 

@@ -1,16 +1,10 @@
 // controller.c — procesado del pad por frame
 #include <genesis.h>
-#include "core/config.h"
-#include "core/controller.h"
-#include "core/frame.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/items.h"
-#include "actors/collisions.h"
-#include "world/background.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
+#include "spells/spells.h"
 #include "interface/interface.h"
 
 void joy_check(void)    // Process joystick input each frame for movement, actions, and pause

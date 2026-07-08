@@ -1,21 +1,13 @@
 // characters.c — personajes: init, movimiento, animaciones, sombras y depth
 #include <genesis.h>
-#include "core/config.h"
-#include "actors/characters.h"
-#include "actors/entity.h"
-#include "actors/enemies.h"
-#include "actors/items.h"
-#include "actors/collisions.h"
-#include "core/frame.h"
-#include "world/background.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
 #include "interface/interface.h"
-#include "narrative/dialogs.h"
-#include "narrative/texts_data.h"
-#include "res_characters.h"
-#include "res_faces.h"
+#include "res_all.h"
 
 Entity obj_character[MAX_CHR];         // Array of game characters with their properties
 Sprite *spr_chr[MAX_CHR];             // Array of character sprites

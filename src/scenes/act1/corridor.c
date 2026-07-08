@@ -1,19 +1,12 @@
 // act1/corridor.c — hooks del pasillo (lógica; la secuencia está en corridor.scene)
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "core/init.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
+#include "narrative/narrative.h"
+#include "res_all.h"
 #include "scenes/act1/corridor.h"
-#include "narrative/texts.h"
-#include "narrative/texts_data.h"
-#include "narrative/dialogs.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/items.h"
-#include "world/background.h"
-#include "res_backgrounds.h"
-#include "res_items.h"
 
 void act1_corridor_setup(void)    // Nivel del pasillo + libros/lámparas/puertas/mapas
 {

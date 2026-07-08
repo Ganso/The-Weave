@@ -1,14 +1,8 @@
 // main.c — bucle principal: intro + bucle de escenas por nombre (scene_vm)
 #include <genesis.h>
-#include "core/config.h"
-#include "core/hack.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "scenes/geesebumps.h"
-#include "scenes/intro.h"
-#include "scenes/scene_vm.h"
-#include "scenes/scene_data.h"
-#include "narrative/texts.h"
+#include "core/core.h"
+#include "narrative/narrative.h"
+#include "scenes/scenes.h"
 
 
 #ifndef HACK_SMOKE_BUILD // en la smoke ROM el main vive en src/smoke/smoke_main.c

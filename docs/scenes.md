@@ -136,21 +136,15 @@ void act1_claro_enemy(void); // Aparición de un WeaverGhost para el combate
 ```
 
 ```c
-// claro.c
+// claro.c — includes por metalibrería de dominio (ver AGENTS.md §6)
 #include <genesis.h>
-#include "core/config.h"
-#include "core/init.h"
-#include "core/frame.h"
-#include "scenes/act1/claro.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "world/background.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
+#include "spells/spells.h"
 #include "interface/interface.h"
-#include "res_backgrounds.h"
-#include "res_enemies.h"
+#include "res_all.h"
+#include "scenes/act1/claro.h"   // header propio (hooks de esta escena)
 
 void act1_claro_setup(void)
 {

@@ -1,10 +1,8 @@
 // texts.c — idioma activo y utilidades de posicionado de texto
 #include <genesis.h>
-#include "core/config.h"
-#include "narrative/texts.h"
-#include "narrative/encode.h"
-#include "narrative/dialogs.h"
-#include "actors/characters.h"
+#include "core/core.h"
+#include "actors/actors.h"
+#include "narrative/narrative.h"
 
 // MAX TEXT LENGHT: "123456789012345678901234567890" (30 characters)
 

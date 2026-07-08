@@ -1,12 +1,8 @@
 // items.c — items: init, visibilidad y detección de interacción
 #include <genesis.h>
-#include "core/config.h"
-#include "actors/items.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/collisions.h"
-#include "world/background.h"
-#include "core/frame.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 
 Item obj_item[MAX_ITEMS];              // Array of game items with their properties
 Sprite *spr_item[MAX_ITEMS];           // Array of item sprites

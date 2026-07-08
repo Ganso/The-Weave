@@ -2,24 +2,18 @@
 // Ver el bloque de arquitectura en spell.h.
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/hack.h"
-#include "core/frame.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
+#include "core/core.h"
+#include "actors/actors.h"
+#include "combat/combat.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
+#include "scenes/scenes.h"
+#include "interface/interface.h"
+#include "audio/audio.h"
 #include "spells/player_spells.h"
 #include "spells/enemy_spells.h"
 #include "spells/fire.h"
 #include "spells/light.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "combat/combat.h"
-#include "interface/interface.h"
-#include "audio/sound.h"
-#include "narrative/dialogs.h"
-#include "narrative/texts_data.h"
-#include "scenes/scene_vm.h"   // scene_puzzle_notify (progreso de puzzles narrativos)
 
 SpellDef spell_defs[SPELL_COUNT];
 u8 spell_zone = ZONE_NONE;

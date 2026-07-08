@@ -1,26 +1,15 @@
 // act1/bedroom.c — hooks del dormitorio (lógica; la secuencia está en bedroom.scene)
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "scenes/act1/bedroom.h"
-#include "narrative/texts.h"
-#include "narrative/texts_data.h"
-#include "narrative/dialogs.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/items.h"
-#include "world/background.h"
-#include "spells/spell.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
 #include "interface/interface.h"
-#include "audio/sound.h"
-#include "res_backgrounds.h"
-#include "res_characters.h"
-#include "res_items.h"
-#include "res_sound.h"
-#include "res_geesebumps.h"
-#include "resources.h"
+#include "audio/audio.h"
+#include "res_all.h"
+#include "scenes/act1/bedroom.h"
 
 void act1_bedroom_setup(void)    // Nivel nocturno, personajes e items del dormitorio
 {

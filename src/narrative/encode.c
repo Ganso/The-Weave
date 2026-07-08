@@ -1,5 +1,5 @@
 #include <genesis.h>
-#include "narrative/encode.h"
+#include "narrative/narrative.h"
 
 char* encode_spanish_text(const char* input) {
     // Static buffer: no malloc/free on the 64KB RAM (B7). The encoded text is never

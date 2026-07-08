@@ -1,17 +1,12 @@
 // enemies.c — enemigos: init, IA de movimiento, animaciones y liberación
 #include <genesis.h>
-#include "core/config.h"
-#include "actors/enemies.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
-#include "actors/collisions.h"
+#include "spells/spells.h"
 #include "interface/interface.h"
-#include "core/frame.h"
-#include "world/background.h"
-#include "res_enemies.h"
+#include "res_all.h"
 
 Enemy obj_enemy[MAX_ENEMIES];                    // Array of enemy instances with their properties
 Sprite *spr_enemy[MAX_ENEMIES];                  // Array of enemy sprites

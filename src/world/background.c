@@ -1,11 +1,8 @@
 // background.c — scroll del fondo, límites y dibujo incremental del mapa
 #include <genesis.h>
-#include "core/config.h"
-#include "world/background.h"
-#include "core/frame.h"
-#include "core/controller.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 
 Map *background_BGA;              // Foreground layer tilemap
 Map *background_BGB;              // Background layer tilemap

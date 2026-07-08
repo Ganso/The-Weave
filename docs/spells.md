@@ -111,17 +111,15 @@ void wind_init(void); // Registra VIENTO en spell_defs[] (lo llama init_spells)
 ```
 
 ```c
-// wind.c
+// wind.c — includes por metalibrería de dominio (ver AGENTS.md §6)
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "spells/spell.h"
-#include "spells/wind.h"
+#include "core/core.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "audio/sound.h"
-#include "narrative/dialogs.h"
-#include "narrative/texts_data.h"
-#include "actors/enemies.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
+#include "audio/audio.h"
+#include "spells/wind.h"       // header propio (no está en ninguna metalibrería)
 
 #define COLOR_WIND_VDP  RGB24_TO_VDPCOLOR(0x66FF88)   // verde ráfaga
 

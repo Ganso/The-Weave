@@ -1,14 +1,11 @@
 // act1/hall.c — hook de setup del hall (la secuencia entera está en hall.scene)
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/init.h"
-#include "core/frame.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
+#include "res_all.h"
 #include "scenes/act1/hall.h"
-#include "world/background.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "res_backgrounds.h"
 
 void act1_hall_setup(void)    // Nivel del hall + posiciones iniciales
 {

@@ -1,22 +1,14 @@
 // init.c — initialize (motor, PAL/NTSC, drivers), new_level y end_level
 #include <genesis.h>
-#include "core/config.h"
-#include "core/init.h"
-#include "core/frame.h"
-#include "world/background.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "actors/items.h"
-#include "interface/interface.h"
-#include "spells/spell.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "narrative/dialogs.h"
-#include "resources.h"
-#include "res_characters.h"
-#include "res_faces.h"
-#include "res_interface.h"
-#include "audio/sound.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
+#include "interface/interface.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 void initialize(bool first_time)    // Initialize system hardware, sprites, controllers and global game state
 {

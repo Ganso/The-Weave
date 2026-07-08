@@ -120,7 +120,7 @@ with open(HEADER_FILE, 'w', encoding='utf-8') as h:
 # ------------------------------------------------------------
 with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
     c.write('// Auto-generated from texts.csv and clusters.csv – DO NOT EDIT\n')
-    c.write('#include <genesis.h>\n#include "narrative/texts.h"\n#include "narrative/texts_data.h"\n#include "actors/characters.h"\n#include "narrative/dialogs.h"\n\n')
+    c.write('#include <genesis.h>\n#include "narrative/narrative.h"\n#include "actors/actors.h"\n\n')
 
     # 4a. Arrays de cada set ---------------------------------------------------
     for s, rows in sets.items():

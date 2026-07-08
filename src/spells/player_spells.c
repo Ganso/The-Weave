@@ -2,19 +2,15 @@
 // Cada hechizo es una entrada en spell_defs[] con lo mínimo imperativo en hooks.
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "spells/spell.h"
+#include "core/core.h"
+#include "actors/actors.h"
+#include "combat/combat.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
+#include "interface/interface.h"
+#include "audio/audio.h"
 #include "spells/player_spells.h"
 #include "spells/enemy_spells.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "combat/combat.h"
-#include "interface/interface.h"
-#include "audio/sound.h"
-#include "narrative/dialogs.h"
-#include "narrative/texts_data.h"
 
 // =====================================================================
 // THUNDER — flash blanco; invertido contrarresta el thunder enemigo

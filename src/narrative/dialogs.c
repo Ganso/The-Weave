@@ -1,18 +1,11 @@
 // dialogs.c — render de diálogos, voces y choices
 #include <genesis.h>
-#include "core/config.h"
-#include "core/hack.h"
-#include "narrative/dialogs.h"
-#include "narrative/texts.h"
-#include "narrative/texts_data.h"
-#include "narrative/encode.h"
-#include "actors/characters.h"
-#include "core/frame.h"
-#include "core/controller.h"
+#include "core/core.h"
+#include "actors/actors.h"
+#include "narrative/narrative.h"
 #include "interface/interface.h"
-#include "audio/sound.h"
-#include "res_dialogs.h"
-#include "res_interface.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 const u8 *voice_sample[MAX_VOICE][MAX_DIALOG_SOUNDS]; // Character voice samples
 u32 voice_sample_size[MAX_VOICE][MAX_DIALOG_SOUNDS]; // Size of each character voice sample

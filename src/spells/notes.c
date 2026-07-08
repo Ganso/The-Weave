@@ -2,17 +2,13 @@
 // La cola del jugador valida a las 4 notas y delega en el motor (spell.c).
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "spells/notes.h"
-#include "spells/spell.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
+#include "core/core.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
+#include "spells/spells.h"
 #include "interface/interface.h"
-#include "audio/sound.h"
-#include "res_interface.h"
-#include "res_sound.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 bool player_has_rod;          // puede físicamente usar hechizos
 bool player_patterns_enabled; // no silenciado por una cutscene

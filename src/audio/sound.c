@@ -1,11 +1,9 @@
 // sound.c — sonido: XGM2, PCM, notas y jingles
 #include <genesis.h>
-#include "core/config.h"
-#include "core/hack.h"
-#include "audio/sound.h"
-#include "spells/constants_spells.h"
-#include "core/frame.h"
-#include "res_sound.h"
+#include "core/core.h"
+#include "spells/spells.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 void play_music(const u8 *music)    // Start playing background music track using XGM1/XGM2 driver
 {

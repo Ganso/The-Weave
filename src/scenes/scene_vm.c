@@ -1,22 +1,13 @@
 // scene_vm.c — intérprete de cutscenes. Ver el bloque de arquitectura en scene_vm.h.
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "scenes/scene_vm.h"
-#include "scenes/scene_hooks.h"
-#include "scenes/scene_data.h"
-#include "narrative/texts.h"
-#include "narrative/texts_data.h"
-#include "narrative/choices_data.h"
-#include "narrative/dialogs.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "world/background.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
+#include "scenes/scenes.h"
 #include "interface/interface.h"
 
 u8 last_choice;       // resultado del último CHOICE

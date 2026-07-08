@@ -2,19 +2,14 @@
 #ifdef HACK_SMOKE_BUILD
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "smoke/smoke_runner.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
-#include "scenes/scene_vm.h"
-#include "scenes/scene_data.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "world/background.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "res_backgrounds.h"
+#include "spells/spells.h"
+#include "scenes/scenes.h"
+#include "res_all.h"
+#include "smoke/smoke_runner.h"
 
 static void result_line(const char *label, const char *value, u8 y)
 {

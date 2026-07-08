@@ -1,10 +1,7 @@
 // entity.c — movimiento base de entidades (bloqueante por diseño, ver B5)
 #include <genesis.h>
-#include "core/config.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "core/frame.h"
+#include "core/core.h"
+#include "actors/actors.h"
 
 bool movement_active;    // Whether entity movement is currently allowed
 

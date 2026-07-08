@@ -1,24 +1,14 @@
 // act1/forest.c — hooks del bosque (lógica; la secuencia está en forest.scene)
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "scenes/act1/forest.h"
-#include "narrative/texts.h"
-#include "narrative/texts_data.h"
-#include "narrative/dialogs.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "actors/items.h"
-#include "world/background.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
 #include "interface/interface.h"
-#include "res_backgrounds.h"
-#include "res_items.h"
-#include "res_enemies.h"
+#include "res_all.h"
+#include "scenes/act1/forest.h"
 
 void act1_forest_setup(void)    // Nivel del bosque + items + personajes + hechizos del tutorial
 {

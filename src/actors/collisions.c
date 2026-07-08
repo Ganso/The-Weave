@@ -1,12 +1,8 @@
 // collisions.c — colisiones y distancias
 #include <genesis.h>
-#include "core/config.h"
-#include "actors/collisions.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/items.h"
-#include "actors/enemies.h"
-#include "world/background.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 
 u8 num_colls;    // Counter to prevent infinite collision loops
 

@@ -4,8 +4,7 @@
 #ifdef HACK_SMOKE_BUILD
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/init.h"
+#include "core/core.h"
 #include "smoke/smoke_cases.h"
 #include "smoke/smoke_runner.h"
 

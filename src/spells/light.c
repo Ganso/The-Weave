@@ -10,11 +10,10 @@
 // invertido de la escena de test.
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "spells/spell.h"
+#include "core/core.h"
+#include "spells/spells.h"
+#include "audio/audio.h"
 #include "spells/light.h"
-#include "audio/sound.h"
 
 #define COLOR_LIGHT_CYAN   RGB24_TO_VDPCOLOR(0x66DDFF)   // primer tramo: cian
 #define COLOR_LIGHT_WHITE  RGB24_TO_VDPCOLOR(0xFFFFFF)   // segundo tramo: blanco

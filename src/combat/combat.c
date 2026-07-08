@@ -1,17 +1,12 @@
 #include <genesis.h>
-#include "core/config.h"
-#include "core/hack.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "core/frame.h"
-#include "world/background.h"
+#include "spells/spells.h"
 #include "interface/interface.h"
-#include "audio/sound.h"
-#include "res_sound.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 CombatState combat_state; // Current combat state
 

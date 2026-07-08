@@ -11,12 +11,11 @@
 // añadir un caso a la smoke ROM (Fase 7). Ver también AGENTS.md.
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "spells/spell.h"
-#include "spells/fire.h"
+#include "core/core.h"
 #include "combat/combat.h"
-#include "audio/sound.h"
+#include "spells/spells.h"
+#include "audio/audio.h"
+#include "spells/fire.h"
 
 #define COLOR_FIRE_VDP  RGB24_TO_VDPCOLOR(0xE08020)   // naranja fuego
 

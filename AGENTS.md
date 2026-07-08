@@ -46,6 +46,9 @@
 
 ## 3. Estructura de directorios
 
+Cada dominio de `src/` tiene una **metalibrería** `<dominio>/<dominio>.h` que
+reexporta sus headers públicos; los `.c` incluyen esa, no los headers sueltos (§6).
+
 ```
 data/            → autoría editable: texts.csv (diálogos), choices.csv,
                    scenes/<acto>/<escena>.scene
@@ -215,8 +218,20 @@ juego: `HACK_START_SCENE "act1_test"` o smoke ROM. Es la chuleta canónica del D
 - Llaves: Allman en funciones; K&R en if/for/while. 4 espacios.
 - Comentario `//` junto a cada firma en los `.h`; bloque `/* */` de arquitectura al
   inicio de cabeceras de subsistema. Sin plantillas Doxygen.
-- **Includes explícitos** relativos a `-Isrc -Ires` (`"spells/spell.h"`, `"res_sound.h"`).
-  Orden: `<genesis.h>`, config/hack, cabecera propia, módulos, recursos.
+- **Includes por METALIBRERÍA de dominio** (relativos a `-Isrc -Ires`). Cada `.c`
+  incluye `<dominio>/<dominio>.h` de los dominios que usa, en vez de los headers
+  sueltos. Metalibrerías: `core/core.h`, `world/world.h`, `actors/actors.h`,
+  `combat/combat.h`, `spells/spells.h`, `narrative/narrative.h`, `scenes/scenes.h`,
+  `interface/interface.h`, `audio/audio.h`, y `res_all.h` (todos los recursos).
+  Orden en el bloque: `<genesis.h>` → metalibrerías (ese orden) → headers específicos
+  que no estén en ninguna meta (p.ej. `scenes/act1/<escena>.h`, los headers de
+  registro `spells/player_spells.h`… que solo usa spell.c).
+  - Los **`.h` NO incluyen metalibrerías**: solo sus dependencias mínimas de tipos
+    (evita acoplar todo un dominio a una cabecera). Las metalibrerías son para los `.c`.
+  - `combat` e `interface` son de un solo header, así que `combat/combat.h` e
+    `interface/interface.h` YA son su propia metalibrería.
+  - Un `.c` de dominio X incluye igualmente `X/X.h` (arrastra su propio header vía
+    la meta; los guards lo hacen inocuo).
 - Sin malloc/free: pools y buffers estáticos. `static const` para datos inmutables.
 - Guards `_FOO_H_`. Funciones privadas `static`. Designated initializers en tablas.
 - No editar generados: `narrative/texts_data.*`, `narrative/choices_data.*`,

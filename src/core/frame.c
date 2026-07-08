@@ -1,13 +1,9 @@
 #include <genesis.h>
-#include "core/frame.h"
-#include "core/controller.h"
-#include "world/background.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "actors/items.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "spells/notes.h"
+#include "spells/spells.h"
 
 u16 tile_ind;        // Current tile index for VDP tile loading
 u16 frame_counter;   // Counter incremented each frame for RNG and timing

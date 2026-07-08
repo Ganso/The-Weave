@@ -1,14 +1,10 @@
 // intro.c — intro del juego
 #include <genesis.h>
-#include "core/config.h"
-#include "scenes/intro.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "narrative/dialogs.h"
-#include "narrative/texts.h"
-#include "audio/sound.h"
-#include "res_intro.h"
-#include "res_geesebumps.h"
+#include "core/core.h"
+#include "narrative/narrative.h"
+#include "scenes/scenes.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 /**
  * @brief Displays and handles the game's intro sequence

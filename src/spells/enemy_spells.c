@@ -1,15 +1,12 @@
 // enemy_spells.c — en_thunder y en_bite: datos + hooks.
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "spells/spell.h"
-#include "spells/enemy_spells.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
+#include "core/core.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "audio/sound.h"
+#include "spells/spells.h"
+#include "audio/audio.h"
+#include "spells/enemy_spells.h"
 
 // =====================================================================
 // EN_THUNDER — flash del cielo; al terminar golpea al jugador; counterable

@@ -2,19 +2,13 @@
 // Reutiliza recursos existentes: fondo de bosque + el WeaverGhost. Nada nuevo en res/.
 
 #include <genesis.h>
-#include "core/config.h"
-#include "core/frame.h"
-#include "core/init.h"
-#include "scenes/act1/test.h"
-#include "actors/entity.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
-#include "world/background.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
+#include "core/core.h"
+#include "world/world.h"
+#include "actors/actors.h"
+#include "spells/spells.h"
 #include "interface/interface.h"
-#include "res_backgrounds.h"
-#include "res_enemies.h"
+#include "res_all.h"
+#include "scenes/act1/test.h"
 
 void act1_test_setup(void)    // Fondo de bosque + personajes visibles + vara y hechizos del test
 {

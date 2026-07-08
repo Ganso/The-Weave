@@ -1,18 +1,13 @@
 // interface.c — HUD y pausa
 #include <genesis.h>
-#include "core/config.h"
-#include "interface/interface.h"
-#include "spells/spell.h"
-#include "spells/notes.h"
-#include "actors/characters.h"
-#include "actors/enemies.h"
+#include "core/core.h"
+#include "actors/actors.h"
 #include "combat/combat.h"
-#include "core/frame.h"
-#include "core/controller.h"
-#include "narrative/texts.h"
-#include "narrative/dialogs.h"
-#include "audio/sound.h"
-#include "res_interface.h"
+#include "spells/spells.h"
+#include "narrative/narrative.h"
+#include "interface/interface.h"
+#include "audio/audio.h"
+#include "res_all.h"
 
 Sprite *spr_face_left;                    // Left character face background sprite
 Sprite *spr_face_right;                   // Right character face background sprite

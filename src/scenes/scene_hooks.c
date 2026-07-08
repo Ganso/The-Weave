@@ -1,7 +1,7 @@
 // scene_hooks.c — tabla de despacho de hooks. Los hooks viven en src/scenes/<acto>/<escena>.c
 
 #include <genesis.h>
-#include "scenes/scene_hooks.h"
+#include "scenes/scenes.h"
 #include "scenes/act1/bedroom.h"
 #include "scenes/act1/corridor.h"
 #include "scenes/act1/hall.h"

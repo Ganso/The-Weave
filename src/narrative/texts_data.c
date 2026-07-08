@@ -1,9 +1,7 @@
 // Auto-generated from texts.csv and clusters.csv – DO NOT EDIT
 #include <genesis.h>
-#include "narrative/texts.h"
-#include "narrative/texts_data.h"
-#include "actors/characters.h"
-#include "narrative/dialogs.h"
+#include "narrative/narrative.h"
+#include "actors/actors.h"
 
 const DialogItem system_dialog[] = {
     [SYSMSG_DEMO_TITLE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
