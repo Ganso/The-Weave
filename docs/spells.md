@@ -76,6 +76,167 @@ sin canUse — el guion manda).
 | EN_THUNDER | MI FA SOL SOL | 1 s | counterable; daño al jugador al fin natural |
 | EN_BITE | MI SOL DO | 1 s | DESHABILITADO (decisión de diseño; sin daño heredado) |
 
+## Caso práctico: crear el hechizo VIENTO paso a paso
+
+Un hechizo de jugador de ejemplo que toca **todos los conceptos fundamentales**:
+`canUse` condicional + su `onRejected`, `onLaunch`, fases declarativas (una visual
+y una de daño), `onFinish`, y el cableado completo (id, init, icono, jingle,
+desbloqueo, smoke). Diseño: "una ráfaga que solo puede lanzarse contra un enemigo
+en combate; destella verde y le hace 1 de daño a mitad del efecto".
+
+### 1. Reservar el id — `src/spells/constants_spells.h`
+
+Los ids de jugador van antes de `SPELL_PLAYER_COUNT`; al insertar uno, los de
+enemigo y los contadores se corren (son índices internos, sin problema):
+
+```c
+#define SPELL_FIRE         4
+#define SPELL_LIGHT        5
+#define SPELL_WIND         6      // nuevo
+#define SPELL_PLAYER_COUNT 7     // era 6
+// Enemy spells
+#define SPELL_EN_THUNDER   7     // era 6
+#define SPELL_EN_BITE      8     // era 7
+#define SPELL_COUNT        9     // era 8
+```
+
+### 2. El hechizo — `src/spells/wind.c` y `wind.h`
+
+```c
+// wind.h
+#ifndef _WIND_H_
+#define _WIND_H_
+void wind_init(void); // Registra VIENTO en spell_defs[] (lo llama init_spells)
+#endif
+```
+
+```c
+// wind.c
+#include <genesis.h>
+#include "core/config.h"
+#include "core/frame.h"
+#include "spells/spell.h"
+#include "spells/wind.h"
+#include "combat/combat.h"
+#include "audio/sound.h"
+#include "narrative/dialogs.h"
+#include "narrative/texts_data.h"
+#include "actors/enemies.h"
+
+#define COLOR_WIND_VDP  RGB24_TO_VDPCOLOR(0x66FF88)   // verde ráfaga
+
+static SpellPhase wind_phases[2];   // se rellenan en runtime (SCREEN_FPS)
+static u16 wind_saved_color;
+
+// canUse: solo directo y solo si hay un enemigo activo en combate.
+static bool wind_can_use(const SpellContext *ctx)
+{
+    if (ctx->reversed) return false;             // no tiene forma invertida útil
+    if (ctx->enemyId == ENEMY_NONE) return false; // requiere blanco
+    return true;
+}
+
+// onRejected: feedback cuando canUse devolvió false (aquí, diálogo genérico).
+static void wind_on_rejected(SpellContext *ctx)
+{
+    (void)ctx;
+    talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN], false);
+}
+
+static void wind_on_launch(SpellContext *ctx)
+{
+    (void)ctx;
+    wind_saved_color = PAL_getColor(PAL0_COL4);  // guardar para restaurar luego
+    play_spell_jingle(SPELL_WIND);
+    // el resto (flash + daño) lo declaran las fases
+}
+
+static void wind_on_finish(SpellContext *ctx)
+{
+    (void)ctx;
+    PAL_setColor(PAL0_COL4, wind_saved_color);   // restaurar el cielo
+}
+
+void wind_init(void)    // llamado desde init_spells()
+{
+    // Fase visual: destello verde el primer segundo.
+    wind_phases[0] = (SpellPhase){ 0, SCREEN_FPS, PHASE_VISUAL_FLASH, PAL0_COL4, COLOR_WIND_VDP };
+    // Fase de daño: PUNTUAL (start==end) a mitad del efecto → 1 de daño al enemigo activo.
+    wind_phases[1] = (SpellPhase){ SCREEN_FPS/2, SCREEN_FPS/2, PHASE_LOGIC_DAMAGE, PHASE_TARGET_ENEMY_ACTIVE, 1 };
+
+    spell_defs[SPELL_WIND] = (SpellDef){
+        .id = SPELL_WIND,
+        .notes = { NOTE_LA, NOTE_SOL, NOTE_FA, NOTE_MI }, .noteCount = 4,
+        .isPalindrome = false, .counterable = false,
+        .baseDuration = SCREEN_FPS,              // 1 segundo, PAL o NTSC
+        .enabled = false,                        // lo desbloquea la escena
+        .canUse = wind_can_use, .onRejected = wind_on_rejected,
+        .onLaunch = wind_on_launch, .onFinish = wind_on_finish,
+        .phases = wind_phases, .phaseCount = 2,
+        // sin onUpdate/onCounter/onCancel: este hechizo no los necesita
+    };
+}
+```
+
+Conceptos que ilustra y **cuándo NO** usar cada hook: no hay `onUpdate` porque el
+efecto visual es declarativo (fases), no imperativo; no hay `onCounter` porque no
+es `counterable`; no hay `onCancel` porque no hay nada que limpiar si se corta
+(el `onFinish` que restaura el color solo corre en fin natural — si necesitaras
+restaurar también al cancelar, añadirías `onCancel`).
+
+### 3. Registrar en el motor — `src/spells/spell.c`
+
+```c
+#include "spells/wind.h"
+// ... dentro de init_spells(), junto a los otros *_init():
+    wind_init();
+```
+
+### 4. Icono de HUD — `res/` + `interface.c`
+
+Crea `res/Sprites/Interface/pattern_wind.png` (32×32, 4×4 tiles, misma paleta
+indexada que los demás — ver cómo se generaron los de FIRE/LUZ en el commit
+"Iconos de HUD para FIRE y LUZ"). Decláralo y cablea el caso en las DOS funciones
+que dibujan iconos:
+
+```
+# res/res_interface.res
+SPRITE int_pattern_wind "Sprites/Interface/pattern_wind.png" 4 4 BEST
+```
+```c
+// interface.c — en show_pattern_icon Y en show_icon_in_pause_list:
+if (npattern==SPELL_WIND) nsprite = &int_pattern_wind;
+```
+
+### 5. Jingle — `src/audio/sound.c`
+
+```c
+// en play_spell_jingle(), reutilizando un sample existente:
+case SPELL_WIND:
+    play_sample(snd_pattern_open, sizeof(snd_pattern_open));
+    break;
+```
+
+### 6. Desbloqueo y prueba
+
+- En un hook de setup de escena: `spell_enable(SPELL_WIND);` (silencioso) o
+  `activate_spell(SPELL_WIND);` (con jingle y notas, para una cutscene de "has
+  aprendido...").
+- Smoke ROM (`src/smoke/smoke_cases.h`): un CHECK y un CAST.
+  ```c
+  {"CHK wind sin enemigo - NO", SMOKE_CHECK, SPELL_WIND, false, 0, false, NULL},
+  {"CAST wind (1s verde)",      SMOKE_CAST,  SPELL_WIND, false, 0, false, NULL},
+  ```
+  (El CAST usa `spell_narrative_cast`, que no pasa por `canUse`, así que el
+  destello se ve aunque no haya enemigo; el daño de la fase no hace nada sin
+  blanco — `enemyId == ENEMY_NONE`.)
+
+### 7. Compilar
+
+`./build-theweave.sh release` (o `smoke`). El build corre el codegen y compila;
+si olvidaste el `wind_init()` o un include, el enlazador o el compilador lo dicen.
+Notas del hechizo: **LA SOL FA MI** (botones X C B A).
+
 ## Depurar
 
 `src/core/hack.h`: `HACK_ALL_SPELLS`, `HACK_ENEMIES_ONE_HP`,

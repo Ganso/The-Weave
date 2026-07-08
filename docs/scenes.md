@@ -90,3 +90,171 @@ la exige (`zone ZONE_X`).
 con branch, cast scripted, puzzle de 3 hechizos, scroll, combate). No está
 enlazada desde el juego: se llega con `HACK_START_SCENE "act1_test"` o desde la
 smoke ROM. Úsala como chuleta del DSL y como test de regresión del motor.
+
+## Caso práctico: crear la escena "act1_claro" paso a paso
+
+Una escena de ejemplo con **todos los conceptos fundamentales**: setup en hook C,
+diálogos, un `choice` con dos ramas (branch/goto/label), `say_response`,
+movimientos + animación, `wait_press`, un combate y la transición a la siguiente
+escena. Guion: "Linus y Clio llegan a un claro; el jugador decide explorar (un
+combate) o seguir de largo; ambas ramas confluyen y la escena termina".
+
+### 1. Textos — `data/texts.csv`
+
+Set `act1_claro` (define `ACT1_CLARO`), ids `A1_CLARO_*`. Una fila `NULL` cierra
+un cluster. `face`/`side`: `FACE_linus`/`FACE_clio` · `SIDE_LEFT`/`SIDE_RIGHT`.
+
+```
+act1_claro,A1_CLARO_ARRIVE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Un claro en el bosque|El aire está quieto,A forest clearing|The air is still
+act1_claro,A1_CLARO_CLIO,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Exploramos|o seguimos?,Do we explore|or move on?
+act1_claro,NULL,,,,,
+act1_claro,A1_CLARO_EXPLORE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Hay algo entre|los árboles...,Something moves|in the trees...
+act1_claro,A1_CLARO_SKIP,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Mejor no perder|tiempo,Better not waste|time
+act1_claro,A1_CLARO_AFTER,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,Sigamos el camino,Let's follow the path
+```
+
+### 2. Choice — `data/choices.csv`
+
+`act1_claro_choice` (define `ACT1_CLARO_CHOICE`); opciones vacías = no existen.
+
+```
+act1_claro_choice,0,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Explorar el claro,Seguir de largo,,,Explore the clearing,Move on,,
+```
+
+### 3. Hooks C — `src/scenes/act1/claro.{c,h}`
+
+La LÓGICA (setup con recursos, aparición del enemigo) va en hooks; la secuencia,
+en el `.scene`.
+
+```c
+// claro.h
+#ifndef _ACT1_CLARO_H_
+#define _ACT1_CLARO_H_
+void act1_claro_setup(void); // Fondo de bosque + Linus y Clio visibles
+void act1_claro_enemy(void); // Aparición de un WeaverGhost para el combate
+#endif
+```
+
+```c
+// claro.c
+#include <genesis.h>
+#include "core/config.h"
+#include "core/init.h"
+#include "core/frame.h"
+#include "scenes/act1/claro.h"
+#include "actors/entity.h"
+#include "actors/characters.h"
+#include "actors/enemies.h"
+#include "world/background.h"
+#include "spells/spell.h"
+#include "spells/notes.h"
+#include "interface/interface.h"
+#include "res_backgrounds.h"
+#include "res_enemies.h"
+
+void act1_claro_setup(void)
+{
+    player_has_rod = true;   // ANTES de init_character(CHR_linus): decide su sprite
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map,
+              forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);   // fondo ancho → USER, no AUTO
+    set_limits(0,134,275,172);
+
+    init_character(CHR_linus);
+    init_character(CHR_clio);
+    active_character = CHR_linus;
+    move_character_instant(CHR_linus, 140, 154);
+    show_character(CHR_linus, true);
+    move_character_instant(CHR_clio, 90, 154);
+    show_character(CHR_clio, true);
+
+    spell_enable(SPELL_THUNDER);   // para el combate opcional
+    spell_enable(SPELL_HIDE);
+}
+
+void act1_claro_enemy(void)
+{
+    show_or_hide_interface(false);
+    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    obj_character[active_character].state = STATE_IDLE;
+    anim_character(active_character, ANIM_IDLE);
+    reset_character_animations();
+    SPR_update();
+
+    init_enemy(0, ENEMY_CLS_WEAVERGHOST);
+    move_enemy_instant(0, FASTFIX32_FROM_INT(350), FASTFIX32_FROM_INT(176));
+    move_enemy(0, FASTFIX32_FROM_INT(250), FASTFIX32_FROM_INT(140));
+}
+```
+
+### 4. Registrar los hooks — `src/scenes/scene_hooks.{h,c}`
+
+```c
+// scene_hooks.h — en el enum (antes de HOOK_COUNT):
+    HOOK_ACT1_CLARO_SETUP,
+    HOOK_ACT1_CLARO_ENEMY,
+```
+```c
+// scene_hooks.c — include + entradas en la tabla (VERIFICA que ambas están:
+// un hueco NULL en la tabla cuelga la consola, ver la guarda del op CALL):
+#include "scenes/act1/claro.h"
+    [HOOK_ACT1_CLARO_SETUP] = act1_claro_setup,
+    [HOOK_ACT1_CLARO_ENEMY] = act1_claro_enemy,
+```
+
+### 5. La escena — `data/scenes/act1/claro.scene`
+
+El nombre interno (`act1_claro`) sale de la ruta `act1/claro.scene`; la directiva
+`scene` debe coincidir.
+
+```
+scene act1_claro
+
+call act1_claro_setup
+say_cluster ACT1_CLARO A1_CLARO_ARRIVE sound   # cluster: ARRIVE + CLIO hasta el NULL
+
+# Clio se acerca y mira a Linus
+move CHR_clio 120 154
+look CHR_clio right
+anim CHR_linus ANIM_ACTION
+wait 8
+anim CHR_linus ANIM_IDLE
+
+set movement on
+set spells on
+
+choice ACT1_CLARO_CHOICE 0
+say_response ACT1_CLARO A1_CLARO_EXPLORE sound  # respuesta = EXPLORE + last_choice
+branch 1 goto seguir                            # opción 1 (Seguir) salta el combate
+
+# Rama "explorar": combate
+call act1_claro_enemy
+combat
+goto confluye
+
+label seguir
+say ACT1_CLARO A1_CLARO_SKIP sound
+
+label confluye
+set interface off
+say ACT1_CLARO A1_CLARO_AFTER sound
+wait_press                                      # espera A antes de cerrar
+fade_out 60
+next_scene act1_forest
+```
+
+Nota sobre `say_response`: muestra `dialogs[ACT1_CLARO][A1_CLARO_EXPLORE + last_choice]`,
+así que la opción 0 enseña `A1_CLARO_EXPLORE` y la 1 `A1_CLARO_SKIP` (el id
+siguiente). Si prefieres textos no correlativos, usa `branch`/`say` como en la
+rama de combate.
+
+### 6. Enlazar y probar
+
+- Desde la escena anterior: `next_scene act1_claro`. O directo:
+  `HACK_START_SCENE "act1_claro"` en `src/core/hack.h` + build.
+- Opcional: añadir un caso `SMOKE_SCENE` en `src/smoke/smoke_cases.h`.
+
+### 7. Compilar
+
+`./build-theweave.sh release` (o `smoke`). `gen_scenes.py` valida en **fatal**
+cada referencia (textos, choice, hooks, escena de `next_scene`): un id mal escrito
+corta el build con `archivo:línea` antes de compilar C.
