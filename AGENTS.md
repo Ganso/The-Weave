@@ -9,7 +9,7 @@
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
 - C plano compilado con **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
 - Estado: demo técnica (acto 1, 4 escenas). **Refactor 2026-07 COMPLETADO**
-  (plan en `refactorizar.md`, bitácora en `docs/refactor/`): motor de hechizos de
+  (plan en `docs/refactor/plan.md`, bitácora en `docs/refactor/`): motor de hechizos de
   2 slots, VM de escenas con DSL, codegen validado, docs y smoke ROM.
 
 ## 2. Cómo se compila y ejecuta
@@ -135,7 +135,7 @@ EN_BITE 6; `SPELL_NONE` 254) + motor con **dos slots** (`SPELL_SLOT_PLAYER`,
    (enemies.c): HP, follow, y su lista `spell[]` ({SPELL_EN_X, SPELL_NONE}).
 2. Sprite en `res/res_enemies.res` + caso en el switch de `init_enemy`.
 3. `init_enemy(slot, ENEMY_CLS_*)` + `move_enemy*` en la escena; `combat_init()` arranca.
-- **EN_BITE está deshabilitado a propósito** (decisión §15 refactorizar.md): para
+- **EN_BITE está deshabilitado a propósito** (decisión §15 docs/refactor/plan.md): para
   activarlo, añadir `SPELL_EN_BITE` a la lista `spell[]` de una clase y ajustar
   `rechargeInit` con playtest. Nota heredada: bite no aplicaba daño al terminar.
 

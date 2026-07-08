@@ -1,7 +1,7 @@
 # Fase 5 — Diseño de implementación: VM de escenas + DSL
 
 > Documento de detalle previo a la implementación (pedido expresamente por el usuario).
-> Complementa `refactorizar.md` §4 con las decisiones finales tomadas al confrontar el
+> Complementa `plan.md` §4 con las decisiones finales tomadas al confrontar el
 > diseño con el código real de `act_1.c`. Tras implementarse, sirve como referencia
 > del sistema junto a AGENTS.md §"Sistema de escenas".
 
@@ -27,7 +27,7 @@ no como parche.
 | `src/scenes/scene_data.{c,h}` | GENERADO — steps, tabla `scenes[]`, lookup act/escena |
 | `src/narrative/choices_data.{c,h}` | GENERADO — `ChoiceItem` + tabla `choices[]` |
 
-**Ajustes sobre el plan §4** (documentados aquí, reflejados luego en refactorizar.md):
+**Ajustes sobre el plan §4** (documentados aquí, reflejados luego en plan.md):
 - **Sin `scene_api.c`**: los wrappers no aportaban nada — los `case` de la VM llaman
   directamente a las primitivas existentes (`talk_dialog`, `move_character`, ...).
 - **Ops de puzzle (`puzzle_sequence`/`if_puzzle_solved`) DISEÑADOS pero NO

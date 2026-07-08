@@ -1,6 +1,6 @@
 # Checklist del refactor — fase a fase
 
-> Se tacha al completar. La descripción completa de cada fase está en `refactorizar.md` §10.
+> Se tacha al completar. La descripción completa de cada fase está en `plan.md` §10.
 > Regla de oro: si el build no pasa o el playtest revela regresión contra el baseline,
 > se arregla antes de avanzar.
 

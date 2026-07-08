@@ -2,7 +2,7 @@
 
 > Este build (rama `refactor`, fin de Fase 1, commit del cierre de fase) es la
 > **referencia de comportamiento** para todas las fases siguientes (decisión D10 de
-> `refactorizar.md`). La comparación es funcional/visual, nunca binaria.
+> `plan.md`). La comparación es funcional/visual, nunca binaria.
 >
 > **VALIDADO por el usuario el 2026-07-06**: el combate de la escena 5 (el punto que
 > destapó los bugs B26 y las regresiones de B2/B4) fue re-testeado con un ROM de test
@@ -41,7 +41,7 @@ Todo lo demás se comporta exactamente como `docs/refactor/rom_pre_refactor.bin`
      `hitpoints - 1` con el moribundo (0 HP) → underflow a anim 255 → `SPR_setAnim`
      corrompía el sprite engine y `SPR_update` congelaba el VDP.
 2. La auditoría situaba el combate en la escena 3; está en la **escena 5**. Corregido
-   en `state_audit.md` y `refactorizar.md`.
+   en `state_audit.md` y `plan.md`.
 
 ## Referencia de playtest para fases siguientes
 

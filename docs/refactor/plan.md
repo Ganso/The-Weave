@@ -108,7 +108,7 @@ The-Weave/
 ├── AGENTS.md                  (exhaustivo, fuente de verdad — ver §9.1)
 ├── Makefile                   (NUEVO: wildcard + pre-build codegen)
 ├── build-theweave.sh          (NUEVO: wrapper de build; sustituye a ~/codigo/build-sgdk.sh para este repo)
-├── refactorizar.md            (este plan)
+├── plan.md            (este plan)
 ├── README.md                  (sin cambios relevantes)
 ├── .gitignore                 (actualizado: out/, venv/, tools/voice/__pycache__/, etc.)
 │
@@ -1338,7 +1338,7 @@ recarga — decisión de diseño de juego, posterior al refactor.
 
 ## 16. Cómo ejecutar este plan ("venga, refactoriza")
 
-1. Confirmar que `refactorizar.md` está al día y las decisiones de §1 cuadran.
+1. Confirmar que `plan.md` está al día y las decisiones de §1 cuadran.
    (Las preguntas de implementación ya están resueltas — §15.)
 2. Ejecutar fases 0 → 7 en orden. Tras cada fase:
    - Build: `./build-theweave.sh build` (desde Fase 2; antes, el build actual anotado

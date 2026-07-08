@@ -2,7 +2,7 @@
 
 > Generado en la Fase 0 del refactor (2026-07-06). Refleja el estado del código en la
 > rama `master` (commit `eaa9a4e`) al crear la rama `refactor`.
-> Referenciado desde `refactorizar.md` §0.
+> Referenciado desde `plan.md` §0.
 
 ## Métricas
 
@@ -63,7 +63,7 @@ los 11 `res_*.h`, y los `.h` de todos los módulos en orden de dependencia. Cons
   en_thunder (slot 0, counterable, con `onCounter`) y en_bite (slot 1, 3 notas MI SOL DO).
 - **Hallazgo clave**: `update_enemy_pattern` y `try_counter_spell` hardcodean el
   pattern-slot 0 → **en_bite jamás se ejecuta en combate** (B2/B3). Decisión tomada:
-  al corregir el bug, bite queda deshabilitado explícitamente (ver `refactorizar.md` §15).
+  al corregir el bug, bite queda deshabilitado explícitamente (ver `plan.md` §15).
 - Los callbacks de pattern muestran diálogos directamente (`pattern_thunder.c:18` hint
   de WeaverGhost que además restaura `combat_state`) — acoplamiento B18.
 

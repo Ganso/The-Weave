@@ -1,6 +1,6 @@
 # Bugs conocidos — estado de corrección
 
-> Tabla maestra de `refactorizar.md` §6, con estado vivo. Se actualiza al corregir cada uno.
+> Tabla maestra de `plan.md` §6, con estado vivo. Se actualiza al corregir cada uno.
 > Grupos: **A** = no cambia comportamiento observable · **B** = sí lo cambia (playtest + nota en baseline.md) · **doc** = se documenta, no se toca · **(→F4)** = se resuelve en la Fase 4.
 
 | # | Grupo | Archivo:línea | Bug | Fix acordado | Estado |
