@@ -4,10 +4,12 @@
  * Una escena es un array de SceneStep en ROM (generado por tools/gen_scenes.py
  * desde data/scenes/ *.scene). scene_run() lo interpreta: un case por opcode.
  *
- * Filosofía HÍBRIDA (fase5_design.md): el DSL expresa la secuencia narrativa
- * (diálogos, choices/branch, movimientos, esperas, combate, transiciones);
- * la lógica (setup con punteros a recursos, bucles de items, cinemáticas de
- * paleta) vive en hooks C (scene_hooks.c) invocados con el op CALL.
+ * Filosofía HÍBRIDA: el DSL expresa TODO lo declarativo — el setup (level/limits/
+ * palette/character/item/enable_spell/…, con tablas laterales para los punteros a
+ * recursos) y la secuencia narrativa (diálogos, choices/branch, movimientos,
+ * esperas, combate, transiciones). Solo la lógica imperativa (bucles de items,
+ * cinemáticas de paleta, aparición de enemigos) vive en hooks C (scene_hooks.c)
+ * invocados con el op CALL.
  *
  * Reglas de la VM:
  *  - NUNCA escribe en los steps (ROM). Estado mutable (last_choice, pc) en RAM.
@@ -19,7 +21,7 @@
  *   scene_hooks.c  — hooks C por escena + scene_hook_table[]
  *   scene_data.c/h — GENERADO: steps + scenes[] + scene_lookup(act, escena)
  *
- * Ver docs/refactor/fase5_design.md y AGENTS.md §escenas.
+ * Ver AGENTS.md §6 (motor de escenas) y docs/scenes.md (autoría).
  */
 #ifndef _SCENE_VM_H_
 #define _SCENE_VM_H_

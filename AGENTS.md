@@ -1,289 +1,308 @@
-# AGENTS.md
+# AGENTS.md — biblia técnica de The Weave
 
-> FUNDAMENTAL: Actualiza este fichero después de cada interacción si aplica.
-> Mantenlo sincronizado con el estado real del código. Es la fuente de verdad
-> para herramientas automáticas y para no re-investigar lo ya sabido.
+> Esta es la **fuente de verdad** del proyecto para humanos y herramientas
+> automáticas. Contiene todo lo necesario para entender y tocar el código **leyendo
+> los archivos fuente lo mínimo posible**. Mantenlo sincronizado con el código real:
+> **actualízalo en la misma tanda en que cambies algo que aquí se describe.**
+>
+> **Qué NO está aquí (y dónde está):** la *autoría de contenido* tiene guías propias,
+> exhaustivas y para no técnicos, en `docs/` (ver §10). AGENTS.md documenta el
+> **motor, la arquitectura y las trampas**; las guías documentan **cómo escribir**
+> hechizos, escenas y textos. No dupliques aquí lo que ya está en esas guías: enlázalas.
 
 ## 1. Qué es el proyecto
 
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
-- C plano compilado con **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
-- Estado: demo técnica (acto 1, 4 escenas). **Refactor 2026-07 COMPLETADO**
-  (plan en `docs/refactor/plan.md`, bitácora en `docs/refactor/`): motor de hechizos de
-  2 slots, VM de escenas con DSL, codegen validado, docs y smoke ROM.
+- **C plano** sobre **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
+- **Estado**: demo técnica del acto 1. Flujo narrativo:
+  `act1_bedroom → act1_corridor → act1_hall → act1_forest → reset`. Pilares del motor:
+  hechizos de dos slots (§5), VM de cutscenes con DSL propio (§6), codegen validado
+  desde `data/` (§4), y una smoke ROM para probar hechizos/escenas aislados.
+- Hay una bitácora histórica del rediseño que dio lugar a esta arquitectura en
+  `docs/refactor/` (baseline, bugs numerados B\*, plan). Es **referencia histórica**,
+  no hace falta para el día a día.
 
-## 2. Cómo se compila y ejecuta
+## 2. Compilar, ejecutar y debugear
 
 ```
 ./build-theweave.sh [build|release|full|clean|smoke] [--no-run|-n]
 ```
-`smoke` compila la ROM de pruebas (out/smoke.bin; docs/testing.md).
-- Pipeline: **codegen en el host** (python3 `tools/gen_texts.py` — la imagen Docker NO
-  trae python3) → make dentro del contenedor `ghcr.io/stephane-d/sgdk:latest`
-  (`--entrypoint make GDK=/sgdk -f /src/Makefile`) → backup rotatorio
-  `out/TheWeave_<fecha>.bin` (mantiene 5) → MiSTer por FTP si `MISTER_IP` responde,
-  si no BlastEm. `--no-run` para builds desatendidos.
-- El `Makefile` del repo solo **envuelve** el `makefile.gen` de SGDK (`include`), que ya
-  hace wildcard de `src/*.c src/*/*.c res/*.res` con `-Isrc -Ires`. Añadir un `.c` NO
-  requiere tocar el Makefile.
-- Config personal (MiSTer, BlastEm, SGDK local) en `.build-theweave.local.sh` (gitignored).
-- Docker funciona sin sudo en esta máquina. Salida: `out/rom.bin` (~896 KB con padding).
-- VS Code: tasks en `.vscode/tasks.json` apuntan al script del repo.
+
+El **pipeline y la configuración personal** están documentados en `docs/build.md`. En
+una línea: codegen python en el **host** (la imagen Docker de SGDK no trae python3) →
+`make` dentro de `ghcr.io/stephane-d/sgdk:latest` → backup rotatorio → MiSTer (FTP) o
+BlastEm. Salida `out/rom.bin` (~896 KB con padding). La smoke ROM
+(`build-theweave.sh smoke`, `out/smoke.bin`) y el checklist de playtest están en
+`docs/testing.md`.
+
+Datos que conviene tener a mano aquí:
+- El `Makefile` del repo solo **envuelve** el `makefile.gen` de SGDK, que hace
+  wildcard de `src/**/*.c` y `res/*.res` con `-Isrc -Ires`. **Añadir un `.c` o un
+  `.res` NO requiere tocar el Makefile.**
+- Los generadores validan en **FATAL** con `archivo:línea`: una referencia rota
+  (id de diálogo, hook, escena, hechizo) corta el build antes de compilar.
 
 ### Cómo debugear (flujo probado)
 
-1. Editar **solo** `src/core/hack.h`: `HACK_START_SCENE "act1_forest"` (directo al
-   combate; escenas SIEMPRE por nombre),
-   `DEBUG_LEVEL 2-3` (trazas KDebug → consola de BlastEm), `HACK_ENEMIES_ONE_HP`,
+1. Editar **solo** `src/core/hack.h`. Toggles disponibles: `HACK_START_SCENE
+   "act1_forest"` (arranca directo en una escena — **siempre por nombre**),
+   `DEBUG_LEVEL 2-3` (trazas KDebug a la consola de BlastEm), `HACK_ENEMIES_ONE_HP`,
    `HACK_FAST_DIALOGS`, `HACK_ALL_SPELLS`, `HACK_PLAYER_INVULNERABLE`,
    `HACK_FORCE_LANGUAGE`, `HACK_MUTE_MUSIC/SFX`.
-2. Si BlastEm congela ("Read from VDP data port with invalid source"), el PC que
-   imprime se localiza en `out/symbol.txt` (ordenado por dirección) — **ojo: con LTO
-   la atribución puede engañar**; la última traza KDEBUG suele señalar mejor.
-3. Corrupción del sprite engine (cuelgue dentro de `SPR_update`) = alguien llamó a
-   `SPR_setAnim` con índice fuera de rango, usó un `Sprite*` liberado o liberó dos
-   veces. Ejemplo histórico: B26 (underflow `hitpoints-1` con enemigo a 0 HP).
+2. `dprintf(nivel, ...)` (KDebug) solo emite si `nivel <= DEBUG_LEVEL`.
+3. Si BlastEm congela con *"Read from VDP data port with invalid source"*, el PC
+   impreso se localiza en `out/symbol.txt` (ordenado por dirección). **Con LTO la
+   atribución del PC puede engañar**; la última traza KDebug suele señalar mejor.
+4. Cuelgue dentro de `SPR_update` = corrupción del sprite engine: alguien llamó a
+   `SPR_setAnim` con índice fuera de rango, usó un `Sprite*` liberado, o hubo un
+   underflow de contador. Ver la trampa de `SPR_setAnim` en §7.
 
 ## 3. Estructura de directorios
 
 Cada dominio de `src/` tiene una **metalibrería** `<dominio>/<dominio>.h` que
-reexporta sus headers públicos; los `.c` incluyen esa, no los headers sueltos (§6).
+reexporta sus headers públicos; los `.c` incluyen esa, no los headers sueltos (§8).
 
 ```
 data/            → autoría editable: texts.csv (diálogos), choices.csv,
                    scenes/<acto>/<escena>.scene
-tools/           → codegen y utilidades python (gen_texts.py; voice/ = animalese)
+tools/           → codegen python (gen_texts.py, gen_choices.py, gen_scenes.py) +
+                   voice/ (síntesis de voces animalese)
 src/
   boot/          → rom_head.c, sega.s
-  core/          → main, init, controller, frame (next_frame/timing), config.h, hack.h
-  world/         → background (scroll, límites)
-  actors/        → entity (base), characters, enemies, items, collisions
+  core/          → main (bucle de escenas), init, controller, frame
+                   (next_frame/timing), config.h (SCREEN_WIDTH…), hack.h (toggles)
+  world/         → background: scroll, límites, new_level/end_level
+  actors/        → entity (base común), characters, enemies, items, collisions
   combat/        → FSM de combate (combat_state, hit_enemy/hit_player)
-  spells/        → MOTOR DE HECHIZOS (ver §5)
+  spells/        → motor de hechizos (§5)
   narrative/     → texts, texts_data (GEN), choices_data (GEN), dialogs, encode
   scenes/        → scene_vm (intérprete), scene_hooks (enum+tabla), scene_data (GEN),
-                   <acto>/<escena>.c/.h (hooks por escena), intro, geesebumps (C)
+                   <acto>/<escena>.c/.h (hooks de lógica por escena), intro, geesebumps
   interface/     → HUD, pausa, contador de vida
   audio/         → sound (XGM2; jingles por spell id)
   smoke/         → smoke ROM: menú de casos (solo compila con -DHACK_SMOKE_BUILD)
-res/             → res_*.res (definiciones rescomp) + res_*.h/.c (GEN) + assets fuente:
-  gfx/           → gráficos: font.png, backgrounds/act1, characters, enemies, faces,
+res/             → res_*.res (rescomp) + res_*.h/.c (GEN) + assets fuente:
+  gfx/           → font.png, backgrounds/act1, characters, enemies, faces,
                    interface, items/act1, geesebumps, intro
-  sfx/           → sonido: dialogs (deep/man/woman), effects, music, notes, patterns, player
+  sfx/           → dialogs/{deep,man,woman}, effects, music, notes, patterns, player
 ```
-(globals.h y act_1.c ya NO existen — eliminados en la Fase 5)
 
-## 4. Trampas y datos duros (leer antes de tocar nada)
+## 4. Codegen: de `data/` a C (todo generado, no editar a mano)
 
-- **`bool` de SGDK es `u8`** (`~/sgdk/inc/types.h`): no usarlo como contador (bug B23).
-- **`SCREEN_FPS` es una VARIABLE runtime** (50 PAL / 60 NTSC, detectada en `initialize`).
-  Nada de tablas `const` con duraciones en frames: se rellenan en runtime
-  (`SCREEN_FPS * n`). Milisegundos → ticks con `calc_ticks(ms)`.
-- **`GAMEVERSION` incrusta `__DATE__`**: dos builds de días distintos NUNCA son
-  byte-idénticos. Comparaciones de ROM solo funcionales/visuales.
-- **Nunca bloquear con `while(!SPR_isAnimationDone)`** ni consultar esa función el
-  mismo frame de un `SPR_setAnim` (estado obsoleto hasta `SPR_update`). Muertes y
-  esperas → timers con `modeTimer` (ver bug B4 en `docs/refactor/bugs.md`).
-- **`u16` y restas**: comparar antes de restar HP/contadores (underflow, B25/B26).
-- `next_frame(bool interactive)` es EL latido: input+combate+animaciones+SPR_update+
-  vblank. Los bloqueantes (move_entity, diálogos, wait_seconds) lo llaman por dentro.
-- **Mapa real de escenas**: 1 dormitorio · 2 pasillo (libros) · 3 hall Clio/Xander
-  (choices, SIN combate) · 5 bosque (tutorial + **combate contra 2 WeaverGhosts** + fin).
-- El texto usa charset propio: español codificado (ñ→^ á→# é→$ í→% ó→* ú→/ ¿→< ¡→>)
-  vía `encode_spanish_text` (buffer estático — consumir antes de la siguiente llamada).
-  Escapes en textos: `|` salto de línea, `@[...@]` color.
-- KDebug (`dprintf(nivel, ...)`) solo emite si `nivel <= DEBUG_LEVEL` (hack.h).
+Tres generadores en `tools/` convierten los datos de autoría en tablas C. Corren en
+el host (el build los lanza; también manualmente con `python3 tools/gen_*.py`). Todos
+**validan en FATAL** y emiten las constantes C **verbatim** (el compilador es la 2ª
+red de validación).
 
-## 5. Sistema de hechizos (spells/) — desde la Fase 4
+| Generador | Entrada | Salida (NO editar) | Valida |
+|---|---|---|---|
+| `gen_texts.py`   | `data/texts.csv`   | `narrative/texts_data.{c,h}`   | — |
+| `gen_choices.py` | `data/choices.csv` | `narrative/choices_data.{c,h}` | — |
+| `gen_scenes.py`  | `data/scenes/*/*.scene` | `scenes/scene_data.{c,h}` | labels, diálogos vs texts.csv, choices vs choices.csv, hooks vs enum `HOOK_*`, hechizos/zonas vs `constants_spells.h`, escena destino de `next_scene` |
 
-**Arquitectura**: tabla única `spell_defs[SPELL_COUNT]` (ids unificados en
-`constants_spells.h`: THUNDER 0, HIDE 1, OPEN 2, SLEEP 3, FIRE 4 | EN_THUNDER 5,
-EN_BITE 6; `SPELL_NONE` 254) + motor con **dos slots** (`SPELL_SLOT_PLAYER`,
-`SPELL_SLOT_ENEMY`) — ambos pueden estar vivos a la vez (counter). `combat_state`
-(combat.c) sigue siendo el director: el motor consulta/actualiza ese FSM.
+- **Nombres, no números**: escenas, sets de diálogo y choices se nombran
+  `<acto>_<nombre>` (`act1_bedroom`, `act1_hall_choice`). El generador emite el enum
+  numérico interno (`SceneId`, `ACT1_BEDROOM`…) pero en DSL/textos/hacks se habla
+  SIEMPRE por nombre, para poder intercalar sin renumerar.
+- `gen_scenes.py` también emite **tablas laterales** para los datos que no caben en
+  los 4 args `s16` de un `SceneStep` o que llevan punteros a recursos:
+  `scene_levels[]`, `scene_items[]`, `scene_palettes[]` y `puzzle_seqs[]`.
+
+## 5. Sistema de hechizos (`spells/`)
+
+**Ids** (`constants_spells.h`): jugador THUNDER 0, HIDE 1, OPEN 2, SLEEP 3, FIRE 4,
+LIGHT 5 (`SPELL_PLAYER_COUNT` = 6); enemigo EN_THUNDER 6, EN_BITE 7
+(`SPELL_COUNT` = 8); `SPELL_NONE` = 254. Zonas: `ZONE_NONE` 0, `ZONE_CAULDRON` 1.
+Botón→nota: A→MI B→FA C→SOL X→LA Y→SI Z→DO.
+
+**Arquitectura**: tabla única `spell_defs[SPELL_COUNT]` + motor con **dos slots**
+(`SPELL_SLOT_PLAYER`, `SPELL_SLOT_ENEMY`), ambos pueden estar vivos a la vez (para el
+counter). `combat_state` (combat.c) es el director del combate; el motor consulta y
+actualiza ese FSM.
 
 - `spell.c` — motor: `spell_validate` → `spell_player_cast` (counter o launch),
   `spell_update` (cada frame desde `update_combat`), `spell_try_counter`,
-  `spell_cancel`, `spell_reject` (feedback + resume del enemigo), lado enemigo
-  (`spell_enemy_try_launch` con recargas por enemigo, cadencia de notas).
+  `spell_cancel`, `spell_reject` (feedback + resume del enemigo), y el lado enemigo
+  (`spell_enemy_try_launch`, recargas por enemigo, cadencia de notas).
 - `notes.c` — cola de notas del jugador (debounce `MIN_TIME_BETWEEN_NOTES`, timeout
-  `MAX_PATTERN_WAIT_TIME`, lock global) y HUD de notas enemigas.
-- `player_spells.c` / `enemy_spells.c` / `fire.c` — defs + hooks de cada hechizo.
-- Hooks (todos opcionales): `canUse` → `onRejected` (hints con diálogo) → `onLaunch`
-  → `onUpdate` (por frame; el auto-fin por `baseDuration` aplica siempre) →
-  `onFinish` (SOLO fin natural) / `onCounter` (contrarrestado) / `onCancel` (cortado).
-  **El motor es el único que toca frameCounter, slots y cleanup.**
-- Fases declarativas (`SpellPhase`): `PHASE_VISUAL_FLASH` (continuo) y
-  `PHASE_LOGIC_DAMAGE` (puntual: usar start==end). Se rellenan en runtime.
-- Zona narrativa: `spell_zone` (ZONE_*) — la fijará la escena (Fase 5); los canUse
-  la reciben en `ctx->zoneId`.
+  `MAX_PATTERN_WAIT_TIME`, lock global) y HUD de notas enemigas. `player_has_rod`
+  vive aquí y decide el sprite de Linus (ver la trampa en §7).
+- `player_spells.c` / `enemy_spells.c` / `fire.c` / `light.c` — las `SpellDef` y los
+  hooks de cada hechizo. Cada hechizo hace su `*_init()`, llamado desde
+  `init_spells()` en `spell.c`.
+- **Hooks (todos opcionales)**: `canUse` → `onRejected` (hint con diálogo si no se
+  puede) → `onLaunch` → `onUpdate` (por frame; el auto-fin por `baseDuration` aplica
+  siempre) → `onFinish` (SOLO fin natural) / `onCounter` (contrarrestado) /
+  `onCancel` (cortado). **El motor es el único que toca `frameCounter`, los slots y el
+  cleanup**; los hooks nunca liberan ni avanzan el contador.
+- **Fases declarativas** (`SpellPhase`): efectos descritos como datos, no como código.
+  `PHASE_VISUAL_FLASH` (continuo en un rango de frames) y `PHASE_LOGIC_DAMAGE`
+  (puntual: `start==end`). Se rellenan en runtime porque dependen de `SCREEN_FPS`.
+- **Zona narrativa**: `spell_zone` (`ZONE_*`) la fija la escena con el op `zone`; los
+  `canUse` la reciben en `ctx->zoneId`.
+- Desbloqueo: `spell_enable(id)` (silencioso; op `enable_spell` del DSL) o
+  `activate_spell(id)` (con jingle y notas, para cutscenes).
+- **`EN_BITE` está deshabilitado a propósito**: para activarlo, añádelo a la lista
+  `spell[]` de una clase de enemigo y ajusta `rechargeInit` con playtest.
 
-### Receta: añadir un hechizo nuevo
+→ **Para crear un hechizo nuevo**: guía paso a paso en `docs/spells.md`. Puntos que
+tocan el motor: `SPELL_*` en `constants_spells.h` (los de jugador antes de
+`SPELL_PLAYER_COUNT`; renumerar arrastra `PLAYER_COUNT`/`COUNT`), `*_init()` en
+`init_spells()`, icono en `show_pattern_icon` (interface.c), jingle en
+`play_spell_jingle` (sound.c), caso en la smoke ROM.
 
-1. Copiar `src/spells/fire.c/.h` (es el ejemplo canónico comentado).
-2. Añadir `SPELL_MIO` en `constants_spells.h` (antes de `SPELL_PLAYER_COUNT` si es
-   de jugador) y llamar `mio_init()` desde `init_spells()` en `spell.c`.
-3. Si es de jugador con icono: añadir su sprite y el caso en `show_pattern_icon`
-   (interface.c). Jingle: caso en `play_spell_jingle` (sound.c).
-4. Desbloqueo en juego: `spell_enable(SPELL_MIO)` (silencioso) o
-   `activate_spell(SPELL_MIO)` (con jingle y notas, para cutscenes).
-5. Añadir caso a la smoke ROM (`src/smoke/smoke_cases.h`).
+## 6. Sistema de escenas / cutscenes (`scenes/`)
 
-### Receta: añadir un enemigo
+Una escena es un **array de `SceneStep` en ROM** (`{u8 op; s16 a,b,c,d;}`) generado
+desde `data/scenes/<acto>/<escena>.scene`. `scene_run()` lo interpreta con un `switch`
+por opcode. **Filosofía híbrida**:
 
-1. Clase en `actors/enemies.h` (`ENEMY_CLS_*`) + entrada en `init_enemy_classes`
-   (enemies.c): HP, follow, y su lista `spell[]` ({SPELL_EN_X, SPELL_NONE}).
-2. Sprite en `res/res_enemies.res` + caso en el switch de `init_enemy`.
-3. `init_enemy(slot, ENEMY_CLS_*)` + `move_enemy*` en la escena; `combat_init()` arranca.
-- **EN_BITE está deshabilitado a propósito** (decisión §15 docs/refactor/plan.md): para
-  activarlo, añadir `SPELL_EN_BITE` a la lista `spell[]` de una clase y ajustar
-  `rechargeInit` con playtest. Nota heredada: bite no aplicaba daño al terminar.
+- **El DSL `.scene` expresa todo lo declarativo**: el *setup* (fondo, límites, paleta,
+  personajes, objetos, hechizos, vara) y la *secuencia narrativa* (diálogos, choices,
+  movimientos, esperas, combate, casts, transiciones).
+- **Los hooks C (`scene_hooks.c`) solo tienen la lógica imperativa** que una lista de
+  órdenes no puede expresar: bucles de items, cinemáticas de paleta, aparición de
+  enemigos. Se invocan desde el DSL con `call <hook>`. **Hay escenas sin ningún hook**
+  (p.ej. `act1_hall`, 100% declarativa).
 
-### Receta: añadir diálogos
+Internals del intérprete (esto NO está en la guía de autoría):
+- **La VM nunca escribe en los steps** (están en ROM). Todo el estado mutable
+  (`last_choice`, `pc`) vive en RAM.
+- **No hay `next_frame` entre steps**: los ops instantáneos se encadenan; los
+  bloqueantes (say, move, wait, combat, call) gestionan sus propios frames.
+- `main.c` = `while(true) scene_run(&scenes[current_scene_id])`; cada escena deja
+  `current_scene_id` apuntando a la siguiente (op `next_scene`) o resetea/termina.
+- **Tablas laterales** (§4): `level`/`item`/`palette` guardan un índice en el step y
+  los datos reales (con punteros a recursos) en `scene_levels[]`/`scene_items[]`/
+  `scene_palettes[]`. Ojo: la paleta se guarda como `const Palette *` (copiarla por
+  valor no es constante en un inicializador estático).
+- **Puzzles de secuencia**: `puzzle_sequence <tag> <spell:dir>…` + `wait_puzzle` +
+  `if_puzzle_solved`. El motor de hechizos llama a `scene_puzzle_notify()` al terminar
+  cada cast para avanzar/reiniciar el puzzle activo (tabla lateral `PuzzleSeq`).
+- **HUD durante diálogos**: los ops SAY/SAY_CLUSTER/SAY_RESPONSE/CHOICE ocultan el HUD
+  de hechizos mientras hablan y lo restauran si estaba activo (no se solapa con el
+  texto). `show_or_hide_interface()` no toca `interface_active`.
+- **Asimetría deliberada de `set interface`**: `on` pone `interface_active=true` y
+  muestra el HUD; `off` SOLO oculta el HUD (no toca `interface_active`, porque los
+  rechazos de hechizo dependen de ese flag). Documentado en `scene_vm.h`.
 
-1. Fila en `data/texts.csv` (`set,id,face,side,time,es,en`; side: SIDE_LEFT/RIGHT/NONE).
-2. `python3 tools/gen_texts.py` (o compilar: el build lo lanza) → `narrative/texts_data.*`.
-3. En una escena: `say SET ID sound|silent` en el `.scene`. En un hook C:
-   `talk_dialog(&dialogs[SET][ID], sound)` / `talk_cluster` (encadena hasta `TERM_*`).
+**Escena de referencia del motor**: `act1_test` (`data/scenes/act1/test.scene`)
+ejercita TODOS los ops — diálogos, choice+branch con bucles, cast scripted, dos
+puzzles (uno con paso invertido), scroll y dos oleadas de combate. No está enlazada
+al juego (`HACK_START_SCENE "act1_test"` o smoke ROM); es la chuleta canónica del DSL
+(desglose sección a sección en `docs/test_scene.md`).
 
-## 5b. Sistema de escenas (scenes/) — desde la Fase 5
+→ **Para crear una escena o un choice**: guía paso a paso en `docs/scenes.md`
+(referencia completa de ops, formatos de CSV, recetas). Solo si la escena necesita
+lógica imperativa creas `src/scenes/<acto>/<nombre>.c/.h` y registras cada hook en
+DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c`
+(olvidar uno → salto a NULL → cuelgue; la VM avisa por KDebug si el hueco es NULL).
 
-**LAS ESCENAS NO TIENEN NÚMERO**: se nombran `<acto>_<nombre>` (act1_bedroom,
-act1_corridor, act1_hall, act1_forest) para poder intercalar escenas sin renombrar
-nada. El SceneId numérico es un identificador INTERNO generado; en código, DSL,
-textos y hacks se habla siempre por nombre. Los diálogos siguen la misma filosofía:
-sets `act1_bedroom`... (defines ACT1_BEDROOM...) e ids `A1_BEDROOM_*`; choices
-`act1_hall_choice` (ACT1_HALL_CHOICE).
+## 7. Trampas y datos duros (leer antes de tocar nada)
 
-**Diseño completo**: `docs/refactor/fase5_design.md`. Filosofía HÍBRIDA: el DSL
-(`data/scenes/actN_sceneM.scene`) expresa TODO lo declarativo — el SETUP
-(level/limits/palette/character/active/follow/enable_spell/item, `set rod`) y la
-SECUENCIA narrativa (say/say_cluster/say_response, choice+branch, move/look/show,
-wait, set, combat, cast, fade_out, next_scene). Solo la LÓGICA imperativa (bucles de
-items, cinemáticas de paleta, aparición de enemigos) vive en hooks C
-(`scene_hooks.c`) invocados con `call <hook>`. Los ops que llevan punteros a recursos
-(level/item/palette) usan tablas laterales GENERADAS en scene_data.c
-(`scene_levels[]`/`scene_items[]`/`scene_palettes[]`, como `puzzle_seqs[]`). Hay
-escenas sin ningún hook (p.ej. act1_hall).
+- **`bool` de SGDK es `u8`** (`sgdk/inc/types.h`): no lo uses como contador.
+- **`SCREEN_FPS` es una VARIABLE runtime** (50 PAL / 60 NTSC, detectada en
+  `initialize`). Nada de tablas `const` con duraciones en frames: rellénalas en
+  runtime (`SCREEN_FPS * n`). Milisegundos → ticks con `calc_ticks(ms)`.
+- **`u16` y restas**: compara antes de restar HP/contadores (underflow silencioso).
+- **`next_frame(bool interactive)` es EL latido**: input + combate + animaciones +
+  `SPR_update` + vblank. Los bloqueantes (`move_entity`, diálogos, `wait_seconds`) lo
+  llaman por dentro. No dibujes ni proceses input fuera de él.
+- **Nunca bloquees con `while(!SPR_isAnimationDone)`** ni la consultes el mismo frame
+  de un `SPR_setAnim` (estado obsoleto hasta el siguiente `SPR_update`). Muertes y
+  esperas → timers con `modeTimer`.
+- **`SPR_setAnim` con un índice que el sprite no tiene** lee un puntero fuera de rango
+  y congela el VDP (crash constante). Caso concreto: la **vara de Linus**. Pon
+  `set rod on` (o `player_has_rod=true`) ANTES de crear a Linus (`character CHR_linus`
+  / `init_character`): con vara usa `linus_sprite` (tiene `ANIM_ACTION` para tocar
+  notas), sin vara `linus_norod_sprite` (no la tiene). Al revés → cuelgue al tocar la
+  1ª nota.
+- **Scroll y `new_level`/op `level`**: la anchura y el modo deben cuadrar con el mapa.
+  `auto_*` sobre una anchura menor que el mapa deriva cada frame y acaba leyendo fuera
+  del tilemap → cuelgue *"unmapped read"*. Fondos anchos → `user_*` con la anchura
+  real (p.ej. forest = 1440, user_right). Ante la duda, copia los valores de una
+  escena que use el mismo fondo.
+- **`GAMEVERSION` incrusta `__DATE__`**: dos builds de días distintos NUNCA son
+  byte-idénticos. Compara comportamiento (funcional/visual), no bytes.
+- **Charset propio del texto de diálogo**: el español se codifica
+  (ñ→^ á→# é→\$ í→% ó→\* ú→/ ¿→< ¡→>) vía `encode_spanish_text` (buffer estático:
+  consúmelo antes de la siguiente llamada). Escapes de texto: `|` salto de línea,
+  `@[...@]` color.
+- **Fuente en UI de texto CRUDO** (`VDP_drawText`, no diálogos): la fuente tiene los
+  glifos españoles EN las posiciones ASCII de `/ < > ^ # $ % *`. En menús/HUD crudos
+  evita esos caracteres. Los diálogos normales no sufren esto (ya pasan por
+  `encode_spanish_text`).
 
-- `gen_scenes.py` valida TODO en fatal (labels, diálogos contra texts.csv, choices
-  contra choices.csv, hooks contra el enum HOOK_* de scene_hooks.h, spells/zonas) y
-  emite `scene_data.c` con las constantes C verbatim — el compilador es la 2ª red.
-- La VM (`scene_vm.c`) nunca escribe en los steps (ROM); `last_choice` en RAM; sin
-  next_frame entre steps (los ops bloqueantes gestionan sus frames).
-- `main.c` = bucle infinito sobre `scene_lookup(current_act, current_scene)`.
-- Puzzles de secuencia: `puzzle_sequence <tag> <spell:dir>...` + `wait_puzzle` +
-  `if_puzzle_solved` (tabla lateral PuzzleSeq generada; el motor de hechizos
-  notifica a la VM en cada cast que termina — scene_puzzle_notify).
-- `say_response` responde con `dialogs[set][base + last_choice]` (respuestas a choices).
-- `set interface off` solo oculta el HUD (NO toca interface_active — asimetría
-  deliberada, ver scene_vm.h).
-- Los ops de diálogo (SAY/SAY_CLUSTER/SAY_RESPONSE/CHOICE) ocultan el HUD de
-  hechizos mientras hablan y lo restauran si estaba activo (así el HUD no se
-  solapa con el texto). `show_or_hide_interface()` no toca `interface_active`.
-- Ops de anim/pausa: `anim <chr> <ANIM_*>` y `wait_press` (pausa hasta A).
-- Ops de setup declarativo: `level <bg_tile> <bg_map> <front_tile> <front_map> <pal>
-  <ancho> <scroll_mode> <speed>` (bg = `none none` si no hay capa trasera; scroll_mode
-  ∈ auto_right/auto_left/user_right/user_left; ancho admite literal o constante C como
-  SCREEN_WIDTH), `limits x0 y0 x1 y1`, `palette PAL0..3 <pal>`, `character CHR_*`,
-  `active CHR_*`, `follow CHR_* on/off`, `enable_spell SPELL_*`, `item <slot> <sprite>
-  <pal> <x> <y> <cw> <cxo> <ch> <cyo> <depth>` (cw..cyo verbatim → admiten
-  COLLISION_DEFAULT; depth FORCE_BACKGROUND/FORCE_FOREGROUND/CALCULATE_DEPTH), y la
-  flag `set rod on/off` (player_has_rod).
-- **TRAMPA de scroll**: la anchura y el modo del op `level` deben cuadrar con el
-  mapa. `auto_*` sobre una anchura menor que el mapa deriva cada frame y
-  acaba leyendo fuera del tilemap → cuelgue "unmapped read". Para fondos anchos
-  usa `user_*` con la anchura real (p.ej. forest = 1440, user_right).
-- **TRAMPA de orden en setup**: pon `set rod on` ANTES de `character CHR_linus` —
-  decide su sprite (con vara `linus_sprite` tiene ANIM_ACTION; sin vara no). Ponerlo
-  después deja a Linus sin la animación de tocar notas y `SPR_setAnim(ANIM_ACTION)`
-  lee basura → cuelgue al tocar la 1ª nota. Regla general: **`SPR_setAnim` con un índice que el sprite no tiene lee
-  un puntero fuera de rango y congela el VDP** (dirección de crash constante).
-- **TRAMPA de la fuente en UI de texto crudo** (VDP_drawText, no diálogos): la
-  fuente del juego tiene los glifos españoles EN las posiciones ASCII de
-  `/ < > ^ # $ % *` (ú ¿ ¡ ñ á é í ó). En menús/HUD crudos evita esos caracteres.
-  Los diálogos normales no sufren esto (encode_spanish_text ya lo gestiona).
-
-**Escena de test del motor**: `act1_test` (data/scenes/act1/test.scene) ejercita
-TODOS los ops — diálogos, choice+branch, cast scripted, puzzle de 3 hechizos
-(thunder→fire→hide en ZONE_CAULDRON), scroll y combate. No enlazada desde el
-juego: `HACK_START_SCENE "act1_test"` o smoke ROM. Es la chuleta canónica del DSL.
-
-### Receta: añadir una cutscene
-
-1. Crear `data/scenes/<acto>/<nombre>.scene` (copiar act1/hall.scene como referencia
-   narrativa; act1/forest.scene como referencia con combate). El nombre interno es
-   `<acto>_<nombre>` y la directiva `scene` debe coincidir.
-2. El SETUP va en el propio `.scene` (level/limits/character/item/enable_spell/…).
-   Solo si necesita LÓGICA imperativa (enemigos, cinemáticas de paleta, bucles de
-   items): crear `src/scenes/<acto>/<nombre>.c/.h` con sus hooks + añadirlos al enum
-   `HOOK_*` de `scene_hooks.h` y a la tabla de `scene_hooks.c`.
-3. Sus textos: set `<acto>_<nombre>` en texts.csv, ids `A<n>_<NOMBRE>_*`.
-4. Compilar (el build corre gen_scenes.py; valida referencias en fatal).
-5. Enlazarla: `next_scene <acto>_<nombre>` desde la escena anterior. Añadir caso a la smoke ROM (`src/smoke/smoke_cases.h`).
-
-### Receta: añadir un choice
-
-1. Filas en `data/choices.csv` (set,item,face,side,time,es_1..4,en_1..4).
-2. En el `.scene`: `choice MI_SET <item>` + `branch <n> goto <label>` o
-   `say_response SET BASE_ID` si las respuestas son texto correlativo.
-
-## 6. Reglas de codificación
+## 8. Reglas de codificación
 
 - `snake_case` funciones/variables; `UPPER_CASE` macros; `PascalCase` tipos.
-- Tipos SGDK (`u8/u16/u32/s8/s16/s32/bool`); nunca `int` a pelo.
-- Llaves: Allman en funciones; K&R en if/for/while. 4 espacios.
+- **Tipos SGDK** (`u8/u16/u32/s8/s16/s32/bool`); nunca `int` a pelo.
+- Llaves: **Allman** en funciones; **K&R** en if/for/while. 4 espacios.
 - Comentario `//` junto a cada firma en los `.h`; bloque `/* */` de arquitectura al
-  inicio de cabeceras de subsistema. Sin plantillas Doxygen.
+  inicio de las cabeceras de subsistema. Sin plantillas Doxygen.
 - **Includes por METALIBRERÍA de dominio** (relativos a `-Isrc -Ires`). Cada `.c`
-  incluye `<dominio>/<dominio>.h` de los dominios que usa, en vez de los headers
-  sueltos. Metalibrerías: `core/core.h`, `world/world.h`, `actors/actors.h`,
-  `combat/combat.h`, `spells/spells.h`, `narrative/narrative.h`, `scenes/scenes.h`,
-  `interface/interface.h`, `audio/audio.h`, y `res_all.h` (todos los recursos).
-  Orden en el bloque: `<genesis.h>` → metalibrerías (ese orden) → headers específicos
-  que no estén en ninguna meta (p.ej. `scenes/act1/<escena>.h`, los headers de
-  registro `spells/player_spells.h`… que solo usa spell.c).
-  - Los **`.h` NO incluyen metalibrerías**: solo sus dependencias mínimas de tipos
-    (evita acoplar todo un dominio a una cabecera). Las metalibrerías son para los `.c`.
-  - `combat` e `interface` son de un solo header, así que `combat/combat.h` e
-    `interface/interface.h` YA son su propia metalibrería.
-  - Un `.c` de dominio X incluye igualmente `X/X.h` (arrastra su propio header vía
-    la meta; los guards lo hacen inocuo).
-- Sin malloc/free: pools y buffers estáticos. `static const` para datos inmutables.
-- Guards `_FOO_H_`. Funciones privadas `static`. Designated initializers en tablas.
-- No editar generados: `narrative/texts_data.*`, `narrative/choices_data.*`,
+  incluye `<dominio>/<dominio>.h` de los dominios que usa, no los headers sueltos.
+  Metalibrerías: `core/core.h`, `world/world.h`, `actors/actors.h`, `combat/combat.h`,
+  `spells/spells.h`, `narrative/narrative.h`, `scenes/scenes.h`, `interface/interface.h`,
+  `audio/audio.h`, y `res_all.h` (todos los recursos). Orden del bloque: `<genesis.h>`
+  → metalibrerías (ese orden) → headers específicos que no estén en ninguna meta
+  (p.ej. `scenes/act1/<escena>.h`, o `spells/player_spells.h` que solo usa spell.c).
+  - Los **`.h` NO incluyen metalibrerías**: solo sus dependencias mínimas de tipos.
+  - `combat` e `interface` son de un solo header → ese header YA es su metalibrería.
+- Sin `malloc/free`: pools y buffers estáticos. `static const` para datos inmutables.
+  Funciones privadas `static`. Guards `_FOO_H_`. Designated initializers en tablas.
+- **No editar generados**: `narrative/texts_data.*`, `narrative/choices_data.*`,
   `scenes/scene_data.*`, `res/*.h` de rescomp.
 
-## 7. Pendientes conocidos
+## 9. Recursos (`res/`)
 
-- Jingles de SLEEP y EN_BITE sin componer (TODO en `play_spell_jingle`, decisión §15).
-- "Better enemy defeat handling" (B16): la muerte actual es anim hurt 1s + release;
-  mejorarla (anim propia, recompensas) es diseño de juego — el motor lo soporta vía
-  `onFinish`/`hit_enemy`.
-- act1_scene4 no existe (hueco intencional en el guion; el DSL permite añadirla sin C
-  si es lineal).
-- (los ops de puzzle de la VM ya están implementados — escena act1_test como referencia)
+- Assets fuente en `gfx/` (gráficos) y `sfx/` (sonido), con subcarpetas por tipo de
+  actor/escena. Los `.res` (definiciones rescomp) y los `res_*.h/.c` generados viven
+  en la **raíz** de `res/`. `res_all.h` los agrega todos.
+- Al añadir un asset: ponlo en su carpeta `gfx/`/`sfx/` y referéncialo en el `.res`
+  con esa ruta (`SPRITE nombre "gfx/interface/x.png" …`). **El NOMBRE declarado en el
+  `.res` (no la ruta) es lo que genera el símbolo C** → mover un asset no cambia el
+  código, solo la ruta del `.res`.
+- Arte fuente: Aseprite (`.ase`/`.aseprite`) en `res/gfx/…`. Créditos de terceros en
+  la sección Acknowledgements del README.
 
-## 8. Voces y arte
+## 10. Mapa de documentación (`docs/`)
 
-- Voces animalese: `tools/voice/generate_animalese_voices.py` (descarga animalese.wav
-  de github.com/Acedio/animalese.js, requiere venv con librosa/numpy/soundfile).
-  Rutas ancladas al directorio del script (ejecutable desde cualquier cwd).
-  - **Los fonemas A-Z de las voces del juego (woman/man/deep) se escriben
-    DIRECTAMENTE en `res/sfx/dialogs/<voz>/`** (donde `res_dialogs.res` los
-    referencia): regenerar = actualizar los assets del juego en su sitio.
-  - En `tools/voice/` solo se versiona el script y la fuente
-    `animalese_download/animalese.wav`. La voz "raw" y las síntesis de prueba
-    (`phonemes_animalese/`, `synthesis_animalese/`) son SALIDA de exploración,
-    gitignored (el script las recrea con `mkdir(exist_ok=True)`).
-  - Los `typewriter*.wav` de `res/sfx/dialogs/` NO los genera este script (son
-    efectos externos); solo las voces A-Z.
-- **Estructura de `res/`**: assets fuente divididos en `gfx/` (gráficos) y `sfx/`
-  (sonido), con subcarpetas por tipo de actor/escena (`gfx/characters`, `gfx/enemies`,
-  `gfx/backgrounds/act1`, `gfx/items/act1`, `sfx/dialogs/{deep,man,woman}`…). Los
-  `.res` y los `res_*.h/.c` generados viven en la raíz de `res/`. Al añadir un asset:
-  ponlo en su carpeta `gfx/`/`sfx/` y referéncialo en el `.res` con esa ruta
-  (`SPRITE x "gfx/interface/x.png" …`). **El NOMBRE declarado en el `.res` (no la
-  ruta) es lo que genera el símbolo C** — mover assets no cambia el código.
-- Arte: Aseprite (`.ase`/`.aseprite` fuente en `res/gfx/…`). Créditos de terceros:
-  sección Acknowledgements del README.
+AGENTS.md es la biblia del **motor**. La **autoría de contenido** y los flujos de
+trabajo tienen guías dedicadas — no dupliques su contenido aquí, enlázalas:
+
+| Documento | Cubre |
+|---|---|
+| `docs/build.md`    | Pipeline de build completo, configuración personal, VS Code, problemas típicos. |
+| `docs/testing.md`  | Smoke ROM (tipos de caso, cómo añadir uno) y checklist de playtest. |
+| `docs/spells.md`   | Guía para no técnicos: crear un hechizo de principio a fin (hooks, fases, zonas, receta). |
+| `docs/scenes.md`   | Guía para no técnicos: crear una escena (todos los ops del DSL, formatos de texts.csv/choices.csv, recetas). |
+| `docs/texts.md`    | Guía para no técnicos: escribir diálogos, clusters, choices y voces. |
+| `docs/test_scene.md` | Desglose de qué prueba cada sección de `act1_test`. |
+| `docs/refactor/`   | Histórico del rediseño (baseline, bugs B\*, plan). Referencia, no día a día. |
+
+Las guías `spells.md`/`scenes.md`/`texts.md` son **deliberadamente autocontenidas y no
+técnicas** (no remiten a otros documentos): al mantenerlas, conserva ese tono y no las
+acortes al estilo terso de AGENTS.
+
+## 11. Voces (animalese)
+
+- `tools/voice/generate_animalese_voices.py` sintetiza las voces (perfiles woman / man
+  / deep) a partir de `tools/voice/animalese_download/animalese.wav`
+  (github.com/Acedio/animalese.js; requiere venv con librosa/numpy/soundfile). Rutas
+  ancladas al directorio del script (ejecutable desde cualquier cwd).
+- Los **fonemas A-Z se escriben DIRECTAMENTE en `res/sfx/dialogs/<voz>/`** (donde
+  `res_dialogs.res` los referencia): regenerar = actualizar los assets en su sitio.
+- Se versiona solo el script y `animalese.wav`. La voz raw y las síntesis de prueba
+  (`phonemes_animalese/`, `synthesis_animalese/`) son salida de exploración,
+  gitignored. Los `typewriter*.wav` NO los genera este script (son efectos externos).
+
+## 12. Pendientes conocidos
+
+- Jingles de SLEEP y EN_BITE sin componer (TODO en `play_spell_jingle`).
+- Mejor manejo de la derrota de un enemigo: la muerte actual es anim hurt ~1 s +
+  release; una anim propia y recompensas es diseño de juego (el motor lo soporta vía
+  `onFinish`/`hit_enemy`).
+- No hay escena entre `act1_hall` y `act1_forest` para una posible ampliación; el DSL
+  permite añadirla sin C si es lineal.
+- Capturas de referencia de playtest pendientes (`docs/testing/`).

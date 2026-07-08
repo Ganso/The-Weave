@@ -27,7 +27,7 @@ Tipos de caso (`src/smoke/smoke_cases.h`):
 Una fila en `smoke_cases[]` (`src/smoke/smoke_cases.h`) y rebuild. Sin tocar el
 menú ni el runner.
 
-## Checklist de playtest (contra docs/refactor/baseline.md)
+## Checklist de playtest
 
 - **Intro + logo**: GeeseBumps y la intro, selección de idioma.
 - **act1_bedroom**: cisne (flash-aparición-diálogo-flash); 4 items en cualquier
@@ -44,9 +44,9 @@ menú ni el runner.
 
 ## Referencia
 
-El comportamiento de referencia es el baseline post-Fase-1
-(`docs/refactor/baseline.md`). Las comparaciones son funcionales/visuales — nunca
-binarias (`GAMEVERSION` incrusta la fecha de build).
+El comportamiento de referencia está recogido en `docs/refactor/baseline.md`
+(histórico). Las comparaciones son funcionales/visuales — nunca binarias
+(`GAMEVERSION` incrusta la fecha de build).
 
 Capturas de referencia: pendiente de añadir en `docs/testing/` (hacerlas en el
 próximo playtest completo).
