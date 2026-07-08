@@ -7,9 +7,13 @@
 > smoke ROM (`./build-theweave.sh smoke` → caso "SCENE act1_test (motor)").
 > Tras probar con smoke: `./build-theweave.sh release` para restaurar out/.
 
-## Estado: ESTABILIZADO (sesión 2026-07-08)
+## Estado: OPERATIVO Y VALIDADO POR EL USUARIO (2026-07-08)
 
-### Bugs reportados por el usuario y su arreglo (2026-07-08)
+Todas las secciones del banco de pruebas se han ejecutado y validadas en
+BlastEm. Las casillas de abajo quedan marcadas como comprobadas; sirven como
+checklist de regresión si en el futuro se toca el motor de escenas o de hechizos.
+
+### Histórico de bugs cazados durante la estabilización (todos resueltos)
 - **No se veía al personaje**: `act1_test_setup` hacía `init_character` (crea el
   sprite OCULTO) pero nunca `show_character` ni lo posicionaba. Arreglado:
   posiciona y muestra a Linus.
@@ -44,52 +48,52 @@ repite al acabar cada sección:
 ## Qué probar, sección a sección
 
 ### Intro
-- [ ] Cluster de 3 pantallas con el mapeo botón→nota.
-- [ ] `wait_press`: la escena espera a que pulses A (op nuevo de la VM).
+- [x] Cluster de 3 pantallas con el mapeo botón→nota.
+- [x] `wait_press`: la escena espera a que pulses A (op nuevo de la VM).
 
 ### 1. Diálogos y quiz
-- [ ] Cara de **Clio a la DERECHA** y de **Xander a la izquierda** (variedad de
+- [x] Cara de **Clio a la DERECHA** y de **Xander a la izquierda** (variedad de
       face/side en DialogItem).
-- [ ] `anim`: Linus hace la animación de MAGIA 1,5 s por opcode del DSL y vuelve a idle.
-- [ ] **Quiz anidado** (choices dentro de choices, con bucles de reintento):
+- [x] `anim`: Linus hace la animación de MAGIA 1,5 s por opcode del DSL y vuelve a idle.
+- [x] **Quiz anidado** (choices dentro de choices, con bucles de reintento):
   - Q1 "¿Cuántas notas tiene un patrón?" → correcta **Cuatro** (opción 2).
     Fallar → mensaje + repetición de la pregunta (bucle goto).
   - Q2 "¿Qué hechizo es palíndromo?" → correcta **Esconderse** (opción 3).
   - Confirmación anidada "¿Estás seguro?" → **No** vuelve a Q2; **Sí** supera el quiz.
-- [ ] Vuelta al hub.
+- [x] Vuelta al hub.
 
 ### 2. Hechizos y puzzles
-- [ ] Cast scripted de **sleep** (hechizo solo-guion) con `wait_spell`.
-- [ ] Cast scripted de **LUZ** — hechizo NUEVO definido por fases declarativas:
+- [x] Cast scripted de **sleep** (hechizo solo-guion) con `wait_spell`.
+- [x] Cast scripted de **LUZ** — hechizo NUEVO definido por fases declarativas:
       el cielo pasa a **cian** (0,75 s) y luego a **blanco** (0,75 s) y se restaura.
-- [ ] Selector de puzzle (choice de 2):
+- [x] Selector de puzzle (choice de 2):
   - **Puzzle 1 (básico)**: trueno → fuego → esconderse (directos). Requiere
     `zone ZONE_CAULDRON` (fire). Notas en el propio diálogo.
   - **Puzzle 2 (con INVERTIDO)**: trueno → **luz invertida (DO SI LA SOL)** →
     esconderse. Primera prueba real del matching `reversed` en PuzzleSeq.
     LUZ es el único hechizo casteable invertido libremente (sin canUse).
-- [ ] Fallar la secuencia la reinicia (con crédito si el fallo es el 1er paso).
-- [ ] `if_puzzle_solved` tras el puzzle 1 (el centinela "ERROR" nunca debe verse).
-- [ ] Vuelta al hub (se puede entrar otra vez y elegir el otro puzzle).
+- [x] Fallar la secuencia la reinicia (con crédito si el fallo es el 1er paso).
+- [x] `if_puzzle_solved` tras el puzzle 1 (el centinela "ERROR" nunca debe verse).
+- [x] Vuelta al hub (se puede entrar otra vez y elegir el otro puzzle).
 
 ### 3. Combate (dos oleadas en la misma escena)
-- [ ] **Oleada 1**: WeaverGhost clásico — hint al thunder directo, counter
+- [x] **Oleada 1**: WeaverGhost clásico — hint al thunder directo, counter
       (SOL SOL FA MI) durante su efecto, muerte con 2 counters.
-- [ ] **Oleada 2**: **ENEMY_CLS_TESTGHOST** (clase SOLO test, sprite del ghost)
+- [x] **Oleada 2**: **ENEMY_CLS_TESTGHOST** (clase SOLO test, sprite del ghost)
       con DOS hechizos: thunder (counterable, recarga 3 s) y **mordisco**
       (MI SOL DO, 3 notas, NO counterable, recarga 2 s, ahora hace 1 de daño).
       Verificar: alternancia de ataques por recargas, y que el counter solo
       funciona contra el thunder (contra el mordisco: esconderse o comerse el golpe).
-- [ ] `combat` dos veces en la misma escena (re-init limpio del FSM).
-- [ ] Vuelta al hub.
+- [x] `combat` dos veces en la misma escena (re-init limpio del FSM).
+- [x] Vuelta al hub.
 
 ### Salida
-- [ ] Opción 4 del hub: despedida + fade_out + next_scene al dormitorio.
-- [ ] Desde la smoke ROM: al terminar vuelve al menú de smoke.
+- [x] Opción 4 del hub: despedida + fade_out + next_scene al dormitorio.
+- [x] Desde la smoke ROM: al terminar vuelve al menú de smoke.
 
 ## Casos nuevos de smoke ROM (menú)
-- [ ] `CHK light directo - SI` y `CHK light inverso - SI` (único invertido libre).
-- [ ] `CAST light (cian-blanco)`: duración 90/90 frames NTSC + efecto visual.
+- [x] `CHK light directo - SI` y `CHK light inverso - SI` (único invertido libre).
+- [x] `CAST light (cian-blanco)`: duración 90/90 frames NTSC + efecto visual.
 
 ## Cambios de motor de esta sesión (2026-07-07)
 
@@ -103,7 +107,7 @@ repite al acabar cada sección:
 | Guarda hook NULL | scene_vm.c (op CALL) | hook sin registrar avisa por KDebug, no cuelga |
 | Iconos HUD opcionales | interface.c | hechizo sin icono no se dibuja, no crashea (FIRE y LUZ ya tienen icono: F y L) |
 
-## Ideas pendientes (no implementadas)
+## Mejoras futuras opcionales (NO bloqueantes; el test está completo y operativo)
 
 - Op `music`/`sfx` desde DSL (necesita tabla de recursos: los punteros no caben
   en los args s16 del SceneStep).

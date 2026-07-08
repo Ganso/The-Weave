@@ -39,7 +39,9 @@ verbatim (el compilador valida). `sound`/`silent` opcional en los say (def. sile
 | `move_instant CHR x y` | | teletransporte |
 | `show CHR on/off` | | mostrar/ocultar personaje |
 | `look CHR left/right` | | orientación del sprite |
+| `anim CHR ANIM_*` | `anim CHR_linus ANIM_MAGIC` | fija la animación del personaje |
 | `wait <décimas>` | `wait 20` | espera 2,0 s (escala PAL/NTSC) |
+| `wait_press` | | pausa la cutscene hasta que se pulse A |
 | `wait_scroll <offset>` | `wait_scroll 360` | deja jugar hasta ese scroll |
 | `set <flag> on/off` | `set interface on` | movement · scroll · interface · spells |
 | `combat` | | combate interactivo completo (hasta ganar) |
