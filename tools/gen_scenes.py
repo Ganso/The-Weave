@@ -90,10 +90,20 @@ OPS = {
     'anim':         ('SCENE_OP_ANIM',         ['verbatim', 'verbatim']),
     'wait_press':   ('SCENE_OP_WAIT_PRESS',   []),
     'if_puzzle_solved': ('SCENE_OP_IF_PUZZLE_SOLVED', ['puzzletag', 'kwgoto', 'label']),
+    # --- Setup declarativo (level/item/palette tienen handler propio abajo) ---
+    'limits':       ('SCENE_OP_LIMITS',       ['int', 'int', 'int', 'int']),
+    'character':    ('SCENE_OP_CHARACTER',    ['verbatim']),
+    'active':       ('SCENE_OP_ACTIVE',       ['verbatim']),
+    'follow':       ('SCENE_OP_FOLLOW',       ['verbatim', 'onoff']),
+    'enable_spell': ('SCENE_OP_ENABLE_SPELL', ['spell']),
 }
 PUZZLE_SEQ_MAX = 4
 FLAGS = {'movement': 'SCENE_FLAG_MOVEMENT', 'scroll': 'SCENE_FLAG_SCROLL',
-         'interface': 'SCENE_FLAG_INTERFACE', 'spells': 'SCENE_FLAG_SPELLS'}
+         'interface': 'SCENE_FLAG_INTERFACE', 'spells': 'SCENE_FLAG_SPELLS',
+         'rod': 'SCENE_FLAG_ROD'}
+# Modos de scroll del op `level` (mapean a los BG_SCRL_* de world/background.h)
+SCROLL_MODES = {'auto_right': 'BG_SCRL_AUTO_RIGHT', 'auto_left': 'BG_SCRL_AUTO_LEFT',
+                'user_right': 'BG_SCRL_USER_RIGHT', 'user_left': 'BG_SCRL_USER_LEFT'}
 
 # ---------------------------------------------------------------------------
 # Parseo de una escena
@@ -105,6 +115,20 @@ def scene_name_of(path):
     return f"{actdir}_{base}"
 
 puzzle_seqs = []   # global: cada entrada es {'spells': [(SPELL_X, 0|1), ...]}
+
+# Tablas laterales de setup (globales a todas las escenas, como puzzle_seqs).
+# Cada entrada guarda el fragmento C ya formateado que emitiremos en scene_data.c.
+scene_levels    = []   # cada entrada: dict con los 8 campos de SceneLevel
+scene_items     = []   # cada entrada: dict con los 9 campos de SceneItem
+scene_palettes  = []   # cada entrada: nombre de recurso Palette (verbatim)
+
+# Nombre de recurso rescomp: identificador C (letras, dígitos, _). Se emite
+# VERBATIM (con & donde toque); el compilador C valida que exista de verdad.
+RES_RE = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
+def res_ref(val, where, kind, pointer=True):
+    if not RES_RE.match(val):
+        die(f"{where}: '{val}' no parece un nombre de recurso {kind} válido")
+    return ('&' + val) if pointer else val
 
 def parse_scene(path, all_scene_names):
     fname = scene_name_of(path)
@@ -149,6 +173,67 @@ def parse_scene(path, all_scene_names):
             puzzle_tags[tag] = len(puzzle_seqs)
             puzzle_seqs.append({'spells': seq, 'where': where, 'tag': f"{fname}:{tag}"})
             steps.append({'op': 'SCENE_OP_PUZZLE_SEQ', 'args': [str(puzzle_tags[tag])], 'label': None, 'where': where})
+            continue
+
+        if tok[0] == 'level':
+            # level <bg_tile> <bg_map> <front_tile> <front_map> <pal> <width> <scroll_mode> <speed>
+            # bg_tile/bg_map pueden ser 'none' (NULL) si el nivel no usa capa de fondo.
+            if len(tok) != 9:
+                die(f"{where}: level espera 8 argumentos: bg_tile bg_map front_tile front_map pal width scroll_mode speed")
+            def optres(v):  # recurso o 'none' → NULL
+                return 'NULL' if v == 'none' else res_ref(v, where, 'de tileset/mapa')
+            # anchura: un número (800, 1440) o una constante C (SCREEN_WIDTH); se emite verbatim
+            if not tok[6].isdigit() and not RES_RE.match(tok[6]):
+                die(f"{where}: la anchura '{tok[6]}' no es un número ni una constante válida")
+            try: int(tok[8])
+            except ValueError: die(f"{where}: la velocidad '{tok[8]}' no es un número")
+            if tok[7] not in SCROLL_MODES:
+                die(f"{where}: modo de scroll '{tok[7]}' inválido ({', '.join(SCROLL_MODES)})")
+            idx = len(scene_levels)
+            scene_levels.append({
+                'bgTile':   optres(tok[1]), 'bgMap':    optres(tok[2]),
+                'frontTile':optres(tok[3]), 'frontMap': optres(tok[4]),
+                'pal':      res_ref(tok[5], where, 'de paleta'),
+                'width':    tok[6], 'scrollMode': SCROLL_MODES[tok[7]], 'scrollSpeed': tok[8],
+            })
+            steps.append({'op': 'SCENE_OP_LEVEL', 'args': [str(idx)], 'label': None, 'where': where})
+            continue
+
+        if tok[0] == 'palette':
+            # palette <PAL_slot> <pal_resource>
+            if len(tok) != 3:
+                die(f"{where}: palette espera 2 argumentos: ranura (PAL0..PAL3) y recurso de paleta")
+            slot = tok[1]
+            if slot not in ('PAL0', 'PAL1', 'PAL2', 'PAL3'):
+                die(f"{where}: ranura de paleta '{slot}' inválida (PAL0..PAL3)")
+            idx = len(scene_palettes)
+            scene_palettes.append(res_ref(tok[2], where, 'de paleta'))
+            steps.append({'op': 'SCENE_OP_PALETTE', 'args': [slot, str(idx)], 'label': None, 'where': where})
+            continue
+
+        if tok[0] == 'item':
+            # item <slot> <sprite> <pal> <x> <y> <cw> <cxo> <ch> <cyo> <depth>
+            # cw/cxo/ch/cyo admiten COLLISION_DEFAULT o un número (se emiten verbatim);
+            # depth es FORCE_BACKGROUND / FORCE_FOREGROUND / CALCULATE_DEPTH.
+            if len(tok) != 11:
+                die(f"{where}: item espera 10 argumentos: slot sprite pal x y cw cxo ch cyo depth")
+            for i in (1, 5, 9):  # slot, x, y son números
+                pass
+            try:
+                int(tok[1]); int(tok[4]); int(tok[5])
+            except ValueError:
+                die(f"{where}: slot/x/y de item deben ser números")
+            depth = tok[10]
+            if depth not in ('FORCE_BACKGROUND', 'FORCE_FOREGROUND', 'CALCULATE_DEPTH'):
+                die(f"{where}: depth '{depth}' inválido (FORCE_BACKGROUND/FORCE_FOREGROUND/CALCULATE_DEPTH)")
+            idx = len(scene_items)
+            scene_items.append({
+                'sprite': res_ref(tok[2], where, 'de sprite'),
+                'pal':  tok[3], 'x': tok[4], 'y': tok[5],
+                'cw':   tok[6], 'cxo': tok[7], 'ch': tok[8], 'cyo': tok[9],
+                'depth': depth,
+            })
+            steps.append({'op': 'SCENE_OP_ITEM', 'args': [tok[1], str(idx)], 'label': None, 'where': where})
             continue
 
         if tok[0] not in OPS:
@@ -270,15 +355,21 @@ with open(HEADER_FILE, 'w', encoding='utf-8') as h:
     h.write('extern const u8 scene_count;\n\n')
     h.write('s16 scene_id_by_name(const char *name); // SceneId, o -1 si no existe (para hacks/smoke)\n\n')
     h.write('extern const PuzzleSeq puzzle_seqs[]; // secuencias de puzzle (indexadas por los ops PUZZLE_*)\n')
+    h.write('extern const SceneLevel   scene_levels[];   // niveles (indexados por el op LEVEL)\n')
+    h.write('extern const SceneItem    scene_items[];    // items del escenario (indexados por el op ITEM)\n')
+    h.write('extern const ScenePalette scene_palettes[]; // paletas a cargar (indexadas por el op PALETTE)\n')
     h.write('\n#endif // _SCENE_DATA_H_\n')
 
 with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
     c.write('// Generated by tools/gen_scenes.py from data/scenes/*.scene — DO NOT EDIT\n')
     c.write('#include <genesis.h>\n')
+    c.write('#include "core/core.h"  // SCREEN_WIDTH y otras constantes usadas en las tablas de setup\n')
     c.write('#include "scenes/scenes.h"\n')
     c.write('#include "narrative/narrative.h"\n')
     c.write('#include "actors/actors.h"\n')
-    c.write('#include "spells/spells.h"\n\n')
+    c.write('#include "spells/spells.h"\n')
+    c.write('#include "world/world.h"\n')
+    c.write('#include "res_all.h"      // recursos rescomp (tilesets, sprites, paletas) para las tablas de setup\n\n')
 
     for sc in scenes:
         c.write(f"static const SceneStep {sc['name']}_steps[] = {{\n")
@@ -302,6 +393,34 @@ with open(SOURCE_FILE, 'w', encoding='utf-8') as c:
     else:
         c.write('    { 0, {0}, {0} } // (sin puzzles definidos)\n')
     c.write('};\n\n')
+
+    # --- Tablas laterales de setup declarativo ---
+    c.write('const SceneLevel scene_levels[] = {\n')
+    if scene_levels:
+        for i, L in enumerate(scene_levels):
+            c.write(f"    {{ {L['bgTile']}, {L['bgMap']}, {L['frontTile']}, {L['frontMap']}, "
+                    f"{L['pal']}, {L['width']}, {L['scrollMode']}, {L['scrollSpeed']} }}, // {i}\n")
+    else:
+        c.write('    { NULL, NULL, NULL, NULL, NULL, 0, 0, 0 } // (sin niveles definidos)\n')
+    c.write('};\n\n')
+
+    c.write('const SceneItem scene_items[] = {\n')
+    if scene_items:
+        for i, I in enumerate(scene_items):
+            c.write(f"    {{ {I['sprite']}, {I['pal']}, {I['x']}, {I['y']}, "
+                    f"{I['cw']}, {I['cxo']}, {I['ch']}, {I['cyo']}, {I['depth']} }}, // {i}\n")
+    else:
+        c.write('    { NULL, 0, 0, 0, 0, 0, 0, 0, 0 } // (sin items definidos)\n')
+    c.write('};\n\n')
+
+    c.write('const ScenePalette scene_palettes[] = {\n')
+    if scene_palettes:
+        for i, p in enumerate(scene_palettes):
+            c.write(f"    {{ {p} }}, // {i}\n")
+    else:
+        c.write('    { {0} } // (sin paletas definidas)\n')
+    c.write('};\n\n')
+
     c.write('s16 scene_id_by_name(const char *name)    // SceneId, o -1 si no existe\n{\n')
     c.write('    for (u8 i = 0; i < scene_count; i++)\n')
     c.write('        if (strcmp(scenes[i].name, name) == 0) return i;\n')

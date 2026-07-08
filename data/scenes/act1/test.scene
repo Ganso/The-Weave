@@ -10,7 +10,23 @@
 # ============================================================================
 scene act1_test
 
-call act1_test_setup         # nivel del pasillo + items + personajes + hechizos del test
+# --- Montaje del banco de pruebas (antes en act1_test_setup) ---
+# Misma config que act1_forest: anchura real del mapa (1440) y scroll por el
+# jugador (user_right). Un auto_right con anchura 320 derivaría fuera del tilemap
+# y provocaría una lectura no mapeada (cuelgue "unmapped read").
+level forest_bg_tile forest_bg_map forest_front_tile forest_front_map forest_pal 1440 user_right 3
+limits 0 134 275 172
+set rod on                    # vara: fijar ANTES de character CHR_linus (decide su sprite)
+character CHR_linus
+character CHR_clio             # para probar show/hide desde el DSL
+active CHR_linus
+move_instant CHR_linus 140 154
+show CHR_linus on
+move_instant CHR_clio 70 154  # Clio empieza oculta; el DSL la muestra/oculta
+enable_spell SPELL_THUNDER
+enable_spell SPELL_HIDE
+enable_spell SPELL_FIRE
+enable_spell SPELL_LIGHT       # LUZ: solo existe habilitado aquí (fases + invertible)
 
 say_cluster ACT1_TEST A1_TEST_INTRO sound
 wait_press                   # pausa de cutscene: esperar pulsación de A (op nuevo)

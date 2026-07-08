@@ -1,8 +1,18 @@
 # Acto 1 — Hall: Clio y Xander hablan de los Tejedores
-# La escena narrativa por excelencia: casi puro DSL.
+# La escena narrativa por excelencia: puro DSL (setup incluido).
 scene act1_hall
 
-call act1_hall_setup         # nivel del hall, personajes en posición
+# --- Montaje del nivel y colocación inicial (antes en act1_hall_setup) ---
+level historians_bg_tile historians_bg_map historians_front_tile historians_front_map historians_pal SCREEN_WIDTH auto_right 3
+character CHR_linus
+character CHR_clio
+character CHR_xander
+move_instant CHR_clio 40 174
+move_instant CHR_linus 360 164
+look CHR_clio left        # Clio mira a la derecha (flipH=false)
+look CHR_linus right      # Linus mira a la izquierda (flipH=true)
+show CHR_clio on
+show CHR_linus on
 
 say_cluster ACT1_HALL A1_HALL_GUILD_YEAR sound
 move CHR_linus 200 174

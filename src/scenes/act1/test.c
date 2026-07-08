@@ -10,36 +10,6 @@
 #include "res_all.h"
 #include "scenes/act1/test.h"
 
-void act1_test_setup(void)    // Fondo de bosque + personajes visibles + vara y hechizos del test
-{
-    // Misma config que act1_forest: anchura real del mapa (1440) y scroll por el
-    // jugador (USER_RIGHT). El AUTO_RIGHT con anchura 320 derivaba fuera del tilemap
-    // y provocaba una lectura no mapeada (cuelgue "unmapped read").
-    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
-    set_limits(0,134,275,172);
-
-    // player_has_rod DEBE fijarse ANTES de init_character(CHR_linus): decide qué
-    // sprite usa Linus. Con vara = linus_sprite (tiene ANIM_ACTION de tocar notas);
-    // sin vara = linus_norod_sprite (sin esa animación → SPR_setAnim leería basura
-    // y colgaría al tocar una nota). Igual que act1_forest_setup.
-    player_has_rod = true;
-
-    init_character(CHR_linus);
-    init_character(CHR_clio);        // para probar show/hide desde el DSL
-    active_character = CHR_linus;
-
-    // Colocar y MOSTRAR a Linus (init_character crea el sprite oculto)
-    move_character_instant(CHR_linus, 140, 154);
-    show_character(CHR_linus, true);
-    move_character_instant(CHR_clio, 70, 154); // Clio empieza oculta; el DSL la muestra/oculta
-
-    // Hechizos del test (fire y luz: casteables por el jugador solo aquí)
-    spell_enable(SPELL_THUNDER);
-    spell_enable(SPELL_HIDE);
-    spell_enable(SPELL_FIRE);
-    spell_enable(SPELL_LIGHT);   // LUZ: solo existe habilitado aquí (fases + invertible)
-}
-
 void act1_test_ghost2(void)    // Oleada 2: fantasma de TEST con dos hechizos (thunder + mordisco)
 {
     PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);

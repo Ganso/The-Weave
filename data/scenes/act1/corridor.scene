@@ -1,11 +1,29 @@
 # Acto 1 — Pasillo de los historiadores: los libros y los recuerdos
 scene act1_corridor
 
-call act1_corridor_setup     # nivel del pasillo, items, Linus
+# --- Montaje del pasillo, items y Linus (antes en act1_corridor_setup) ---
+# El pasillo no usa capa de fondo (back): solo la capa frontal → bg_tile/bg_map = none.
+level none none historians_corridor_front_tile historians_corridor_front_map historians_corridor_pal 800 user_left 0
+limits 0 140 275 168
+item 0 item_corridor_bookpedestal_sprite PAL0 600 95 COLLISION_DEFAULT COLLISION_DEFAULT 8 58 CALCULATE_DEPTH   # libro de historia del gremio
+item 1 item_corridor_bookpedestal_sprite PAL0 200 95 COLLISION_DEFAULT COLLISION_DEFAULT 8 58 CALCULATE_DEPTH   # mitos y leyendas
+item 2 item_corridor_lamp_sprite PAL0 32 0 0 0 0 0 FORCE_BACKGROUND
+item 3 item_corridor_lamp_sprite PAL0 176 0 0 0 0 0 FORCE_BACKGROUND
+item 4 item_corridor_lamp_sprite PAL0 336 0 0 0 0 0 FORCE_BACKGROUND
+item 5 item_corridor_lamp_sprite PAL0 464 0 0 0 0 0 FORCE_BACKGROUND
+item 6 item_corridor_lamp_sprite PAL0 656 0 0 0 0 0 FORCE_BACKGROUND
+item 7 item_corridor_door_bottom_sprite PAL0 96 120 COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT FORCE_BACKGROUND
+item 8 item_corridor_door_bottom_sprite PAL0 400 120 COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT FORCE_BACKGROUND
+item 9 item_corridor_door_bottom_sprite PAL0 720 120 COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT FORCE_BACKGROUND
+item 10 item_corridor_map_bottom_sprite PAL0 240 120 COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT FORCE_BACKGROUND
+item 11 item_corridor_map_bottom_sprite PAL0 544 120 COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT COLLISION_DEFAULT FORCE_BACKGROUND
+character CHR_linus
 
 say_cluster SYSTEM_DIALOG SYSMSG_DEMO_TITLE sound   # aviso de demo técnica
 
-call act1_corridor_entry     # entrada de Linus por la derecha
+# Entrada de Linus por la derecha (antes en act1_corridor_entry)
+move_instant CHR_linus 340 154
+move CHR_linus 270 154
 
 say_cluster ACT1_CORRIDOR A1_CORRIDOR_OVERSLEPT silent
 

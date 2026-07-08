@@ -1,7 +1,18 @@
 # Acto 1 — Dormitorio: la visita del cisne y el primer patrón
 scene act1_bedroom
 
-call act1_bedroom_setup      # nivel nocturno, personajes, items
+# --- Montaje del nivel, paleta del cisne, personajes e items (antes en act1_bedroom_setup) ---
+level bedroom_bg_tile bedroom_bg_map bedroom_front_tile bedroom_front_map bedroom_night_pal SCREEN_WIDTH auto_right 3
+limits 20 145 278 176
+palette PAL1 swan_pal         # usar la paleta del cisne en lugar de la de personajes
+character CHR_swan
+character CHR_linus
+item 0 item_bedroom_bed PAL0 31 139 93 0 23 0 FORCE_BACKGROUND              # cama
+item 1 item_bedroom_chair PAL0 236 110 26 0 43 0 FORCE_BACKGROUND           # silla
+item 2 item_bedroom_windowsill PAL0 125 121 99 0 22 0 FORCE_BACKGROUND      # alféizar
+item 3 item_bedroom_cabinet PAL0 270 79 51 0 82 0 FORCE_BACKGROUND          # armario + partitura
+item 4 item_bedroom_linus_sleeping PAL0 30 112 0 0 0 0 FORCE_BACKGROUND     # Linus dormido
+
 call act1_bedroom_swan       # cinemática del cisne (flash + diálogo + flash)
 call act1_bedroom_wake       # amanece, Linus se levanta, control al jugador
 call act1_bedroom_items      # bucle de items: cama, silla, ventana, armario (aprende sleep)

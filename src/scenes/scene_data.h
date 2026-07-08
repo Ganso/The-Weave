@@ -19,5 +19,8 @@ extern const u8 scene_count;
 s16 scene_id_by_name(const char *name); // SceneId, o -1 si no existe (para hacks/smoke)
 
 extern const PuzzleSeq puzzle_seqs[]; // secuencias de puzzle (indexadas por los ops PUZZLE_*)
+extern const SceneLevel   scene_levels[];   // niveles (indexados por el op LEVEL)
+extern const SceneItem    scene_items[];    // items del escenario (indexados por el op ITEM)
+extern const ScenePalette scene_palettes[]; // paletas a cargar (indexadas por el op PALETTE)
 
 #endif // _SCENE_DATA_H_

@@ -54,7 +54,16 @@ typedef enum {
     SCENE_OP_WAIT_PUZZLE  = 23,  // a=índice — espera interactiva hasta resolverlo
     SCENE_OP_IF_PUZZLE_SOLVED = 24, // a=índice, b=stepIdx — salta si está resuelto
     SCENE_OP_ANIM         = 25,  // a=chr, b=ANIM_* — anim_character
-    SCENE_OP_WAIT_PRESS   = 26   // pausa de cutscene hasta pulsar A (frames no-interactivos)
+    SCENE_OP_WAIT_PRESS   = 26,  // pausa de cutscene hasta pulsar A (frames no-interactivos)
+    // --- Ops de SETUP declarativo (antes vivían en hooks C de _setup) ---
+    SCENE_OP_LEVEL        = 27,  // a=índice en scene_levels[] — new_level (fondo, paleta, scroll)
+    SCENE_OP_LIMITS       = 28,  // a,b,c,d = x_min,y_min,x_max,y_max — set_limits
+    SCENE_OP_PALETTE      = 29,  // a=PAL_* (ranura), b=índice en scene_palettes[] — PAL_setPalette
+    SCENE_OP_CHARACTER    = 30,  // a=chr — init_character
+    SCENE_OP_ACTIVE       = 31,  // a=chr — active_character = chr
+    SCENE_OP_FOLLOW       = 32,  // a=chr, b=on — follow_active_character
+    SCENE_OP_ENABLE_SPELL = 33,  // a=SPELL_* — spell_enable (desbloqueo silencioso)
+    SCENE_OP_ITEM         = 34   // a=slot, b=índice en scene_items[] — init_item
 } SceneOp;
 
 // Flags del op SET
@@ -64,8 +73,40 @@ typedef enum {
     SCENE_FLAG_INTERFACE = 2,   // on: interface_active=true + mostrar HUD; off: SOLO ocultar HUD
                                 // (asimetría deliberada: nada del juego desactiva interface_active
                                 //  a mitad de escena, y los rechazos de hechizo dependen de él)
-    SCENE_FLAG_SPELLS    = 3    // player_patterns_enabled
+    SCENE_FLAG_SPELLS    = 3,   // player_patterns_enabled
+    SCENE_FLAG_ROD       = 4    // player_has_rod (fijar ANTES de character <linus>: decide su sprite)
 } SceneFlag;
+
+// --- Tablas laterales de SETUP (GENERADAS por gen_scenes.py, indexadas por los
+// ops LEVEL/ITEM/PALETTE: sus datos no caben en los 4 args s16 de un SceneStep, y
+// además llevan punteros a recursos) ---
+
+// Un nivel: fondo (dos capas: back opcional + front), paleta y modo de scroll.
+typedef struct {
+    const TileSet       *bgTile;   // capa de fondo (back); NULL si el nivel no la usa
+    const MapDefinition *bgMap;    // mapa de la capa back; NULL con bgTile
+    const TileSet       *frontTile; // capa frontal (front)
+    const MapDefinition *frontMap;  // mapa de la capa front
+    const Palette       *pal;      // paleta inicial del nivel (puntero: la copia por valor no es constante en inicializador estático)
+    u16 width;                     // anchura real del mapa en píxeles
+    u8  scrollMode;                // BG_SCRL_* (AUTO/USER, izquierda/derecha)
+    u8  scrollSpeed;               // velocidad de scroll (cada modo la usa a su manera)
+} SceneLevel;
+
+// Un item del escenario (decorado u objeto interactivo).
+typedef struct {
+    const SpriteDefinition *sprite; // gráfico del item
+    u8  pal;                        // ranura de paleta (PAL_*)
+    u16 x;                          // x en el fondo
+    u8  y;                          // y en pantalla
+    u16 cw, cxo, ch, cyo;           // caja de colisión: ancho, offset x, alto, offset y
+    u8  depth;                      // FORCE_BACKGROUND / FORCE_FOREGROUND / CALCULATE_DEPTH
+} SceneItem;
+
+// Una paleta a cargar en una ranura (p.ej. sustituir la de personajes por la del cisne).
+typedef struct {
+    const Palette *pal;
+} ScenePalette;
 
 // Secuencia esperada de un puzzle de hechizos (tabla lateral GENERADA por
 // gen_scenes.py: los pasos no caben en los 4 args s16 de un SceneStep)

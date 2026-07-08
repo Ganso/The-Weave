@@ -156,10 +156,15 @@ sets `act1_bedroom`... (defines ACT1_BEDROOM...) e ids `A1_BEDROOM_*`; choices
 `act1_hall_choice` (ACT1_HALL_CHOICE).
 
 **Diseño completo**: `docs/refactor/fase5_design.md`. Filosofía HÍBRIDA: el DSL
-(`data/scenes/actN_sceneM.scene`) expresa la SECUENCIA narrativa (say/say_cluster/
-say_response, choice+branch, move/look/show, wait, set, combat, cast, fade_out,
-next_scene); la LÓGICA (setup con punteros a recursos, bucles de items, cinemáticas
-de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
+(`data/scenes/actN_sceneM.scene`) expresa TODO lo declarativo — el SETUP
+(level/limits/palette/character/active/follow/enable_spell/item, `set rod`) y la
+SECUENCIA narrativa (say/say_cluster/say_response, choice+branch, move/look/show,
+wait, set, combat, cast, fade_out, next_scene). Solo la LÓGICA imperativa (bucles de
+items, cinemáticas de paleta, aparición de enemigos) vive en hooks C
+(`scene_hooks.c`) invocados con `call <hook>`. Los ops que llevan punteros a recursos
+(level/item/palette) usan tablas laterales GENERADAS en scene_data.c
+(`scene_levels[]`/`scene_items[]`/`scene_palettes[]`, como `puzzle_seqs[]`). Hay
+escenas sin ningún hook (p.ej. act1_hall).
 
 - `gen_scenes.py` valida TODO en fatal (labels, diálogos contra texts.csv, choices
   contra choices.csv, hooks contra el enum HOOK_* de scene_hooks.h, spells/zonas) y
@@ -176,16 +181,23 @@ de paleta) vive en hooks C (`scene_hooks.c`) invocados con `call <hook>`.
 - Los ops de diálogo (SAY/SAY_CLUSTER/SAY_RESPONSE/CHOICE) ocultan el HUD de
   hechizos mientras hablan y lo restauran si estaba activo (así el HUD no se
   solapa con el texto). `show_or_hide_interface()` no toca `interface_active`.
-- Ops nuevos (sesión test): `anim <chr> <ANIM_*>` y `wait_press` (pausa hasta A).
-- **TRAMPA de scroll**: la anchura y el modo de `new_level` deben cuadrar con el
-  mapa. `BG_SCRL_AUTO_*` sobre una anchura menor que el mapa deriva cada frame y
+- Ops de anim/pausa: `anim <chr> <ANIM_*>` y `wait_press` (pausa hasta A).
+- Ops de setup declarativo: `level <bg_tile> <bg_map> <front_tile> <front_map> <pal>
+  <ancho> <scroll_mode> <speed>` (bg = `none none` si no hay capa trasera; scroll_mode
+  ∈ auto_right/auto_left/user_right/user_left; ancho admite literal o constante C como
+  SCREEN_WIDTH), `limits x0 y0 x1 y1`, `palette PAL0..3 <pal>`, `character CHR_*`,
+  `active CHR_*`, `follow CHR_* on/off`, `enable_spell SPELL_*`, `item <slot> <sprite>
+  <pal> <x> <y> <cw> <cxo> <ch> <cyo> <depth>` (cw..cyo verbatim → admiten
+  COLLISION_DEFAULT; depth FORCE_BACKGROUND/FORCE_FOREGROUND/CALCULATE_DEPTH), y la
+  flag `set rod on/off` (player_has_rod).
+- **TRAMPA de scroll**: la anchura y el modo del op `level` deben cuadrar con el
+  mapa. `auto_*` sobre una anchura menor que el mapa deriva cada frame y
   acaba leyendo fuera del tilemap → cuelgue "unmapped read". Para fondos anchos
-  usa `BG_SCRL_USER_*` con la anchura real (p.ej. forest = 1440, USER_RIGHT).
-- **TRAMPA de orden en setup**: fija `player_has_rod` ANTES de
-  `init_character(CHR_linus)` — decide su sprite (con vara `linus_sprite` tiene
-  ANIM_ACTION; sin vara no). Ponerlo después deja a Linus sin la animación de
-  tocar notas y `SPR_setAnim(ANIM_ACTION)` lee basura → cuelgue al tocar la 1ª
-  nota. Regla general: **`SPR_setAnim` con un índice que el sprite no tiene lee
+  usa `user_*` con la anchura real (p.ej. forest = 1440, user_right).
+- **TRAMPA de orden en setup**: pon `set rod on` ANTES de `character CHR_linus` —
+  decide su sprite (con vara `linus_sprite` tiene ANIM_ACTION; sin vara no). Ponerlo
+  después deja a Linus sin la animación de tocar notas y `SPR_setAnim(ANIM_ACTION)`
+  lee basura → cuelgue al tocar la 1ª nota. Regla general: **`SPR_setAnim` con un índice que el sprite no tiene lee
   un puntero fuera de rango y congela el VDP** (dirección de crash constante).
 - **TRAMPA de la fuente en UI de texto crudo** (VDP_drawText, no diálogos): la
   fuente del juego tiene los glifos españoles EN las posiciones ASCII de
@@ -202,8 +214,10 @@ juego: `HACK_START_SCENE "act1_test"` o smoke ROM. Es la chuleta canónica del D
 1. Crear `data/scenes/<acto>/<nombre>.scene` (copiar act1/hall.scene como referencia
    narrativa; act1/forest.scene como referencia con combate). El nombre interno es
    `<acto>_<nombre>` y la directiva `scene` debe coincidir.
-2. Si necesita setup o lógica: crear `src/scenes/<acto>/<nombre>.c/.h` con sus hooks
-   + añadirlos al enum `HOOK_*` de `scene_hooks.h` y a la tabla de `scene_hooks.c`.
+2. El SETUP va en el propio `.scene` (level/limits/character/item/enable_spell/…).
+   Solo si necesita LÓGICA imperativa (enemigos, cinemáticas de paleta, bucles de
+   items): crear `src/scenes/<acto>/<nombre>.c/.h` con sus hooks + añadirlos al enum
+   `HOOK_*` de `scene_hooks.h` y a la tabla de `scene_hooks.c`.
 3. Sus textos: set `<acto>_<nombre>` en texts.csv, ids `A<n>_<NOMBRE>_*`.
 4. Compilar (el build corre gen_scenes.py; valida referencias en fatal).
 5. Enlazarla: `next_scene <acto>_<nombre>` desde la escena anterior. Añadir caso a la smoke ROM (`src/smoke/smoke_cases.h`).

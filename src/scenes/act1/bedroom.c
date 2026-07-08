@@ -11,24 +11,6 @@
 #include "res_all.h"
 #include "scenes/act1/bedroom.h"
 
-void act1_bedroom_setup(void)    // Nivel nocturno, personajes e items del dormitorio
-{
-    new_level(&bedroom_bg_tile, &bedroom_bg_map, &bedroom_front_tile, &bedroom_front_map, bedroom_night_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
-    set_limits(20,145,278,176);
-
-    // Use swan palette instead of characters palette
-    PAL_setPalette(PAL1, swan_pal.data, DMA);
-
-    init_character(CHR_swan);
-    init_character(CHR_linus);
-
-    init_item(0, &item_bedroom_bed, PAL0, 31, 139, 93, 0, 23, 0, FORCE_BACKGROUND); // Bed
-    init_item(1, &item_bedroom_chair, PAL0, 236, 110, 26, 0, 43, 0, FORCE_BACKGROUND); // Chair
-    init_item(2, &item_bedroom_windowsill, PAL0, 125, 121, 99, 0, 22, 0, FORCE_BACKGROUND); // Windowsill
-    init_item(3, &item_bedroom_cabinet, PAL0, 270, 79, 51, 0, 82, 0, FORCE_BACKGROUND); // Cabinet and sheet music
-    init_item(4, &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0, FORCE_BACKGROUND); // Linus sleeping
-}
-
 void act1_bedroom_swan(void)    // Cinemática del cisne: aparece con flash, habla, desaparece
 {
     u16 paltmp[64];

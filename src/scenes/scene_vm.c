@@ -83,6 +83,7 @@ static void set_scene_flag(u8 flag, bool on)
             show_or_hide_interface(on);
             break;
         case SCENE_FLAG_SPELLS:    player_patterns_enabled = on; break;
+        case SCENE_FLAG_ROD:       player_has_rod = on; break;
         default: break;
     }
 }
@@ -216,6 +217,45 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
                 u16 joy;
                 do { next_frame(false); joy = JOY_readJoypad(JOY_1); } while (joy & BUTTON_A);
                 do { next_frame(false); joy = JOY_readJoypad(JOY_1); } while (!(joy & BUTTON_A));
+                break;
+            }
+
+            // --- Setup declarativo (antes en hooks C de _setup) ---
+            case SCENE_OP_LEVEL: {
+                const SceneLevel *L = &scene_levels[st->a];
+                new_level(L->bgTile, L->bgMap, L->frontTile, L->frontMap,
+                          *L->pal, L->width, L->scrollMode, L->scrollSpeed);
+                break;
+            }
+
+            case SCENE_OP_LIMITS:
+                set_limits(st->a, st->b, st->c, st->d);
+                break;
+
+            case SCENE_OP_PALETTE:
+                PAL_setPalette(st->a, scene_palettes[st->b].pal->data, DMA);
+                break;
+
+            case SCENE_OP_CHARACTER:
+                init_character(st->a);
+                break;
+
+            case SCENE_OP_ACTIVE:
+                active_character = st->a;
+                break;
+
+            case SCENE_OP_FOLLOW:
+                follow_active_character(st->a, st->b);
+                break;
+
+            case SCENE_OP_ENABLE_SPELL:
+                spell_enable(st->a);
+                break;
+
+            case SCENE_OP_ITEM: {
+                const SceneItem *I = &scene_items[st->b];
+                init_item(st->a, I->sprite, I->pal, I->x, I->y,
+                          I->cw, I->cxo, I->ch, I->cyo, I->depth);
                 break;
             }
 
