@@ -254,11 +254,16 @@ juego: `HACK_START_SCENE "act1_test"` o smoke ROM. Es la chuleta canónica del D
 
 - Voces animalese: `tools/voice/generate_animalese_voices.py` (descarga animalese.wav
   de github.com/Acedio/animalese.js, requiere venv con librosa/numpy/soundfile).
-  Salida → `res/sfx/dialogs/`. Perfiles woman/man/deep.
+  Rutas ancladas al directorio del script (ejecutable desde cualquier cwd).
+  - **Los fonemas A-Z de las voces del juego (woman/man/deep) se escriben
+    DIRECTAMENTE en `res/sfx/dialogs/<voz>/`** (donde `res_dialogs.res` los
+    referencia): regenerar = actualizar los assets del juego en su sitio.
   - En `tools/voice/` solo se versiona el script y la fuente
-    `animalese_download/animalese.wav`. Los intermedios (`phonemes_animalese/`,
-    `synthesis_animalese/`) son SALIDA regenerable del script y están gitignored:
-    el script los recrea (`mkdir(exist_ok=True)`) al ejecutarse.
+    `animalese_download/animalese.wav`. La voz "raw" y las síntesis de prueba
+    (`phonemes_animalese/`, `synthesis_animalese/`) son SALIDA de exploración,
+    gitignored (el script las recrea con `mkdir(exist_ok=True)`).
+  - Los `typewriter*.wav` de `res/sfx/dialogs/` NO los genera este script (son
+    efectos externos); solo las voces A-Z.
 - **Estructura de `res/`**: assets fuente divididos en `gfx/` (gráficos) y `sfx/`
   (sonido), con subcarpetas por tipo de actor/escena (`gfx/characters`, `gfx/enemies`,
   `gfx/backgrounds/act1`, `gfx/items/act1`, `sfx/dialogs/{deep,man,woman}`…). Los

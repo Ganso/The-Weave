@@ -23,9 +23,16 @@ LIBRARY_SAMPLES_PER_LETTER = int(LIBRARY_LETTER_SECS * SAMPLE_FREQ)
 OUTPUT_LETTER_SECS = 0.075
 OUTPUT_SAMPLES_PER_LETTER = int(OUTPUT_LETTER_SECS * SAMPLE_FREQ)
 
-DOWNLOAD_DIR = Path("animalese_download")
-PHONEMES_DIR = Path("phonemes_animalese")
-SYNTHESIS_DIR = Path("synthesis_animalese")
+# Rutas ancladas al directorio del script (funciona desde cualquier cwd)
+SCRIPT_DIR = Path(__file__).resolve().parent
+DOWNLOAD_DIR = SCRIPT_DIR / "animalese_download"       # fuente animalese.wav (versionada)
+PHONEMES_DIR = SCRIPT_DIR / "phonemes_animalese"       # voz "raw" + exploración (gitignored)
+SYNTHESIS_DIR = SCRIPT_DIR / "synthesis_animalese"     # síntesis de prueba (gitignored)
+
+# Voces que USA el juego (fonemas A-Z): se escriben DIRECTAMENTE en res/sfx/dialogs/<voz>/,
+# que es donde res_dialogs.res las referencia. Regenerar = actualizar los assets del juego.
+GAME_DIALOGS_DIR = (SCRIPT_DIR / ".." / ".." / "res" / "sfx" / "dialogs").resolve()
+GAME_VOICES = {"woman", "man", "deep"}
 
 ANIMALESE_WAV_URL = "https://github.com/Acedio/animalese.js/raw/refs/heads/master/animalese.wav"
 
@@ -309,13 +316,16 @@ def save_all_phonemes(phonemes, sr):
     print("[SAVE] Guardando fonemas generados...\n")
     
     for voice_name in phonemes.keys():
-        voice_dir = PHONEMES_DIR / voice_name
+        # Las voces del juego van directamente a res/sfx/dialogs/<voz>/ (lo que usa
+        # el juego); las de solo exploración (raw) a phonemes_animalese/<voz>/.
+        base_dir = GAME_DIALOGS_DIR if voice_name in GAME_VOICES else PHONEMES_DIR
+        voice_dir = base_dir / voice_name
         voice_dir.mkdir(parents=True, exist_ok=True)
-        
+
         for letter, audio in phonemes[voice_name].items():
             out_path = voice_dir / f"{letter}.wav"
             sf.write(str(out_path), audio, sr)
-        
+
         print(f"✓ {voice_name.upper()}: 26 fonemas guardados en {voice_dir}/")
     
     print()
