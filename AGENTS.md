@@ -66,7 +66,10 @@ src/
   interface/     → HUD, pausa, contador de vida
   audio/         → sound (XGM2; jingles por spell id)
   smoke/         → smoke ROM: menú de casos (solo compila con -DHACK_SMOKE_BUILD)
-res/             → recursos SGDK (res_*.res/.h generados por rescomp) y arte fuente
+res/             → res_*.res (definiciones rescomp) + res_*.h/.c (GEN) + assets fuente:
+  gfx/           → gráficos: font.png, backgrounds/act1, characters, enemies, faces,
+                   interface, items/act1, geesebumps, intro
+  sfx/           → sonido: dialogs (deep/man/woman), effects, music, notes, patterns, player
 ```
 (globals.h y act_1.c ya NO existen — eliminados en la Fase 5)
 
@@ -251,9 +254,17 @@ juego: `HACK_START_SCENE "act1_test"` o smoke ROM. Es la chuleta canónica del D
 
 - Voces animalese: `tools/voice/generate_animalese_voices.py` (descarga animalese.wav
   de github.com/Acedio/animalese.js, requiere venv con librosa/numpy/soundfile).
-  Salida → `res/Sound/Dialogs/`. Perfiles woman/man/deep.
+  Salida → `res/sfx/dialogs/`. Perfiles woman/man/deep.
   - En `tools/voice/` solo se versiona el script y la fuente
     `animalese_download/animalese.wav`. Los intermedios (`phonemes_animalese/`,
     `synthesis_animalese/`) son SALIDA regenerable del script y están gitignored:
     el script los recrea (`mkdir(exist_ok=True)`) al ejecutarse.
-- Arte: Aseprite (`.ase` en res/). Créditos de terceros: sección Acknowledgements del README.
+- **Estructura de `res/`**: assets fuente divididos en `gfx/` (gráficos) y `sfx/`
+  (sonido), con subcarpetas por tipo de actor/escena (`gfx/characters`, `gfx/enemies`,
+  `gfx/backgrounds/act1`, `gfx/items/act1`, `sfx/dialogs/{deep,man,woman}`…). Los
+  `.res` y los `res_*.h/.c` generados viven en la raíz de `res/`. Al añadir un asset:
+  ponlo en su carpeta `gfx/`/`sfx/` y referéncialo en el `.res` con esa ruta
+  (`SPRITE x "gfx/interface/x.png" …`). **El NOMBRE declarado en el `.res` (no la
+  ruta) es lo que genera el símbolo C** — mover assets no cambia el código.
+- Arte: Aseprite (`.ase`/`.aseprite` fuente en `res/gfx/…`). Créditos de terceros:
+  sección Acknowledgements del README.

@@ -51,5 +51,5 @@ Uso en escena: `choice ACT1_HALL_CHOICE 0` deja la opción elegida (0-based) en
 
 Las voces animalese de los diálogos se generan con
 `tools/voice/generate_animalese_voices.py` (venv con librosa/numpy/soundfile);
-salida en `res/Sound/Dialogs/`. Perfiles: woman, man, deep. La fuente de fonemas
+salida en `res/sfx/dialogs/`. Perfiles: woman, man, deep. La fuente de fonemas
 es animalese.wav del proyecto animalese.js (ver Acknowledgements del README).

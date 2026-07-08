@@ -192,14 +192,14 @@ restaurar también al cancelar, añadirías `onCancel`).
 
 ### 4. Icono de HUD — `res/` + `interface.c`
 
-Crea `res/Sprites/Interface/pattern_wind.png` (32×32, 4×4 tiles, misma paleta
+Crea `res/gfx/interface/pattern_wind.png` (32×32, 4×4 tiles, misma paleta
 indexada que los demás — ver cómo se generaron los de FIRE/LUZ en el commit
 "Iconos de HUD para FIRE y LUZ"). Decláralo y cablea el caso en las DOS funciones
 que dibujan iconos:
 
 ```
 # res/res_interface.res
-SPRITE int_pattern_wind "Sprites/Interface/pattern_wind.png" 4 4 BEST
+SPRITE int_pattern_wind "gfx/interface/pattern_wind.png" 4 4 BEST
 ```
 ```c
 // interface.c — en show_pattern_icon Y en show_icon_in_pause_list:
