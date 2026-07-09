@@ -20,7 +20,7 @@ u16 y_limit_max;                  // Maximum Y position when no scroll
 void update_bg(bool player_moved)    // Update background scroll positions based on movement
 {
     // Front background layer
-    if (player_moved) MAP_scrollTo(background_BGA, FASTFIX32_TO_INT(offset_BGA), 0); // Scroll background A
+    if (background_BGA != NULL && player_moved) MAP_scrollTo(background_BGA, FASTFIX32_TO_INT(offset_BGA), 0); // Scroll background A
     
     // Back background layer
     if (background_BGB!=NULL) {

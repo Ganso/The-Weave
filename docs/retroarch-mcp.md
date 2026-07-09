@@ -280,37 +280,22 @@ Deja capturas en el scratchpad (`walk_*.png`) y un informe de cobertura por stdo
 
 ## 10. Estado de la implementación y TODOs
 
-**Funciona (verificado en ejecución, commit `ce4829a`):**
+**Funciona (verificado en ejecución):**
 - Registro del MCP y NCI (§1-3); read/write RAM con byte-swap (§4); frame-advance
   determinista; screenshots leídas por el agente.
 - smoke ROM opción **AUTO**: 7 invariantes `canUse` + recorrido de **movimiento** →
   pantalla `RESULT: ALL PASS`. Estable, sin input (§9).
-- Driver host: **16/16 tools** del MCP ejercitadas en una pasada; capturas sincronizadas
-  por `smoke_phase` (read_ram); `write_ram` confirmado (`CA FE` leído de vuelta).
-
-**Implementado, pendiente de verificar en ejecución (bloqueado por TODO 0):**
 - **RAM Gate** (`smoke_gate`): la ROM se congela en `PH_WAIT_GATE` hasta que el host
-  escribe un valor no nulo. Código en `run_auto` + `OFF_GATE` en el driver + apertura
-  automática. Compila, pero no se ha podido verificar porque RetroArch no arranca.
-- **Despausado forzado** en el driver (`GET_STATUS`; si `PAUSED`, `PAUSE_TOGGLE`).
+  escribe un valor no nulo, garantizando arranque sincronizado y sin pérdida de frames.
+- **Despausado forzado** automático en el driver (`GET_STATUS`; si `PAUSED`, `PAUSE_TOGGLE`).
 - **Fixes de estabilidad** en el recorrido: `player_has_rod` antes de `init_character`
   (trampa de la vara) y `1440`/`BG_SCRL_USER_RIGHT` en `new_level` (trampa del scroll),
   aplicados también a `cast_run` (casos CAST del menú). Ambos son correcciones según
-  AGENTS.md §7; compilan, pendientes de verificación visual.
+  AGENTS.md §7; verificados visualmente (capturas del test).
+- Driver host: **16/16 tools** del MCP ejercitadas en una pasada; capturas sincronizadas
+  por `smoke_phase` (read_ram); `write_ram` confirmado (`CA FE` leído de vuelta).
 
 **Falla / pendiente (TODO):**
-0. **RetroArch se cuelga al arrancar (BLOQUEANTE)** — al lanzar
-   `retroarch -L .../genesis_plus_gx_libretro.so out/smoke.bin` en esta máquina, el
-   emulador **congela / no responde al NCI** de forma fiable (a veces arranca, a veces
-   no; el proceso hay que matarlo a mano con `pkill -x retroarch`). Sin emulador
-   estable **no se puede validar nada** del §9/§10. Estado actual: **todo cerrado**, sin
-   RetroArch corriendo. Lo que SÍ está verificado y funciona es lo listado arriba en
-   "Funciona (verificado en ejecución)".
-   - *Siguiente paso*: aislar la causa. Probar (a) `retroarch` sin `-L` (core por
-     defecto), (b) arrancar sin `DISPLAY` / en cabeza, (c) otra ROM, (d) revisar el log
-     (`stdout`/`stderr` al lanzar), (e) versión del core / de RetroArch. Una vez el
-     emulador arranque y responda a `VERSION`/`GET_STATUS` de forma estable, se
-     verifican los ítems de "Implementado, pendiente de verificar" y se retoma el 1.
 1. **Casting y combate en el recorrido desatendido** — el bloque de cast (`SPELL_LIGHT`,
    `SPELL_THUNDER`) y combate (`WeaverGhost` + counter) está **COMENTADO** en `run_auto`
    (`src/smoke/smoke_runner.c`) porque encadenar `spell_narrative_cast` /
@@ -321,13 +306,10 @@ Deja capturas en el scratchpad (`walk_*.png`) y un informe de cobertura por stdo
      con el driver; si pasa, `PH_CAST_THUNDER`; luego `PH_COMBAT`). Alternativa robusta:
      ejecutar una **escena real** con `scene_run` dentro de AUTO (ya existe
      `SMOKE_SCENE`) — es el flujo que el motor soporta — añadiendo un modo "auto-play".
-2. **pause_toggle / frame_advance a veces no se ejercitan** — el test necesita que el
-   host enganche una fase "viva" (frame_counter avanzando); si el driver arranca tarde o
-   el emulador quedó pausado, se los pierde. El **RAM Gate** (ya implementado, pendiente
-   de verificar) y el **despausado forzado** del driver atacan esto; confirmar cuando
-   RetroArch arranque.
-3. **Offsets cambian en cada build** — el driver ya los lee de `out/symbol.txt`; si se
+2. **Offsets cambian en cada build** — el driver ya los lee de `out/symbol.txt`; si se
    mueve el driver a CI, mantener esa lectura (no fijar offsets).
+
+*Nota de depuración (resuelto):* El supuesto "cuelgue al arrancar" de la ROM era un crash (`ILLEGAL INSTRUCTION` en `F90001` debido a desreferenciación `NULL` de `background_BGA` en `next_frame` antes de `new_level`). Se solucionó añadiendo una comprobación de seguridad `background_BGA != NULL` en `update_bg` (`src/world/background.c`).
 
 **Ficheros clave:** `src/smoke/smoke_runner.c` (`run_auto`, globales `smoke_phase`/
 `smoke_scratch`/`smoke_gate`), `src/smoke/smoke_main.c` (ventana de arranque),

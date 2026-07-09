@@ -57,10 +57,13 @@ static bool boot_wait_skip(void)
 int main(bool hard)
 {
     (void)hard;
+    dprintf(3, "SMOKE main: pre-initialize");
     initialize(true);
+    dprintf(3, "SMOKE main: post-initialize, boot_wait_skip");
 
     if (!boot_wait_skip())
     {
+        dprintf(3, "SMOKE main: arrancando AUTO (fila 0)");
         smoke_run_case(&smoke_cases[0]);              // fila 0 = SMOKE_AUTO
         while (!(wait_joy_press() & BUTTON_A)) { }     // resultados en pantalla hasta A
     }

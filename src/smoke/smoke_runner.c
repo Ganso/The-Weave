@@ -115,9 +115,11 @@ static void hold(u16 frames)   // deja correr N frames (anima sprites, combate, 
 
 static void run_auto(void)
 {
+    dprintf(3, "AUTO: entra run_auto");
     smoke_scratch = 0;
     smoke_gate    = 0;
     smoke_phase   = PH_WAIT_GATE;   // señal al host: "estoy listo, esperando gate"
+    dprintf(3, "AUTO: en PH_WAIT_GATE, esperando gate");
 
     // Esperar a que el host dé luz verde inyectando un valor != 0 en smoke_gate.
     // Así el host sabe que el emulador está listo y no se pierden trazas/frames.
@@ -125,10 +127,12 @@ static void run_auto(void)
     {
         next_frame(false);
     }
+    dprintf(3, "AUTO: gate abierto, sigue");
 
     smoke_phase = PH_BOOT;
 
     // --- 1. Invariantes de canUse (instantáneas, sin render) ---
+    dprintf(3, "AUTO: fase 1 - checks canUse");
     u16 ok = 0, n = 0;
     const char *fails[SMOKE_CASE_COUNT];
     u16 nfail = 0;
@@ -142,8 +146,10 @@ static void run_auto(void)
         else if (nfail < SMOKE_CASE_COUNT) fails[nfail++] = c->name;
         dprintf(1, "AUTO %s: %s", c->name, pass ? "PASS" : "FAIL");
     }
+    dprintf(3, "AUTO: checks %u/%u OK", ok, n);
 
     // --- 2. Recorrido por el nivel: movimiento del personaje ---
+    dprintf(3, "AUTO: fase 2 - new_level + linus");
     // player_has_rod ANTES de init_character (trampa de la vara: AGENTS.md §7).
     // Anchura 1440 + BG_SCRL_USER_RIGHT (trampa del scroll: AGENTS.md §7).
     player_has_rod = true;
@@ -151,10 +157,13 @@ static void run_auto(void)
 
     new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map,
               forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
+    dprintf(3, "AUTO: new_level ok");
     init_character(CHR_linus);
+    dprintf(3, "AUTO: init_character ok");
     move_character_instant(CHR_linus, 150, 154);
     show_character(CHR_linus, true);
     movement_active = false;
+    dprintf(3, "AUTO: linus visible, a hold");
 
     smoke_phase = PH_IDLE;                              // reposo (hold largo: da margen al host
     anim_character(CHR_linus, ANIM_IDLE);               // para engancharse y probar pause/frameadvance,
@@ -227,7 +236,9 @@ static void run_auto(void)
     //
     // combat_finish();
 
+    dprintf(3, "AUTO: pre end_level");
     end_level();
+    dprintf(3, "AUTO: post end_level, resultados");
 
     // --- 5. Pantalla de resultados (end_level dejó las paletas en negro) ---
     PAL_setColor(15, 0x0EEE);   // texto en blanco
