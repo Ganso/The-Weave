@@ -25,9 +25,9 @@ typedef struct {
 } SmokeCase;
 
 static const SmokeCase smoke_cases[] = {
-    // --- Suite automatica: todos los CHECK (invariantes de canUse, no interactivos) ---
+    // --- Suite automatica: recorrido scripted por las mecánicas + invariantes canUse ---
     // Debe ir en la fila 0: el arranque desatendido ejecuta smoke_cases[0].
-    {"AUTO  invariantes canUse",  SMOKE_AUTO,  0, false, 0, false, NULL},
+    {"AUTO  recorrido + checks",  SMOKE_AUTO,  0, false, 0, false, NULL},
 
     // --- Invariantes de canUse (instantáneos) ---
     {"CHK fire sin zona  - NO",  SMOKE_CHECK, SPELL_FIRE,    false, ZONE_NONE,     false, NULL},

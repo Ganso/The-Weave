@@ -88,23 +88,39 @@ static void run_cast(const SmokeCase *c)
     VDP_drawText("A = volver al menu", 4, 20);
 }
 
-// --- AUTO: corre todos los CHECK (invariantes de canUse) y deja resultados ---
-// Solo los CHECK: instantáneos, sin render ni sprites, deterministas → seguros de
-// encadenar y sin input. Los CAST se excluyen a propósito (miden duración + efecto
-// visual "a ojo" y encadenar new_level/end_level reinicia el hardware con fades
-// asíncronos en vuelo, corrompiendo el sprite engine); se siguen ejecutando uno a
-// uno desde el menú. Pensado para validación desatendida (RetroArch NCI no envia
-// input; ver docs/retroarch-mcp.md): la ROM llega sola a esta pantalla.
+// --- AUTO: recorrido scripted por las mecánicas + invariantes de canUse -------
+// Corre sin input: pensado para validación desatendida vía RetroArch NCI/MCP
+// (ver docs/retroarch-mcp.md). Dos globales en WRAM dejan que el host (el MCP)
+// sincronice capturas y pruebe write_ram:
+//   smoke_phase   fase actual del recorrido (SmokePhase); 0xFFFF = resultados.
+//   smoke_scratch libre para probar retroarch_write_ram / read_ram (la ROM no lo usa).
+// volatile + escritas explícitas para que --gc-sections no las descarte.
+volatile u16 smoke_phase   = 0;
+volatile u16 smoke_scratch = 0;
+
+typedef enum {
+    PH_BOOT = 0, PH_IDLE = 1, PH_WALK = 2, PH_CAST_LIGHT = 3,
+    PH_CAST_THUNDER = 4, PH_COMBAT = 5, PH_DONE = 0xFFFF
+} SmokePhase;
+
+static void hold(u16 frames)   // deja correr N frames (anima sprites, combate, scroll)
+{
+    for (u16 f = 0; f < frames; f++) next_frame(true);
+}
+
 static void run_auto(void)
 {
+    smoke_phase   = PH_BOOT;
+    smoke_scratch = 0;
+
+    // --- 1. Invariantes de canUse (instantáneas, sin render) ---
     u16 ok = 0, n = 0;
     const char *fails[SMOKE_CASE_COUNT];
     u16 nfail = 0;
-
     for (u16 i = 0; i < SMOKE_CASE_COUNT; i++)
     {
         const SmokeCase *c = &smoke_cases[i];
-        if (c->kind != SMOKE_CHECK) continue;   // solo invariantes de canUse
+        if (c->kind != SMOKE_CHECK) continue;
         n++;
         bool pass = check_pass(c);
         if (pass) ok++;
@@ -112,18 +128,47 @@ static void run_auto(void)
         dprintf(1, "AUTO %s: %s", c->name, pass ? "PASS" : "FAIL");
     }
 
-    char buf[32];
+    // --- 2. Recorrido por el nivel: movimiento del personaje (mecánica principal) ---
+    // Nota: el recorrido se limita al MOVIMIENTO, que es estable fuera del scene VM.
+    // Castear/combatir encadenados aquí cuelga/corrompe el sprite engine (el motor de
+    // hechizos está pensado para correr dentro de la VM de escenas; AGENTS.md §7): esos
+    // efectos se prueban uno a uno con los casos CAST/SCENE del menú. La lógica del
+    // sistema de hechizos SÍ queda cubierta arriba por las 7 invariantes canUse.
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map,
+              forest_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
+    init_character(CHR_linus);
+    move_character_instant(CHR_linus, 150, 154);
+    show_character(CHR_linus, true);
+    movement_active = false;
+
+    smoke_phase = PH_IDLE;                              // reposo (hold largo: da margen al host
+    anim_character(CHR_linus, ANIM_IDLE);               // para engancharse y probar pause/frameadvance,
+    hold(150);                                          // frame_counter avanza aquí)
+
+    smoke_phase = PH_WALK;                              // movimiento: recorre el nivel a der. e izq.
+    move_character(CHR_linus, 240, 154);   hold(20);
+    move_character(CHR_linus,  40, 154);   hold(20);
+    move_character_instant(CHR_linus, 150, 154);
+    anim_character(CHR_linus, ANIM_IDLE);  hold(40);
+
+    end_level();
+
+    // --- 3. Pantalla de resultados (end_level dejó las paletas en negro) ---
+    PAL_setColor(15, 0x0EEE);   // texto en blanco
+    VDP_setTextPalette(PAL0);
     VDP_clearPlane(BG_A, true);
     VDP_clearPlane(BG_B, true);
-    VDP_drawText("SMOKE AUTO RESULTS", 4, 2);
-    VDP_drawText("(CHECK invariantes canUse)", 4, 3);
-    sprintf(buf, "CHECKS  %u OK  %u FAIL", ok, (u16)(n - ok)); VDP_drawText(buf, 4, 5);
+
+    char buf[32];
+    VDP_drawText("SMOKE AUTO - WALKTHROUGH", 4, 2);
+    sprintf(buf, "CHECKS  %u OK  %u FAIL", ok, (u16)(n - ok)); VDP_drawText(buf, 4, 4);
+    VDP_drawText("WALK   OK", 4, 5);
     VDP_drawText((nfail == 0) ? "RESULT: ALL PASS" : "RESULT: FAIL", 4, 7);
-
-    for (u16 i = 0; i < nfail && i < 10; i++) VDP_drawText(fails[i], 6, 9 + i);
-
+    for (u16 i = 0; i < nfail && i < 8; i++) VDP_drawText(fails[i], 6, 9 + i);
     VDP_drawText("A = menu", 4, 22);
-    dprintf(1, "AUTO DONE: %u/%u OK", ok, n);
+
+    dprintf(1, "AUTO DONE: checks %u/%u OK", ok, n);
+    smoke_phase = PH_DONE;      // señal al host: resultados en pantalla
 }
 
 // --- SCENE: ejecutar la escena completa -------------------------------------

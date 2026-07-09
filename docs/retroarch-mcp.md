@@ -203,16 +203,25 @@ El NCI **no** puede pulsar botones. Para pruebas que requieran interacción:
 
 ## 9. Test desatendido de referencia: suite AUTO de la smoke ROM
 
-La smoke ROM (`docs/testing.md`) trae una opción **AUTO** que ejecuta todas las
-invariantes de `canUse` (los casos `CHECK`, no interactivos) y deja una **pantalla de
-resultados** con el recuento. Es el test que valida de punta a punta que este sistema
-funciona: build → arranque → auto-run → captura → lectura, **sin tocar el mando**.
+La smoke ROM (`docs/testing.md`) trae una opción **AUTO** (fila 0 del menú, y auto-corre
+al arrancar si no pulsas A en ~3 s) que sin tocar el mando:
 
-Cómo llega sola a los resultados (el NCI no envia input, §7): al arrancar, la smoke ROM
-muestra una ventana de ~3 s "A = menu"; si nadie pulsa, corre AUTO automáticamente y
-pinta los resultados. Los `CHECK` son instantáneos, así que la pantalla aparece a los
-pocos segundos del arranque. (Los `CAST` se excluyen de AUTO a propósito: miden efecto
-visual y encadenar niveles reinicia el sprite engine; se corren uno a uno desde el menú.)
+1. ejecuta las **7 invariantes `canUse`** (casos `CHECK`) — cubre la lógica del sistema
+   de hechizos;
+2. hace un **recorrido de movimiento** por el nivel del bosque: Linus aparece, espera en
+   reposo y camina a derecha e izquierda (mecánica de movimiento);
+3. deja una **pantalla de resultados** (`CHECKS N OK M FAIL`, `WALK OK`, `RESULT: ALL PASS`).
+
+Durante el recorrido, la ROM escribe la **fase actual** en la global `smoke_phase`
+(WRAM), lo que permite al host **sincronizar capturas leyendo RAM** (read_ram) en vez de
+adivinar por tiempo. Otra global, `smoke_scratch`, es un buffer libre para probar
+`write_ram`. Los offsets de ambas (y de `frame_counter`) se sacan de `out/symbol.txt`
+(§4); cambian en cada build, así que léelos de ahí, no los fijes.
+
+> El recorrido se limita al **movimiento** a propósito: castear/combatir encadenados
+> fuera de la VM de escenas cuelga/corrompe el sprite engine (crash o hang en
+> `SPR_update`; ver §10 y AGENTS.md §7). Casts y combate se prueban uno a uno con los
+> casos `CAST`/`SCENE` del menú.
 
 Receta (probada):
 
@@ -232,10 +241,67 @@ python3 -c 'import socket; s=socket.socket(2,2); s.settimeout(1); s.sendto(b"SCR
 ls -t ~/.config/retroarch/screenshots/*.png | head -1     # <- leer este PNG
 ```
 
-**Validación:** el PNG debe mostrar `RESULT: ALL PASS` y `CHECKS  N OK  0 FAIL`, donde
-`N` es el número de filas `CHECK` en `src/smoke/smoke_cases.h` (7 en el momento de
-escribir esto). Si sale `RESULT: FAIL`, la pantalla lista debajo los nombres de los
-casos que fallaron. Cerrar con `pkill -x retroarch`.
+**Validación:** el PNG debe mostrar `RESULT: ALL PASS`, `CHECKS  N OK  0 FAIL` (N = filas
+`CHECK` en `src/smoke/smoke_cases.h`, 7 hoy) y `WALK OK`. Si sale `RESULT: FAIL`, lista
+debajo los casos fallidos. Cerrar con `pkill -x retroarch`.
+
+### Driver host de referencia (ejercita las 17 tools del MCP)
+
+`tools/retroarch/mcp_driver.py` conduce la ROM y ejercita **todos** los comandos NCI que
+expone el MCP (mapeo tool→comando en la tabla de abajo), sincronizando capturas con
+`smoke_phase` y probando `write_ram` sobre `smoke_scratch`. Uso:
+
+```bash
+DISPLAY=:0 retroarch -L .../genesis_plus_gx_libretro.so out/smoke.bin &   # background
+python3 tools/retroarch/mcp_driver.py                                     # lee offsets de out/symbol.txt
+```
+Deja capturas en el scratchpad (`walk_*.png`) y un informe de cobertura por stdout.
+
+| MCP tool | comando NCI | probado |
+|---|---|---|
+| ping / get_status / get_config | `VERSION` / `GET_STATUS` / `GET_CONFIG_PARAM <n>` | ✅ |
+| read_ram / write_ram | `READ_CORE_RAM 0x<off> <n>` / `WRITE_CORE_RAM 0x<off> <hex>` | ✅ (con byte-swap §4) |
+| read_memory / write_memory | `READ_CORE_MEMORY` / `WRITE_CORE_MEMORY` | ✅ reporta `no memory map` (esperado en Genesis) |
+| pause_toggle / frame_advance | `PAUSE_TOGGLE` / `FRAMEADVANCE` | ✅ +1 frame determinista (si engancha una fase viva) |
+| screenshot / show_message | `SCREENSHOT` / `SHOW_MSG <msg>` | ✅ (show_message es fire-and-forget) |
+| save_state / load_state / load_state_slot | `SAVE_STATE` / `LOAD_STATE` / `LOAD_STATE_SLOT <n>` | ✅ fire-and-forget; SAVE se verifica por el dir de estados |
+| state_slot_plus / minus / reset | `STATE_SLOT_PLUS` / `_MINUS` / `RESET` | ✅ fire-and-forget |
+
+---
+
+## 10. Estado de la implementación y TODOs
+
+**Funciona (verificado):**
+- Registro del MCP y NCI (§1-3); read/write RAM con byte-swap (§4); frame-advance
+  determinista; screenshots leídas por el agente.
+- smoke ROM opción **AUTO**: 7 invariantes `canUse` + recorrido de **movimiento** →
+  pantalla `RESULT: ALL PASS`. Estable, sin input (§9).
+- Driver host: **16/16 tools** del MCP ejercitadas en una pasada; capturas sincronizadas
+  por `smoke_phase` (read_ram); `write_ram` confirmado (`CA FE` leído de vuelta).
+
+**Falla / pendiente (TODO):**
+1. **Casting y combate en el recorrido desatendido** — encadenar `spell_narrative_cast`
+   o `init_enemy`/`hit_enemy` tras `new_level` + movimiento/hold **cuelga o crashea** el
+   sprite engine (crash/hang en `SPR_update`). Por eso el recorrido se quedó en
+   movimiento. Los casos `CAST`/`SCENE` individuales del menú SÍ corren (flujo soportado).
+   - *Siguiente paso*: confirmar por captura que `run_cast` (menú) es realmente estable;
+     si lo es, replicar su contexto EXACTO (cast inmediato tras `new_level`+`init`, sin
+     `hold`/scroll previo). Alternativa robusta: ejecutar una **escena real** con
+     `scene_run` dentro de AUTO (ya existe `SMOKE_SCENE`) — es el flujo que el motor
+     soporta — añadiendo un modo "auto-play" que inyecte las pulsaciones scripteadas
+     (las escenas esperan input; hoy son interactivas).
+2. **pause_toggle / frame_advance a veces no se ejercitan** — el test necesita que el
+   host enganche una fase "viva" (frame_counter avanzando); si el driver arranca tarde o
+   el emulador quedó pausado, se los pierde.
+   - *Siguiente paso*: añadir un **gate en RAM** (una global que el host ponga por
+     `write_ram`) para congelar el arranque de AUTO hasta que el host esté listo, y que
+     el driver **fuerce despausar** al inicio (`GET_STATUS`; si `PAUSED`, `PAUSE_TOGGLE`).
+3. **Offsets cambian en cada build** — el driver ya los lee de `out/symbol.txt`; si se
+   mueve el driver a CI, mantener esa lectura (no fijar offsets).
+
+**Ficheros clave:** `src/smoke/smoke_runner.c` (`run_auto`, globales `smoke_phase`/
+`smoke_scratch`), `src/smoke/smoke_main.c` (ventana de arranque), `src/smoke/smoke_cases.h`
+(fila `SMOKE_AUTO`), `tools/retroarch/mcp_driver.py` (driver host).
 
 Añadir una invariante nueva = una fila `SMOKE_CHECK` en `smoke_cases.h` (entra sola en
 la suite AUTO; ver `docs/testing.md`).
