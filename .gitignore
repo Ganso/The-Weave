@@ -77,3 +77,6 @@ __pycache__/
 # (la fuente animalese.wav SÍ se versiona; estos son salida)
 tools/voice/phonemes_animalese/
 tools/voice/synthesis_animalese/
+
+# Smoke test desatendido: capturas de la última run (tools/retroarch/mcp_driver.py)
+docs/testing/smoke-latest/

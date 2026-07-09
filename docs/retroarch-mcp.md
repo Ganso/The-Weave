@@ -49,6 +49,18 @@ scripteada/repetible sin tocar el mando.
    network_cmd_port   = "55355"
    ```
    (o por GUI: Settings → Network → Network Commands → ON).
+2b. **Ajustes para uso desatendido** (mismo `retroarch.cfg`; editar con RetroArch
+   CERRADO, porque guarda la config al salir y pisaría el cambio):
+   ```ini
+   pause_nonactive      = "false"   # sin esto, RetroArch se PAUSA al perder el foco
+                                    # de ventana y la run se congela a mitad
+   video_gpu_screenshot = "false"   # sin esto, SCREENSHOT lee el framebuffer GL de una
+                                    # ventana desenfocada y saca PNGs de ruido/basura
+   ```
+   Ambos síntomas se observaron en esta máquina (driver "gl"): pausas espurias en
+   mitad de la run y capturas llenas de píxeles aleatorios. Con estos dos ajustes
+   las capturas salen siempre del framebuffer del core (correctas) y la emulación
+   no se detiene aunque la ventana quede en segundo plano.
 3. **`mcp-retroarch`** instalado global (`npm install -g mcp-retroarch`) y **registrado
    en Claude Code a nivel usuario**:
    ```bash
@@ -204,67 +216,88 @@ El NCI **no** puede pulsar botones. Para pruebas que requieran interacción:
 ## 9. Test desatendido de referencia: suite AUTO de la smoke ROM
 
 La smoke ROM (`docs/testing.md`) trae una opción **AUTO** (fila 0 del menú, y auto-corre
-al arrancar si no pulsas A en ~3 s) que sin tocar el manda:
+al arrancar si no pulsas A en ~3 s) que, sin tocar el mando, prueba **cada mecánica
+fundamental** del juego:
 
-1. ejecuta las **7 invariantes `canUse`** (casos `CHECK`) — cubre la lógica del sistema
+1. ejecuta las **7 invariantes `canUse`** (casos `CHECK`) — la lógica del sistema
    de hechizos;
 2. hace un **recorrido de movimiento** por el nivel del bosque: Linus aparece con su
    vara (`player_has_rod`, trampa de AGENTS.md §7), espera en reposo y camina a derecha
-   e izquierda (mecánica de movimiento);
-3. *(planificado)* **castearía** `SPELL_LIGHT` y `SPELL_THUNDER` y **libraría un combate**
-   contra un `WeaverGhost` (counter con trueno invertido). **Hoy está COMENTADO** en
-   `run_auto` porque cuelga el sprite engine encadenado tras `new_level`+movimiento
-   (§10 TODO 1); se descomenta fase a fase cuando se estabilice.
-4. deja una **pantalla de resultados** (`CHECKS N OK M FAIL`, `WALK OK`, `RESULT: ALL PASS`).
+   e izquierda (mecánica de movimiento y scroll);
+3. **castea** `SPELL_LIGHT` y `SPELL_THUNDER` (cast scripted encadenado; PASS si cada
+   uno termina en `baseDuration ± 2` frames, igual que los casos `CAST` del menú);
+4. **libra un combate** contra un `WeaverGhost`: el fantasma toca sus notas y lanza su
+   rayo, el jugador lo contrarresta con **trueno invertido** (counter) y el enemigo
+   muere (1 HP). Cada espera lleva una guarda de frames: si la IA no progresa, el
+   combate se marca FAIL y la suite sigue (nunca se cuelga);
+5. deja una **pantalla de resultados**:
+   ```
+   CHECKS  7 OK  0 FAIL
+   WALK    OK
+   CAST    LIGHT OK (90)      <- frames medidos
+   CAST    THUNDER OK (240)
+   COMBAT  OK
+   RESULT: ALL PASS
+   ```
 
 Durante el recorrido, la ROM escribe la **fase actual** en la global `smoke_phase`
 (WRAM), lo que permite al host **sincronizar capturas leyendo RAM** (read_ram) en vez de
-adivinar por tiempo. La global `smoke_scratch` es un buffer libre para probar `write_ram`.
-La global `smoke_gate` sirve como **puerta de sincronización (RAM Gate)**: la ROM se
-congela al inicio del test AUTO (`PH_WAIT_GATE`, `smoke_phase=0xFFFE`) hasta que el host
-escribe un valor no nulo (ej. `01 01`) en ella, garantizando que el emulador esté listo
-y no se pierdan trazas o frames. Los offsets de todas estas globales se leen
-dinámicamente de `out/symbol.txt` (§4); cambian en cada build, así que léelos de ahí.
+adivinar por tiempo. Fases: `1` idle, `2` walk, `3` cast_light, `4` cast_thunder,
+`5` combat, `0xFFFE` esperando gate, `0xFFFF` resultados. La global `smoke_scratch` es
+un buffer libre para probar `write_ram`. La global `smoke_gate` sirve como **puerta de
+sincronización (RAM Gate)**: la ROM se congela al inicio del test AUTO (`PH_WAIT_GATE`,
+`smoke_phase=0xFFFE`) hasta que el host escribe un valor no nulo (ej. `01 01`) en ella,
+garantizando que el emulador esté listo y no se pierdan trazas o frames. **El gate tiene
+un timeout de ~10 s**: si nadie lo abre (run a mano, hardware real), la suite arranca
+sola. Los offsets de todas estas globales se leen dinámicamente de `out/symbol.txt`
+(§4); cambian en cada build, así que léelos de ahí.
 
-> El recorrido se limita al **movimiento** a propósito: castear/combatir encadenados
-> fuera de la VM de escenas cuelga/corrompe el sprite engine (crash o hang en
-> `SPR_update`; ver §10 y AGENTS.md §7). El bloque de cast/combate está **comentado** en
-> `run_auto` (`src/smoke/smoke_runner.c`) pendiente de estabilizar; los casos
-> `CAST`/`SCENE` individuales del menú SÍ corren (flujo soportado).
-
-Receta (probada):
-
-```bash
-# 1. Compilar la smoke ROM (no lanza emulador)
-./build-theweave.sh smoke --no-run          # -> out/smoke.bin
-
-# 2. Lanzar en background (en Claude Code: run_in_background del tool Bash)
-DISPLAY=:0 retroarch -L /usr/lib/x86_64-linux-gnu/libretro/genesis_plus_gx_libretro.so out/smoke.bin
-```
-
-```bash
-# 3. Esperar ~6 s (3 s de ventana + checks) y capturar; localizar y leer el PNG.
-#    (En Claude Code, mete la espera en un comando run_in_background: los sleep
-#    largos en primer plano están bloqueados.)
-python3 -c 'import socket; s=socket.socket(2,2); s.settimeout(1); s.sendto(b"SCREENSHOT",("127.0.0.1",55355))'
-ls -t ~/.config/retroarch/screenshots/*.png | head -1     # <- leer este PNG
-```
-
-**Validación:** el PNG debe mostrar `RESULT: ALL PASS`, `CHECKS  N OK  0 FAIL` (N = filas
-`CHECK` en `src/smoke/smoke_cases.h`, 7 hoy) y `WALK OK`. Si sale `RESULT: FAIL`, lista
-debajo los casos fallidos. Cerrar con `pkill -x retroarch`.
-
-### Driver host de referencia (ejercita las 17 tools del MCP)
+### Run automatizada con el driver host (la vía recomendada)
 
 `tools/retroarch/mcp_driver.py` conduce la ROM y ejercita **todos** los comandos NCI que
 expone el MCP (mapeo tool→comando en la tabla de abajo), sincronizando capturas con
-`smoke_phase` y probando `write_ram` sobre `smoke_scratch`. Uso:
+`smoke_phase` y probando `write_ram` sobre `smoke_scratch`:
 
 ```bash
-DISPLAY=:0 retroarch -L .../genesis_plus_gx_libretro.so out/smoke.bin &   # background
-python3 tools/retroarch/mcp_driver.py                                     # lee offsets de out/symbol.txt
+./build-theweave.sh smoke --no-run                                         # -> out/smoke.bin
+DISPLAY=:0 retroarch -L /usr/lib/x86_64-linux-gnu/libretro/genesis_plus_gx_libretro.so out/smoke.bin &
+python3 tools/retroarch/mcp_driver.py                                      # lee offsets de out/symbol.txt
+pkill -x retroarch
 ```
-Deja capturas en el scratchpad (`walk_*.png`) y un informe de cobertura por stdout.
+
+- **Salida**: capturas de cada fase + informe en `docs/testing/smoke-latest/`
+  (en `.gitignore`), con la fecha de la run en el nombre
+  (`2026-07-09_2139_cast_light.png`, `…_results.png`, `…_report.txt`). La carpeta se
+  vacía al empezar: lo que contiene es siempre la última run.
+- **Exit code**: `0` si las 16 tools se ejercitaron Y el recorrido pasó por todas las
+  fases hasta resultados; `1` en caso contrario (útil para scripts/CI).
+- El driver **despausa solo** el emulador si lo encuentra en PAUSED (al inicio y
+  vigilando durante toda la run).
+- Se puede relanzar sin reiniciar RetroArch: el RESET final deja la ROM rearrancando,
+  y el driver espera al siguiente `PH_WAIT_GATE`.
+
+### Run a mano (sin driver, sin MCP)
+
+La suite no necesita ningún host: el gate expira solo a los ~10 s.
+
+1. `./build-theweave.sh smoke` (sin `--no-run` lanza el emulador él mismo), o lanza
+   RetroArch/BlastEm/hardware real con `out/smoke.bin`.
+2. **No toques nada.** Tras la ventana de arranque (~3 s) y el gate (~10 s), la suite
+   corre sola: verás a Linus caminar, los dos hechizos y el combate contra el fantasma
+   (~25 s en total).
+3. Lee la pantalla final: debe decir `RESULT: ALL PASS` con el desglose de arriba
+   (`CHECKS 7 OK 0 FAIL`, `WALK OK`, `CAST LIGHT/THUNDER OK`, `COMBAT OK`). Si algo
+   falla, los casos `CHECK` fallidos se listan debajo.
+4. Con mando: pulsa `A` en la ventana de arranque para ir al **menú** y ejecutar
+   cualquier caso suelto (CHECK/CAST/SCENE) de forma interactiva; `A` de nuevo tras un
+   caso vuelve al menú.
+
+Si además quieres una captura de la pantalla final sin driver (emulador con NCI):
+
+```bash
+python3 -c 'import socket; s=socket.socket(2,2); s.sendto(b"SCREENSHOT",("127.0.0.1",55355))'
+ls -t ~/.config/retroarch/screenshots/*.png | head -1     # <- leer este PNG
+```
 
 | MCP tool | comando NCI | probado |
 |---|---|---|
@@ -283,33 +316,41 @@ Deja capturas en el scratchpad (`walk_*.png`) y un informe de cobertura por stdo
 **Funciona (verificado en ejecución):**
 - Registro del MCP y NCI (§1-3); read/write RAM con byte-swap (§4); frame-advance
   determinista; screenshots leídas por el agente.
-- smoke ROM opción **AUTO**: 7 invariantes `canUse` + recorrido de **movimiento** →
-  pantalla `RESULT: ALL PASS`. Estable, sin input (§9).
+- smoke ROM opción **AUTO completa**: 7 invariantes `canUse` + movimiento + cast de
+  `SPELL_LIGHT` y `SPELL_THUNDER` (duración medida) + **combate** contra `WeaverGhost`
+  con counter de trueno invertido → pantalla `RESULT: ALL PASS`. Estable, sin input,
+  verificada tanto con driver como a mano (§9).
 - **RAM Gate** (`smoke_gate`): la ROM se congela en `PH_WAIT_GATE` hasta que el host
   escribe un valor no nulo, garantizando arranque sincronizado y sin pérdida de frames.
-- **Despausado forzado** automático en el driver (`GET_STATUS`; si `PAUSED`, `PAUSE_TOGGLE`).
+  Con **timeout de ~10 s** para que una run a mano (sin host) arranque sola.
+- **Despausado forzado** automático en el driver (`GET_STATUS`; si `PAUSED`,
+  `PAUSE_TOGGLE`), al inicio y vigilando durante toda la run.
 - **Fixes de estabilidad** en el recorrido: `player_has_rod` antes de `init_character`
   (trampa de la vara) y `1440`/`BG_SCRL_USER_RIGHT` en `new_level` (trampa del scroll),
   aplicados también a `cast_run` (casos CAST del menú). Ambos son correcciones según
   AGENTS.md §7; verificados visualmente (capturas del test).
 - Driver host: **16/16 tools** del MCP ejercitadas en una pasada; capturas sincronizadas
-  por `smoke_phase` (read_ram); `write_ram` confirmado (`CA FE` leído de vuelta).
+  por `smoke_phase` (read_ram) con la fecha de la run en el nombre, guardadas en
+  `docs/testing/smoke-latest/` (en `.gitignore`); `write_ram` confirmado (`CA FE` leído
+  de vuelta); exit code 0/1 para scripts.
 
-**Falla / pendiente (TODO):**
-1. **Casting y combate en el recorrido desatendido** — el bloque de cast (`SPELL_LIGHT`,
-   `SPELL_THUNDER`) y combate (`WeaverGhost` + counter) está **COMENTADO** en `run_auto`
-   (`src/smoke/smoke_runner.c`) porque encadenar `spell_narrative_cast` /
-   `init_enemy`+`combat_init` tras `new_level` + movimiento/hold **cuelga o crashea** el
-   sprite engine (crash/hang en `SPR_update`). Los casos `CAST`/`SCENE` individuales del
-   menú SÍ corren (flujo soportado).
-   - *Siguiente paso*: descomentar **fase a fase** (primero `PH_CAST_LIGHT` solo, verificar
-     con el driver; si pasa, `PH_CAST_THUNDER`; luego `PH_COMBAT`). Alternativa robusta:
-     ejecutar una **escena real** con `scene_run` dentro de AUTO (ya existe
-     `SMOKE_SCENE`) — es el flujo que el motor soporta — añadiendo un modo "auto-play".
-2. **Offsets cambian en cada build** — el driver ya los lee de `out/symbol.txt`; si se
+**Pendiente (TODO):**
+1. **Offsets cambian en cada build** — el driver ya los lee de `out/symbol.txt`; si se
    mueve el driver a CI, mantener esa lectura (no fijar offsets).
+2. Posible extensión: modo "auto-play" para ejecutar una **escena real** (`scene_run`)
+   dentro de AUTO y cubrir también la VM de escenas sin mando.
 
-*Nota de depuración (resuelto):* El supuesto "cuelgue al arrancar" de la ROM era un crash (`ILLEGAL INSTRUCTION` en `F90001` debido a desreferenciación `NULL` de `background_BGA` en `next_frame` antes de `new_level`). Se solucionó añadiendo una comprobación de seguridad `background_BGA != NULL` en `update_bg` (`src/world/background.c`).
+*Notas de depuración (resueltas):*
+- El supuesto "cuelgue al arrancar" de la ROM era un crash (`ILLEGAL INSTRUCTION` en
+  `F90001` por desreferenciación `NULL` de `background_BGA` en `next_frame` antes de
+  `new_level`). Arreglado con la comprobación `background_BGA != NULL` en `update_bg`
+  (`src/world/background.c`).
+- El histórico "cuelgue del sprite engine al encadenar cast/combate tras
+  new_level+movimiento" no se reprodujo una vez aplicados los fixes anteriores (crash
+  de arranque + vara + scroll): las fases de cast y combate se reactivaron en
+  `run_auto` y pasan de forma estable. Las "capturas corruptas" y "pausas a mitad de
+  run" que confundían el diagnóstico eran del emulador, no de la ROM (§2b:
+  `video_gpu_screenshot` y `pause_nonactive`).
 
 **Ficheros clave:** `src/smoke/smoke_runner.c` (`run_auto`, globales `smoke_phase`/
 `smoke_scratch`/`smoke_gate`), `src/smoke/smoke_main.c` (ventana de arranque),

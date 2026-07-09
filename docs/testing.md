@@ -13,10 +13,15 @@ vuelve al menú).
 
 Tipos de caso (`src/smoke/smoke_cases.h`):
 
-- **AUTO** (primera fila del menú) — ejecuta de golpe todos los `CHECK` y deja una
-  pantalla de resultados (`CHECKS N OK M FAIL`, `RESULT: ALL PASS`/`FAIL` + nombres
-  de los que fallen). Además corre **sola al arrancar** si no pulsas A en ~3 s: así
-  la ROM se puede validar sin mando desde RetroArch (ver `docs/retroarch-mcp.md` §9).
+- **AUTO** (primera fila del menú) — recorrido desatendido por **cada mecánica
+  fundamental**: los 7 `CHECK` de canUse, movimiento por el bosque, cast de LIGHT y
+  THUNDER (duración medida en frames) y un combate contra un WeaverGhost resuelto
+  con counter de trueno invertido. Deja una pantalla de resultados con el desglose
+  (`CHECKS/WALK/CAST/COMBAT` + `RESULT: ALL PASS`/`FAIL` y los casos fallidos).
+  Además corre **sola al arrancar** si no pulsas A en ~3 s: así la ROM se puede
+  validar sin mando, a mano o vía RetroArch (ver `docs/retroarch-mcp.md` §9, que
+  incluye la receta del driver `tools/retroarch/mcp_driver.py` — capturas con fecha
+  en `docs/testing/smoke-latest/` — y la de la run a mano).
 - **CHECK** — invariantes automáticos de canUse (p.ej. "fire sin zona → rechazado",
   "fire en ZONE_CAULDRON → permitido"). PASS/FAIL instantáneo en pantalla.
 - **CAST** — lanza el hechizo con un cast scripted en un nivel de pruebas y mide

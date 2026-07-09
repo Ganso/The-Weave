@@ -96,7 +96,8 @@ static void run_cast(const SmokeCase *c)
 //   smoke_phase   fase actual del recorrido (SmokePhase); 0xFFFF = resultados.
 //   smoke_scratch libre para probar retroarch_write_ram / read_ram (la ROM no lo usa).
 //   smoke_gate    puerta de sincronización: la ROM se congela en PH_WAIT_GATE hasta
-//                  que el host escribe un valor != 0 (garantiza que no se pierdan frames).
+//                  que el host escribe un valor != 0 (garantiza que no se pierdan
+//                  frames) o expira el timeout (~10 s: una run a mano arranca sola).
 // volatile + escritas explícitas para que --gc-sections no las descarte.
 volatile u16 smoke_phase   = 0;
 volatile u16 smoke_scratch = 0;
@@ -123,11 +124,14 @@ static void run_auto(void)
 
     // Esperar a que el host dé luz verde inyectando un valor != 0 en smoke_gate.
     // Así el host sabe que el emulador está listo y no se pierden trazas/frames.
-    while (smoke_gate == 0)
+    // Timeout de fallback (~10 s): una run A MANO (sin host que abra el gate)
+    // arranca sola; el driver lo abre en milisegundos y nunca llega aquí.
+    u16 gate_wait = SCREEN_FPS * 10;
+    while (smoke_gate == 0 && gate_wait--)
     {
         next_frame(false);
     }
-    dprintf(3, "AUTO: gate abierto, sigue");
+    dprintf(3, "AUTO: gate abierto (o timeout), sigue");
 
     smoke_phase = PH_BOOT;
 
@@ -176,65 +180,69 @@ static void run_auto(void)
     anim_character(CHR_linus, ANIM_IDLE);  hold(40);
 
     // --- 3. Castear hechizos (PH_CAST_LIGHT y PH_CAST_THUNDER) -------------------
-    // [COMENTADO: cuelga el sprite engine encadenado tras new_level+movimiento.
-    //  Ver docs/retroarch-mcp.md §10 TODO 1. Los casos CAST del menú SÍ funcionan
-    //  (cast aislado); lo que falla es encadenarlo aquí. Descomentar fase a fase.]
-    // spell_enable(SPELL_LIGHT);
-    // spell_enable(SPELL_THUNDER);
-    //
-    // smoke_phase = PH_CAST_LIGHT;
-    // spell_narrative_cast(SPELL_LIGHT, false);
-    // while (spell_slot_active(SPELL_SLOT_PLAYER))
-    // {
-    //     next_frame(true);
-    // }
-    // hold(30);
-    //
-    // smoke_phase = PH_CAST_THUNDER;
-    // spell_narrative_cast(SPELL_THUNDER, false);
-    // while (spell_slot_active(SPELL_SLOT_PLAYER))
-    // {
-    //     next_frame(true);
-    // }
-    // hold(30);
+    // Mismo criterio que los casos CAST del menú: PASS si el slot se libera en
+    // baseDuration±2. El bucle está acotado (x2) para que la suite siempre llegue
+    // a la pantalla de resultados aunque un hechizo no termine.
+    spell_enable(SPELL_LIGHT);
+    spell_enable(SPELL_THUNDER);
 
-    // --- 4. Combate (PH_COMBAT) --------------------------------------------------
-    // [COMENTADO: cuelga el sprite engine (init_enemy/combat_init encadenados).
-    //  Ver docs/retroarch-mcp.md §10 TODO 1. Descomentar cuando el cast estable.]
-    // smoke_phase = PH_COMBAT;
-    // PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
-    // init_enemy(0, ENEMY_CLS_WEAVERGHOST);
-    // obj_enemy[0].hitpoints = 1; // 1 HP para que muera de un solo counter
-    // move_enemy_instant(0, FASTFIX32_FROM_INT(250), FASTFIX32_FROM_INT(154));
-    // show_enemy(0, true);
-    //
-    // combat_init();
-    //
-    // // Esperar a que el enemigo inicie su ataque (entra en COMBAT_STATE_ENEMY_PLAYING)
-    // while (combat_state == COMBAT_STATE_IDLE)
-    // {
-    //     next_frame(true);
-    // }
-    //
-    // // Esperar a que termine de tocar las notas (entra en COMBAT_STATE_ENEMY_EFFECT)
-    // while (combat_state == COMBAT_STATE_ENEMY_PLAYING)
-    // {
-    //     next_frame(true);
-    // }
-    //
-    // // El rayo enemigo está activo: contrarrestar con trueno invertido
-    // if (combat_state == COMBAT_STATE_ENEMY_EFFECT)
-    // {
-    //     spell_player_cast(SPELL_THUNDER, true);
-    // }
-    //
-    // // Esperar a que el enemigo sea liberado y el combate termine
-    // while (combat_state != COMBAT_NO)
-    // {
-    //     next_frame(true);
-    // }
-    //
-    // combat_finish();
+    smoke_phase = PH_CAST_LIGHT;
+    u16 light_expected = spell_defs[SPELL_LIGHT].baseDuration;
+    u16 light_frames = 0;
+    spell_narrative_cast(SPELL_LIGHT, false);
+    while (spell_slot_active(SPELL_SLOT_PLAYER) && light_frames < light_expected * 2)
+    {
+        next_frame(true);
+        light_frames++;
+    }
+    bool light_ok = !spell_slot_active(SPELL_SLOT_PLAYER) &&
+                    light_frames + 2 >= light_expected && light_frames <= light_expected + 2;
+    hold(30);
+
+    smoke_phase = PH_CAST_THUNDER;
+    u16 thunder_expected = spell_defs[SPELL_THUNDER].baseDuration;
+    u16 thunder_frames = 0;
+    spell_narrative_cast(SPELL_THUNDER, false);
+    while (spell_slot_active(SPELL_SLOT_PLAYER) && thunder_frames < thunder_expected * 2)
+    {
+        next_frame(true);
+        thunder_frames++;
+    }
+    bool thunder_ok = !spell_slot_active(SPELL_SLOT_PLAYER) &&
+                      thunder_frames + 2 >= thunder_expected && thunder_frames <= thunder_expected + 2;
+    hold(30);
+
+    // --- 4. Combate (PH_COMBAT): WeaverGhost ataca, counter con trueno invertido ---
+    // Cada espera lleva una guarda generosa: si la IA no progresa, el combate se da
+    // por FAIL y la suite sigue hasta los resultados en vez de colgarse.
+    smoke_phase = PH_COMBAT;
+    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    init_enemy(0, ENEMY_CLS_WEAVERGHOST);
+    obj_enemy[0].hitpoints = 1; // 1 HP para que muera de un solo counter
+    move_enemy_instant(0, FASTFIX32_FROM_INT(250), FASTFIX32_FROM_INT(154));
+    show_enemy(0, true);
+
+    combat_init();
+
+    u16 guard = SCREEN_FPS * 30;   // techo total del combate (30 s)
+
+    // Esperar a que el enemigo inicie su ataque (entra en COMBAT_STATE_ENEMY_PLAYING)
+    while (combat_state == COMBAT_STATE_IDLE && guard) { next_frame(true); guard--; }
+
+    // Esperar a que termine de tocar las notas (entra en COMBAT_STATE_ENEMY_EFFECT)
+    while (combat_state == COMBAT_STATE_ENEMY_PLAYING && guard) { next_frame(true); guard--; }
+
+    // El rayo enemigo está activo: contrarrestar con trueno invertido
+    if (combat_state == COMBAT_STATE_ENEMY_EFFECT)
+    {
+        spell_player_cast(SPELL_THUNDER, true);
+    }
+
+    // Esperar a que el enemigo sea liberado y el combate termine
+    while (combat_state != COMBAT_NO && guard) { next_frame(true); guard--; }
+
+    bool combat_ok = (combat_state == COMBAT_NO) && !obj_enemy[0].obj_character.active;
+    combat_finish();
 
     dprintf(3, "AUTO: pre end_level");
     end_level();
@@ -246,15 +254,24 @@ static void run_auto(void)
     VDP_clearPlane(BG_A, true);
     VDP_clearPlane(BG_B, true);
 
-    char buf[32];
+    bool all_pass = (nfail == 0) && light_ok && thunder_ok && combat_ok;
+
+    char buf[40];
     VDP_drawText("SMOKE AUTO - WALKTHROUGH", 4, 2);
     sprintf(buf, "CHECKS  %u OK  %u FAIL", ok, (u16)(n - ok)); VDP_drawText(buf, 4, 4);
-    VDP_drawText("WALK   OK", 4, 5);
-    VDP_drawText((nfail == 0) ? "RESULT: ALL PASS" : "RESULT: FAIL", 4, 7);
-    for (u16 i = 0; i < nfail && i < 8; i++) VDP_drawText(fails[i], 6, 9 + i);
+    VDP_drawText("WALK    OK", 4, 5);
+    sprintf(buf, "CAST    LIGHT %s (%u)", light_ok ? "OK" : "FAIL", light_frames);
+    VDP_drawText(buf, 4, 6);
+    sprintf(buf, "CAST    THUNDER %s (%u)", thunder_ok ? "OK" : "FAIL", thunder_frames);
+    VDP_drawText(buf, 4, 7);
+    sprintf(buf, "COMBAT  %s", combat_ok ? "OK" : "FAIL");
+    VDP_drawText(buf, 4, 8);
+    VDP_drawText(all_pass ? "RESULT: ALL PASS" : "RESULT: FAIL", 4, 10);
+    for (u16 i = 0; i < nfail && i < 8; i++) VDP_drawText(fails[i], 6, 12 + i);
     VDP_drawText("A = menu", 4, 22);
 
-    dprintf(1, "AUTO DONE: checks %u/%u OK", ok, n);
+    dprintf(1, "AUTO DONE: checks %u/%u OK, light=%u thunder=%u combat=%u",
+            ok, n, light_ok, thunder_ok, combat_ok);
     smoke_phase = PH_DONE;      // señal al host: resultados en pantalla
 }
 

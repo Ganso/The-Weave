@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # Driver host: ejercita las 17 tools del MCP (por su comando NCI) contra la smoke
 # ROM en RetroArch, sincronizando capturas con smoke_phase (read_ram).
-import socket, time, os, glob, shutil
+# Deja las capturas de la última run (con fecha en el nombre) y el informe en
+# docs/testing/smoke-latest/ (ignorada por git); la run anterior se borra.
+import socket, time, os, glob, shutil, sys
 
 HOST, PORT = "127.0.0.1", 55355
 SHOT_DIR   = os.path.expanduser("~/.config/retroarch/screenshots")
@@ -9,9 +11,13 @@ STATE_DIR  = os.path.expanduser("~/.config/retroarch/states")
 script_dir = os.path.dirname(os.path.abspath(__file__))
 repo_root  = os.path.abspath(os.path.join(script_dir, "../.."))
 
-# Salida: scratchpad de la IA si está configurado, si no un temp genérico.
-OUT = os.environ.get("AI_SCRATCH_DIR") or "/tmp/theweave_mcp_scratch"
+# Salida: última run en docs/testing/smoke-latest/ (en .gitignore). Se vacía al
+# empezar para que "lo que hay" sea siempre la run más reciente.
+OUT = os.path.join(repo_root, "docs/testing/smoke-latest")
+RUN_TAG = time.strftime("%Y-%m-%d_%H%M")
 os.makedirs(OUT, exist_ok=True)
+for old in glob.glob(f"{OUT}/*"):
+    os.remove(old)
 
 # Offsets CHEEVOS leídos de out/symbol.txt (addr & 0xFFFF); evita editarlos cada build
 def sym_off(name, default):
@@ -42,6 +48,15 @@ def nci(cmd, timeout=0.4):
     except socket.timeout: return None
     finally: s.close()
 
+def ensure_playing():
+    # RetroArch puede pausarse solo (pause_nonactive, o pausa heredada de otra
+    # sesión). Despausar siempre que se detecte, en cualquier punto de la run.
+    status = nci("GET_STATUS")
+    if status and "PAUSED" in status:
+        nci("PAUSE_TOGGLE"); time.sleep(0.1)
+        return True
+    return False
+
 def read_u16(off):
     r = (nci(f"READ_CORE_RAM 0x{off:x} 2") or "").split()
     if len(r) < 4: return None
@@ -52,7 +67,8 @@ def screenshot(label):
     nci("SCREENSHOT"); time.sleep(0.5)
     pngs = glob.glob(f"{SHOT_DIR}/*.png")
     if not pngs: return "(sin png)"
-    dst = f"{OUT}/walk_{label}.png"; shutil.copy(max(pngs, key=os.path.getmtime), dst)
+    dst = f"{OUT}/{RUN_TAG}_{label}.png"
+    shutil.copy(max(pngs, key=os.path.getmtime), dst)
     return os.path.basename(dst)
 
 # --- esperar a que la ROM/emulador responda ---
@@ -60,12 +76,12 @@ for _ in range(50):
     v = nci("VERSION")
     if v and v[0:1].isdigit(): break
     time.sleep(0.1)
+else:
+    print("FATAL: RetroArch no responde en el NCI (¿está lanzado con la smoke ROM?)")
+    sys.exit(1)
 
 # ============ FASE A: solo lectura (rápidas, antes de que arranque el recorrido) ============
-# Forzar despausar si el emulador quedó congelado de una sesión anterior.
-status = nci("GET_STATUS")
-if status and "PAUSED" in status:
-    nci("PAUSE_TOGGLE"); time.sleep(0.1)
+ensure_playing()
 
 log("ping","VERSION", v, bool(v) and v[0:1].isdigit())
 log("get_status","GET_STATUS", nci("GET_STATUS"), True)
@@ -79,10 +95,11 @@ nci("SHOW_MSG recorrido MCP en curso"); log("show_message","SHOW_MSG", "(fire-an
 print("Esperando a que la ROM entre en AUTO (PH_WAIT_GATE)...", flush=True)
 ph = None
 t_gate = time.time()
-while time.time() - t_gate < 15:
+while time.time() - t_gate < 20:
     ph = read_u16(OFF_PHASE)
     if ph == 0xFFFE:
         break
+    ensure_playing()
     time.sleep(0.15)
 else:
     print("WARN: timeout esperando PH_WAIT_GATE, abriendo gate de todos modos", flush=True)
@@ -95,9 +112,13 @@ time.sleep(0.2)
 # ============ FASE B: recorrido — captura por fase + pause/frameadvance ============
 seen, did_fa = set(), False
 t0 = time.time()
-while time.time() - t0 < 40:
+last_check = time.time()
+while time.time() - t0 < 120:
     ph = read_u16(OFF_PHASE)
     if ph is None: time.sleep(0.08); continue
+    if time.time() - last_check > 2:     # vigilar pausas espurias sin saturar el NCI
+        last_check = time.time()
+        if ensure_playing(): print("WARN: emulador pausado a mitad de run; despausado", flush=True)
     if ph not in seen:
         seen.add(ph)
         fr = read_u16(OFF_FRAME)
@@ -124,10 +145,14 @@ rb = nci(f"READ_CORE_RAM 0x{OFF_SCRATCH:x} 2") or ""
 log("write_ram","WRITE+READ scratch", rb, rb.upper().endswith("CA FE"))
 
 # SAVE_STATE es fire-and-forget: verifico por el directorio de estados
+# (recursivo: RetroArch guarda en un subdirectorio por core, p.ej. "Genesis Plus GX/")
 os.makedirs(STATE_DIR, exist_ok=True)
-before = {p: os.path.getmtime(p) for p in glob.glob(f"{STATE_DIR}/*")}
+def state_files():
+    return {p: os.path.getmtime(p)
+            for p in glob.glob(f"{STATE_DIR}/**/*", recursive=True) if os.path.isfile(p)}
+before = state_files()
 nci("SAVE_STATE"); time.sleep(0.6)
-after = {p: os.path.getmtime(p) for p in glob.glob(f"{STATE_DIR}/*")}
+after = state_files()
 saved = (set(after) - set(before)) or {p for p in after if before.get(p) != after[p]}
 log("save_state","SAVE_STATE", f"estado escrito: {[os.path.basename(p) for p in saved] or 'sin cambio detectable'}", bool(saved))
 log("state_slot_plus","STATE_SLOT_PLUS", "(fire-and-forget) "+str(nci("STATE_SLOT_PLUS")), True)
@@ -151,5 +176,11 @@ for t in tools:
     print(("  [x] " if t in covered else "  [ ] FALTA ") + t, flush=True)
 faltan = [t for t in tools if t not in covered]
 print(f"\nTotal: {len(tools)-len(faltan)}/{len(tools)} tools ejercitadas. Faltan: {faltan or 'ninguna'}", flush=True)
+fases_esperadas = {1,2,3,4,5,0xFFFF}
+fases_ok = fases_esperadas <= seen
 print(f"Fases capturadas: {sorted(PHASES.get(p,p) for p in seen)}", flush=True)
-with open(f"{OUT}/mcp_report.txt","w") as f: f.write("\n".join(report))
+print(f"Recorrido completo: {'SI' if fases_ok else 'NO (faltan ' + str(sorted(PHASES.get(p,p) for p in fases_esperadas - seen)) + ')'}", flush=True)
+print(f"Capturas e informe en: {OUT}", flush=True)
+with open(f"{OUT}/{RUN_TAG}_report.txt","w") as f:
+    f.write("\n".join(report))
+sys.exit(0 if (fases_ok and not faltan) else 1)
