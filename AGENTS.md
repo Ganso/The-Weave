@@ -57,6 +57,14 @@ Datos que conviene tener a mano aquí:
    `SPR_setAnim` con índice fuera de rango, usó un `Sprite*` liberado, o hubo un
    underflow de contador. Ver la trampa de `SPR_setAnim` en §7.
 
+**Depuración desatendida (opcional):** si en esta máquina está instalado RetroArch +
+`mcp-retroarch` (detección y setup en `docs/retroarch-mcp.md`), un agente puede arrancar
+la ROM y **leer/escribir RAM, avanzar frame a frame de forma determinista y sacar
+capturas** por el Network Control Interface (UDP :55355) — útil para verificación
+automatizada. No hay input de gamepad por esa vía: para interacción, usa la smoke ROM o
+los toggles de `hack.h`. Antes de ofrecerlo, comprueba disponibilidad con las
+comprobaciones del §3 de ese doc.
+
 ## 3. Estructura de directorios
 
 Cada dominio de `src/` tiene una **metalibrería** `<dominio>/<dominio>.h` que
@@ -275,6 +283,7 @@ trabajo tienen guías dedicadas — no dupliques su contenido aquí, enlázalas:
 |---|---|
 | `docs/build.md`    | Pipeline de build completo, configuración personal, VS Code, problemas típicos. |
 | `docs/testing.md`  | Smoke ROM (tipos de caso, cómo añadir uno) y checklist de playtest. |
+| `docs/retroarch-mcp.md` | Depuración desatendida vía RetroArch + `mcp-retroarch` (NCI UDP :55355): detección, leer/escribir RAM con byte-swap, frame-advance, capturas. |
 | `docs/spells.md`   | Guía para no técnicos: crear un hechizo de principio a fin (hooks, fases, zonas, receta). |
 | `docs/scenes.md`   | Guía para no técnicos: crear una escena (todos los ops del DSL, formatos de texts.csv/choices.csv, recetas). |
 | `docs/texts.md`    | Guía para no técnicos: escribir diálogos, clusters, choices y voces. |
