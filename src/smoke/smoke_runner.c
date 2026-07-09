@@ -48,7 +48,8 @@ static void run_check(const SmokeCase *c)
 static bool cast_run(const SmokeCase *c, u16 *out_frames)
 {
     // Nivel de pruebas: bosque + Linus visible (los efectos usan paleta y sprite)
-    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
+    // Anchura 1440 + BG_SCRL_USER_RIGHT (trampa del scroll: AGENTS.md §7).
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
     init_character(CHR_linus);
     move_character_instant(CHR_linus, 140, 154);
     show_character(CHR_linus, true);
@@ -90,17 +91,21 @@ static void run_cast(const SmokeCase *c)
 
 // --- AUTO: recorrido scripted por las mecánicas + invariantes de canUse -------
 // Corre sin input: pensado para validación desatendida vía RetroArch NCI/MCP
-// (ver docs/retroarch-mcp.md). Dos globales en WRAM dejan que el host (el MCP)
+// (ver docs/retroarch-mcp.md). Tres globales en WRAM dejan que el host (el MCP)
 // sincronice capturas y pruebe write_ram:
 //   smoke_phase   fase actual del recorrido (SmokePhase); 0xFFFF = resultados.
 //   smoke_scratch libre para probar retroarch_write_ram / read_ram (la ROM no lo usa).
+//   smoke_gate    puerta de sincronización: la ROM se congela en PH_WAIT_GATE hasta
+//                  que el host escribe un valor != 0 (garantiza que no se pierdan frames).
 // volatile + escritas explícitas para que --gc-sections no las descarte.
 volatile u16 smoke_phase   = 0;
 volatile u16 smoke_scratch = 0;
+volatile u16 smoke_gate    = 0;
 
 typedef enum {
     PH_BOOT = 0, PH_IDLE = 1, PH_WALK = 2, PH_CAST_LIGHT = 3,
-    PH_CAST_THUNDER = 4, PH_COMBAT = 5, PH_DONE = 0xFFFF
+    PH_CAST_THUNDER = 4, PH_COMBAT = 5,
+    PH_WAIT_GATE = 0xFFFE, PH_DONE = 0xFFFF
 } SmokePhase;
 
 static void hold(u16 frames)   // deja correr N frames (anima sprites, combate, scroll)
@@ -110,8 +115,18 @@ static void hold(u16 frames)   // deja correr N frames (anima sprites, combate, 
 
 static void run_auto(void)
 {
-    smoke_phase   = PH_BOOT;
     smoke_scratch = 0;
+    smoke_gate    = 0;
+    smoke_phase   = PH_WAIT_GATE;   // señal al host: "estoy listo, esperando gate"
+
+    // Esperar a que el host dé luz verde inyectando un valor != 0 en smoke_gate.
+    // Así el host sabe que el emulador está listo y no se pierden trazas/frames.
+    while (smoke_gate == 0)
+    {
+        next_frame(false);
+    }
+
+    smoke_phase = PH_BOOT;
 
     // --- 1. Invariantes de canUse (instantáneas, sin render) ---
     u16 ok = 0, n = 0;
@@ -128,14 +143,14 @@ static void run_auto(void)
         dprintf(1, "AUTO %s: %s", c->name, pass ? "PASS" : "FAIL");
     }
 
-    // --- 2. Recorrido por el nivel: movimiento del personaje (mecánica principal) ---
-    // Nota: el recorrido se limita al MOVIMIENTO, que es estable fuera del scene VM.
-    // Castear/combatir encadenados aquí cuelga/corrompe el sprite engine (el motor de
-    // hechizos está pensado para correr dentro de la VM de escenas; AGENTS.md §7): esos
-    // efectos se prueban uno a uno con los casos CAST/SCENE del menú. La lógica del
-    // sistema de hechizos SÍ queda cubierta arriba por las 7 invariantes canUse.
+    // --- 2. Recorrido por el nivel: movimiento del personaje ---
+    // player_has_rod ANTES de init_character (trampa de la vara: AGENTS.md §7).
+    // Anchura 1440 + BG_SCRL_USER_RIGHT (trampa del scroll: AGENTS.md §7).
+    player_has_rod = true;
+    player_patterns_enabled = true;
+
     new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map,
-              forest_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3);
+              forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
     init_character(CHR_linus);
     move_character_instant(CHR_linus, 150, 154);
     show_character(CHR_linus, true);
@@ -151,9 +166,70 @@ static void run_auto(void)
     move_character_instant(CHR_linus, 150, 154);
     anim_character(CHR_linus, ANIM_IDLE);  hold(40);
 
+    // --- 3. Castear hechizos (PH_CAST_LIGHT y PH_CAST_THUNDER) -------------------
+    // [COMENTADO: cuelga el sprite engine encadenado tras new_level+movimiento.
+    //  Ver docs/retroarch-mcp.md §10 TODO 1. Los casos CAST del menú SÍ funcionan
+    //  (cast aislado); lo que falla es encadenarlo aquí. Descomentar fase a fase.]
+    // spell_enable(SPELL_LIGHT);
+    // spell_enable(SPELL_THUNDER);
+    //
+    // smoke_phase = PH_CAST_LIGHT;
+    // spell_narrative_cast(SPELL_LIGHT, false);
+    // while (spell_slot_active(SPELL_SLOT_PLAYER))
+    // {
+    //     next_frame(true);
+    // }
+    // hold(30);
+    //
+    // smoke_phase = PH_CAST_THUNDER;
+    // spell_narrative_cast(SPELL_THUNDER, false);
+    // while (spell_slot_active(SPELL_SLOT_PLAYER))
+    // {
+    //     next_frame(true);
+    // }
+    // hold(30);
+
+    // --- 4. Combate (PH_COMBAT) --------------------------------------------------
+    // [COMENTADO: cuelga el sprite engine (init_enemy/combat_init encadenados).
+    //  Ver docs/retroarch-mcp.md §10 TODO 1. Descomentar cuando el cast estable.]
+    // smoke_phase = PH_COMBAT;
+    // PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    // init_enemy(0, ENEMY_CLS_WEAVERGHOST);
+    // obj_enemy[0].hitpoints = 1; // 1 HP para que muera de un solo counter
+    // move_enemy_instant(0, FASTFIX32_FROM_INT(250), FASTFIX32_FROM_INT(154));
+    // show_enemy(0, true);
+    //
+    // combat_init();
+    //
+    // // Esperar a que el enemigo inicie su ataque (entra en COMBAT_STATE_ENEMY_PLAYING)
+    // while (combat_state == COMBAT_STATE_IDLE)
+    // {
+    //     next_frame(true);
+    // }
+    //
+    // // Esperar a que termine de tocar las notas (entra en COMBAT_STATE_ENEMY_EFFECT)
+    // while (combat_state == COMBAT_STATE_ENEMY_PLAYING)
+    // {
+    //     next_frame(true);
+    // }
+    //
+    // // El rayo enemigo está activo: contrarrestar con trueno invertido
+    // if (combat_state == COMBAT_STATE_ENEMY_EFFECT)
+    // {
+    //     spell_player_cast(SPELL_THUNDER, true);
+    // }
+    //
+    // // Esperar a que el enemigo sea liberado y el combate termine
+    // while (combat_state != COMBAT_NO)
+    // {
+    //     next_frame(true);
+    // }
+    //
+    // combat_finish();
+
     end_level();
 
-    // --- 3. Pantalla de resultados (end_level dejó las paletas en negro) ---
+    // --- 5. Pantalla de resultados (end_level dejó las paletas en negro) ---
     PAL_setColor(15, 0x0EEE);   // texto en blanco
     VDP_setTextPalette(PAL0);
     VDP_clearPlane(BG_A, true);

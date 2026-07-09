@@ -204,24 +204,33 @@ El NCI **no** puede pulsar botones. Para pruebas que requieran interacción:
 ## 9. Test desatendido de referencia: suite AUTO de la smoke ROM
 
 La smoke ROM (`docs/testing.md`) trae una opción **AUTO** (fila 0 del menú, y auto-corre
-al arrancar si no pulsas A en ~3 s) que sin tocar el mando:
+al arrancar si no pulsas A en ~3 s) que sin tocar el manda:
 
 1. ejecuta las **7 invariantes `canUse`** (casos `CHECK`) — cubre la lógica del sistema
    de hechizos;
-2. hace un **recorrido de movimiento** por el nivel del bosque: Linus aparece, espera en
-   reposo y camina a derecha e izquierda (mecánica de movimiento);
-3. deja una **pantalla de resultados** (`CHECKS N OK M FAIL`, `WALK OK`, `RESULT: ALL PASS`).
+2. hace un **recorrido de movimiento** por el nivel del bosque: Linus aparece con su
+   vara (`player_has_rod`, trampa de AGENTS.md §7), espera en reposo y camina a derecha
+   e izquierda (mecánica de movimiento);
+3. *(planificado)* **castearía** `SPELL_LIGHT` y `SPELL_THUNDER` y **libraría un combate**
+   contra un `WeaverGhost` (counter con trueno invertido). **Hoy está COMENTADO** en
+   `run_auto` porque cuelga el sprite engine encadenado tras `new_level`+movimiento
+   (§10 TODO 1); se descomenta fase a fase cuando se estabilice.
+4. deja una **pantalla de resultados** (`CHECKS N OK M FAIL`, `WALK OK`, `RESULT: ALL PASS`).
 
 Durante el recorrido, la ROM escribe la **fase actual** en la global `smoke_phase`
 (WRAM), lo que permite al host **sincronizar capturas leyendo RAM** (read_ram) en vez de
-adivinar por tiempo. Otra global, `smoke_scratch`, es un buffer libre para probar
-`write_ram`. Los offsets de ambas (y de `frame_counter`) se sacan de `out/symbol.txt`
-(§4); cambian en cada build, así que léelos de ahí, no los fijes.
+adivinar por tiempo. La global `smoke_scratch` es un buffer libre para probar `write_ram`.
+La global `smoke_gate` sirve como **puerta de sincronización (RAM Gate)**: la ROM se
+congela al inicio del test AUTO (`PH_WAIT_GATE`, `smoke_phase=0xFFFE`) hasta que el host
+escribe un valor no nulo (ej. `01 01`) en ella, garantizando que el emulador esté listo
+y no se pierdan trazas o frames. Los offsets de todas estas globales se leen
+dinámicamente de `out/symbol.txt` (§4); cambian en cada build, así que léelos de ahí.
 
 > El recorrido se limita al **movimiento** a propósito: castear/combatir encadenados
 > fuera de la VM de escenas cuelga/corrompe el sprite engine (crash o hang en
-> `SPR_update`; ver §10 y AGENTS.md §7). Casts y combate se prueban uno a uno con los
-> casos `CAST`/`SCENE` del menú.
+> `SPR_update`; ver §10 y AGENTS.md §7). El bloque de cast/combate está **comentado** en
+> `run_auto` (`src/smoke/smoke_runner.c`) pendiente de estabilizar; los casos
+> `CAST`/`SCENE` individuales del menú SÍ corren (flujo soportado).
 
 Receta (probada):
 
@@ -271,7 +280,7 @@ Deja capturas en el scratchpad (`walk_*.png`) y un informe de cobertura por stdo
 
 ## 10. Estado de la implementación y TODOs
 
-**Funciona (verificado):**
+**Funciona (verificado en ejecución, commit `ce4829a`):**
 - Registro del MCP y NCI (§1-3); read/write RAM con byte-swap (§4); frame-advance
   determinista; screenshots leídas por el agente.
 - smoke ROM opción **AUTO**: 7 invariantes `canUse` + recorrido de **movimiento** →
@@ -279,28 +288,50 @@ Deja capturas en el scratchpad (`walk_*.png`) y un informe de cobertura por stdo
 - Driver host: **16/16 tools** del MCP ejercitadas en una pasada; capturas sincronizadas
   por `smoke_phase` (read_ram); `write_ram` confirmado (`CA FE` leído de vuelta).
 
+**Implementado, pendiente de verificar en ejecución (bloqueado por TODO 0):**
+- **RAM Gate** (`smoke_gate`): la ROM se congela en `PH_WAIT_GATE` hasta que el host
+  escribe un valor no nulo. Código en `run_auto` + `OFF_GATE` en el driver + apertura
+  automática. Compila, pero no se ha podido verificar porque RetroArch no arranca.
+- **Despausado forzado** en el driver (`GET_STATUS`; si `PAUSED`, `PAUSE_TOGGLE`).
+- **Fixes de estabilidad** en el recorrido: `player_has_rod` antes de `init_character`
+  (trampa de la vara) y `1440`/`BG_SCRL_USER_RIGHT` en `new_level` (trampa del scroll),
+  aplicados también a `cast_run` (casos CAST del menú). Ambos son correcciones según
+  AGENTS.md §7; compilan, pendientes de verificación visual.
+
 **Falla / pendiente (TODO):**
-1. **Casting y combate en el recorrido desatendido** — encadenar `spell_narrative_cast`
-   o `init_enemy`/`hit_enemy` tras `new_level` + movimiento/hold **cuelga o crashea** el
-   sprite engine (crash/hang en `SPR_update`). Por eso el recorrido se quedó en
-   movimiento. Los casos `CAST`/`SCENE` individuales del menú SÍ corren (flujo soportado).
-   - *Siguiente paso*: confirmar por captura que `run_cast` (menú) es realmente estable;
-     si lo es, replicar su contexto EXACTO (cast inmediato tras `new_level`+`init`, sin
-     `hold`/scroll previo). Alternativa robusta: ejecutar una **escena real** con
-     `scene_run` dentro de AUTO (ya existe `SMOKE_SCENE`) — es el flujo que el motor
-     soporta — añadiendo un modo "auto-play" que inyecte las pulsaciones scripteadas
-     (las escenas esperan input; hoy son interactivas).
+0. **RetroArch se cuelga al arrancar (BLOQUEANTE)** — al lanzar
+   `retroarch -L .../genesis_plus_gx_libretro.so out/smoke.bin` en esta máquina, el
+   emulador **congela / no responde al NCI** de forma fiable (a veces arranca, a veces
+   no; el proceso hay que matarlo a mano con `pkill -x retroarch`). Sin emulador
+   estable **no se puede validar nada** del §9/§10. Estado actual: **todo cerrado**, sin
+   RetroArch corriendo. Lo que SÍ está verificado y funciona es lo listado arriba en
+   "Funciona (verificado en ejecución)".
+   - *Siguiente paso*: aislar la causa. Probar (a) `retroarch` sin `-L` (core por
+     defecto), (b) arrancar sin `DISPLAY` / en cabeza, (c) otra ROM, (d) revisar el log
+     (`stdout`/`stderr` al lanzar), (e) versión del core / de RetroArch. Una vez el
+     emulador arranque y responda a `VERSION`/`GET_STATUS` de forma estable, se
+     verifican los ítems de "Implementado, pendiente de verificar" y se retoma el 1.
+1. **Casting y combate en el recorrido desatendido** — el bloque de cast (`SPELL_LIGHT`,
+   `SPELL_THUNDER`) y combate (`WeaverGhost` + counter) está **COMENTADO** en `run_auto`
+   (`src/smoke/smoke_runner.c`) porque encadenar `spell_narrative_cast` /
+   `init_enemy`+`combat_init` tras `new_level` + movimiento/hold **cuelga o crashea** el
+   sprite engine (crash/hang en `SPR_update`). Los casos `CAST`/`SCENE` individuales del
+   menú SÍ corren (flujo soportado).
+   - *Siguiente paso*: descomentar **fase a fase** (primero `PH_CAST_LIGHT` solo, verificar
+     con el driver; si pasa, `PH_CAST_THUNDER`; luego `PH_COMBAT`). Alternativa robusta:
+     ejecutar una **escena real** con `scene_run` dentro de AUTO (ya existe
+     `SMOKE_SCENE`) — es el flujo que el motor soporta — añadiendo un modo "auto-play".
 2. **pause_toggle / frame_advance a veces no se ejercitan** — el test necesita que el
    host enganche una fase "viva" (frame_counter avanzando); si el driver arranca tarde o
-   el emulador quedó pausado, se los pierde.
-   - *Siguiente paso*: añadir un **gate en RAM** (una global que el host ponga por
-     `write_ram`) para congelar el arranque de AUTO hasta que el host esté listo, y que
-     el driver **fuerce despausar** al inicio (`GET_STATUS`; si `PAUSED`, `PAUSE_TOGGLE`).
+   el emulador quedó pausado, se los pierde. El **RAM Gate** (ya implementado, pendiente
+   de verificar) y el **despausado forzado** del driver atacan esto; confirmar cuando
+   RetroArch arranque.
 3. **Offsets cambian en cada build** — el driver ya los lee de `out/symbol.txt`; si se
    mueve el driver a CI, mantener esa lectura (no fijar offsets).
 
 **Ficheros clave:** `src/smoke/smoke_runner.c` (`run_auto`, globales `smoke_phase`/
-`smoke_scratch`), `src/smoke/smoke_main.c` (ventana de arranque), `src/smoke/smoke_cases.h`
+`smoke_scratch`/`smoke_gate`), `src/smoke/smoke_main.c` (ventana de arranque),
+`src/smoke/smoke_cases.h`
 (fila `SMOKE_AUTO`), `tools/retroarch/mcp_driver.py` (driver host).
 
 Añadir una invariante nueva = una fila `SMOKE_CHECK` en `smoke_cases.h` (entra sola en

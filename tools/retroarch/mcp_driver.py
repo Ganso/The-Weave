@@ -6,12 +6,17 @@ import socket, time, os, glob, shutil
 HOST, PORT = "127.0.0.1", 55355
 SHOT_DIR   = os.path.expanduser("~/.config/retroarch/screenshots")
 STATE_DIR  = os.path.expanduser("~/.config/retroarch/states")
-OUT = "/tmp/claude-1000/-home-ganso-codigo-The-Weave/f1efe627-235e-486e-bf4e-3607cac4accc/scratchpad"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+repo_root  = os.path.abspath(os.path.join(script_dir, "../.."))
+
+# Salida: scratchpad de la IA si está configurado, si no un temp genérico.
+OUT = os.environ.get("AI_SCRATCH_DIR") or "/tmp/theweave_mcp_scratch"
+os.makedirs(OUT, exist_ok=True)
 
 # Offsets CHEEVOS leídos de out/symbol.txt (addr & 0xFFFF); evita editarlos cada build
 def sym_off(name, default):
     try:
-        for ln in open("/home/ganso/codigo/The-Weave/out/symbol.txt"):
+        for ln in open(os.path.join(repo_root, "out/symbol.txt")):
             p = ln.split()
             if len(p) >= 3 and p[2] == name:
                 return int(p[0], 16) & 0xFFFF
@@ -20,7 +25,9 @@ def sym_off(name, default):
 OFF_FRAME   = sym_off("frame_counter", 0x071e)
 OFF_SCRATCH = sym_off("smoke_scratch", 0x0bcc)
 OFF_PHASE   = sym_off("smoke_phase",   0x0bce)
-PHASES = {0:"boot",1:"idle",2:"walk",3:"cast_light",4:"cast_thunder",5:"combat",0xFFFF:"done"}
+OFF_GATE    = sym_off("smoke_gate",    0x0bd0)
+PHASES = {0:"boot",1:"idle",2:"walk",3:"cast_light",4:"cast_thunder",5:"combat",
+          0xFFFE:"wait_gate",0xFFFF:"done"}
 report, covered = [], set()
 
 def log(tool, cmd, resp, ok):
@@ -55,12 +62,35 @@ for _ in range(50):
     time.sleep(0.1)
 
 # ============ FASE A: solo lectura (rápidas, antes de que arranque el recorrido) ============
+# Forzar despausar si el emulador quedó congelado de una sesión anterior.
+status = nci("GET_STATUS")
+if status and "PAUSED" in status:
+    nci("PAUSE_TOGGLE"); time.sleep(0.1)
+
 log("ping","VERSION", v, bool(v) and v[0:1].isdigit())
 log("get_status","GET_STATUS", nci("GET_STATUS"), True)
 log("get_config","GET_CONFIG_PARAM", nci("GET_CONFIG_PARAM savestate_directory"), True)
 log("read_memory","READ_CORE_MEMORY", nci("READ_CORE_MEMORY 0x0 4"), True)   # genesis: "no memory map" (esperado)
 log("write_memory","WRITE_CORE_MEMORY", nci("WRITE_CORE_MEMORY 0x0 00"), True)
 nci("SHOW_MSG recorrido MCP en curso"); log("show_message","SHOW_MSG", "(fire-and-forget)", True)
+
+# Esperar a que la ROM entre en el gate loop (smoke_phase == 0xFFFE = PH_WAIT_GATE).
+# Así el host no pierde frames: la ROM se congela hasta que abramos el gate.
+print("Esperando a que la ROM entre en AUTO (PH_WAIT_GATE)...", flush=True)
+ph = None
+t_gate = time.time()
+while time.time() - t_gate < 15:
+    ph = read_u16(OFF_PHASE)
+    if ph == 0xFFFE:
+        break
+    time.sleep(0.15)
+else:
+    print("WARN: timeout esperando PH_WAIT_GATE, abriendo gate de todos modos", flush=True)
+
+# Abrir el gate en RAM para arrancar el test (write_ram: primera escritura real)
+nci(f"WRITE_CORE_RAM 0x{OFF_GATE:x} 01 01")
+log("write_ram","WRITE gate=0101", f"gate abierto (phase era 0x{ph or 0:x})", ph == 0xFFFE)
+time.sleep(0.2)
 
 # ============ FASE B: recorrido — captura por fase + pause/frameadvance ============
 seen, did_fa = set(), False
