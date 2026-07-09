@@ -195,4 +195,47 @@ El NCI **no** puede pulsar botones. Para pruebas que requieran interacción:
    Comparar con el valor esperado → PASS/FAIL.
 5. Opcional: `FRAMEADVANCE` en bucle para medir duración en frames, y `SCREENSHOT` +
    leer el PNG para juzgar el efecto visual.
-6. Cerrar RetroArch (`pkill -f 'retroarch -L'`).
+6. Cerrar RetroArch. **Usa `pkill -x retroarch`** (nombre exacto), no
+   `pkill -f retroarch`: con `-f` el patrón casa con la propia línea de comando que lo
+   invoca y el shell se autotermina (exit 144).
+
+---
+
+## 9. Test desatendido de referencia: suite AUTO de la smoke ROM
+
+La smoke ROM (`docs/testing.md`) trae una opción **AUTO** que ejecuta todas las
+invariantes de `canUse` (los casos `CHECK`, no interactivos) y deja una **pantalla de
+resultados** con el recuento. Es el test que valida de punta a punta que este sistema
+funciona: build → arranque → auto-run → captura → lectura, **sin tocar el mando**.
+
+Cómo llega sola a los resultados (el NCI no envia input, §7): al arrancar, la smoke ROM
+muestra una ventana de ~3 s "A = menu"; si nadie pulsa, corre AUTO automáticamente y
+pinta los resultados. Los `CHECK` son instantáneos, así que la pantalla aparece a los
+pocos segundos del arranque. (Los `CAST` se excluyen de AUTO a propósito: miden efecto
+visual y encadenar niveles reinicia el sprite engine; se corren uno a uno desde el menú.)
+
+Receta (probada):
+
+```bash
+# 1. Compilar la smoke ROM (no lanza emulador)
+./build-theweave.sh smoke --no-run          # -> out/smoke.bin
+
+# 2. Lanzar en background (en Claude Code: run_in_background del tool Bash)
+DISPLAY=:0 retroarch -L /usr/lib/x86_64-linux-gnu/libretro/genesis_plus_gx_libretro.so out/smoke.bin
+```
+
+```bash
+# 3. Esperar ~6 s (3 s de ventana + checks) y capturar; localizar y leer el PNG.
+#    (En Claude Code, mete la espera en un comando run_in_background: los sleep
+#    largos en primer plano están bloqueados.)
+python3 -c 'import socket; s=socket.socket(2,2); s.settimeout(1); s.sendto(b"SCREENSHOT",("127.0.0.1",55355))'
+ls -t ~/.config/retroarch/screenshots/*.png | head -1     # <- leer este PNG
+```
+
+**Validación:** el PNG debe mostrar `RESULT: ALL PASS` y `CHECKS  N OK  0 FAIL`, donde
+`N` es el número de filas `CHECK` en `src/smoke/smoke_cases.h` (7 en el momento de
+escribir esto). Si sale `RESULT: FAIL`, la pantalla lista debajo los nombres de los
+casos que fallaron. Cerrar con `pkill -x retroarch`.
+
+Añadir una invariante nueva = una fila `SMOKE_CHECK` en `smoke_cases.h` (entra sola en
+la suite AUTO; ver `docs/testing.md`).

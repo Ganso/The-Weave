@@ -34,10 +34,36 @@ static u16 wait_joy_press(void)    // Espera una pulsación nueva (con release p
     return joy;
 }
 
+// Ventana de arranque: da ~3 s para saltar al menú con A. Si nadie pulsa,
+// devuelve false y el main corre la suite AUTO (validación desatendida: el
+// NCI de RetroArch no envia input, así que la ROM debe llegar sola a la
+// pantalla de resultados; ver docs/retroarch-mcp.md).
+static bool boot_wait_skip(void)
+{
+    VDP_clearPlane(BG_A, true);
+    VDP_clearPlane(BG_B, true);
+    VDP_drawText("THE WEAVE - SMOKE TEST", 8, 8);
+    VDP_drawText("A = menu", 8, 11);
+    VDP_drawText("espera = AUTO test", 8, 12);
+    do { SYS_doVBlankProcess(); } while (JOY_readJoypad(JOY_1)); // release previo
+    for (u16 f = 0; f < 180; f++)
+    {
+        SYS_doVBlankProcess();
+        if (JOY_readJoypad(JOY_1) & BUTTON_A) return true;
+    }
+    return false;
+}
+
 int main(bool hard)
 {
     (void)hard;
     initialize(true);
+
+    if (!boot_wait_skip())
+    {
+        smoke_run_case(&smoke_cases[0]);              // fila 0 = SMOKE_AUTO
+        while (!(wait_joy_press() & BUTTON_A)) { }     // resultados en pantalla hasta A
+    }
 
     while (true)
     {

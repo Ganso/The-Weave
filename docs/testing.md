@@ -13,6 +13,10 @@ vuelve al menú).
 
 Tipos de caso (`src/smoke/smoke_cases.h`):
 
+- **AUTO** (primera fila del menú) — ejecuta de golpe todos los `CHECK` y deja una
+  pantalla de resultados (`CHECKS N OK M FAIL`, `RESULT: ALL PASS`/`FAIL` + nombres
+  de los que fallen). Además corre **sola al arrancar** si no pulsas A en ~3 s: así
+  la ROM se puede validar sin mando desde RetroArch (ver `docs/retroarch-mcp.md` §9).
 - **CHECK** — invariantes automáticos de canUse (p.ej. "fire sin zona → rechazado",
   "fire en ZONE_CAULDRON → permitido"). PASS/FAIL instantáneo en pantalla.
 - **CAST** — lanza el hechizo con un cast scripted en un nivel de pruebas y mide

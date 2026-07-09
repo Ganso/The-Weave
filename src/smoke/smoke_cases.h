@@ -10,7 +10,8 @@
 typedef enum {
     SMOKE_CHECK,   // invariante de canUse: PASS si spell_can_use == expected
     SMOKE_CAST,    // cast scripted en un nivel de pruebas: PASS si termina en baseDuration±2
-    SMOKE_SCENE    // ejecuta la escena completa (interactiva)
+    SMOKE_SCENE,   // ejecuta la escena completa (interactiva)
+    SMOKE_AUTO     // corre todos los CHECK+CAST (los no-interactivos) y deja pantalla de resultados
 } SmokeKind;
 
 typedef struct {
@@ -24,6 +25,10 @@ typedef struct {
 } SmokeCase;
 
 static const SmokeCase smoke_cases[] = {
+    // --- Suite automatica: todos los CHECK (invariantes de canUse, no interactivos) ---
+    // Debe ir en la fila 0: el arranque desatendido ejecuta smoke_cases[0].
+    {"AUTO  invariantes canUse",  SMOKE_AUTO,  0, false, 0, false, NULL},
+
     // --- Invariantes de canUse (instantáneos) ---
     {"CHK fire sin zona  - NO",  SMOKE_CHECK, SPELL_FIRE,    false, ZONE_NONE,     false, NULL},
     {"CHK fire caldero   - SI",  SMOKE_CHECK, SPELL_FIRE,    false, ZONE_CAULDRON, true,  NULL},
