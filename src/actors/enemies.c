@@ -32,8 +32,9 @@ void init_enemy_classes(void)    // Setup enemy class definitions with HP, patte
 {
     obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_NONE}}; // 2 HP, lanza thunder, no sigue
     obj_enemy_class[ENEMY_CLS_TESTGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_EN_BITE}}; // SOLO TEST: multi-hechizo (recargas alternas)
-    // Note (B2, decision docs/refactor/plan.md §15): ninguna clase lleva SPELL_EN_BITE por ahora.
-    // Activarlo es decisión de diseño: añadirlo a la lista spell[] y ajustar rechargeInit con playtest.
+    obj_enemy_class[ENEMY_CLS_BOAR]=(Enemy_Class) { 2, false, 0, {SPELL_EN_BITE, SPELL_NONE}}; // 2 HP, muerde (no counterable), no sigue
+    // Note (B2, decision docs/refactor/plan.md §15): el jabalí es la primera clase de juego
+    // con SPELL_EN_BITE; ajustar rechargeInit/follow con playtest.
 }
 
 
@@ -57,6 +58,11 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     case ENEMY_CLS_WEAVERGHOST:
     case ENEMY_CLS_TESTGHOST:   // la clase de test reutiliza el sprite del ghost
         nsprite = &weaver_ghost_sprite;
+        nsprite_shadow = NULL;
+        drops_shadow=false;
+        break;
+    case ENEMY_CLS_BOAR:
+        nsprite = &boar_sprite;
         nsprite_shadow = NULL;
         drops_shadow=false;
         break;

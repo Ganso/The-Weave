@@ -184,8 +184,8 @@ actualiza ese FSM.
   `canUse` la reciben en `ctx->zoneId`.
 - Desbloqueo: `spell_enable(id)` (silencioso; op `enable_spell` del DSL) o
   `activate_spell(id)` (con jingle y notas, para cutscenes).
-- **`EN_BITE` está deshabilitado a propósito**: para activarlo, añádelo a la lista
-  `spell[]` de una clase de enemigo y ajusta `rechargeInit` con playtest.
+- **`EN_BITE`** lo usa el jabalí (`ENEMY_CLS_BOAR`), primera clase de juego con
+  mordisco (no counterable); ajustar `rechargeInit`/follow con playtest.
 
 → **Para crear un hechizo nuevo**: guía paso a paso en `docs/spells.md`. Puntos que
 tocan el motor: `SPELL_*` en `constants_spells.h` (los de jugador antes de
