@@ -10,6 +10,40 @@
 > **motor, la arquitectura y las trampas**; las guías documentan **cómo escribir**
 > hechizos, escenas y textos. No dupliques aquí lo que ya está en esas guías: enlázalas.
 
+## Flujo de trabajo Git (multi-ordenador — CRÍTICO)
+
+> Javier trabaja este proyecto **desde varios ordenadores**. En cualquier sesión el
+> remoto puede tener commits que este clon no tiene, y este clon puede tener trabajo
+> sin subir. Sincronizar mal = trabajo duplicado o perdido. **Esto no es opcional y
+> anula la cautela por defecto de "subir solo si me lo piden": aquí SE SUBE siempre.**
+
+**Al EMPEZAR cada sesión — comprobar sincronización REAL antes de tocar código:**
+
+1. `git fetch --all --prune` — **siempre lo primero**. `git status` a secas MIENTE: se
+   calcula contra el último fetch y puede decir "al día" o "adelantado por N" cuando en
+   realidad las ramas han divergido.
+2. `git status -sb` y `git rev-list --left-right --count @{upstream}...HEAD`
+   (izquierda = commits solo en el remoto; derecha = commits solo locales).
+3. Interpretar el conteo `L  R`:
+   - `0  0` → sincronizado, adelante.
+   - `N  0` (solo remoto por delante) → `git pull --ff-only`.
+   - `0  N` (solo local por delante) → trabajo sin subir de otra sesión; lo subes al terminar.
+   - `N  M` (**divergencia**) → NO hagas pull/merge a ciegas. Mira los commits de cada lado
+     (`git log --oneline @{upstream}..HEAD` y `... HEAD..@{upstream}`) y los ficheros que
+     tocan. Si es **trabajo paralelo sobre lo mismo**, compara las dos implementaciones y
+     quédate con la mejor; **etiqueta con `git tag` lo que vayas a descartar antes de un
+     `reset --hard`** para que sea recuperable. Ante duda real, pregunta.
+
+**Cómo se hacen los commits (bien):**
+- Un commit por hito, asunto concreto en imperativo (qué cambia y por qué), nunca "wip"/"cambios".
+- Actualiza este AGENTS.md y las guías de `docs/` **en la misma tanda** que el código que describen.
+- Cierra el mensaje con el trailer `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+
+**Antes de TERMINAR la sesión — subir TODO (obligatorio):**
+- No dejes commits locales sin empujar: otro ordenador los va a necesitar. `git push`.
+- Verifica que quedó sincronizado: `git rev-list --left-right --count @{upstream}...HEAD` == `0  0`.
+- Nunca `push --force` a `master` sin analizar antes qué hay en el remoto (puede ser trabajo de otro PC).
+
 ## 1. Qué es el proyecto
 
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
