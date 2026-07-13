@@ -63,13 +63,42 @@ def read_u16(off):
     try: return (int(r[3],16) << 8) | int(r[2],16)   # deswap 16-bit: b1<<8 | b0
     except ValueError: return None
 
+def frames_advancing(gap=0.4):
+    # Testigo de vida: frame_counter avanza => la ROM está ejecutando frames.
+    a = read_u16(OFF_FRAME); time.sleep(gap); b = read_u16(OFF_FRAME)
+    return None not in (a, b) and a != b
+
+def wait_running(timeout=30):
+    # RetroArch puede arrancar EN FRÍO: la ROM no ejecuta frames (frame_counter
+    # congelado en 0) aunque GET_STATUS diga PLAYING, por foco/pause_nonactive.
+    # Una vez arranca, sigue sola hasta el final. Aquí la empujamos hasta que
+    # frame_counter avanza: despausamos y, si sigue helada, forzamos frames con
+    # FRAMEADVANCE y reanudamos marcha libre. Sin esto el handshake del gate
+    # (PH_WAIT_GATE) hace timeout porque la fase nunca sale de 0.
+    t0 = time.time()
+    while time.time() - t0 < timeout:
+        ensure_playing()
+        if frames_advancing(): return True
+        for _ in range(8): nci("FRAMEADVANCE")   # fuerza ejecución aunque esté estrangulada
+        nci("PAUSE_TOGGLE")                       # reanuda marcha libre tras los advance
+    return frames_advancing()
+
 def screenshot(label):
-    nci("SCREENSHOT"); time.sleep(0.5)
-    pngs = glob.glob(f"{SHOT_DIR}/*.png")
-    if not pngs: return "(sin png)"
+    # Anti-stale: solo devolvemos una captura cuyo mtime sea POSTERIOR al comando
+    # SCREENSHOT. Por mtime (no por set-diff de nombres) captamos tanto ficheros
+    # nuevos como sobrescrituras (RetroArch nombra por segundo: dos capturas en el
+    # mismo segundo reusan nombre). Si en ~4 s no aparece nada fresco, devolvemos
+    # un sentinel en vez de arrastrar una captura vieja (que daría un falso "OK").
+    t_before = time.time() - 0.5                  # margen por desfase de reloj/fs
+    nci("SCREENSHOT")
     dst = f"{OUT}/{RUN_TAG}_{label}.png"
-    shutil.copy(max(pngs, key=os.path.getmtime), dst)
-    return os.path.basename(dst)
+    for _ in range(40):                           # hasta ~4 s esperando el PNG fresco
+        time.sleep(0.1)
+        fresh = [p for p in glob.glob(f"{SHOT_DIR}/*.png") if os.path.getmtime(p) >= t_before]
+        if fresh:
+            shutil.copy(max(fresh, key=os.path.getmtime), dst)
+            return os.path.basename(dst)
+    return "(sin captura nueva)"
 
 # --- esperar a que la ROM/emulador responda ---
 for _ in range(50):
@@ -89,6 +118,10 @@ log("get_config","GET_CONFIG_PARAM", nci("GET_CONFIG_PARAM savestate_directory")
 log("read_memory","READ_CORE_MEMORY", nci("READ_CORE_MEMORY 0x0 4"), True)   # genesis: "no memory map" (esperado)
 log("write_memory","WRITE_CORE_MEMORY", nci("WRITE_CORE_MEMORY 0x0 00"), True)
 nci("SHOW_MSG recorrido MCP en curso"); log("show_message","SHOW_MSG", "(fire-and-forget)", True)
+
+# Asegurar que la ROM ejecuta frames antes del handshake (arranque en frío).
+if not wait_running():
+    print("WARN: la ROM no arranca frames (frame_counter congelado tras 30s)", flush=True)
 
 # Esperar a que la ROM entre en el gate loop (smoke_phase == 0xFFFE = PH_WAIT_GATE).
 # Así el host no pierde frames: la ROM se congela hasta que abramos el gate.
@@ -124,7 +157,7 @@ while time.time() - t0 < 120:
         fr = read_u16(OFF_FRAME)
         name = PHASES.get(ph, f"0x{ph:x}")
         shot = screenshot(name)
-        log("read_ram+shot", f"phase={name} fr={fr}", shot, fr is not None)
+        log("read_ram+shot", f"phase={name} fr={fr}", shot, fr is not None and shot != "(sin captura nueva)")
         # pause + frameadvance deterministas en la primera fase "viva" (frame_counter avanza)
         if ph in (1,2,3,4,5) and not did_fa:
             did_fa = True
@@ -139,7 +172,8 @@ while time.time() - t0 < 120:
     time.sleep(0.08)
 
 # ============ FASE C: write_ram + save/load state (en pantalla de resultados) ============
-log("read_ram+shot","phase=results (final)", screenshot("results"), True)
+shot_res = screenshot("results")
+log("read_ram+shot","phase=results (final)", shot_res, shot_res != "(sin captura nueva)")
 nci(f"WRITE_CORE_RAM 0x{OFF_SCRATCH:x} CA FE"); time.sleep(0.1)
 rb = nci(f"READ_CORE_RAM 0x{OFF_SCRATCH:x} 2") or ""
 log("write_ram","WRITE+READ scratch", rb, rb.upper().endswith("CA FE"))

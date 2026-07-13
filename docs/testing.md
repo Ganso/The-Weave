@@ -36,6 +36,20 @@ Tipos de caso (`src/smoke/smoke_cases.h`):
 Una fila en `smoke_cases[]` (`src/smoke/smoke_cases.h`) y rebuild. Sin tocar el
 menú ni el runner.
 
+### Estado y trabajo futuro
+
+La **validación automatizada de la smoke ROM está completa y verificada**: la suite
+AUTO pasa desatendida (`RESULT: ALL PASS`) tanto a mano como por el driver MCP de
+RetroArch (`docs/retroarch-mcp.md`), que ejercita las 16 tools, sincroniza capturas por
+`smoke_phase` y da exit code 0/1 para scripts. El handshake del gate y las capturas son
+deterministas (arranque en frío + anti-stale).
+
+El resto del plan (`docs/testing/plan.md`) es **trabajo futuro**: embudo de input +
+override por RAM para pilotar la ROM real (Fase 3, mete las **escenas** en la
+verificación desatendida), y un menú de debug runtime con hacks en caliente (Fase 4).
+Hasta entonces, las escenas y el resto del juego se validan con el **checklist de
+playtest** de abajo.
+
 ## Checklist de playtest
 
 - **Intro + logo**: GeeseBumps y la intro, selección de idioma.

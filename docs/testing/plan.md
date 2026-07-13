@@ -1,14 +1,25 @@
 # Plan — Testing automatizado y debug runtime (testing-v2.1)
 
-> **NOTA (2026-07-13).** Las Fases 1-2 se enviaron finalmente con el enfoque de
-> `origin/master` (recorrido *walkthrough* scripted: idle → walk → cast LIGHT →
-> cast THUNDER → combate, con `smoke_phase` como enum de fases y `smoke_scratch`
-> en vez de `smoke_passed/failed`), que supera a la versión table-driven descrita
-> más abajo (corrige el cuelgue de CAST y añade validación de combate). Ver el
-> código real en `src/smoke/smoke_runner.c` y `tools/retroarch/mcp_driver.py`.
-> Las secciones "Estado/Objetivo" de abajo reflejan el diseño original; se
-> conservan por el **roadmap de Fases 3-4 (seam de input override + menú debug),
-> que sigue pendiente** y es la razón de mantener este documento.
+> ## Estado del plan (cierre 2026-07-13)
+>
+> **Fases 1-2 COMPLETAS y verificadas end-to-end.** La automatización de la smoke ROM
+> está terminada: la suite AUTO (recorrido *walkthrough* scripted idle → walk → cast
+> LIGHT → cast THUNDER → combate, con `smoke_phase` como enum de fases y `smoke_scratch`
+> para probar `write_ram`) pasa desatendida (`RESULT: ALL PASS`) tanto a mano como por
+> `tools/retroarch/mcp_driver.py`, que ejercita **16/16 tools** del MCP y da exit 0/1.
+> Verificado en RetroArch + Genesis Plus GX (`DISPLAY=:0`) en corridas repetidas.
+> Código real: `src/smoke/smoke_runner.c` (`run_auto`), `src/smoke/smoke_main.c`,
+> `tools/retroarch/mcp_driver.py`. Doc de uso: `docs/retroarch-mcp.md` §9-10.
+>
+> Endurecimiento del driver (2026-07-13): handshake del gate determinista tras espera de
+> arranque en frío (`wait_running`, vence el `frame_counter` congelado por foco/
+> `pause_nonactive`) y capturas anti-stale (mtime > comando). Ambos verificados 3/3 runs.
+>
+> **Fases 3 en adelante: TRABAJO FUTURO** (aún sin implementar). Fase 3 (embudo
+> `pad_read` + override de input por RAM) mete las escenas en la verificación
+> desatendida; Fase 4 (menú de debug runtime + hacks en caliente) cablea de paso los 6
+> toggles muertos de `hack.h`; Fases 5-6, cierre y escenas bajo guion. Las secciones de
+> abajo son el **diseño de referencia** de esas fases pendientes (y el histórico de 1-2).
 
 Port a The Weave de la infraestructura de la Fase 4 del refactor de Red Planet
 (`../RedPlanet_MD`, v2.0-refactor): smoke ROM desatendida con marcadores RAM,
@@ -23,10 +34,13 @@ driver MCP de RetroArch, seam de input override y menú de debug runtime.
   `symbol.txt` los hace el agente; todo lo que requiere emulador con GUI
   (BlastEm, RetroArch) lo ejecuta Javier y reporta el resultado.
 
-## Estado (2026-07-12) — Fases 1 y 2 COMPLETAS y verificadas end-to-end
+## Estado (2026-07-12) — histórico del diseño original (table-driven de 13 casos)
+
+> Superado por el walkthrough de `origin/master` (ver el cierre arriba). Se conserva
+> por los fixes documentados, que siguen siendo válidos.
 
 Verificado en RetroArch + Genesis Plus GX con vídeo real (DISPLAY=:0):
-`mcp_driver.py --auto` recorre los 13 casos y da **RESULT: ALL PASS
+`mcp_driver.py --auto` recorría los 13 casos y daba **RESULT: ALL PASS
 (passed=13 failed=0)**, con la pantalla-resumen legible en captura. Tres fixes
 por el camino:
 

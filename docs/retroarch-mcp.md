@@ -271,8 +271,17 @@ pkill -x retroarch
   vacía al empezar: lo que contiene es siempre la última run.
 - **Exit code**: `0` si las 16 tools se ejercitaron Y el recorrido pasó por todas las
   fases hasta resultados; `1` en caso contrario (útil para scripts/CI).
+- **Arranque en frío robusto** (`wait_running`): RetroArch puede lanzar la ventana sin
+  ejecutar frames todavía (`frame_counter` congelado aunque `GET_STATUS` diga `PLAYING`,
+  por foco/`pause_nonactive`). El driver espera a que `frame_counter` avance antes del
+  handshake del gate — despausando y, si sigue helada, forzando frames con `FRAMEADVANCE`.
+  Sin esto el handshake de `PH_WAIT_GATE` hacía timeout porque la fase no salía de 0.
 - El driver **despausa solo** el emulador si lo encuentra en PAUSED (al inicio y
   vigilando durante toda la run).
+- **Capturas anti-stale**: `screenshot()` solo acepta un PNG cuyo mtime sea posterior al
+  comando `SCREENSHOT`; si RetroArch no genera captura fresca, marca la fase como FAIL y
+  devuelve `(sin captura nueva)` en vez de arrastrar una PNG vieja (que daría un falso
+  "OK" con la pantalla de otra run).
 - Se puede relanzar sin reiniciar RetroArch: el RESET final deja la ROM rearrancando,
   y el driver espera al siguiente `PH_WAIT_GATE`.
 
@@ -333,12 +342,22 @@ ls -t ~/.config/retroarch/screenshots/*.png | head -1     # <- leer este PNG
   por `smoke_phase` (read_ram) con la fecha de la run en el nombre, guardadas en
   `docs/testing/smoke-latest/` (en `.gitignore`); `write_ram` confirmado (`CA FE` leído
   de vuelta); exit code 0/1 para scripts.
+- **Endurecido y verificado** (2026-07-13): handshake del gate determinista tras espera
+  de arranque en frío (`wait_running`) y capturas anti-stale (mtime > comando). Corridas
+  repetidas dan `gate abierto (phase 0xFFFE)`, 16/16 tools, recorrido completo, exit 0,
+  con las 10 capturas frescas — reproducible desde shell (`DISPLAY=:0`, GenesisPlusGX).
 
-**Pendiente (TODO):**
-1. **Offsets cambian en cada build** — el driver ya los lee de `out/symbol.txt`; si se
-   mueve el driver a CI, mantener esa lectura (no fijar offsets).
-2. Posible extensión: modo "auto-play" para ejecutar una **escena real** (`scene_run`)
-   dentro de AUTO y cubrir también la VM de escenas sin mando.
+**La automatización de la smoke ROM (Fases 1-2 del plan de testing) está completa.** El
+resto del roadmap (`docs/testing/plan.md`) es **trabajo futuro**:
+1. **Fase 3** — embudo `pad_read()` + override de input por RAM (`g_inputOverride*`): permite
+   pilotar la ROM real desde fuera y meter las **escenas** (`scene_run`) en la verificación
+   desatendida (hoy son playtest manual).
+2. **Fase 4** — dominio `src/debug/`: hacks runtime (`g_hacks`) + menú oculto sobre el
+   Window plane; cablear de paso los 6 toggles de `hack.h` que hoy no se consultan.
+3. **Fases 5-6** — cierre de documentación y (opcional) escenas bajo guion de input.
+
+*(Nota menor ya resuelta: los offsets cambian en cada build; el driver los lee de
+`out/symbol.txt`, no los fijes si lo llevas a CI.)*
 
 *Notas de depuración (resueltas):*
 - El supuesto "cuelgue al arrancar" de la ROM era un crash (`ILLEGAL INSTRUCTION` en
