@@ -110,4 +110,5 @@ act1_test,A1_TEST_WAVE2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Oleada 2: fa
 act1_test,A1_TEST_VICTORY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Combate superado|Volviendo al menú,TEST: Combat cleared|Back to the menu
 act1_test,A1_TEST_COMBAT_MENU,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¿Qué tipo|de combate?,TEST: Which kind|of combat?
 act1_test,A1_TEST_MELEE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Jabalíes: sin vara.|Pulsa @[A@] para golpear|Seis golpes los ahuyentan,TEST Boars: no rod.|Press @[A@] to strike|Six hits drive them away
+act1_test,A1_TEST_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Te han derrotado|Reintentando el combate,TEST: You were defeated|Retrying the combat
 act1_test,A1_TEST_BYE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Fin del banco de pruebas|Volviendo al dormitorio,TEST: End of the test bench|Returning to the bedroom

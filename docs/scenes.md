@@ -403,10 +403,29 @@ set spells on
 ### 7.7. Combate
 
 - **`combat`** — lanza un **combate interactivo completo** y no sigue hasta que el
-  jugador **gane**. Antes de esta orden, normalmente habrás hecho aparecer a los
-  enemigos con un `call` a un gancho de C (ver sección 9).
+  combate termine: porque el jugador **gana** o porque su **vida llega a cero**
+  (empieza cada combate con 5 puntos; cada golpe enemigo resta uno). Antes de esta
+  orden, normalmente habrás hecho aparecer a los enemigos con un `call` a un gancho
+  de C (ver sección 9).
   - **Cuándo:** cuando toca pelear. Es tan simple como poner `combat`; toda la
     mecánica de la pelea la gestiona el juego.
+- **`if_defeated goto <etiqueta>`** — salta a una etiqueta **si el último combate
+  terminó en derrota** (la vida del jugador llegó a cero). Ponla justo después de un
+  `combat` (o de un `call` a un gancho que corra un combate físico) para mostrar un
+  mensaje de fallo y repetir la pelea. Si el jugador ganó, el guion sigue de largo.
+  - Ejemplo de combate con reintento:
+
+    ```
+    label pelea
+    call mi_escena_enemigos
+    combat
+    if_defeated goto pelea_fallida
+    say MI_ESCENA VICTORIA sound
+    goto continuar
+    label pelea_fallida
+    say MI_ESCENA DERROTA sound
+    goto pelea
+    ```
 
 ### 7.8. Lanzar hechizos desde el guion (cinemáticas)
 

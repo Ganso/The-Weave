@@ -171,7 +171,8 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
 
             case SCENE_OP_COMBAT: // combate interactivo completo (el FSM manda)
                 combat_init();
-                while (combat_state != COMBAT_NO) next_frame(true);
+                while (combat_state != COMBAT_NO && !player_defeated) next_frame(true);
+                if (player_defeated) combat_abort();   // la escena decide el reintento (op if_defeated)
                 break;
 
             case SCENE_OP_CAST: // lanzamiento scripted (puzzles / demostraciones)
@@ -207,6 +208,10 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
 
             case SCENE_OP_IF_PUZZLE_SOLVED:
                 if (puzzle_solved(st->a)) { pc = st->b; continue; }
+                break;
+
+            case SCENE_OP_IF_DEFEATED: // salta si el último combate acabó en derrota
+                if (player_defeated) { pc = st->a; continue; }
                 break;
 
             case SCENE_OP_ANIM:

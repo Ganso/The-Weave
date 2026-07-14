@@ -9,7 +9,7 @@
 #define ENEMY_ENTITY_ID_BASE 100
 
 // Enemies
-#define MAX_ENEMIES 3
+#define MAX_ENEMIES 5
 #define ENEMY_NONE 254
 #define MAX_SPELLS_PER_ENEMY 2   // huecos de hechizo por clase de enemigo
 

@@ -43,7 +43,8 @@ repite al acabar cada sección:
 1. **Diálogos y quiz**
 2. **Hechizos y puzzles**
 3. **Combate** → menú anidado: **por hechizos** (dos oleadas) o **físico:
-   jabalíes** (melee, Linus sin vara)
+   jabalíes** (melee, Linus sin vara). En ambos, el jugador tiene **5 puntos de
+   vida** por combate; al llegar a cero, mensaje de derrota y reintento.
 4. **Terminar test** → fade + next_scene al dormitorio
 
 ## Qué probar, sección a sección
@@ -86,6 +87,9 @@ repite al acabar cada sección:
       Verificar: alternancia de ataques por recargas, y que el counter solo
       funciona contra el thunder (contra el mordisco: esconderse o comerse el golpe).
 - [x] `combat` dos veces en la misma escena (re-init limpio del FSM).
+- [ ] **Derrota y reintento**: dejarse golpear 5 veces → mensaje "Te han
+      derrotado" y la oleada vuelve a empezar (por oleada: perder en la 2
+      repite solo la 2).
 - [x] Vuelta al hub.
 
 ### 3b. Combate físico: jabalíes (combat/melee.c)
@@ -94,8 +98,8 @@ repite al acabar cada sección:
 - [ ] Al empezar el melee, Linus pierde la vara (cambia el sprite a `linus_norod`)
       y Clio, si estuviera delante, se recoloca andando detrás de él mirando a la
       derecha y se queda inmóvil todo el combate.
-- [ ] Entran **3 jabalíes**: dos por la derecha y uno por la izquierda, a tres
-      alturas, escalonados (~0,7 s).
+- [ ] Entran **5 jabalíes**: tres por la derecha y dos por la izquierda, a
+      distintas alturas, escalonados (~0,7 s).
 - [ ] Los jabalíes **persiguen** a Linus con **pausas aleatorias** (~1 s quietos y
       siguen; con cooldown por enemigo) y, al llegar a su altura, **muerden**
       (anim de colmillos; el daño cae a mitad del ciclo; flash + stun del jugador,
@@ -106,6 +110,8 @@ repite al acabar cada sección:
       sea cual sea, y desde fuera vuelve a la carga. Cooldown entre golpes (~0,5 s).
 - [ ] Al **sexto golpe conectado** (da igual a qué jabalí), todos huyen galopando
       hacia su lado más cercano y desaparecen; termina el combate.
+- [ ] **Derrota y reintento**: recibir 5 mordiscos → mensaje "Te han derrotado"
+      y el combate se reinicia (vuelven a entrar los 5 jabalíes).
 - [ ] Linus recupera la vara (sprite normal) y vuelta al hub.
 
 ### Salida

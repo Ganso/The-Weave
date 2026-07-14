@@ -17,20 +17,23 @@ void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabal�
     player_has_rod = false;
     reinit_character_sprite(CHR_linus);
 
-    // 3 jabalíes fuera de pantalla: dos por la derecha y uno por la izquierda
+    // 5 jabalíes fuera de pantalla: tres por la derecha y dos por la izquierda
     PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);
-    static const s16 boar_spawn[3][2] = {   // {x esquina, y de pies}
+    static const s16 boar_spawn[5][2] = {   // {x esquina, y de pies}
         { SCREEN_WIDTH + 12, 146 },         // derecha, arriba
+        { -60,               152 },         // izquierda
         { SCREEN_WIDTH + 36, 170 },         // derecha, abajo
-        { -60,               158 },         // izquierda, centro
+        { -84,               166 },         // izquierda
+        { SCREEN_WIDTH + 60, 158 },         // derecha, centro
     };
-    for (u16 i = 0; i < 3; i++) {
+    for (u16 i = 0; i < 5; i++) {
         init_enemy(i, ENEMY_CLS_BOAR);
         move_enemy_instant(i, FASTFIX32_FROM_INT(boar_spawn[i][0]),
                            FASTFIX32_FROM_INT(boar_spawn[i][1]));
         show_enemy(i, true);
     }
 
+    player_max_hitpoints = 5;        // vida del jugador en este combate
     melee_combat_run(6, CHR_clio);   // 6 golpes los ahuyentan; Clio espera detrás
 
     // Restaurar la vara: el resto del banco de pruebas la necesita
@@ -55,6 +58,8 @@ void act1_test_ghost2(void)    // Oleada 2: fantasma de TEST con dos hechizos (t
 void act1_test_ghost(void)    // Un WeaverGhost para el combate de prueba (patrón de forest)
 {
     show_or_hide_interface(false);
+
+    player_max_hitpoints = 5;   // vida del jugador en este combate
 
     PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA); // Enemy palette
 

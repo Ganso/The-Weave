@@ -37,6 +37,14 @@ typedef enum
 } CombatState;
 extern CombatState combat_state; // Current combat state
 
+// Vida del jugador durante los combates (por hechizos y físico). Se reinicia a
+// player_max_hitpoints al empezar cada combate; cámbiala antes si un combate
+// concreto necesita otra cifra. Al llegar a 0 se marca player_defeated y el
+// combate en curso termina (el op if_defeated del DSL permite el reintento).
+extern u16 player_max_hitpoints;  // vida inicial de cada combate (5 por defecto)
+extern u16 player_hitpoints;      // vida restante del combate en curso
+extern bool player_defeated;      // el último combate acabó con la vida a 0
+
 // (El contexto de hechizos/notas vive ahora en el motor: spells/spell.c y spells/notes.c)
 
 // Timings
@@ -47,6 +55,7 @@ extern CombatState combat_state; // Current combat state
 
 void combat_init(void); // Start combat phase
 void combat_finish(void); // Finish combat phase
+void combat_abort(void); // Player defeated: release every enemy and close the combat
 void hit_enemy(u8 enemyId, u8 damage); // Hit an enemy
 void hit_player(u8 damage); // Hit the player
 void update_combat(void); // Update combat state,

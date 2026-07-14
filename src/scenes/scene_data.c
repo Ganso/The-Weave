@@ -202,24 +202,34 @@ static const SceneStep act1_test_steps[] = {
     { SCENE_OP_FOLLOW, CHR_clio, 1, 0, 0 }, // 75
     { SCENE_OP_SAY, ACT1_TEST, A1_TEST_COMBAT_MENU, 0, 0 }, // 76
     { SCENE_OP_CHOICE, ACT1_TEST_COMBAT_MENU, 0, 0, 0 }, // 77
-    { SCENE_OP_BRANCH, 1, 90, 0, 0 }, // 78
+    { SCENE_OP_BRANCH, 1, 97, 0, 0 }, // 78
     { SCENE_OP_BRANCH, 2, 18, 0, 0 }, // 79
     { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 80
     { SCENE_OP_SAY, ACT1_TEST, A1_TEST_COMBAT, 1, 0 }, // 81
     { SCENE_OP_CALL, HOOK_ACT1_TEST_GHOST, 0, 0, 0 }, // 82
     { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 83
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_WAVE2, 1, 0 }, // 84
-    { SCENE_OP_CALL, HOOK_ACT1_TEST_GHOST2, 0, 0, 0 }, // 85
-    { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 86
-    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 87
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_VICTORY, 1, 0 }, // 88
-    { SCENE_OP_GOTO, 18, 0, 0, 0 }, // 89
-    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 0, 0, 0 }, // 90
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_MELEE, 1, 0 }, // 91
-    { SCENE_OP_CALL, HOOK_ACT1_TEST_BOARS, 0, 0, 0 }, // 92
-    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 93
-    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_VICTORY, 1, 0 }, // 94
-    { SCENE_OP_GOTO, 18, 0, 0, 0 }, // 95
+    { SCENE_OP_IF_DEFEATED, 86, 0, 0, 0 }, // 84
+    { SCENE_OP_GOTO, 88, 0, 0, 0 }, // 85
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_DEFEAT, 1, 0 }, // 86
+    { SCENE_OP_GOTO, 81, 0, 0, 0 }, // 87
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_WAVE2, 1, 0 }, // 88
+    { SCENE_OP_CALL, HOOK_ACT1_TEST_GHOST2, 0, 0, 0 }, // 89
+    { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 90
+    { SCENE_OP_IF_DEFEATED, 95, 0, 0, 0 }, // 91
+    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 92
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_VICTORY, 1, 0 }, // 93
+    { SCENE_OP_GOTO, 18, 0, 0, 0 }, // 94
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_DEFEAT, 1, 0 }, // 95
+    { SCENE_OP_GOTO, 88, 0, 0, 0 }, // 96
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 0, 0, 0 }, // 97
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_MELEE, 1, 0 }, // 98
+    { SCENE_OP_CALL, HOOK_ACT1_TEST_BOARS, 0, 0, 0 }, // 99
+    { SCENE_OP_IF_DEFEATED, 104, 0, 0, 0 }, // 100
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 101
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_VICTORY, 1, 0 }, // 102
+    { SCENE_OP_GOTO, 18, 0, 0, 0 }, // 103
+    { SCENE_OP_SAY, ACT1_TEST, A1_TEST_DEFEAT, 1, 0 }, // 104
+    { SCENE_OP_GOTO, 99, 0, 0, 0 }, // 105
 };
 
 const SceneScript scenes[] = {
@@ -227,7 +237,7 @@ const SceneScript scenes[] = {
     { "act1_corridor", act1_corridor_steps, 23 },
     { "act1_forest", act1_forest_steps, 36 },
     { "act1_hall", act1_hall_steps, 28 },
-    { "act1_test", act1_test_steps, 96 },
+    { "act1_test", act1_test_steps, 106 },
 };
 
 const u8 scene_count = 5;

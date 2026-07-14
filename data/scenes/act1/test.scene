@@ -128,23 +128,42 @@ choice ACT1_TEST_COMBAT_MENU 0
 branch 1 goto sec_melee
 branch 2 goto hub
 
-# 3a — Por hechizos: dos oleadas (clásico counterable + multi-hechizo)
+# 3a — Por hechizos: dos oleadas (clásico counterable + multi-hechizo).
+# Cada oleada se reintenta si la vida del jugador (5) llega a cero.
 set spells on
+label spl_w1
 say ACT1_TEST A1_TEST_COMBAT sound
 call act1_test_ghost                      # oleada 1: WeaverGhost clásico
 combat
+if_defeated goto spl_w1_fail
+goto spl_w2
+label spl_w1_fail
+say ACT1_TEST A1_TEST_DEFEAT sound
+goto spl_w1
+
+label spl_w2
 say ACT1_TEST A1_TEST_WAVE2 sound
 call act1_test_ghost2                     # oleada 2: TESTGHOST (thunder + mordisco)
 combat
+if_defeated goto spl_w2_fail
 set interface on                          # combat_init la mostró; asegurar estado
 say ACT1_TEST A1_TEST_VICTORY sound
 goto hub
+label spl_w2_fail
+say ACT1_TEST A1_TEST_DEFEAT sound
+goto spl_w2
 
-# 3b — Físico: 3 jabalíes, Linus SIN vara, golpes con A (combat/melee.c)
+# 3b — Físico: 5 jabalíes, Linus SIN vara, golpes con A (combat/melee.c).
+# También con vida 5 y reintento en derrota.
 label sec_melee
 set spells off                            # sin notas: el botón A es el golpe
 say ACT1_TEST A1_TEST_MELEE sound
+label melee_retry
 call act1_test_boars                      # quita la vara, coloca a Clio y corre el melee
+if_defeated goto melee_fail
 set spells on                             # restaurar para el resto del banco
 say ACT1_TEST A1_TEST_VICTORY sound
 goto hub
+label melee_fail
+say ACT1_TEST A1_TEST_DEFEAT sound
+goto melee_retry

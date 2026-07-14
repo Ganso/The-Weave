@@ -171,6 +171,13 @@ locomoción con el enemigo en STATE_WALKING) y resuelve el golpe del jugador con
 (reutiliza STATE_PLAYING_NOTE → ANIM_ACTION). El tutorial "Eso ha dolido" de
 update_character_animations solo salta con combat_state != COMBAT_NO.
 
+**Vida del jugador** (ambos combates): `player_hitpoints` se reinicia a
+`player_max_hitpoints` (5 por defecto; fijarla en el hook del combate si procede) en
+cada `combat_init`/`melee_combat_run`; `hit_player` la resta y a 0 marca
+`player_defeated`. El op `combat` del DSL sale entonces vía `combat_abort()` (libera
+enemigos y cierra), y el melee libera y retorna. El op **`if_defeated goto`** permite
+a la escena mostrar el fallo y reintentar (ver act1_test).
+
 - `spell.c` — motor: `spell_validate` → `spell_player_cast` (counter o launch),
   `spell_update` (cada frame desde `update_combat`), `spell_try_counter`,
   `spell_cancel`, `spell_reject` (feedback + resume del enemigo), y el lado enemigo

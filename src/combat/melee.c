@@ -331,12 +331,14 @@ void melee_combat_run(u8 hits_to_win, u16 companion)
     attack_timer = 0;
     attack_cd = 15;                      // margen para no golpear con el A del diálogo
     prev_joy = JOY_readJoypad(JOY_ALL);
+    player_hitpoints = player_max_hitpoints;   // la vida se reinicia en cada combate
+    player_defeated = false;
 
     bool old_scroll = player_scroll_active;
     player_scroll_active = false;        // arena fija durante el combate
 
     bool running = true;
-    while (running) {
+    while (running && !player_defeated) {
         next_frame(true);
         melee_update_player_attack();
 
@@ -347,10 +349,20 @@ void melee_combat_run(u8 hits_to_win, u16 companion)
         }
     }
 
+    // Derrota: liberar a los que queden; la escena decide el reintento (op if_defeated)
+    if (player_defeated) {
+        for (u16 e = 0; e < MAX_ENEMIES; e++) {
+            if (mb_state[e] != MB_GONE && obj_enemy[e].obj_character.active)
+                release_enemy(e);
+            mb_state[e] = MB_GONE;
+        }
+    }
+
     // Dejar al jugador limpio
     if (obj_character[active_character].state == STATE_PLAYING_NOTE)
         obj_character[active_character].state = STATE_IDLE;
 
     player_scroll_active = old_scroll;
-    dprintf(2, "Melee combat: end (%d hits)", melee_hits);
+    dprintf(2, "Melee combat: end (%d hits, %s)", melee_hits,
+            player_defeated ? "derrota" : "victoria");
 }

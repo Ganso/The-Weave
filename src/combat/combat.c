@@ -10,6 +10,10 @@
 
 CombatState combat_state; // Current combat state
 
+u16 player_max_hitpoints = 5;   // vida inicial de cada combate
+u16 player_hitpoints = 5;       // vida restante del combate en curso
+bool player_defeated;           // el último combate acabó con la vida a 0
+
 // --------------------------------
 // LOCAL HELPERS
 // --------------------------------
@@ -33,6 +37,8 @@ void combat_init(void)
     dprintf(2,"Starting combat phase");
 
     combat_state = COMBAT_STATE_IDLE; // Set initial state;
+    player_hitpoints = player_max_hitpoints;   // la vida se reinicia en cada combate
+    player_defeated = false;
     spell_engine_reset();
 
     player_scroll_active = false; // Disable player scroll during combat
@@ -54,6 +60,21 @@ void combat_finish(void)
     combat_state = COMBAT_NO;
 
     player_scroll_active = true; // Enable player scroll after combat
+}
+
+// Player defeated: release every enemy and close the combat so the scene can
+// show the failure message and retry (op if_defeated of the DSL)
+void combat_abort(void)
+{
+    dprintf(2,"Aborting combat: player defeated");
+
+    for (u8 i = 0; i < MAX_ENEMIES; i++)
+        if (obj_enemy[i].obj_character.active)
+            release_enemy(i);   // también libera el slot de hechizo del lanzador
+
+    spell_engine_reset();
+    obj_character[active_character].state = STATE_IDLE;
+    combat_finish();
 }
 
 // Hit an enemy
@@ -99,6 +120,15 @@ void hit_player(u8 damage)
     if (obj_character[active_character].state == STATE_HIT) return;
 
     dprintf(2,"Player hit for %d damage", damage);
+
+    // Restar vida; a 0 queda marcada la derrota (el bucle de combate la recoge)
+    if (damage >= player_hitpoints) {
+        player_hitpoints = 0;
+        player_defeated = true;
+        dprintf(2,"Player defeated");
+    } else {
+        player_hitpoints -= damage;
+    }
 
     // Flash + sound
     play_sample(snd_player_hurt, sizeof(snd_player_hurt));

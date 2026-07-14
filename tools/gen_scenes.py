@@ -90,6 +90,7 @@ OPS = {
     'anim':         ('SCENE_OP_ANIM',         ['verbatim', 'verbatim']),
     'wait_press':   ('SCENE_OP_WAIT_PRESS',   []),
     'if_puzzle_solved': ('SCENE_OP_IF_PUZZLE_SOLVED', ['puzzletag', 'kwgoto', 'label']),
+    'if_defeated':  ('SCENE_OP_IF_DEFEATED',  ['kwgoto', 'label']),
     # --- Setup declarativo (level/item/palette tienen handler propio abajo) ---
     'limits':       ('SCENE_OP_LIMITS',       ['int', 'int', 'int', 'int']),
     'character':    ('SCENE_OP_CHARACTER',    ['verbatim']),

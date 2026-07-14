@@ -40,11 +40,11 @@ typedef enum {
     SCENE_OP_MOVE         = 7,   // a=chr, b=x, c=y — move_character (bloquea, B5)
     SCENE_OP_MOVE_INSTANT = 8,   // a=chr, b=x, c=y
     SCENE_OP_SHOW         = 9,   // a=chr, b=visible
-    SCENE_OP_LOOK         = 10,  // a=chr, b=direction_right (semántica de look_left)
+    SCENE_OP_LOOK         = 10,  // a=chr, b=left (semántica de look_left: true=izquierda)
     SCENE_OP_WAIT         = 11,  // a=décimas de segundo (frames no-interactivos)
     SCENE_OP_WAIT_SCROLL  = 12,  // a=offset — espera interactiva hasta offset_BGA >= a
     SCENE_OP_SET          = 13,  // a=SCENE_FLAG_*, b=on
-    SCENE_OP_COMBAT       = 14,  // combat_init + espera interactiva hasta COMBAT_NO
+    SCENE_OP_COMBAT       = 14,  // combat_init + espera hasta COMBAT_NO o derrota (combat_abort)
     SCENE_OP_CAST         = 15,  // a=spell, b=reversed — cast scripted (origin NARRATIVE)
     SCENE_OP_WAIT_SPELL   = 16,  // espera a que el slot PLAYER quede libre
     SCENE_OP_ZONE         = 17,  // a=ZONE_* — fija spell_zone
@@ -65,7 +65,8 @@ typedef enum {
     SCENE_OP_ACTIVE       = 31,  // a=chr — active_character = chr
     SCENE_OP_FOLLOW       = 32,  // a=chr, b=on — follow_active_character
     SCENE_OP_ENABLE_SPELL = 33,  // a=SPELL_* — spell_enable (desbloqueo silencioso)
-    SCENE_OP_ITEM         = 34   // a=slot, b=índice en scene_items[] — init_item
+    SCENE_OP_ITEM         = 34,  // a=slot, b=índice en scene_items[] — init_item
+    SCENE_OP_IF_DEFEATED  = 35   // a=stepIdx — salta si el último combate acabó en derrota
 } SceneOp;
 
 // Flags del op SET
