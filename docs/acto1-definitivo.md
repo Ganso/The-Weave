@@ -1835,6 +1835,15 @@ Fundido a negro.
 - En la choza, puede haber dos o tres puntos de inspección opcionales con comentarios sobre hilos quemados, bastidores rotos y símbolos que el gremio jamás copió en sus libros.
 - En el cierre, puede conservarse una breve pausa interactiva antes de subir a la nave, para que el jugador mire por última vez la isla en silencio.
 
+### Estado de las escenas (julio 2026)
+
+Las escenas 4-7 están **montadas y enlazadas** al flujo del juego (`act1_coast` →
+`act1_hut` → `act1_return` → `act1_coast_end`, encadenadas desde el salón) con
+**textos placeholder** ("TEXTO DE LA ESCENA N"): la estructura jugable (combates
+con reintento, curación de Clio, rayo + bastón + patrón Electricidad, espectros,
+cierre con tormenta) ya funciona y solo falta verter el guión en `data/texts.csv`
+y afinar posiciones/tiempos con playtest.
+
 ### Estado de los assets (julio 2026)
 
 Todo lo listado existe en `res/` y compila. Lo marcado *(placeholder)* es arte funcional generado por código, pensado para sustituirse por `.ase` definitivos sin tocar código (mismo archivo, mismas dimensiones y paleta):

@@ -332,6 +332,73 @@ const DialogItem act1_test[] = {
     [A1_TEST_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 
+const DialogItem act1_coast[] = {
+    [A1_COAST_ARRIVE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(llegada a la isla)",
+         "SCENE 4 TEXT|(arrival at the island)"} },
+    [A1_COAST_COMBAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(jabalíes: golpea con A)",
+         "SCENE 4 TEXT|(boars: strike with A)"} },
+    [A1_COAST_HEAL] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(Clio canta Curación)",
+         "SCENE 4 TEXT|(Clio sings Healing)"} },
+    [A1_COAST_ONWARD] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(hacia la choza)",
+         "SCENE 4 TEXT|(towards the hut)"} },
+    [A1_COAST_DEFEAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(derrota: reintento)",
+         "SCENE 4 TEXT|(defeat: retry)"} },
+    [A1_COAST_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogItem act1_hut[] = {
+    [A1_HUT_ENTER] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(entrada en la choza)",
+         "SCENE 5 TEXT|(entering the hut)"} },
+    [A1_HUT_LOOM] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(el telar roto)",
+         "SCENE 5 TEXT|(the broken loom)"} },
+    [A1_HUT_STAFF] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(el bastón)",
+         "SCENE 5 TEXT|(the staff)"} },
+    [A1_HUT_SYSTEM] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(patrón inscrito: Electricidad)",
+         "SCENE 5 TEXT|(pattern inscribed: Lightning)"} },
+    [A1_HUT_LEAVE] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(hay que volver)",
+         "SCENE 5 TEXT|(we must go back)"} },
+    [A1_HUT_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogItem act1_return[] = {
+    [A1_RETURN_START] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(regreso con antorcha)",
+         "SCENE 6 TEXT|(return with the torch)"} },
+    [A1_RETURN_BOARS] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(otra vez los jabalíes)",
+         "SCENE 6 TEXT|(the boars again)"} },
+    [A1_RETURN_DEFEAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(derrota: reintento)",
+         "SCENE 6 TEXT|(defeat: retry)"} },
+    [A1_RETURN_GHOSTS] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(espectros: contrarresta|con SOL SOL FA MI)",
+         "SCENE 6 TEXT|(spectres: counter|with SOL SOL FA MI)"} },
+    [A1_RETURN_DONE] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(la nave a la vista)",
+         "SCENE 6 TEXT|(the ship in sight)"} },
+    [A1_RETURN_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
+const DialogItem act1_coast_end[] = {
+    [A1_END_DIALOG] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 7|(cierre del acto)",
+         "SCENE 7 TEXT|(act closing)"} },
+    [A1_END_FIN] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 7|FIN DEL ACTO 1",
+         "SCENE 7 TEXT|END OF ACT 1"} },
+    [A1_END_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
 const DialogItem *dialogs[] = {
     system_dialog,  // 0
     act1_corridor,  // 1
@@ -339,4 +406,8 @@ const DialogItem *dialogs[] = {
     act1_forest,  // 3
     act1_bedroom,  // 4
     act1_test,  // 5
+    act1_coast,  // 6
+    act1_hut,  // 7
+    act1_return,  // 8
+    act1_coast_end,  // 9
 };

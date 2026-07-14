@@ -141,6 +141,39 @@ enum Act1TestId {
     A1_TEST_COUNT = 32
 };
 
+enum Act1CoastId {
+    A1_COAST_ARRIVE = 0,
+    A1_COAST_COMBAT = 1,
+    A1_COAST_HEAL = 2,
+    A1_COAST_ONWARD = 3,
+    A1_COAST_DEFEAT = 4,
+    A1_COAST_COUNT = 5
+};
+
+enum Act1HutId {
+    A1_HUT_ENTER = 0,
+    A1_HUT_LOOM = 1,
+    A1_HUT_STAFF = 2,
+    A1_HUT_SYSTEM = 3,
+    A1_HUT_LEAVE = 4,
+    A1_HUT_COUNT = 5
+};
+
+enum Act1ReturnId {
+    A1_RETURN_START = 0,
+    A1_RETURN_BOARS = 1,
+    A1_RETURN_DEFEAT = 2,
+    A1_RETURN_GHOSTS = 3,
+    A1_RETURN_DONE = 4,
+    A1_RETURN_COUNT = 5
+};
+
+enum Act1CoastEndId {
+    A1_END_DIALOG = 0,
+    A1_END_FIN = 1,
+    A1_END_COUNT = 2
+};
+
 enum DialogSetId {
     SYSTEM_DIALOG,  // 0
     ACT1_CORRIDOR,  // 1
@@ -148,6 +181,10 @@ enum DialogSetId {
     ACT1_FOREST,  // 3
     ACT1_BEDROOM,  // 4
     ACT1_TEST,  // 5
+    ACT1_COAST,  // 6
+    ACT1_HUT,  // 7
+    ACT1_RETURN,  // 8
+    ACT1_COAST_END,  // 9
     DIALOG_SET_COUNT
 };
 

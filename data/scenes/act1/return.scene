@@ -1,0 +1,56 @@
+# Acto 1 — Escena 6: regreso hacia la nave (guión definitivo)
+# Vuelta nocturna con antorcha: segunda emboscada de jabalíes (melee) y los
+# espectros del Caos (combate por hechizos). Textos placeholder.
+scene act1_return
+
+level forest_bg_tile forest_bg_map forest_front_tile forest_front_map forest_dark_pal 1440 user_right 3
+limits 0 134 275 172
+set rod on                    # ya tiene el bastón (la antorcha es visual)
+character CHR_linus
+character CHR_clio
+active CHR_linus
+move_instant CHR_linus -30 154
+move_instant CHR_clio -60 154
+follow CHR_clio on
+show CHR_linus on
+show CHR_clio on
+enable_spell SPELL_THUNDER
+enable_spell SPELL_LIGHT
+
+call act1_return_start        # antorcha + viento
+say ACT1_RETURN A1_RETURN_START sound
+move CHR_linus 50 154
+
+set movement on
+set scroll on
+set interface on
+wait_scroll 200
+
+# Segunda emboscada de jabalíes (melee, sin notas)
+label ret_boars
+set spells off
+say ACT1_RETURN A1_RETURN_BOARS sound
+call act1_return_boars
+if_defeated goto ret_boars_fail
+
+# Espectros del Caos (combate por hechizos)
+set spells on
+set movement on
+wait_scroll 360
+label ret_ghosts
+say ACT1_RETURN A1_RETURN_GHOSTS sound
+call act1_return_ghosts
+combat
+if_defeated goto ret_ghosts_fail
+
+say ACT1_RETURN A1_RETURN_DONE sound
+call act1_return_end          # se apaga la antorcha
+next_scene act1_coast_end
+
+label ret_boars_fail
+say ACT1_RETURN A1_RETURN_DEFEAT sound
+goto ret_boars
+
+label ret_ghosts_fail
+say ACT1_RETURN A1_RETURN_DEFEAT sound
+goto ret_ghosts

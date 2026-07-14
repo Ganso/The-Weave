@@ -39,4 +39,4 @@ say_response ACT1_HALL A1_HALL_CLIO_IF_XANDER_WANTS sound
 
 wait 20
 
-next_scene act1_forest
+next_scene act1_coast

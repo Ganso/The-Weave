@@ -1,0 +1,25 @@
+# Acto 1 — Escena 7: cierre del acto en la costa, con tormenta (guión definitivo)
+# La nave se prepara para partir. Textos placeholder. FIN DEL ACTO 1.
+scene act1_coast_end
+
+level coast_bg_tile coast_bg_map coast_front_tile coast_front_map coast_storm_pal 640 user_right 3
+limits 0 154 275 204
+set rod on
+character CHR_linus
+character CHR_clio
+active CHR_linus
+move_instant CHR_linus 340 174
+move_instant CHR_clio 370 174
+show CHR_linus on
+show CHR_clio on
+look CHR_linus left           # mirando hacia la nave
+look CHR_clio left
+
+call act1_coast_end_ambient   # olas + motor de vapor
+move CHR_linus 200 174
+move CHR_clio 240 174
+say ACT1_COAST_END A1_END_DIALOG sound
+wait 20
+say ACT1_COAST_END A1_END_FIN sound
+fade_out 120
+hard_reset
