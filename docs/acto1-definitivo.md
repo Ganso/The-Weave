@@ -1835,6 +1835,18 @@ Fundido a negro.
 - En la choza, puede haber dos o tres puntos de inspección opcionales con comentarios sobre hilos quemados, bastidores rotos y símbolos que el gremio jamás copió en sus libros.
 - En el cierre, puede conservarse una breve pausa interactiva antes de subir a la nave, para que el jugador mire por última vez la isla en silencio.
 
+### Estado de los assets (julio 2026)
+
+Todo lo listado existe en `res/` y compila. Lo marcado *(placeholder)* es arte funcional generado por código, pensado para sustituirse por `.ase` definitivos sin tocar código (mismo archivo, mismas dimensiones y paleta):
+
+- **Fondos**: dormitorio, pasillo, salón y bosque (definitivos); **costa** (`coast_bg_*`, paletas `coast_day`/`coast_storm` para las escenas 4 y 7) y **choza del telar** (`hut_bg_*`, con agujero del techo que deja ver luna y estrellas de la capa trasera) *(placeholder)*.
+- **Personajes**: Linus (vara/sin vara/antorcha), Clio, Xander, cisne. **Pendiente**: animaciones de Clio herida/cojeando y cantando Curación (escena 4.3).
+- **Enemigos**: jabalí (con sombra) y WeaverGhost (sirve como espectro del Caos).
+- **Items**: dormitorio del guión definitivo (retrato `bedroom_portrait`, estantería `bedroom_bookshelf`, baúl `bedroom_chest`), choza (bastón `hut_staff` con frame «resonando», bastidor `hut_loom_debris`, hilos `hut_threads`), gaviota `coast_seagull` *(placeholder)*.
+- **FX**: rayo `fx_lightning_sprite` (3 frames, paleta propia) *(placeholder)*. Flashes/resplandores restantes se hacen por paleta, sin asset.
+- **Interfaz**: iconos de patrón `pattern_dark` (Oscuridad) y `pattern_heal` (Curación) *(placeholder)*.
+- **Audio**: SFX ambientales `snd_ambient_waves/wind/seagull/thunder/steam` *(placeholder procedural)*. **Pendiente**: música de las escenas (composición VGM) y jingles de SLEEP/EN_BITE.
+
 ### Tono
 
 El acto debe sonar a fábula oscura: íntimo, melancólico y extraño, con personajes contenidos que rara vez dicen todo lo que piensan, pero lo dejan ver entre líneas.

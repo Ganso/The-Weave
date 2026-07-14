@@ -27,3 +27,10 @@ WAV snd_player_hit_enemy "sfx/player/player_hit_enemy_resampled.wav" XGM2
 
 WAV snd_effect_magic_appear "sfx/effects/effect_magic_appear_resampled.wav" XGM2
 WAV snd_effect_magic_disappear "sfx/effects/effect_magic_appear_inverted_resampled.wav" XGM2
+
+# Ambientes del acto 1 (placeholder procedural)
+WAV snd_ambient_waves "sfx/ambient/ambient_waves_resampled.wav" XGM2
+WAV snd_ambient_wind "sfx/ambient/ambient_wind_resampled.wav" XGM2
+WAV snd_ambient_seagull "sfx/ambient/ambient_seagull_resampled.wav" XGM2
+WAV snd_ambient_thunder "sfx/ambient/ambient_thunder_resampled.wav" XGM2
+WAV snd_ambient_steam "sfx/ambient/ambient_steam_resampled.wav" XGM2

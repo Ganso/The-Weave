@@ -22,5 +22,16 @@ extern const TileSet forest_bg_tile;
 extern const MapDefinition forest_bg_map;
 extern const Palette forest_pal;
 extern const Palette forest_dark_pal;
+extern const TileSet coast_front_tile;
+extern const MapDefinition coast_front_map;
+extern const TileSet coast_bg_tile;
+extern const MapDefinition coast_bg_map;
+extern const Palette coast_pal;
+extern const Palette coast_storm_pal;
+extern const TileSet hut_front_tile;
+extern const MapDefinition hut_front_map;
+extern const TileSet hut_bg_tile;
+extern const MapDefinition hut_bg_map;
+extern const Palette hut_pal;
 
 #endif // _RES_RES_BACKGROUNDS_H_

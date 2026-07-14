@@ -17,3 +17,16 @@ SPRITE item_forest_fg2_sprite "gfx/items/act1/forest_fgsprite2.png" 6 3 BEST
 SPRITE item_forest_fg3_sprite "gfx/items/act1/forest_fgsprite3.png" 6 2 BEST 
 SPRITE item_forest_fg4_sprite "gfx/items/act1/forest_fgsprite4.png" 6 9 BEST 
 SPRITE item_forest_fg5_sprite "gfx/items/act1/forest_fgsprite5.png" 4 22 BEST 
+
+# Act 1 - Scene 1 (bedroom, interacciones del guión definitivo — placeholder)
+SPRITE item_bedroom_portrait "gfx/items/act1/bedroom_portrait.png" 3 4 BEST
+SPRITE item_bedroom_bookshelf "gfx/items/act1/bedroom_bookshelf.png" 6 8 BEST
+SPRITE item_bedroom_chest "gfx/items/act1/bedroom_chest.png" 5 3 BEST
+
+# Act 1 - Scene 4/7 (costa — placeholder)
+SPRITE item_coast_seagull "gfx/items/act1/coast_seagull.png" 3 2 BEST 6
+
+# Act 1 - Scene 5 (choza — placeholder). El bastón tiene 2 frames: normal/resonando
+SPRITE item_hut_staff "gfx/items/act1/hut_staff.png" 5 2 BEST 25
+SPRITE item_hut_loom_debris "gfx/items/act1/hut_loom_debris.png" 6 5 BEST
+SPRITE item_hut_threads "gfx/items/act1/hut_threads.png" 4 3 BEST
