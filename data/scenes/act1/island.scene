@@ -1,0 +1,51 @@
+# Acto 1 — Escena 4b: interior de la isla, bosque de día (guión definitivo)
+# Tras la playa (lugar de paso), aquí atacan por primera vez los jabalíes y
+# Clio canta el patrón de Curación. Textos placeholder pendientes de guión.
+scene act1_island
+
+level forest_bg_tile forest_bg_map forest_front_tile forest_front_map forest_pal 1440 user_right 3
+limits 0 134 275 172
+item 0 item_forest_fg1_sprite PAL0 260 160 0 0 0 0 FORCE_FOREGROUND    # roca 1
+item 1 item_forest_fg5_sprite PAL0 180 0 0 0 0 0 FORCE_FOREGROUND      # árbol (vertical)
+item 2 item_forest_fg2_sprite PAL0 440 152 0 0 0 0 FORCE_FOREGROUND    # roca 2
+item 3 item_forest_fg3_sprite PAL0 880 160 0 0 0 0 FORCE_FOREGROUND    # roca 3
+item 4 item_forest_fg4_sprite PAL0 1400 104 0 0 0 0 FORCE_FOREGROUND   # árbol (grande)
+item 5 item_forest_fg1_sprite PAL0 1050 160 0 0 0 0 FORCE_FOREGROUND   # roca 1
+item 6 item_forest_fg5_sprite PAL0 1270 0 0 0 0 0 FORCE_FOREGROUND     # árbol (vertical)
+set rod off                   # Linus aún no tiene el bastón
+character CHR_linus
+character CHR_clio
+active CHR_linus
+move_instant CHR_linus -30 154
+move_instant CHR_clio -60 154
+follow CHR_clio on
+show CHR_linus on
+show CHR_clio on
+
+say ACT1_ISLAND A1_ISLAND_ENTER sound
+move CHR_linus 50 154
+
+# Caminar hacia el interior
+set movement on
+set scroll on
+wait_scroll 200
+
+# Primer ataque de los jabalíes (reintento si la vida llega a cero)
+label fday_combat
+say ACT1_ISLAND A1_ISLAND_COMBAT sound
+call act1_fday_boars
+if_defeated goto fday_fail
+
+# Clio ha sido herida: canta el patrón de Curación
+say ACT1_ISLAND A1_ISLAND_HEAL sound
+call act1_fday_heal
+
+# Seguir hasta el fondo del bosque: allí aparece la choza
+say ACT1_ISLAND A1_ISLAND_ONWARD sound
+set movement on
+wait_scroll 1110
+next_scene act1_hut
+
+label fday_fail
+say ACT1_ISLAND A1_ISLAND_DEFEAT sound
+goto fday_combat

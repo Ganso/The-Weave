@@ -1842,9 +1842,11 @@ ESCENA N"); solo falta verter el guión en `data/texts.csv` y afinar con playtes
 
 - **Esc. 1**: interacciones nuevas del guión — retrato, estantería y baúl (items
   placeholder en el dormitorio).
-- **Esc. 4** (`act1_coast`): rótulo, gaviota que alza el vuelo, exploración con el
-  **árbol rojo examinable** (A cerca del árbol), combate físico de jabalíes con
-  derrota/reintento y **curación de Clio** (anim placeholder + destello).
+- **Esc. 4** (`act1_coast` → `act1_island`): la playa es un **lugar de paso**
+  (rótulo, gaviota que alza el vuelo, árbol rojo examinable con A); el primer
+  ataque de los jabalíes y la **curación de Clio** ocurren en el tramo de
+  **bosque de día** del interior (`act1_island`, reutiliza el fondo del bosque
+  con su paleta diurna).
 - **Esc. 5** (`act1_hut`): exploración libre con **inspecciones** (bastidor,
   hilos); interactuar con el **bastón** dispara el rayo, la recogida (ANIM_GRAB),
   el patrón **Electricidad** y la primera voz de Bobbin; al salir, la **sombra**

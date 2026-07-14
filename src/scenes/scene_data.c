@@ -49,17 +49,10 @@ static const SceneStep act1_coast_steps[] = {
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 15
     { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 16
     { SCENE_OP_CALL, HOOK_ACT1_COAST_EXPLORE, 0, 0, 0 }, // 17
-    { SCENE_OP_SAY, ACT1_COAST, A1_COAST_COMBAT, 1, 0 }, // 18
-    { SCENE_OP_CALL, HOOK_ACT1_COAST_BOARS, 0, 0, 0 }, // 19
-    { SCENE_OP_IF_DEFEATED, 27, 0, 0, 0 }, // 20
-    { SCENE_OP_SAY, ACT1_COAST, A1_COAST_HEAL, 1, 0 }, // 21
-    { SCENE_OP_CALL, HOOK_ACT1_COAST_HEAL, 0, 0, 0 }, // 22
-    { SCENE_OP_SAY, ACT1_COAST, A1_COAST_ONWARD, 1, 0 }, // 23
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 24
-    { SCENE_OP_WAIT_SCROLL, 318, 0, 0, 0 }, // 25
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 26
-    { SCENE_OP_SAY, ACT1_COAST, A1_COAST_DEFEAT, 1, 0 }, // 27
-    { SCENE_OP_GOTO, 18, 0, 0, 0 }, // 28
+    { SCENE_OP_SAY, ACT1_COAST, A1_COAST_ONWARD, 1, 0 }, // 18
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 19
+    { SCENE_OP_WAIT_SCROLL, 318, 0, 0, 0 }, // 20
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_ISLAND, 0, 0, 0 }, // 21
 };
 
 static const SceneStep act1_coast_end_steps[] = {
@@ -220,8 +213,45 @@ static const SceneStep act1_hut_steps[] = {
     { SCENE_OP_NEXT_SCENE, SCENE_ACT1_RETURN, 0, 0, 0 }, // 29
 };
 
-static const SceneStep act1_return_steps[] = {
+static const SceneStep act1_island_steps[] = {
     { SCENE_OP_LEVEL, 7, 0, 0, 0 }, // 0
+    { SCENE_OP_LIMITS, 0, 134, 275, 172 }, // 1
+    { SCENE_OP_ITEM, 0, 31, 0, 0 }, // 2
+    { SCENE_OP_ITEM, 1, 32, 0, 0 }, // 3
+    { SCENE_OP_ITEM, 2, 33, 0, 0 }, // 4
+    { SCENE_OP_ITEM, 3, 34, 0, 0 }, // 5
+    { SCENE_OP_ITEM, 4, 35, 0, 0 }, // 6
+    { SCENE_OP_ITEM, 5, 36, 0, 0 }, // 7
+    { SCENE_OP_ITEM, 6, 37, 0, 0 }, // 8
+    { SCENE_OP_SET, SCENE_FLAG_ROD, 0, 0, 0 }, // 9
+    { SCENE_OP_CHARACTER, CHR_linus, 0, 0, 0 }, // 10
+    { SCENE_OP_CHARACTER, CHR_clio, 0, 0, 0 }, // 11
+    { SCENE_OP_ACTIVE, CHR_linus, 0, 0, 0 }, // 12
+    { SCENE_OP_MOVE_INSTANT, CHR_linus, -30, 154, 0 }, // 13
+    { SCENE_OP_MOVE_INSTANT, CHR_clio, -60, 154, 0 }, // 14
+    { SCENE_OP_FOLLOW, CHR_clio, 1, 0, 0 }, // 15
+    { SCENE_OP_SHOW, CHR_linus, 1, 0, 0 }, // 16
+    { SCENE_OP_SHOW, CHR_clio, 1, 0, 0 }, // 17
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_ENTER, 1, 0 }, // 18
+    { SCENE_OP_MOVE, CHR_linus, 50, 154, 0 }, // 19
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 20
+    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 21
+    { SCENE_OP_WAIT_SCROLL, 200, 0, 0, 0 }, // 22
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_COMBAT, 1, 0 }, // 23
+    { SCENE_OP_CALL, HOOK_ACT1_FDAY_BOARS, 0, 0, 0 }, // 24
+    { SCENE_OP_IF_DEFEATED, 32, 0, 0, 0 }, // 25
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_HEAL, 1, 0 }, // 26
+    { SCENE_OP_CALL, HOOK_ACT1_FDAY_HEAL, 0, 0, 0 }, // 27
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_ONWARD, 1, 0 }, // 28
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 29
+    { SCENE_OP_WAIT_SCROLL, 1110, 0, 0, 0 }, // 30
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 31
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_DEFEAT, 1, 0 }, // 32
+    { SCENE_OP_GOTO, 23, 0, 0, 0 }, // 33
+};
+
+static const SceneStep act1_return_steps[] = {
+    { SCENE_OP_LEVEL, 8, 0, 0, 0 }, // 0
     { SCENE_OP_LIMITS, 0, 134, 275, 172 }, // 1
     { SCENE_OP_SET, SCENE_FLAG_ROD, 1, 0, 0 }, // 2
     { SCENE_OP_CHARACTER, CHR_linus, 0, 0, 0 }, // 3
@@ -269,7 +299,7 @@ static const SceneStep act1_return_steps[] = {
 };
 
 static const SceneStep act1_test_steps[] = {
-    { SCENE_OP_LEVEL, 8, 0, 0, 0 }, // 0
+    { SCENE_OP_LEVEL, 9, 0, 0, 0 }, // 0
     { SCENE_OP_LIMITS, 0, 134, 275, 172 }, // 1
     { SCENE_OP_SET, SCENE_FLAG_ROD, 1, 0, 0 }, // 2
     { SCENE_OP_CHARACTER, CHR_linus, 0, 0, 0 }, // 3
@@ -379,17 +409,18 @@ static const SceneStep act1_test_steps[] = {
 
 const SceneScript scenes[] = {
     { "act1_bedroom", act1_bedroom_steps, 19 },
-    { "act1_coast", act1_coast_steps, 29 },
+    { "act1_coast", act1_coast_steps, 22 },
     { "act1_coast_end", act1_coast_end_steps, 26 },
     { "act1_corridor", act1_corridor_steps, 23 },
     { "act1_forest", act1_forest_steps, 36 },
     { "act1_hall", act1_hall_steps, 28 },
     { "act1_hut", act1_hut_steps, 30 },
+    { "act1_island", act1_island_steps, 34 },
     { "act1_return", act1_return_steps, 45 },
     { "act1_test", act1_test_steps, 106 },
 };
 
-const u8 scene_count = 9;
+const u8 scene_count = 10;
 
 const PuzzleSeq puzzle_seqs[] = {
     { 3, {SPELL_THUNDER, SPELL_FIRE, SPELL_HIDE}, {0, 0, 0} }, // 0: act1_test:puerta_test
@@ -404,8 +435,9 @@ const SceneLevel scene_levels[] = {
     { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_dark_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 4
     { &historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, &historians_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3 }, // 5
     { &hut_bg_tile, &hut_bg_map, &hut_front_tile, &hut_front_map, &hut_pal, 640, BG_SCRL_USER_RIGHT, 3 }, // 6
-    { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_dark_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 7
-    { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 8
+    { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 7
+    { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_dark_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 8
+    { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 9
 };
 
 const SceneItem scene_items[] = {
@@ -440,6 +472,13 @@ const SceneItem scene_items[] = {
     { &item_hut_staff, PAL0, 430, 150, 0, 0, 0, 0, CALCULATE_DEPTH }, // 28
     { &item_hut_loom_debris, PAL0, 200, 110, 0, 0, 24, 48, CALCULATE_DEPTH }, // 29
     { &item_hut_threads, PAL0, 500, 146, 0, 0, 0, 0, CALCULATE_DEPTH }, // 30
+    { &item_forest_fg1_sprite, PAL0, 260, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 31
+    { &item_forest_fg5_sprite, PAL0, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 32
+    { &item_forest_fg2_sprite, PAL0, 440, 152, 0, 0, 0, 0, FORCE_FOREGROUND }, // 33
+    { &item_forest_fg3_sprite, PAL0, 880, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 34
+    { &item_forest_fg4_sprite, PAL0, 1400, 104, 0, 0, 0, 0, FORCE_FOREGROUND }, // 35
+    { &item_forest_fg1_sprite, PAL0, 1050, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 36
+    { &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 37
 };
 
 const ScenePalette scene_palettes[] = {

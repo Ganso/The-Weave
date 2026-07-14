@@ -49,9 +49,9 @@
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
 - **C plano** sobre **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
 - **Estado**: acto 1 montado con textos/arte placeholder. Flujo narrativo:
-  `act1_bedroom → act1_corridor → act1_hall → act1_coast → act1_hut → act1_return
-  → act1_coast_end → reset` (act1_forest queda fuera del flujo: accesible desde la
-  smoke ROM o HACK_START_SCENE). Pilares del motor:
+  `act1_bedroom → act1_corridor → act1_hall → act1_coast → act1_island → act1_hut
+  → act1_return → act1_coast_end → reset` (act1_forest queda fuera del flujo:
+  accesible desde la smoke ROM o HACK_START_SCENE). Pilares del motor:
   hechizos de dos slots (§5), VM de cutscenes con DSL propio (§6), codegen validado
   desde `data/` (§4), y una smoke ROM para probar hechizos/escenas aislados.
 - Hay una bitácora histórica del rediseño que dio lugar a esta arquitectura en

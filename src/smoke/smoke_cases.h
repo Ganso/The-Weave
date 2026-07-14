@@ -52,6 +52,7 @@ static const SmokeCase smoke_cases[] = {
     {"SCENE act1_hall",           SMOKE_SCENE, 0, false, 0, false, "act1_hall"},
     {"SCENE act1_forest",         SMOKE_SCENE, 0, false, 0, false, "act1_forest"},
     {"SCENE act1_coast",          SMOKE_SCENE, 0, false, 0, false, "act1_coast"},
+    {"SCENE act1_island",         SMOKE_SCENE, 0, false, 0, false, "act1_island"},
     {"SCENE act1_hut",            SMOKE_SCENE, 0, false, 0, false, "act1_hut"},
     {"SCENE act1_return",         SMOKE_SCENE, 0, false, 0, false, "act1_return"},
     {"SCENE act1_coast_end",      SMOKE_SCENE, 0, false, 0, false, "act1_coast_end"},

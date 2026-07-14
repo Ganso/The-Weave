@@ -12,9 +12,10 @@ typedef enum {
     SCENE_ACT1_FOREST = 4,
     SCENE_ACT1_HALL = 5,
     SCENE_ACT1_HUT = 6,
-    SCENE_ACT1_RETURN = 7,
-    SCENE_ACT1_TEST = 8,
-    SCENE_COUNT_TOTAL = 9
+    SCENE_ACT1_ISLAND = 7,
+    SCENE_ACT1_RETURN = 8,
+    SCENE_ACT1_TEST = 9,
+    SCENE_COUNT_TOTAL = 10
 } SceneId;
 
 extern const SceneScript scenes[];

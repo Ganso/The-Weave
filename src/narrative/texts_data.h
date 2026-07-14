@@ -146,12 +146,9 @@ enum Act1TestId {
 
 enum Act1CoastId {
     A1_COAST_ARRIVE = 0,
-    A1_COAST_COMBAT = 1,
-    A1_COAST_HEAL = 2,
-    A1_COAST_ONWARD = 3,
-    A1_COAST_DEFEAT = 4,
-    A1_COAST_TREE = 5,
-    A1_COAST_COUNT = 6
+    A1_COAST_ONWARD = 1,
+    A1_COAST_TREE = 2,
+    A1_COAST_COUNT = 3
 };
 
 enum Act1HutId {
@@ -189,6 +186,15 @@ enum Act1CoastEndId {
     A1_END_COUNT = 4
 };
 
+enum Act1IslandId {
+    A1_ISLAND_ENTER = 0,
+    A1_ISLAND_COMBAT = 1,
+    A1_ISLAND_HEAL = 2,
+    A1_ISLAND_ONWARD = 3,
+    A1_ISLAND_DEFEAT = 4,
+    A1_ISLAND_COUNT = 5
+};
+
 enum DialogSetId {
     SYSTEM_DIALOG,  // 0
     ACT1_CORRIDOR,  // 1
@@ -200,6 +206,7 @@ enum DialogSetId {
     ACT1_HUT,  // 7
     ACT1_RETURN,  // 8
     ACT1_COAST_END,  // 9
+    ACT1_ISLAND,  // 10
     DIALOG_SET_COUNT
 };
 

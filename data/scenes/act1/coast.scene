@@ -1,7 +1,7 @@
 # Acto 1 — Escena 4: costa de la Isla de los Tejedores (guión definitivo)
-# Llegada en la nave de vapor (la gaviota alza el vuelo), exploración con el
-# árbol rojo examinable, primer combate físico (jabalíes, sin vara) y la
-# curación de Clio. Textos placeholder pendientes de guión.
+# Lugar de paso: llegada en la nave de vapor (la gaviota alza el vuelo) y
+# exploración con el árbol rojo examinable, camino del interior de la isla.
+# Textos placeholder pendientes de guión.
 scene act1_coast
 
 level coast_bg_tile coast_bg_map coast_front_tile coast_front_map coast_pal 640 user_right 3
@@ -26,22 +26,8 @@ set movement on
 set scroll on
 call act1_coast_explore
 
-# Combate físico: jabalíes (reintento si la vida llega a cero)
-label coast_combat
-say ACT1_COAST A1_COAST_COMBAT sound
-call act1_coast_boars
-if_defeated goto coast_fail
-
-# Clio ha sido herida: canta el patrón de Curación
-say ACT1_COAST A1_COAST_HEAL sound
-call act1_coast_heal
-
-# Avanzar hasta el final del mapa: allí se ve la choza
+# La playa es un lugar de paso: seguir hacia el interior de la isla
 say ACT1_COAST A1_COAST_ONWARD sound
 set movement on
 wait_scroll 318
-next_scene act1_hut
-
-label coast_fail
-say ACT1_COAST A1_COAST_DEFEAT sound
-goto coast_combat
+next_scene act1_island

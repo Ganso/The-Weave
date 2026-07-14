@@ -7,6 +7,7 @@
 #include "scenes/act1/forest.h"
 #include "scenes/act1/test.h"
 #include "scenes/act1/coast.h"
+#include "scenes/act1/forest_day.h"
 #include "scenes/act1/hut.h"
 #include "scenes/act1/ret.h"
 
@@ -22,8 +23,8 @@ const SceneHook scene_hook_table[HOOK_COUNT] = {
     [HOOK_ACT1_TEST_GHOST2]      = act1_test_ghost2,
     [HOOK_ACT1_TEST_BOARS]       = act1_test_boars,
     [HOOK_ACT1_COAST_ARRIVE]     = act1_coast_arrive,
-    [HOOK_ACT1_COAST_BOARS]      = act1_coast_boars,
-    [HOOK_ACT1_COAST_HEAL]       = act1_coast_heal,
+    [HOOK_ACT1_FDAY_BOARS]       = act1_fday_boars,
+    [HOOK_ACT1_FDAY_HEAL]        = act1_fday_heal,
     [HOOK_ACT1_COAST_END_AMBIENT] = act1_coast_end_ambient,
     [HOOK_ACT1_COAST_EXPLORE]    = act1_coast_explore,
     [HOOK_ACT1_HUT_ITEMS]        = act1_hut_items,

@@ -113,10 +113,7 @@ act1_test,A1_TEST_MELEE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Jabalíes: s
 act1_test,A1_TEST_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Te han derrotado|Reintentando el combate,TEST: You were defeated|Retrying the combat
 act1_test,A1_TEST_BYE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Fin del banco de pruebas|Volviendo al dormitorio,TEST: End of the test bench|Returning to the bedroom
 act1_coast,A1_COAST_ARRIVE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(llegada a la isla),SCENE 4 TEXT|(arrival at the island)
-act1_coast,A1_COAST_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(jabalíes: golpea con A),SCENE 4 TEXT|(boars: strike with A)
-act1_coast,A1_COAST_HEAL,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(Clio canta Curación),SCENE 4 TEXT|(Clio sings Healing)
 act1_coast,A1_COAST_ONWARD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(hacia la choza),SCENE 4 TEXT|(towards the hut)
-act1_coast,A1_COAST_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(derrota: reintento),SCENE 4 TEXT|(defeat: retry)
 act1_hut,A1_HUT_ENTER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(entrada en la choza),SCENE 5 TEXT|(entering the hut)
 act1_hut,A1_HUT_LOOM,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(el telar roto),SCENE 5 TEXT|(the broken loom)
 act1_hut,A1_HUT_STAFF,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(el bastón),SCENE 5 TEXT|(the staff)
@@ -144,3 +141,8 @@ act1_return,A1_RETURN_BOBBIN_DARK,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE
 act1_return,A1_RETURN_RELIT,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(la antorcha reencendida),SCENE 6 TEXT|(the torch relit)
 act1_coast_end,A1_END_PAUSE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 7|(mira la isla por última vez|pulsa A para embarcar),SCENE 7 TEXT|(look at the island one last time|press A to board)
 act1_coast_end,A1_END_BOBBIN,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 7|(susurro de Bobbin:|el hilo ha sido tomado),SCENE 7 TEXT|(Bobbin's whisper:|the thread has been taken)
+act1_island,A1_ISLAND_ENTER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(el bosque de la isla),SCENE 4 TEXT|(the island forest)
+act1_island,A1_ISLAND_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(jabalíes: golpea con A),SCENE 4 TEXT|(boars: strike with A)
+act1_island,A1_ISLAND_HEAL,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(Clio canta Curación),SCENE 4 TEXT|(Clio sings Healing)
+act1_island,A1_ISLAND_ONWARD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(la choza a lo lejos),SCENE 4 TEXT|(the hut in the distance)
+act1_island,A1_ISLAND_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(derrota: reintento),SCENE 4 TEXT|(defeat: retry)

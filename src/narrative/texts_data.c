@@ -345,18 +345,9 @@ const DialogItem act1_coast[] = {
     [A1_COAST_ARRIVE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"TEXTO DE LA ESCENA 4|(llegada a la isla)",
          "SCENE 4 TEXT|(arrival at the island)"} },
-    [A1_COAST_COMBAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
-        {"TEXTO DE LA ESCENA 4|(jabalíes: golpea con A)",
-         "SCENE 4 TEXT|(boars: strike with A)"} },
-    [A1_COAST_HEAL] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
-        {"TEXTO DE LA ESCENA 4|(Clio canta Curación)",
-         "SCENE 4 TEXT|(Clio sings Healing)"} },
     [A1_COAST_ONWARD] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"TEXTO DE LA ESCENA 4|(hacia la choza)",
          "SCENE 4 TEXT|(towards the hut)"} },
-    [A1_COAST_DEFEAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
-        {"TEXTO DE LA ESCENA 4|(derrota: reintento)",
-         "SCENE 4 TEXT|(defeat: retry)"} },
     [A1_COAST_TREE] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"TEXTO DE LA ESCENA 4|(el árbol rojo)",
          "SCENE 4 TEXT|(the red tree)"} },
@@ -444,6 +435,25 @@ const DialogItem act1_coast_end[] = {
     [A1_END_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 
+const DialogItem act1_island[] = {
+    [A1_ISLAND_ENTER] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(el bosque de la isla)",
+         "SCENE 4 TEXT|(the island forest)"} },
+    [A1_ISLAND_COMBAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(jabalíes: golpea con A)",
+         "SCENE 4 TEXT|(boars: strike with A)"} },
+    [A1_ISLAND_HEAL] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(Clio canta Curación)",
+         "SCENE 4 TEXT|(Clio sings Healing)"} },
+    [A1_ISLAND_ONWARD] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(la choza a lo lejos)",
+         "SCENE 4 TEXT|(the hut in the distance)"} },
+    [A1_ISLAND_DEFEAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(derrota: reintento)",
+         "SCENE 4 TEXT|(defeat: retry)"} },
+    [A1_ISLAND_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
+};
+
 const DialogItem *dialogs[] = {
     system_dialog,  // 0
     act1_corridor,  // 1
@@ -455,4 +465,5 @@ const DialogItem *dialogs[] = {
     act1_hut,  // 7
     act1_return,  // 8
     act1_coast_end,  // 9
+    act1_island,  // 10
 };
