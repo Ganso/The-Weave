@@ -84,6 +84,9 @@ Datos que conviene tener a mano aquí:
    `HACK_FAST_DIALOGS`, `HACK_ALL_SPELLS`, `HACK_PLAYER_INVULNERABLE`,
    `HACK_FORCE_LANGUAGE`, `HACK_MUTE_MUSIC/SFX`.
 2. `dprintf(nivel, ...)` (KDebug) solo emite si `nivel <= DEBUG_LEVEL`.
+   La **smoke ROM muestra siempre FPS y carga de CPU** en la esquina superior
+   derecha (VDP_showFPS/VDP_showCPULoad en next_frame, solo con HACK_SMOKE_BUILD):
+   úsala para detectar ralentizaciones.
 3. Si BlastEm congela con *"Read from VDP data port with invalid source"*, el PC
    impreso se localiza en `out/symbol.txt` (ordenado por dirección). **Con LTO la
    atribución del PC puede engañar**; la última traza KDebug suele señalar mejor.
@@ -269,12 +272,18 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
 - **Nunca bloquees con `while(!SPR_isAnimationDone)`** ni la consultes el mismo frame
   de un `SPR_setAnim` (estado obsoleto hasta el siguiente `SPR_update`). Muertes y
   esperas → timers con `modeTimer`.
+- **`SPR_update()` es CARO: exactamente uno por frame** (el de `next_frame`). Jamás
+  lo llames en helpers por-entidad que corren cada frame: recorre y reprocesa TODOS
+  los sprites. Caso real: `update_enemy()` lo llamaba y el melee con 5 jabalíes caía
+  de 50 a ~25 FPS (medido con el contador de la smoke). Los `SPR_set*` son baratos
+  (early-out); acumula cambios y deja que el `SPR_update` global los recoja. En
+  helpers de SETUP/cutscene (poco frecuentes) sí es aceptable.
 - **`SPR_setAnim` con un índice que el sprite no tiene** lee un puntero fuera de rango
-  y congela el VDP (crash constante). Caso concreto: la **vara de Linus**. Pon
-  `set rod on` (o `player_has_rod=true`) ANTES de crear a Linus (`character CHR_linus`
-  / `init_character`): con vara usa `linus_sprite` (tiene `ANIM_ACTION` para tocar
-  notas), sin vara `linus_norod_sprite` (no la tiene). Al revés → cuelgue al tocar la
-  1ª nota.
+  y congela el VDP (crash constante). Caso histórico: la **vara de Linus** (hoy ambos
+  sprites tienen las 6 filas, pero la regla sigue). Pon `set rod on` (o
+  `player_has_rod=true`) ANTES de crear a Linus (`character CHR_linus` /
+  `init_character`) para que elija el sprite correcto; para cambiarlo a mitad de
+  escena usa `reinit_character_sprite`.
 - **Scroll y `new_level`/op `level`**: la anchura y el modo deben cuadrar con el mapa.
   `auto_*` sobre una anchura menor que el mapa deriva cada frame y acaba leyendo fuera
   del tilemap → cuelgue *"unmapped read"*. Fondos anchos → `user_*` con la anchura

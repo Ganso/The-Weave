@@ -33,8 +33,8 @@ typedef enum {
 } MeleeBoarState;
 
 // Parámetros (ajustables con playtest)
-#define MELEE_CHASE_SPEED    FASTFIX32_FROM_INT(1)          // px/frame persiguiendo
-#define MELEE_CHASE_SPEED_Y  (FASTFIX32_FROM_INT(1) / 2)
+#define MELEE_CHASE_SPEED    FASTFIX32_FROM_INT(2)          // px/frame persiguiendo
+#define MELEE_CHASE_SPEED_Y  FASTFIX32_FROM_INT(1)
 #define MELEE_RUN_SPEED      (FASTFIX32_FROM_INT(5) / 2)    // px/frame huyendo
 #define MELEE_ENTER_STAGGER  40    // frames entre la entrada de un enemigo y el siguiente
 #define MELEE_BITE_RANGE_X   34    // alcance del mordisco (entre centros de pies)

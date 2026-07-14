@@ -48,6 +48,12 @@ void next_frame(bool interactive)    // Process next frame with optional interac
     update_sprites_depth();
     SPR_update();
 
+#ifdef HACK_SMOKE_BUILD
+    // Contador de FPS y carga de CPU en la smoke ROM (esquina superior derecha)
+    VDP_showFPS(FALSE, 34, 0);
+    VDP_showCPULoad(34, 1);
+#endif
+
     // Create an RNG seed depending on the number of frames
     frame_counter++;
 
