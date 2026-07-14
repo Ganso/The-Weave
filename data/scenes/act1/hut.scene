@@ -1,39 +1,46 @@
 # Acto 1 — Escena 5: choza de los Tejedores / telar roto (guión definitivo)
-# Exploración, el bastón entre los restos, el rayo y el patrón Electricidad.
+# Exploración libre con puntos de inspección (bastidor, hilos); interactuar
+# con el bastón dispara el rayo, la recogida y el patrón Electricidad. La voz
+# de Bobbin suena por primera vez y una sombra se mueve al salir.
 # Textos placeholder pendientes de guión.
 scene act1_hut
 
 level hut_bg_tile hut_bg_map hut_front_tile hut_front_map hut_pal 640 user_right 3
-limits 0 158 275 204
-item 0 item_hut_staff PAL0 430 168 0 0 0 0 CALCULATE_DEPTH         # el bastón (resonando)
-item 1 item_hut_loom_debris PAL0 200 150 0 0 0 0 FORCE_BACKGROUND  # bastidor roto
-item 2 item_hut_threads PAL0 500 184 0 0 0 0 FORCE_BACKGROUND      # hilos ennegrecidos
+limits 0 134 275 172
+item 0 item_hut_staff PAL0 430 150 0 0 0 0 CALCULATE_DEPTH          # el bastón (resonando)
+item 1 item_hut_loom_debris PAL0 200 110 0 0 24 48 CALCULATE_DEPTH  # bastidor roto
+item 2 item_hut_threads PAL0 500 146 0 0 0 0 CALCULATE_DEPTH        # hilos ennegrecidos
 set rod off
 character CHR_linus
 character CHR_clio
 active CHR_linus
-move_instant CHR_linus -30 176
-move_instant CHR_clio -60 176
+move_instant CHR_linus -30 160
+move_instant CHR_clio -60 160
 follow CHR_clio on
 show CHR_linus on
 show CHR_clio on
 
 say ACT1_HUT A1_HUT_ENTER sound
-move CHR_linus 50 176
-
-# Explorar la choza hasta el fondo (el scroll acaba clavado en 320)
-set movement on
-set scroll on
-wait_scroll 320
+move CHR_linus 50 160
 say ACT1_HUT A1_HUT_LOOM sound
 
-# Cutscene del bastón: acercarse, el rayo, la recogida y el patrón
+# Exploración libre: inspecciones opcionales; tocar el bastón continúa
+set movement on
+set scroll on
+call act1_hut_items
+
+# Cutscene del bastón: el rayo, la recogida y el patrón Electricidad
 set movement off
 set scroll off
-move CHR_linus 80 176
 say ACT1_HUT A1_HUT_STAFF sound
 call act1_hut_lightning
 say ACT1_HUT A1_HUT_SYSTEM sound
 
+# Primera llamada directa de Bobbin
+say ACT1_HUT A1_HUT_BOBBIN sound
+
+# Al salir, algo antiguo despierta entre los restos del telar
 say ACT1_HUT A1_HUT_LEAVE sound
+call act1_hut_shadow
+say ACT1_HUT A1_HUT_SHADOW sound
 next_scene act1_return

@@ -1837,12 +1837,24 @@ Fundido a negro.
 
 ### Estado de las escenas (julio 2026)
 
-Las escenas 4-7 están **montadas y enlazadas** al flujo del juego (`act1_coast` →
-`act1_hut` → `act1_return` → `act1_coast_end`, encadenadas desde el salón) con
-**textos placeholder** ("TEXTO DE LA ESCENA N"): la estructura jugable (combates
-con reintento, curación de Clio, rayo + bastón + patrón Electricidad, espectros,
-cierre con tormenta) ya funciona y solo falta verter el guión en `data/texts.csv`
-y afinar posiciones/tiempos con playtest.
+El acto 1 está **completo mecánicamente** con textos placeholder ("TEXTO DE LA
+ESCENA N"); solo falta verter el guión en `data/texts.csv` y afinar con playtest:
+
+- **Esc. 1**: interacciones nuevas del guión — retrato, estantería y baúl (items
+  placeholder en el dormitorio).
+- **Esc. 4** (`act1_coast`): rótulo, gaviota que alza el vuelo, exploración con el
+  **árbol rojo examinable** (A cerca del árbol), combate físico de jabalíes con
+  derrota/reintento y **curación de Clio** (anim placeholder + destello).
+- **Esc. 5** (`act1_hut`): exploración libre con **inspecciones** (bastidor,
+  hilos); interactuar con el **bastón** dispara el rayo, la recogida (ANIM_GRAB),
+  el patrón **Electricidad** y la primera voz de Bobbin; al salir, la **sombra**
+  se mueve entre los restos.
+- **Esc. 6** (`act1_return`): antorcha + jabalíes (melee, pista de Bobbin al
+  fallar), la **antorcha se apaga** (se inscribe LUZ — *placeholder de Oscuridad
+  hasta que exista SPELL_DARK*), hay que **cantar Luz** para reencenderla, y los
+  **espectros** en combate por hechizos con reintento.
+- **Esc. 7** (`act1_coast_end`): tormenta, **pausa interactiva** (mirar la isla,
+  A para embarcar), susurro de Bobbin y FIN DEL ACTO 1.
 
 ### Estado de los assets (julio 2026)
 

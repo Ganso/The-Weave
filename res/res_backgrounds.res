@@ -26,7 +26,9 @@ MAP forest_bg_map "gfx/backgrounds/act1/forest_bg_back.png" forest_bg_tile BEST
 PALETTE forest_pal "gfx/backgrounds/act1/forest.pal"
 PALETTE forest_dark_pal "gfx/backgrounds/act1/forest_dark.pal"
 
-# Act 1 - Scene 4 y 7 - Costa de la Isla de los Tejedores (placeholder)
+# Act 1 - Scene 4 y 7 - Costa de la Isla de los Tejedores
+# *** PLACEHOLDER (arte generado por código; sustituir por .ase definitivo) ***
+# Área jugable y=0..175: front transparente y back negro por debajo de 176
 TILESET coast_front_tile "gfx/backgrounds/act1/coast_bg_front.png" BEST
 MAP coast_front_map "gfx/backgrounds/act1/coast_bg_front.png" coast_front_tile BEST
 TILESET coast_bg_tile "gfx/backgrounds/act1/coast_bg_back.png" BEST
@@ -34,7 +36,9 @@ MAP coast_bg_map "gfx/backgrounds/act1/coast_bg_back.png" coast_bg_tile BEST
 PALETTE coast_pal "gfx/backgrounds/act1/coast_day.pal"
 PALETTE coast_storm_pal "gfx/backgrounds/act1/coast_storm.pal"
 
-# Act 1 - Scene 5 - Choza de los Tejedores / telar roto (placeholder)
+# Act 1 - Scene 5 - Choza de los Tejedores / telar roto
+# *** PLACEHOLDER (arte generado por código; sustituir por .ase definitivo) ***
+# Área jugable y=0..175: front transparente y back negro por debajo de 176
 TILESET hut_front_tile "gfx/backgrounds/act1/hut_bg_front.png" BEST
 MAP hut_front_map "gfx/backgrounds/act1/hut_bg_front.png" hut_front_tile BEST
 TILESET hut_bg_tile "gfx/backgrounds/act1/hut_bg_back.png" BEST

@@ -235,6 +235,15 @@ const DialogItem act1_bedroom[] = {
     [A1_BEDROOM_TOO_LATE] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"Se me ha hecho demasiado tarde|tengo que ir al salón",
          "It's gotten too late|I need to go the hall"} },
+    [A1_BEDROOM_PORTRAIT_PH] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 1|(retrato familiar)",
+         "SCENE 1 TEXT|(family portrait)"} },
+    [A1_BEDROOM_SHELF_PH] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 1|(estantería)",
+         "SCENE 1 TEXT|(bookshelf)"} },
+    [A1_BEDROOM_CHEST_PH] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 1|(baúl de infancia)",
+         "SCENE 1 TEXT|(childhood chest)"} },
     [A1_BEDROOM_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 
@@ -348,6 +357,9 @@ const DialogItem act1_coast[] = {
     [A1_COAST_DEFEAT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"TEXTO DE LA ESCENA 4|(derrota: reintento)",
          "SCENE 4 TEXT|(defeat: retry)"} },
+    [A1_COAST_TREE] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 4|(el árbol rojo)",
+         "SCENE 4 TEXT|(the red tree)"} },
     [A1_COAST_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 
@@ -367,6 +379,18 @@ const DialogItem act1_hut[] = {
     [A1_HUT_LEAVE] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"TEXTO DE LA ESCENA 5|(hay que volver)",
          "SCENE 5 TEXT|(we must go back)"} },
+    [A1_HUT_DEBRIS] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(bastidor roto)",
+         "SCENE 5 TEXT|(broken frame)"} },
+    [A1_HUT_THREADS] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(hilos ennegrecidos)",
+         "SCENE 5 TEXT|(blackened threads)"} },
+    [A1_HUT_BOBBIN] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(voz de Bobbin:|el tejido se rompe)",
+         "SCENE 5 TEXT|(Bobbin's voice:|the weave is breaking)"} },
+    [A1_HUT_SHADOW] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 5|(algo se ha movido...)",
+         "SCENE 5 TEXT|(something moved...)"} },
     [A1_HUT_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 
@@ -386,6 +410,21 @@ const DialogItem act1_return[] = {
     [A1_RETURN_DONE] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"TEXTO DE LA ESCENA 6|(la nave a la vista)",
          "SCENE 6 TEXT|(the ship in sight)"} },
+    [A1_RETURN_BOBBIN_HINT] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(pista de Bobbin:|reintento del combate)",
+         "SCENE 6 TEXT|(Bobbin's hint:|combat retry)"} },
+    [A1_RETURN_DARKOUT] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(la antorcha se apaga)",
+         "SCENE 6 TEXT|(the torch goes out)"} },
+    [A1_RETURN_SYSTEM_DARK] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(patrón inscrito: Luz|placeholder de Oscuridad)",
+         "SCENE 6 TEXT|(pattern inscribed: Light|Darkness placeholder)"} },
+    [A1_RETURN_BOBBIN_DARK] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(Bobbin: canta la Luz|SOL LA SI DO)",
+         "SCENE 6 TEXT|(Bobbin: sing the Light|SOL LA SI DO)"} },
+    [A1_RETURN_RELIT] = { FACE_clio, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 6|(la antorcha reencendida)",
+         "SCENE 6 TEXT|(the torch relit)"} },
     [A1_RETURN_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 
@@ -396,6 +435,12 @@ const DialogItem act1_coast_end[] = {
     [A1_END_FIN] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"TEXTO DE LA ESCENA 7|FIN DEL ACTO 1",
          "SCENE 7 TEXT|END OF ACT 1"} },
+    [A1_END_PAUSE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 7|(mira la isla por última vez|pulsa A para embarcar)",
+         "SCENE 7 TEXT|(look at the island one last time|press A to board)"} },
+    [A1_END_BOBBIN] = { FACE_swan, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"TEXTO DE LA ESCENA 7|(susurro de Bobbin:|el hilo ha sido tomado)",
+         "SCENE 7 TEXT|(Bobbin's whisper:|the thread has been taken)"} },
     [A1_END_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 

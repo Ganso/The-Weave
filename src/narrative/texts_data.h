@@ -102,7 +102,10 @@ enum Act1BedroomId {
     A1_BEDROOM_TERM_3 = 11,
     A1_BEDROOM_MOTHER_CALLS = 12,
     A1_BEDROOM_TOO_LATE = 13,
-    A1_BEDROOM_COUNT = 14
+    A1_BEDROOM_PORTRAIT_PH = 14,
+    A1_BEDROOM_SHELF_PH = 15,
+    A1_BEDROOM_CHEST_PH = 16,
+    A1_BEDROOM_COUNT = 17
 };
 
 enum Act1TestId {
@@ -147,7 +150,8 @@ enum Act1CoastId {
     A1_COAST_HEAL = 2,
     A1_COAST_ONWARD = 3,
     A1_COAST_DEFEAT = 4,
-    A1_COAST_COUNT = 5
+    A1_COAST_TREE = 5,
+    A1_COAST_COUNT = 6
 };
 
 enum Act1HutId {
@@ -156,7 +160,11 @@ enum Act1HutId {
     A1_HUT_STAFF = 2,
     A1_HUT_SYSTEM = 3,
     A1_HUT_LEAVE = 4,
-    A1_HUT_COUNT = 5
+    A1_HUT_DEBRIS = 5,
+    A1_HUT_THREADS = 6,
+    A1_HUT_BOBBIN = 7,
+    A1_HUT_SHADOW = 8,
+    A1_HUT_COUNT = 9
 };
 
 enum Act1ReturnId {
@@ -165,13 +173,20 @@ enum Act1ReturnId {
     A1_RETURN_DEFEAT = 2,
     A1_RETURN_GHOSTS = 3,
     A1_RETURN_DONE = 4,
-    A1_RETURN_COUNT = 5
+    A1_RETURN_BOBBIN_HINT = 5,
+    A1_RETURN_DARKOUT = 6,
+    A1_RETURN_SYSTEM_DARK = 7,
+    A1_RETURN_BOBBIN_DARK = 8,
+    A1_RETURN_RELIT = 9,
+    A1_RETURN_COUNT = 10
 };
 
 enum Act1CoastEndId {
     A1_END_DIALOG = 0,
     A1_END_FIN = 1,
-    A1_END_COUNT = 2
+    A1_END_PAUSE = 2,
+    A1_END_BOBBIN = 3,
+    A1_END_COUNT = 4
 };
 
 enum DialogSetId {

@@ -29,6 +29,7 @@ SPRITE int_pattern_open "gfx/interface/pattern_open.png" 4 4 BEST
 SPRITE int_pattern_sleep "gfx/interface/pattern_sleep.png" 4 4 BEST 
 SPRITE int_pattern_fire "gfx/interface/pattern_fire.png" 4 4 BEST
 SPRITE int_pattern_light "gfx/interface/pattern_light.png" 4 4 BEST
+# *** PLACEHOLDER: iconos de Oscuridad y Curación generados por código ***
 SPRITE int_pattern_dark "gfx/interface/pattern_dark.png" 4 4 BEST
 SPRITE int_pattern_heal "gfx/interface/pattern_heal.png" 4 4 BEST
 
@@ -39,5 +40,6 @@ SPRITE int_button_A_sprite "gfx/interface/button_A.png" 2 2 BEST 10
 SPRITE int_magin_anim_sprite "gfx/interface/magic_anim.png" 20 1 BEST 10
 IMAGE int_screen_limit "gfx/interface/screen_limit.png" BEST
 
-# FX (placeholder): rayo que cae del cielo (3 frames: fino, brillante, desvanecido)
+# FX: rayo que cae del cielo (3 frames: fino, brillante, desvanecido)
+# *** PLACEHOLDER (sprite generado por código; sustituir por .ase definitivo) ***
 SPRITE fx_lightning_sprite "gfx/interface/fx_lightning.png" 4 18 BEST 4

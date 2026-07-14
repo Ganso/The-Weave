@@ -58,6 +58,35 @@ void act1_return_ghosts(void)    // Espectros del Caos (combate por hechizos)
     player_max_hitpoints = 5;
 }
 
+void act1_return_torch_out(void)    // El viento apaga la antorcha: oscuridad
+{
+    play_sample(snd_ambient_wind, sizeof(snd_ambient_wind));
+    linus_has_torch = false;
+    reinit_character_sprite(CHR_linus);
+    // El patrón queda inscrito (PLACEHOLDER: el guión inscribe Oscuridad con
+    // Luz como reverso; mientras no exista SPELL_DARK se inscribe LUZ, que ya
+    // es invertible en el motor)
+    activate_spell(SPELL_LIGHT);
+}
+
+// Espera interactiva a que el jugador cante LUZ (la antorcha no se
+// reenciende hasta que el patrón suena entero)
+void act1_return_wait_light(void)
+{
+    bool seen = false;
+    while (true) {
+        next_frame(true);
+        if (spell_active_id(SPELL_SLOT_PLAYER) == SPELL_LIGHT) seen = true;
+        else if (seen) return;   // el efecto ha terminado
+    }
+}
+
+void act1_return_torch_relight(void)    // La Luz cantada reenciende la antorcha
+{
+    linus_has_torch = true;
+    reinit_character_sprite(CHR_linus);
+}
+
 void act1_return_end(void)    // Se apaga la antorcha antes de la escena final
 {
     linus_has_torch = false;

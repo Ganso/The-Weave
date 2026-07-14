@@ -1,6 +1,7 @@
 // act1/hut.c — hooks de la choza de los Tejedores (escena 5 del guión).
-// La secuencia está en hut.scene; aquí el momento clave: el rayo cae sobre
-// el bastón, Linus lo recoge (anim GRAB) y se inscribe Electricidad.
+// La secuencia está en hut.scene; aquí la lógica: la exploración con los
+// puntos de inspección, el rayo sobre el bastón (con recogida y patrón
+// Electricidad) y la sombra que se mueve entre los restos al salir.
 
 #include <genesis.h>
 #include "core/core.h"
@@ -9,9 +10,38 @@
 #include "combat/combat.h"
 #include "spells/spells.h"
 #include "interface/interface.h"
+#include "narrative/narrative.h"
 #include "audio/audio.h"
 #include "res_all.h"
 #include "scenes/act1/hut.h"
+
+#define HUT_STAFF_X   430   // x (mundo) del bastón (item 0)
+#define HUT_LOOM_X    350   // x (mundo) del centro del telar roto
+
+// Exploración libre: bastidor (item 1) e hilos (item 2) son inspecciones
+// opcionales; interactuar con el bastón (item 0) dispara la cutscene y sale.
+void act1_hut_items(void)
+{
+    while (true) {
+        switch (last_interacted_item)
+        {
+        case 0: // El bastón: arranca la cutscene del rayo
+            last_interacted_item = ITEM_NONE;
+            return;
+        case 1: // Bastidor roto (texto placeholder)
+            talk_dialog(&dialogs[ACT1_HUT][A1_HUT_DEBRIS], false);
+            last_interacted_item = ITEM_NONE;
+            break;
+        case 2: // Hilos ennegrecidos (texto placeholder)
+            talk_dialog(&dialogs[ACT1_HUT][A1_HUT_THREADS], false);
+            last_interacted_item = ITEM_NONE;
+            break;
+        default:
+            break;
+        }
+        next_frame(true);
+    }
+}
 
 void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electricidad
 {
@@ -21,9 +51,10 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
     reset_character_animations();
     SPR_update();
 
-    // El rayo cae por el agujero del techo sobre el bastón (item 0, ~x110 de pantalla)
+    // El rayo cae por el agujero del techo sobre el bastón (posición según scroll)
+    s16 bolt_x = HUT_STAFF_X - FASTFIX32_TO_INT(offset_BGA) - 12;
     PAL_setPalette(PAL3, fx_lightning_sprite.palette->data, DMA);
-    Sprite *bolt = SPR_addSpriteSafe(&fx_lightning_sprite, 100, 8,
+    Sprite *bolt = SPR_addSpriteSafe(&fx_lightning_sprite, bolt_x, 8,
                                      TILE_ATTR(PAL3, TRUE, false, false));
     play_sample(snd_ambient_thunder, sizeof(snd_ambient_thunder));
 
@@ -53,4 +84,21 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
     reinit_character_sprite(CHR_linus);
 
     activate_spell(SPELL_THUNDER);   // patrón inscrito: Electricidad (jingle + notas)
+}
+
+// Al salir, una sombra se mueve entre los restos del telar (placeholder:
+// la silueta del espectro cruza el fondo un instante)
+void act1_hut_shadow(void)
+{
+    s16 sx = HUT_LOOM_X - FASTFIX32_TO_INT(offset_BGA);
+    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    Sprite *shade = SPR_addSpriteSafe(&weaver_ghost_sprite, sx, 40,
+                                      TILE_ATTR(PAL3, FALSE, false, false));
+    play_sample(snd_effect_magic_disappear, sizeof(snd_effect_magic_disappear));
+    for (u16 i = 0; i < SCREEN_FPS && shade; i++) {
+        SPR_setPosition(shade, sx - i, 40 + (i >> 2));
+        SPR_setVisibility(shade, (i & 2) ? VISIBLE : HIDDEN);   // parpadeo espectral
+        next_frame(false);
+    }
+    if (shade) { SPR_releaseSprite(shade); SPR_update(); }
 }

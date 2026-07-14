@@ -1,25 +1,36 @@
 # Acto 1 — Escena 7: cierre del acto en la costa, con tormenta (guión definitivo)
-# La nave se prepara para partir. Textos placeholder. FIN DEL ACTO 1.
+# Diálogo final, pausa interactiva para mirar la isla por última vez (A para
+# embarcar), susurro de Bobbin y fundido. FIN DEL ACTO 1. Textos placeholder.
 scene act1_coast_end
 
 level coast_bg_tile coast_bg_map coast_front_tile coast_front_map coast_storm_pal 640 user_right 3
-limits 0 154 275 204
+limits 0 134 275 172
 set rod on
 character CHR_linus
 character CHR_clio
 active CHR_linus
-move_instant CHR_linus 340 174
-move_instant CHR_clio 370 174
+move_instant CHR_linus 340 160
+move_instant CHR_clio 370 160
 show CHR_linus on
 show CHR_clio on
 look CHR_linus left           # mirando hacia la nave
 look CHR_clio left
 
 call act1_coast_end_ambient   # olas + motor de vapor
-move CHR_linus 200 174
-move CHR_clio 240 174
+move CHR_linus 210 160
+move CHR_clio 250 160
 say ACT1_COAST_END A1_END_DIALOG sound
-wait 20
+
+# Pausa interactiva: mirar la isla por última vez; A para embarcar
+say ACT1_COAST_END A1_END_PAUSE silent
+set movement on
+wait_press
+set movement off
+
+# Embarque y susurro final de Bobbin
+move CHR_clio 120 152
+move CHR_linus 90 144
+say ACT1_COAST_END A1_END_BOBBIN sound
 say ACT1_COAST_END A1_END_FIN sound
 fade_out 120
 hard_reset

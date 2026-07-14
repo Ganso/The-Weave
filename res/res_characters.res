@@ -5,6 +5,8 @@ SPRITE linus_torch_sprite "gfx/characters/linus_torch.png" 6 8 BEST 4
 SPRITE linus_shadow_sprite "gfx/characters/linus_shadow.png" 6 1 BEST
 
 # Clio
+# Clio: filas 0-1 (idle/walk) definitivas; filas 2-4 (ACTION/MAGIC/HURT)
+# *** PLACEHOLDER (deformaciones del idle como guía; sustituir por .ase) ***
 SPRITE clio_sprite "gfx/characters/clio.png" 4 8 BEST 4 
 SPRITE clio_shadow_sprite "gfx/characters/clio_shadow.png" 4 1 BEST
 
