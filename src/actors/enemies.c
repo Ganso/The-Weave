@@ -63,8 +63,8 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
         break;
     case ENEMY_CLS_BOAR:
         nsprite = &boar_sprite;
-        nsprite_shadow = NULL;
-        drops_shadow=false;
+        nsprite_shadow = &boar_shadow_sprite;
+        drops_shadow=true;
         break;
     default:
         return;
