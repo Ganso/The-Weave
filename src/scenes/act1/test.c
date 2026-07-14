@@ -17,17 +17,21 @@ void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabal�
     player_has_rod = false;
     reinit_character_sprite(CHR_linus);
 
-    // 3 jabalíes por la derecha a tres alturas, fuera de pantalla
+    // 3 jabalíes fuera de pantalla: dos por la derecha y uno por la izquierda
     PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);
-    static const s16 boar_feet_y[3] = {146, 158, 170};
+    static const s16 boar_spawn[3][2] = {   // {x esquina, y de pies}
+        { SCREEN_WIDTH + 12, 146 },         // derecha, arriba
+        { SCREEN_WIDTH + 36, 170 },         // derecha, abajo
+        { -60,               158 },         // izquierda, centro
+    };
     for (u16 i = 0; i < 3; i++) {
         init_enemy(i, ENEMY_CLS_BOAR);
-        move_enemy_instant(i, FASTFIX32_FROM_INT(SCREEN_WIDTH + 12 + i * 24),
-                           FASTFIX32_FROM_INT(boar_feet_y[i]));
+        move_enemy_instant(i, FASTFIX32_FROM_INT(boar_spawn[i][0]),
+                           FASTFIX32_FROM_INT(boar_spawn[i][1]));
         show_enemy(i, true);
     }
 
-    melee_combat_run(3, CHR_clio);   // 3 golpes los ahuyentan; Clio espera detrás
+    melee_combat_run(6, CHR_clio);   // 6 golpes los ahuyentan; Clio espera detrás
 
     // Restaurar la vara: el resto del banco de pruebas la necesita
     player_has_rod = true;

@@ -47,10 +47,15 @@ typedef enum {
 #define MELEE_ATTACK_RANGE_Y 12
 #define MELEE_ATTACK_CD      30    // frames mínimos entre golpes
 #define MELEE_COMPANION_GAP  44    // distancia a la que se coloca el acompañante
+#define MELEE_EXIT_MARGIN    56    // px de pies fuera de pantalla al huir
+#define MELEE_PAUSE_CHANCE   0x7F  // pausa aleatoria: ~1/128 por frame de persecución
+#define MELEE_PAUSE_CD       (SCREEN_FPS * 2)  // frames sin re-pausar tras una pausa
 
 static u8  mb_state[MAX_ENEMIES];
 static u16 mb_timer[MAX_ENEMIES];
-static s16 mb_home_x[MAX_ENEMIES];  // x de pies al empezar: destino de la retirada
+static s16 mb_exit_x[MAX_ENEMIES];  // x de pies destino de la huida en curso (lado más cercano)
+static u16 mb_pause[MAX_ENEMIES];   // pausa aleatoria en curso (frames quieto)
+static u16 mb_pause_cd[MAX_ENEMIES];// cooldown entre pausas aleatorias
 static u16 melee_hits;              // golpes conectados (u16: legible por el driver MCP)
 static u16 attack_timer;            // frames restantes del golpe en curso (0 = ninguno)
 static u16 attack_cd;
@@ -76,31 +81,49 @@ static void melee_stage_companion(u16 companion)
     anim_character(companion, ANIM_IDLE);
 }
 
+// Lado de huida: hacia el borde de pantalla más cercano, sea cual sea
+static s16 melee_nearest_exit_x(u16 e)
+{
+    if (enemy_feet_x(e) < SCREEN_WIDTH / 2) return -MELEE_EXIT_MARGIN;
+    return SCREEN_WIDTH + MELEE_EXIT_MARGIN;
+}
+
 // Mueve un enemigo un paso hacia (tx, ty) de pies, con la animación pedida.
-// Devuelve true si se ha movido (false = bloqueado por colisión o ya llegó).
-static bool melee_step_towards(u16 e, s16 tx, s16 ty, fastfix32 speed_x, fastfix32 speed_y, u8 anim)
+// solid=false ignora la colisión con personajes (huidas: corren "por detrás").
+// Si el paso completo choca, intenta deslizarse por un eje (rodear a Clio).
+// Devuelve true si se ha movido (false = bloqueado del todo o ya llegó).
+static bool melee_step_towards(u16 e, s16 tx, s16 ty, fastfix32 speed_x, fastfix32 speed_y, u8 anim, bool solid)
 {
     Entity *en = &obj_enemy[e].obj_character;
     s16 dx = tx - enemy_feet_x(e);
     s16 dy = ty - enemy_feet_y(e);
 
-    fastfix32 nx = en->x, ny = en->y;
-    if (dx > 0) nx += (speed_x > FASTFIX32_FROM_INT(dx) ? FASTFIX32_FROM_INT(dx) : speed_x);
-    else if (dx < 0) nx -= (speed_x > FASTFIX32_FROM_INT(-dx) ? FASTFIX32_FROM_INT(-dx) : speed_x);
-    if (dy > 0) ny += (speed_y > FASTFIX32_FROM_INT(dy) ? FASTFIX32_FROM_INT(dy) : speed_y);
-    else if (dy < 0) ny -= (speed_y > FASTFIX32_FROM_INT(-dy) ? FASTFIX32_FROM_INT(-dy) : speed_y);
+    fastfix32 sx = 0, sy = 0;
+    if (dx > 0) sx = (speed_x > FASTFIX32_FROM_INT(dx) ? FASTFIX32_FROM_INT(dx) : speed_x);
+    else if (dx < 0) sx = -(speed_x > FASTFIX32_FROM_INT(-dx) ? FASTFIX32_FROM_INT(-dx) : speed_x);
+    if (dy > 0) sy = (speed_y > FASTFIX32_FROM_INT(dy) ? FASTFIX32_FROM_INT(dy) : speed_y);
+    else if (dy < 0) sy = -(speed_y > FASTFIX32_FROM_INT(-dy) ? FASTFIX32_FROM_INT(-dy) : speed_y);
 
-    if (nx == en->x && ny == en->y) return false;   // ya está en el destino
+    if (sx == 0 && sy == 0) return false;           // ya está en el destino
 
-    if (detect_enemy_char_collision(e, FASTFIX32_TO_INT(nx), FASTFIX32_TO_INT(ny)) != CHR_NONE)
-        return false;                               // bloqueado contra un personaje
-
-    en->x = nx;
-    en->y = ny;
-    if (dx != 0) en->flipH = (dx < 0);
-    en->animation = anim;
-    update_enemy(e);
-    return true;
+    // Paso completo, y si choca, deslizamiento por un solo eje
+    fastfix32 dodge = sy ? sy : speed_y;   // esquiva vertical (en ambos sentidos)
+    const fastfix32 tries[4][2] = { {sx, sy}, {sx, 0}, {0, dodge}, {0, -dodge} };
+    for (u16 t = 0; t < 4; t++) {
+        fastfix32 nx = en->x + tries[t][0];
+        fastfix32 ny = en->y + tries[t][1];
+        if (nx == en->x && ny == en->y) continue;
+        if (solid &&
+            detect_enemy_char_collision(e, FASTFIX32_TO_INT(nx), FASTFIX32_TO_INT(ny)) != CHR_NONE)
+            continue;
+        en->x = nx;
+        en->y = ny;
+        if (dx != 0) en->flipH = (dx < 0);
+        en->animation = anim;
+        update_enemy(e);
+        return true;
+    }
+    return false;                                   // bloqueado del todo
 }
 
 // Golpe del jugador: busca el enemigo más cercano DELANTE (según flipH) y a su
@@ -185,8 +208,8 @@ static void melee_update_enemy(u16 e, u8 hits_to_win)
     if (melee_hits >= hits_to_win &&
         mb_state[e] != MB_LEAVE && mb_state[e] != MB_HURT) {
         mb_state[e] = MB_LEAVE;
+        mb_exit_x[e] = melee_nearest_exit_x(e);
         en->state = STATE_WALKING;
-        en->flipH = false;              // hacia la derecha
         en->animation = ANIM_RUN;
     }
 
@@ -213,7 +236,26 @@ static void melee_update_enemy(u16 e, u8 hits_to_win)
             update_enemy(e);
             break;
         }
-        if (!melee_step_towards(e, px, py, MELEE_CHASE_SPEED, MELEE_CHASE_SPEED_Y, ANIM_WALK)) {
+
+        // Pausa aleatoria al acercarse: se queda quieto ~1 s y sigue avanzando,
+        // con un cooldown por enemigo para no encadenar pausas.
+        if (mb_pause[e]) {
+            mb_pause[e]--;
+            en->animation = ANIM_IDLE;
+            update_enemy(e);
+            break;
+        }
+        if (mb_pause_cd[e]) {
+            mb_pause_cd[e]--;
+        } else if ((random() & MELEE_PAUSE_CHANCE) == 0) {
+            mb_pause[e] = SCREEN_FPS - 16 + (random() & 31);   // ~0,7–1,3 s
+            mb_pause_cd[e] = MELEE_PAUSE_CD;
+            en->animation = ANIM_IDLE;
+            update_enemy(e);
+            break;
+        }
+
+        if (!melee_step_towards(e, px, py, MELEE_CHASE_SPEED, MELEE_CHASE_SPEED_Y, ANIM_WALK, true)) {
             en->animation = ANIM_IDLE;  // bloqueado: esperar sin patalear
             update_enemy(e);
         }
@@ -240,24 +282,24 @@ static void melee_update_enemy(u16 e, u8 hits_to_win)
         // update_enemy_animations gestiona el flash y devuelve el estado a IDLE
         if (en->state != STATE_HIT) {
             mb_state[e] = MB_RETREAT;
+            mb_exit_x[e] = melee_nearest_exit_x(e);   // huye hacia el lado más cercano
             en->state = STATE_WALKING;
-            en->flipH = false;          // corre hacia la derecha
             en->animation = ANIM_RUN;
         }
         break;
 
     case MB_RETREAT:
-        if (!melee_step_towards(e, mb_home_x[e], enemy_feet_y(e), MELEE_RUN_SPEED, MELEE_RUN_SPEED, ANIM_RUN)) {
-            mb_state[e] = MB_CHASE;     // llegó a su punto de entrada: vuelve a por Linus
+        if (!melee_step_towards(e, mb_exit_x[e], enemy_feet_y(e),
+                                MELEE_RUN_SPEED, MELEE_RUN_SPEED, ANIM_RUN, false)) {
+            mb_state[e] = MB_CHASE;     // llegó fuera de pantalla: vuelve a por Linus
             en->animation = ANIM_WALK;
         }
         break;
 
     case MB_LEAVE:
-        if (!melee_step_towards(e, mb_home_x[e] + SCREEN_WIDTH, enemy_feet_y(e),
-                                MELEE_RUN_SPEED, MELEE_RUN_SPEED, ANIM_RUN) ||
-            FASTFIX32_TO_INT(en->x) > SCREEN_WIDTH) {
-            release_enemy(e);
+        if (!melee_step_towards(e, mb_exit_x[e], enemy_feet_y(e),
+                                MELEE_RUN_SPEED, MELEE_RUN_SPEED, ANIM_RUN, false)) {
+            release_enemy(e);           // llegó fuera de pantalla: se va del todo
             mb_state[e] = MB_GONE;
         }
         break;
@@ -278,7 +320,8 @@ void melee_combat_run(u8 hits_to_win, u16 companion)
         if (obj_enemy[e].obj_character.active) {
             mb_state[e] = MB_WAIT;
             mb_timer[e] = e * MELEE_ENTER_STAGGER;
-            mb_home_x[e] = enemy_feet_x(e);
+            mb_pause[e] = 0;
+            mb_pause_cd[e] = SCREEN_FPS;   // sin pausas aleatorias nada más entrar
         } else {
             mb_state[e] = MB_GONE;
         }

@@ -89,19 +89,23 @@ repite al acabar cada sección:
 - [x] Vuelta al hub.
 
 ### 3b. Combate físico: jabalíes (combat/melee.c)
-- [ ] Al entrar, Linus pierde la vara (cambia el sprite a `linus_norod`) y Clio,
-      si estuviera delante, se recoloca andando detrás de él mirando a la derecha
-      y se queda inmóvil todo el combate.
-- [ ] Entran **3 jabalíes por la derecha** a tres alturas, escalonados (~0,7 s).
-- [ ] Los jabalíes **persiguen** a Linus y, al llegar a su altura, **muerden**
+- [ ] Al entrar en la sección Combate, **Clio aparece y sigue a Linus** (en ambos
+      combates, para probar cómo se comporta).
+- [ ] Al empezar el melee, Linus pierde la vara (cambia el sprite a `linus_norod`)
+      y Clio, si estuviera delante, se recoloca andando detrás de él mirando a la
+      derecha y se queda inmóvil todo el combate.
+- [ ] Entran **3 jabalíes**: dos por la derecha y uno por la izquierda, a tres
+      alturas, escalonados (~0,7 s).
+- [ ] Los jabalíes **persiguen** a Linus con **pausas aleatorias** (~1 s quietos y
+      siguen; con cooldown por enemigo) y, al llegar a su altura, **muerden**
       (anim de colmillos; el daño cae a mitad del ciclo; flash + stun del jugador,
       sin diálogos: el tutorial "Eso ha dolido" es solo del combate por hechizos).
 - [ ] **Golpe con A** (sin notas: `set spells off`): anim ACTION de Linus; si hay
       un jabalí delante (según hacia dónde mira) y a su altura, recibe el golpe
-      (flash de daño) y **huye galopando a la derecha** hasta su punto de entrada,
-      desde donde vuelve a la carga. Cooldown entre golpes (~0,5 s).
-- [ ] Al **tercer golpe conectado** (da igual a qué jabalí), todos huyen galopando
-      por la derecha y desaparecen; termina el combate.
+      (flash de daño) y **huye galopando hacia el lado de pantalla más cercano**,
+      sea cual sea, y desde fuera vuelve a la carga. Cooldown entre golpes (~0,5 s).
+- [ ] Al **sexto golpe conectado** (da igual a qué jabalí), todos huyen galopando
+      hacia su lado más cercano y desaparecen; termina el combate.
 - [ ] Linus recupera la vara (sprite normal) y vuelta al hub.
 
 ### Salida

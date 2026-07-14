@@ -119,7 +119,10 @@ goto hub
 
 # ----------------------------------------------------------------------------
 # SECCIÓN 3 — Combate: menú anidado (hechizos / físico)
+# Clio acompaña en ambos combates para probar cómo se comporta.
 label sec_combate
+show CHR_clio on
+follow CHR_clio on
 say ACT1_TEST A1_TEST_COMBAT_MENU silent
 choice ACT1_TEST_COMBAT_MENU 0
 branch 1 goto sec_melee

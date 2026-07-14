@@ -165,7 +165,8 @@ actualiza ese FSM.
 
 Aparte existe el **combate físico** (`combat/melee.c`, `melee_combat_run`): cuerpo a
 cuerpo sin hechizos (acto 1 antes de la vara). No toca `combat_state` (queda en
-COMBAT_NO); dirige a los enemigos activos (persiguen/muerden/huyen al ser golpeados,
+COMBAT_NO); dirige a los enemigos activos (persiguen con pausas aleatorias, muerden
+de cerca, y al ser golpeados huyen hacia el lado de pantalla más cercano y vuelven;
 locomoción con el enemigo en STATE_WALKING) y resuelve el golpe del jugador con A
 (reutiliza STATE_PLAYING_NOTE → ANIM_ACTION). El tutorial "Eso ha dolido" de
 update_character_animations solo salta con combat_state != COMBAT_NO.

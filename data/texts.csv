@@ -109,5 +109,5 @@ act1_test,A1_TEST_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Oleada 1: f
 act1_test,A1_TEST_WAVE2,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Oleada 2: fantasma con|DOS hechizos. El @[mordisco@]|NO se puede contrarrestar,TEST Wave 2: ghost with|TWO spells. The @[bite@]|cannot be countered
 act1_test,A1_TEST_VICTORY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Combate superado|Volviendo al menú,TEST: Combat cleared|Back to the menu
 act1_test,A1_TEST_COMBAT_MENU,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¿Qué tipo|de combate?,TEST: Which kind|of combat?
-act1_test,A1_TEST_MELEE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Jabalíes: sin vara.|Pulsa @[A@] para golpear|Tres golpes los ahuyentan,TEST Boars: no rod.|Press @[A@] to strike|Three hits drive them away
+act1_test,A1_TEST_MELEE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Jabalíes: sin vara.|Pulsa @[A@] para golpear|Seis golpes los ahuyentan,TEST Boars: no rod.|Press @[A@] to strike|Six hits drive them away
 act1_test,A1_TEST_BYE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Fin del banco de pruebas|Volviendo al dormitorio,TEST: End of the test bench|Returning to the bedroom
