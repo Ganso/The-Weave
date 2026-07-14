@@ -280,11 +280,12 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   (early-out); acumula cambios y deja que el `SPR_update` global los recoja. En
   helpers de SETUP/cutscene (poco frecuentes) sí es aceptable.
 - **`SPR_setAnim` con un índice que el sprite no tiene** lee un puntero fuera de rango
-  y congela el VDP (crash constante). Caso histórico: la **vara de Linus** (hoy ambos
-  sprites tienen las 6 filas, pero la regla sigue). Pon `set rod on` (o
-  `player_has_rod=true`) ANTES de crear a Linus (`character CHR_linus` /
-  `init_character`) para que elija el sprite correcto; para cambiarlo a mitad de
-  escena usa `reinit_character_sprite`.
+  y congela el VDP (crash constante). Caso histórico: la **vara de Linus** (hoy los
+  tres sprites tienen las 6 filas, pero la regla sigue). Linus tiene TRES formas:
+  antorcha (`linus_has_torch`, override visual) > vara (`player_has_rod`, además
+  puerta de la magia) > sin nada. Fija ambas ANTES de crear a Linus
+  (`character CHR_linus` / `init_character`); para cambiar de forma a mitad de
+  escena usa `reinit_character_sprite` (ver el hook del melee de act1_test).
 - **Scroll y `new_level`/op `level`**: la anchura y el modo deben cuadrar con el mapa.
   `auto_*` sobre una anchura menor que el mapa deriva cada frame y acaba leyendo fuera
   del tilemap → cuelgue *"unmapped read"*. Fondos anchos → `user_*` con la anchura

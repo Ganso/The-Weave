@@ -13,6 +13,7 @@ Entity obj_character[MAX_CHR];         // Array of game characters with their pr
 Sprite *spr_chr[MAX_CHR];             // Array of character sprites
 Sprite *spr_chr_shadow[MAX_CHR];      // Array of character shadow sprites
 u16 active_character;                 // Currently controlled character ID
+bool linus_has_torch;                 // Visual override: Linus carries the torch (sprite linus_torch)
 Entity obj_face[MAX_FACE];            // Array of character face entities for dialogs
 Sprite *spr_face[MAX_FACE];           // Array of character face sprites
 
@@ -50,7 +51,11 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
         switch (nchar)
         {
         case CHR_linus:
-            if (player_has_rod) nsprite = &linus_sprite;
+            // Tres formas de Linus: antorcha > vara > sin nada. La antorcha es
+            // un override VISUAL (linus_has_torch); player_has_rod sigue siendo
+            // la puerta de la magia. Fijar ambas ANTES de init/reinit (trampa §7).
+            if (linus_has_torch) nsprite = &linus_torch_sprite;
+            else if (player_has_rod) nsprite = &linus_sprite;
             else nsprite = &linus_norod_sprite;
             nsprite_shadow = &linus_shadow_sprite;
             speed = FASTFIX32_FROM_INT(3) / 2; // 1.5 px/frame

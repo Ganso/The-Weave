@@ -95,9 +95,10 @@ repite al acabar cada sección:
 ### 3b. Combate físico: jabalíes (combat/melee.c)
 - [ ] Al entrar en la sección Combate, **Clio aparece y sigue a Linus** (en ambos
       combates, para probar cómo se comporta).
-- [ ] Al empezar el melee, Linus pierde la vara (cambia el sprite a `linus_norod`)
-      y Clio, si estuviera delante, se recoloca andando detrás de él mirando a la
-      derecha y se queda inmóvil todo el combate.
+- [ ] Al empezar el melee, Linus pierde la vara y saca la **antorcha** (cambia el
+      sprite a `linus_torch`; el golpe con A es el golpe de antorcha) y Clio, si
+      estuviera delante, se recoloca andando detrás de él mirando a la derecha y
+      se queda inmóvil todo el combate.
 - [ ] Entran **5 jabalíes**: tres por la derecha y dos por la izquierda, a
       distintas alturas, escalonados (~0,7 s).
 - [ ] Los jabalíes **persiguen** a Linus con **pausas aleatorias** (~1 s quietos y

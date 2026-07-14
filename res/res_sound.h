@@ -7,7 +7,7 @@ extern const u8 snd_pattern_hide[32768];
 extern const u8 snd_pattern_open[11264];
 extern const u8 snd_pattern_invalid[6656];
 extern const u8 snd_player_hurt[5120];
-extern const u8 snd_player_hit_enemy[15360];
+extern const u8 snd_player_hit_enemy[5120];
 extern const u8 snd_effect_magic_appear[90368];
 extern const u8 snd_effect_magic_disappear[90368];
 extern const u8 snd_note_mi[1024];

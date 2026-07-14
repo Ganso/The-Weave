@@ -34,6 +34,7 @@ extern Sprite *spr_chr[MAX_CHR];
 extern Sprite *spr_chr_shadow[MAX_CHR];
 extern u16 active_character; // Which character is the active one
 extern bool movement_active; // Can you move ?
+extern bool linus_has_torch; // Visual override: Linus carries the torch (sprite linus_torch)
 
 // Faces
 extern Entity obj_face[MAX_FACE];

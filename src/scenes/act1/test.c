@@ -13,8 +13,9 @@
 
 void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabalíes (melee.c)
 {
-    // Linus pierde la vara para el combate (cambia también su sprite)
+    // Linus pierde la vara y saca la antorcha (cambia también su sprite)
     player_has_rod = false;
+    linus_has_torch = true;
     reinit_character_sprite(CHR_linus);
 
     // 5 jabalíes fuera de pantalla: tres por la derecha y dos por la izquierda
@@ -37,6 +38,7 @@ void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabal�
     melee_combat_run(6, CHR_clio);   // 6 golpes los ahuyentan; Clio espera detrás
 
     // Restaurar la vara: el resto del banco de pruebas la necesita
+    linus_has_torch = false;
     player_has_rod = true;
     reinit_character_sprite(CHR_linus);
 }
