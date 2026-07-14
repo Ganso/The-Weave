@@ -99,6 +99,9 @@ if [ "$MODE" != "clean" ]; then
     python3 tools/gen_texts.py
     python3 tools/gen_choices.py
     python3 tools/gen_scenes.py
+    # WAV al formato del driver (XGM/XGM2): genera los *_resampled.wav que
+    # referencian los .res. Salta los que ya están al día (--force para rehacer).
+    python3 tools/resample_wavs.py
 fi
 
 # --- 3. COMPILACIÓN ---

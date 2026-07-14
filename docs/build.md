@@ -16,6 +16,14 @@
    `scenes/scene_data.*` desde `data/`. Corre en el host porque la imagen Docker
    de SGDK **no incluye python3**. Los generadores validan en FATAL: una
    referencia rota corta el build con archivo:línea.
+   Después, `tools/resample_wavs.py` remuestrea los WAV de `res/sfx/` al formato
+   del driver de sonido (XGM2 → 13300 Hz mono; XGM → 14000; lee `XGM_VERSION` de
+   `src/audio/sound.h`) generando un `<nombre>_resampled.wav` junto a cada
+   fuente — **los `.res` referencian siempre el `_resampled.wav`**, el original
+   es solo la fuente de autoría. Se salta los que están al día (`--force` para
+   rehacerlos, p.ej. tras cambiar de driver); usa `ffmpeg`, pero como los
+   `_resampled.wav` van commiteados, un equipo sin ffmpeg puede compilar
+   mientras no añada WAV nuevos.
 2. **Compilación (contenedor)** — imagen oficial `ghcr.io/stephane-d/sgdk:latest`
    con `--entrypoint make GDK=/sgdk -f /src/Makefile`. El `Makefile` del repo
    **envuelve** el `makefile.gen` de SGDK, que ya hace wildcard de todo `src/`

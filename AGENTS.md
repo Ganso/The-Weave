@@ -63,9 +63,10 @@
 ```
 
 El **pipeline y la configuración personal** están documentados en `docs/build.md`. En
-una línea: codegen python en el **host** (la imagen Docker de SGDK no trae python3) →
-`make` dentro de `ghcr.io/stephane-d/sgdk:latest` → backup rotatorio → MiSTer (FTP) o
-BlastEm. Salida `out/rom.bin` (~896 KB con padding). La smoke ROM
+una línea: codegen python en el **host** (la imagen Docker de SGDK no trae python3;
+incluye `tools/resample_wavs.py`, que genera los `*_resampled.wav` de `res/sfx/` que
+referencian los .res — 13300 Hz mono para XGM2) → `make` dentro de
+`ghcr.io/stephane-d/sgdk:latest` → backup rotatorio → MiSTer (FTP) o BlastEm. Salida `out/rom.bin` (~896 KB con padding). La smoke ROM
 (`build-theweave.sh smoke`, `out/smoke.bin`) y el checklist de playtest están en
 `docs/testing.md`.
 

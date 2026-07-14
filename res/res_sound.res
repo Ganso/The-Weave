@@ -15,15 +15,15 @@ XGM2 snd_enemy_note_si "sfx/notes/11-Enemy_note_B3.vgm"
 XGM2 snd_enemy_note_do "sfx/notes/12-Enemy_note_C4.vgm"
 
 # Pattern effect sounds
-WAV snd_pattern_thunder "sfx/patterns/pattern_thunder.wav" XGM2
-WAV snd_pattern_hide "sfx/patterns/pattern_hide.wav" XGM2
-WAV snd_pattern_open "sfx/patterns/pattern_open.wav" XGM2
-WAV snd_pattern_invalid "sfx/patterns/pattern_invalid.wav" XGM2
+WAV snd_pattern_thunder "sfx/patterns/pattern_thunder_resampled.wav" XGM2
+WAV snd_pattern_hide "sfx/patterns/pattern_hide_resampled.wav" XGM2
+WAV snd_pattern_open "sfx/patterns/pattern_open_resampled.wav" XGM2
+WAV snd_pattern_invalid "sfx/patterns/pattern_invalid_resampled.wav" XGM2
 
-WAV snd_player_hurt "sfx/player/player_hurt.wav" XGM2
-WAV snd_player_hit_enemy "sfx/player/player_hit_enemy.wav" XGM2
+WAV snd_player_hurt "sfx/player/player_hurt_resampled.wav" XGM2
+WAV snd_player_hit_enemy "sfx/player/player_hit_enemy_resampled.wav" XGM2
 
 # Other effects
 
-WAV snd_effect_magic_appear "sfx/effects/effect_magic_appear.wav" XGM2
-WAV snd_effect_magic_disappear "sfx/effects/effect_magic_appear_inverted.wav" XGM2
+WAV snd_effect_magic_appear "sfx/effects/effect_magic_appear_resampled.wav" XGM2
+WAV snd_effect_magic_disappear "sfx/effects/effect_magic_appear_inverted_resampled.wav" XGM2
