@@ -40,9 +40,17 @@ const ChoiceItem act1_test_choice[] = {
     {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
 };
 
+const ChoiceItem act1_test_combat_menu[] = {
+    {FACE_linus, SIDE_RIGHT, DEFAULT_CHOICE_TIME, 3,
+        {{ "Por hechizos", "Físico: jabalíes", "Volver"},
+        { "By spells", "Physical: boars", "Back"}}},
+    {0, SIDE_LEFT, DEFAULT_TALK_TIME, 0, {{NULL}}} // Terminator
+};
+
 const ChoiceItem *choices[] = {
     act1_hall_choice,   // 0
     act1_test_hub,   // 1
     act1_test_quiz,   // 2
     act1_test_choice,   // 3
+    act1_test_combat_menu,   // 4
 };

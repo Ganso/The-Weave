@@ -134,8 +134,10 @@ enum Act1TestId {
     A1_TEST_COMBAT = 25,
     A1_TEST_WAVE2 = 26,
     A1_TEST_VICTORY = 27,
-    A1_TEST_BYE = 28,
-    A1_TEST_COUNT = 29
+    A1_TEST_COMBAT_MENU = 28,
+    A1_TEST_MELEE = 29,
+    A1_TEST_BYE = 30,
+    A1_TEST_COUNT = 31
 };
 
 enum DialogSetId {

@@ -42,7 +42,8 @@ repite al acabar cada sección:
 
 1. **Diálogos y quiz**
 2. **Hechizos y puzzles**
-3. **Combate** (dos oleadas)
+3. **Combate** → menú anidado: **por hechizos** (dos oleadas) o **físico:
+   jabalíes** (melee, Linus sin vara)
 4. **Terminar test** → fade + next_scene al dormitorio
 
 ## Qué probar, sección a sección
@@ -86,6 +87,22 @@ repite al acabar cada sección:
       funciona contra el thunder (contra el mordisco: esconderse o comerse el golpe).
 - [x] `combat` dos veces en la misma escena (re-init limpio del FSM).
 - [x] Vuelta al hub.
+
+### 3b. Combate físico: jabalíes (combat/melee.c)
+- [ ] Al entrar, Linus pierde la vara (cambia el sprite a `linus_norod`) y Clio,
+      si estuviera delante, se recoloca andando detrás de él mirando a la derecha
+      y se queda inmóvil todo el combate.
+- [ ] Entran **3 jabalíes por la derecha** a tres alturas, escalonados (~0,7 s).
+- [ ] Los jabalíes **persiguen** a Linus y, al llegar a su altura, **muerden**
+      (anim de colmillos; el daño cae a mitad del ciclo; flash + stun del jugador,
+      sin diálogos: el tutorial "Eso ha dolido" es solo del combate por hechizos).
+- [ ] **Golpe con A** (sin notas: `set spells off`): anim ACTION de Linus; si hay
+      un jabalí delante (según hacia dónde mira) y a su altura, recibe el golpe
+      (flash de daño) y **huye galopando a la derecha** hasta su punto de entrada,
+      desde donde vuelve a la carga. Cooldown entre golpes (~0,5 s).
+- [ ] Al **tercer golpe conectado** (da igual a qué jabalí), todos huyen galopando
+      por la derecha y desaparecen; termina el combate.
+- [ ] Linus recupera la vara (sprite normal) y vuelta al hub.
 
 ### Salida
 - [x] Opción 4 del hub: despedida + fade_out + next_scene al dormitorio.

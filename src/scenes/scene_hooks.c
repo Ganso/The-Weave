@@ -17,4 +17,5 @@ const SceneHook scene_hook_table[HOOK_COUNT] = {
     [HOOK_ACT1_FOREST_ENEMIES]   = act1_forest_enemies,
     [HOOK_ACT1_TEST_GHOST]       = act1_test_ghost,
     [HOOK_ACT1_TEST_GHOST2]      = act1_test_ghost2,
+    [HOOK_ACT1_TEST_BOARS]       = act1_test_boars,
 };

@@ -27,6 +27,9 @@
 #define ANIM_ACTION     2
 #define ANIM_MAGIC      3
 #define ANIM_HURT       4
+// La fila 5 es opcional y su significado depende del sprite:
+#define ANIM_RUN        5   // jabalí: galope (huida/retirada del combate físico)
+#define ANIM_GRAB       5   // Linus sin vara: coger el bastón
 
 // Global variables
 extern bool movement_active;

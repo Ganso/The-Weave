@@ -49,7 +49,9 @@ void combat_init(void); // Start combat phase
 void combat_finish(void); // Finish combat phase
 void hit_enemy(u8 enemyId, u8 damage); // Hit an enemy
 void hit_player(u8 damage); // Hit the player
-void update_combat(void); // Update combat state, 
+void update_combat(void); // Update combat state,
 void set_idle(void); // Set combat state to idle or none, depending on the context
+
+#include "combat/melee.h"   // combate físico (sin hechizos): melee_combat_run
 
 #endif

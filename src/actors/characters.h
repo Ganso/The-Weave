@@ -41,6 +41,7 @@ extern Sprite *spr_face[MAX_FACE];
 
 void init_character(u16 nchar); // Initialize a character
 void release_character(u16 nchar); // Release a character from memory
+void reinit_character_sprite(u16 nchar); // Re-create the sprite keeping the pose (e.g. Linus with/without rod)
 void init_face(u16 nface); // Initialize a face
 void release_face(u16 nface); // Release a face from memory
 void update_character(u16 nchar); // Update a character based on every parameter

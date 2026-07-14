@@ -294,6 +294,11 @@ void update_enemy_animations(void)
                 }
                 break;
 
+            case STATE_WALKING:
+                // Locomoción dirigida desde fuera (combate físico, melee.c):
+                // el módulo que mueve al enemigo es dueño de su animación.
+                break;
+
             case STATE_PATTERN_EFFECT:
                 if (en->animation != ANIM_MAGIC)
                     anim_enemy(e, ANIM_MAGIC);

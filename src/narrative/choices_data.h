@@ -9,6 +9,7 @@
 #define ACT1_TEST_HUB    1
 #define ACT1_TEST_QUIZ    2
 #define ACT1_TEST_CHOICE    3
+#define ACT1_TEST_COMBAT_MENU    4
 
 extern const ChoiceItem *choices[];
 

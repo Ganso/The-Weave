@@ -115,7 +115,8 @@ src/
                    (next_frame/timing), config.h (SCREEN_WIDTH…), hack.h (toggles)
   world/         → background: scroll, límites, new_level/end_level
   actors/        → entity (base común), characters, enemies, items, collisions
-  combat/        → FSM de combate (combat_state, hit_enemy/hit_player)
+  combat/        → FSM de combate por hechizos (combat_state, hit_enemy/hit_player)
+                   + melee.c (combate físico sin hechizos: jabalíes, golpe con A)
   spells/        → motor de hechizos (§5)
   narrative/     → texts, texts_data (GEN), choices_data (GEN), dialogs, encode
   scenes/        → scene_vm (intérprete), scene_hooks (enum+tabla), scene_data (GEN),
@@ -161,6 +162,13 @@ Botón→nota: A→MI B→FA C→SOL X→LA Y→SI Z→DO.
 (`SPELL_SLOT_PLAYER`, `SPELL_SLOT_ENEMY`), ambos pueden estar vivos a la vez (para el
 counter). `combat_state` (combat.c) es el director del combate; el motor consulta y
 actualiza ese FSM.
+
+Aparte existe el **combate físico** (`combat/melee.c`, `melee_combat_run`): cuerpo a
+cuerpo sin hechizos (acto 1 antes de la vara). No toca `combat_state` (queda en
+COMBAT_NO); dirige a los enemigos activos (persiguen/muerden/huyen al ser golpeados,
+locomoción con el enemigo en STATE_WALKING) y resuelve el golpe del jugador con A
+(reutiliza STATE_PLAYING_NOTE → ANIM_ACTION). El tutorial "Eso ha dolido" de
+update_character_animations solo salta con combat_state != COMBAT_NO.
 
 - `spell.c` — motor: `spell_validate` → `spell_player_cast` (counter o launch),
   `spell_update` (cada frame desde `update_combat`), `spell_try_counter`,
@@ -290,7 +298,7 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   → metalibrerías (ese orden) → headers específicos que no estén en ninguna meta
   (p.ej. `scenes/act1/<escena>.h`, o `spells/player_spells.h` que solo usa spell.c).
   - Los **`.h` NO incluyen metalibrerías**: solo sus dependencias mínimas de tipos.
-  - `combat` e `interface` son de un solo header → ese header YA es su metalibrería.
+  - `combat` e `interface` usan `combat.h`/`interface.h` como metalibrería (combat.h reexporta melee.h).
 - Sin `malloc/free`: pools y buffers estáticos. `static const` para datos inmutables.
   Funciones privadas `static`. Guards `_FOO_H_`. Designated initializers en tablas.
 - **No editar generados**: `narrative/texts_data.*`, `narrative/choices_data.*`,

@@ -6,3 +6,4 @@ act1_test_quiz,0,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Tres,Cuatro,Cinco,,Th
 act1_test_quiz,1,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Trueno,Fuego,Esconderse,,Thunder,Fire,Hide,
 act1_test_quiz,2,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,"Sí, seguro","No, repetir pregunta",,,"Yes, sure","No, ask again",,
 act1_test_choice,0,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Puzzle básico,Puzzle con invertido,,,Basic puzzle,Puzzle with reversed,,
+act1_test_combat_menu,0,FACE_linus,SIDE_RIGHT,DEFAULT_CHOICE_TIME,Por hechizos,Físico: jabalíes,Volver,,By spells,Physical: boars,Back,

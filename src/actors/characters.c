@@ -140,6 +140,28 @@ void release_character(u16 nchar)    // Free character sprite resources but keep
     SPR_update();
 }
 
+// Re-crea el sprite de un personaje conservando su pose. Necesario cuando cambia
+// el SpriteDefinition que le corresponde: p.ej. Linus con/sin vara — fijar
+// player_has_rod ANTES de llamar (misma trampa de la vara que en init_character).
+void reinit_character_sprite(u16 nchar)
+{
+    if (!obj_character[nchar].active) return;
+
+    fastfix32 x = obj_character[nchar].x;
+    fastfix32 y = obj_character[nchar].y;
+    bool flip    = obj_character[nchar].flipH;
+    bool visible = obj_character[nchar].visible;
+
+    release_character(nchar);
+    init_character(nchar);   // sd==NULL tras release → reelige sprite y resetea la entidad
+
+    obj_character[nchar].x = x;
+    obj_character[nchar].y = y;
+    obj_character[nchar].flipH = flip;
+    update_character(nchar);
+    show_character(nchar, visible);
+}
+
 void init_face(u16 nface)    // Create new character face sprite for dialogs
 {
     u8 npal = PAL1;
@@ -469,11 +491,16 @@ void update_character_animations(void) {
             else {
                 obj_character[chr].state = STATE_IDLE;
                 anim_character(chr, ANIM_IDLE);
-                show_or_hide_interface(false);
-                talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_THAT_HURTS], false); // (ES) "Eso ha dolido" - (EN) "That hurts"
-                talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_TRY_HIDE_OR_THUNDER], false); // (ES) "Puedo probar a esconderme|o tratar de invocar|al trueno" - (EN) "I could try to hide|or attempt to summon|the thunder"
-                show_or_hide_interface(true);       
+                // Tutorial del combate por hechizos (forest). Solo ahí: en el
+                // combate físico (melee.c, combat_state==COMBAT_NO) el consejo
+                // no aplica y los diálogos bloqueantes congelarían el combate.
+                if (combat_state != COMBAT_NO) {
+                    show_or_hide_interface(false);
+                    talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_THAT_HURTS], false); // (ES) "Eso ha dolido" - (EN) "That hurts"
+                    talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_TRY_HIDE_OR_THUNDER], false); // (ES) "Puedo probar a esconderme|o tratar de invocar|al trueno" - (EN) "I could try to hide|or attempt to summon|the thunder"
+                    show_or_hide_interface(true);
                 }
+            }
             break;
             default:
                 break;

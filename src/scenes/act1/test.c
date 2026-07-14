@@ -5,10 +5,34 @@
 #include "core/core.h"
 #include "world/world.h"
 #include "actors/actors.h"
+#include "combat/combat.h"
 #include "spells/spells.h"
 #include "interface/interface.h"
 #include "res_all.h"
 #include "scenes/act1/test.h"
+
+void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabalíes (melee.c)
+{
+    // Linus pierde la vara para el combate (cambia también su sprite)
+    player_has_rod = false;
+    reinit_character_sprite(CHR_linus);
+
+    // 3 jabalíes por la derecha a tres alturas, fuera de pantalla
+    PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);
+    static const s16 boar_feet_y[3] = {146, 158, 170};
+    for (u16 i = 0; i < 3; i++) {
+        init_enemy(i, ENEMY_CLS_BOAR);
+        move_enemy_instant(i, FASTFIX32_FROM_INT(SCREEN_WIDTH + 12 + i * 24),
+                           FASTFIX32_FROM_INT(boar_feet_y[i]));
+        show_enemy(i, true);
+    }
+
+    melee_combat_run(3, CHR_clio);   // 3 golpes los ahuyentan; Clio espera detrás
+
+    // Restaurar la vara: el resto del banco de pruebas la necesita
+    player_has_rod = true;
+    reinit_character_sprite(CHR_linus);
+}
 
 void act1_test_ghost2(void)    // Oleada 2: fantasma de TEST con dos hechizos (thunder + mordisco)
 {

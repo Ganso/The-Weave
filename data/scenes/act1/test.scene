@@ -118,8 +118,14 @@ say ACT1_TEST A1_TEST_PUZZLE_OK sound
 goto hub
 
 # ----------------------------------------------------------------------------
-# SECCIÓN 3 — Combate: dos oleadas (clásico counterable + multi-hechizo)
+# SECCIÓN 3 — Combate: menú anidado (hechizos / físico)
 label sec_combate
+say ACT1_TEST A1_TEST_COMBAT_MENU silent
+choice ACT1_TEST_COMBAT_MENU 0
+branch 1 goto sec_melee
+branch 2 goto hub
+
+# 3a — Por hechizos: dos oleadas (clásico counterable + multi-hechizo)
 set spells on
 say ACT1_TEST A1_TEST_COMBAT sound
 call act1_test_ghost                      # oleada 1: WeaverGhost clásico
@@ -128,5 +134,14 @@ say ACT1_TEST A1_TEST_WAVE2 sound
 call act1_test_ghost2                     # oleada 2: TESTGHOST (thunder + mordisco)
 combat
 set interface on                          # combat_init la mostró; asegurar estado
+say ACT1_TEST A1_TEST_VICTORY sound
+goto hub
+
+# 3b — Físico: 3 jabalíes, Linus SIN vara, golpes con A (combat/melee.c)
+label sec_melee
+set spells off                            # sin notas: el botón A es el golpe
+say ACT1_TEST A1_TEST_MELEE sound
+call act1_test_boars                      # quita la vara, coloca a Clio y corre el melee
+set spells on                             # restaurar para el resto del banco
 say ACT1_TEST A1_TEST_VICTORY sound
 goto hub
