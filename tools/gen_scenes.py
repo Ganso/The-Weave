@@ -301,9 +301,10 @@ def parse_scene(path, all_scene_names):
                 if val not in ('on', 'off'): die(f"{where}: se esperaba on/off, no '{val}'")
                 args.append('1' if val == 'on' else '0')
             elif spec_base == 'leftright':
-                # semántica de look_left(chr, direction_right): right=true
+                # look_left(chr, bool left): left=true — verificado en emulador
+                # (el arte base de los personajes mira a la derecha; flipH=true lo espeja)
                 if val not in ('left', 'right'): die(f"{where}: se esperaba left/right, no '{val}'")
-                args.append('1' if val == 'right' else '0')
+                args.append('1' if val == 'left' else '0')
             elif spec_base == 'sound':
                 if val not in ('sound', 'silent'): die(f"{where}: se esperaba sound/silent, no '{val}'")
                 args.append('1' if val == 'sound' else '0')

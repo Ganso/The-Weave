@@ -9,8 +9,8 @@ character CHR_clio
 character CHR_xander
 move_instant CHR_clio 40 174
 move_instant CHR_linus 360 164
-look CHR_clio left        # Clio mira a la derecha (flipH=false)
-look CHR_linus right      # Linus mira a la izquierda (flipH=true)
+look CHR_clio right       # hacia Linus, que entra por la derecha
+look CHR_linus left       # hacia Clio
 show CHR_clio on
 show CHR_linus on
 
@@ -21,7 +21,7 @@ say_cluster ACT1_HALL A1_HALL_CLIO_LATE sound
 # Entrada de Xander
 move CHR_clio 100 154
 wait 10
-look CHR_clio right
+look CHR_clio left        # hacia Xander, que entra por la izquierda
 move_instant CHR_xander -30 174
 show CHR_xander on
 move CHR_xander 40 174
@@ -34,7 +34,7 @@ say_cluster ACT1_HALL A1_HALL_XANDER_FATHER_WANTED sound
 
 # Segundo choice
 choice ACT1_HALL_CHOICE 1
-look CHR_clio left
+look CHR_clio right       # hacia Linus
 say_response ACT1_HALL A1_HALL_CLIO_IF_XANDER_WANTS sound
 
 wait 20
