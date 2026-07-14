@@ -10,6 +10,11 @@
 
 static u8 cursor = 0;
 
+// Filas visibles del menú: de la 3 a la 3+MENU_ROWS-1, dentro de la zona
+// segura NTSC. Ya hay más casos que filas: la lista es una VENTANA deslizante
+// que sigue al cursor (los "..." indican que hay más arriba/abajo).
+#define MENU_ROWS 17
+
 static void menu_draw(void)
 {
     VDP_clearPlane(BG_A, true);
@@ -17,13 +22,22 @@ static void menu_draw(void)
     VDP_drawText("THE WEAVE - SMOKE TEST", 8, 0);
     VDP_drawText("UP-DOWN + A", 14, 1); // la fuente del juego reserva / < > ^ # $ % * para glifos ES
 
-    // Menú desde la fila 3: con ~18 casos, la última cae hacia la fila 20, dentro
-    // de la zona segura NTSC (empezar más abajo perdía filas por overscan)
-    for (u16 i = 0; i < SMOKE_CASE_COUNT; i++)
+    u16 first = 0;
+    if (SMOKE_CASE_COUNT > MENU_ROWS && cursor >= MENU_ROWS - 1)
     {
-        VDP_drawText(smoke_cases[i].name, 4, 3 + i);
-        VDP_drawText((i == cursor) ? "-" : " ", 2, 3 + i); // cursor: '-' es seguro ('>' saldría como ¡ en la fuente ES)
+        first = cursor - (MENU_ROWS - 1);
+        u16 max_first = SMOKE_CASE_COUNT - MENU_ROWS;
+        if (first > max_first) first = max_first;
     }
+
+    if (first > 0) VDP_drawText("...", 4, 2);
+    for (u16 row = 0; row < MENU_ROWS && first + row < SMOKE_CASE_COUNT; row++)
+    {
+        u16 i = first + row;
+        VDP_drawText(smoke_cases[i].name, 4, 3 + row);
+        VDP_drawText((i == cursor) ? "-" : " ", 2, 3 + row); // cursor: '-' es seguro ('>' saldría como ¡ en la fuente ES)
+    }
+    if (first + MENU_ROWS < SMOKE_CASE_COUNT) VDP_drawText("...", 4, 3 + MENU_ROWS);
 }
 
 static u16 wait_joy_press(void)    // Espera una pulsación nueva (con release previo)
