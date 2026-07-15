@@ -20,6 +20,7 @@ show CHR_clio on
 say ACT1_COAST A1_COAST_ARRIVE sound      # rótulo: "Isla desconocida / Un mes más tarde"
 call act1_coast_arrive        # olas + la gaviota sale volando
 move CHR_linus 60 160
+say_cluster ACT1_COAST A1_COAST_L1 sound  # "Por fin llegamos, madre..." 
 
 # Exploración: el árbol rojo se puede examinar con A (hook con zona por posición)
 set movement on

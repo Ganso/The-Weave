@@ -19,7 +19,7 @@ show CHR_clio on
 enable_spell SPELL_THUNDER
 
 call act1_return_start        # antorcha encendida + viento
-say ACT1_RETURN A1_RETURN_START sound
+say_cluster ACT1_RETURN A1_RETURN_START sound   # "Camina. No mires atrás"
 move CHR_linus 50 154
 
 set movement on
@@ -30,31 +30,34 @@ wait_scroll 200
 # FASE 1 — Segunda emboscada de jabalíes (melee, sin notas)
 label ret_boars
 set spells off
-say ACT1_RETURN A1_RETURN_BOARS sound
+say_cluster ACT1_RETURN A1_RETURN_BOARS sound   # "Otra vez" / "Pues aprende deprisa"
 call act1_return_boars
 if_defeated goto ret_boars_fail
+say_cluster ACT1_RETURN A1_RETURN_BOARS_WON sound  # "Han retrocedido..."
 
 # FASE 2 — El viento apaga la antorcha: patrón inscrito y hay que cantar Luz
 say ACT1_RETURN A1_RETURN_DARKOUT sound
 call act1_return_torch_out    # antorcha fuera + activate_spell LUZ
-say ACT1_RETURN A1_RETURN_SYSTEM_DARK sound
-say ACT1_RETURN A1_RETURN_BOBBIN_DARK sound
+say_cluster ACT1_RETURN A1_RETURN_SYSTEM_DARK sound   # "Patrón inscrito: Oscuridad..."
+say_cluster ACT1_RETURN A1_RETURN_LISTENS sound       # "Que el bastón escuche..."
+say_cluster ACT1_RETURN A1_RETURN_BOBBIN_DARK sound   # pista de Bobbin + notas
 set spells on
 set movement on
 call act1_return_wait_light   # espera a que el jugador cante LUZ
 call act1_return_torch_relight
-say ACT1_RETURN A1_RETURN_RELIT sound
+say_cluster ACT1_RETURN A1_RETURN_RELIT sound   # "La llama... La he cantado" 
 
 # FASE 3 — Espectros del Caos (combate por hechizos)
 set movement on
 wait_scroll 360
 label ret_ghosts
-say ACT1_RETURN A1_RETURN_GHOSTS sound
+say_cluster ACT1_RETURN A1_RETURN_GHOSTS sound  # "¿Qué son esas cosas?" + pista del counter
 call act1_return_ghosts
 combat
 if_defeated goto ret_ghosts_fail
+say_cluster ACT1_RETURN A1_RETURN_GHOSTS_WON sound  # "Se han ido / Se han retirado"
 
-say ACT1_RETURN A1_RETURN_DONE sound
+say_cluster ACT1_RETURN A1_RETURN_DONE sound    # la nave a la vista
 call act1_return_end          # se apaga la antorcha para la escena final
 next_scene act1_coast_end
 

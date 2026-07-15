@@ -22,7 +22,7 @@ follow CHR_clio on
 show CHR_linus on
 show CHR_clio on
 
-say ACT1_ISLAND A1_ISLAND_ENTER sound
+say_cluster ACT1_ISLAND A1_ISLAND_ENTER sound   # "Todo parece quieto..."
 move CHR_linus 50 154
 
 # Caminar hacia el interior
@@ -32,16 +32,17 @@ wait_scroll 200
 
 # Primer ataque de los jabalíes (reintento si la vida llega a cero)
 label fday_combat
-say ACT1_ISLAND A1_ISLAND_COMBAT sound
+say_cluster ACT1_ISLAND A1_ISLAND_COMBAT sound   # "¡Madre, detrás!"
 call act1_fday_boars
 if_defeated goto fday_fail
 
-# Clio ha sido herida: canta el patrón de Curación
-say ACT1_ISLAND A1_ISLAND_HEAL sound
+# Clio ha sido mordida: Linus le pide que cante el patrón de Curación
+say_cluster ACT1_ISLAND A1_ISLAND_HURT sound     # "¡Madre! Estás herida..."
 call act1_fday_heal
+say_cluster ACT1_ISLAND A1_ISLAND_HEALED sound   # "Ya estoy mejor..." (la charla sobre la magia)
 
 # Seguir hasta el fondo del bosque: allí aparece la choza
-say ACT1_ISLAND A1_ISLAND_ONWARD sound
+say_cluster ACT1_ISLAND A1_ISLAND_ONWARD sound   # "¿Padre aprendió Curación...?" ... "Una choza" 
 set movement on
 wait_scroll 1110
 next_scene act1_hut

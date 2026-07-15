@@ -19,7 +19,7 @@ look CHR_clio left
 call act1_coast_end_ambient   # olas + motor de vapor
 move CHR_linus 210 160
 move CHR_clio 250 160
-say ACT1_COAST_END A1_END_DIALOG sound
+say_cluster ACT1_COAST_END A1_END_DIALOG sound  # el cierre del acto
 
 # Pausa interactiva: mirar la isla por última vez; A para embarcar
 say ACT1_COAST_END A1_END_PAUSE silent
@@ -30,7 +30,7 @@ set movement off
 # Embarque y susurro final de Bobbin
 move CHR_clio 120 152
 move CHR_linus 90 144
-say ACT1_COAST_END A1_END_BOBBIN sound
+say_cluster ACT1_COAST_END A1_END_BOBBIN sound  # el susurro final
 say ACT1_COAST_END A1_END_FIN sound
 fade_out 120
 hard_reset

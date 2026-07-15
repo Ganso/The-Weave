@@ -46,13 +46,14 @@ static const SceneStep act1_coast_steps[] = {
     { SCENE_OP_SAY, ACT1_COAST, A1_COAST_ARRIVE, 1, 0 }, // 12
     { SCENE_OP_CALL, HOOK_ACT1_COAST_ARRIVE, 0, 0, 0 }, // 13
     { SCENE_OP_MOVE, CHR_linus, 60, 160, 0 }, // 14
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 15
-    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 16
-    { SCENE_OP_CALL, HOOK_ACT1_COAST_EXPLORE, 0, 0, 0 }, // 17
-    { SCENE_OP_SAY, ACT1_COAST, A1_COAST_ONWARD, 1, 0 }, // 18
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 19
-    { SCENE_OP_WAIT_SCROLL, 318, 0, 0, 0 }, // 20
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_ISLAND, 0, 0, 0 }, // 21
+    { SCENE_OP_SAY_CLUSTER, ACT1_COAST, A1_COAST_L1, 1, 0 }, // 15
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 16
+    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 17
+    { SCENE_OP_CALL, HOOK_ACT1_COAST_EXPLORE, 0, 0, 0 }, // 18
+    { SCENE_OP_SAY, ACT1_COAST, A1_COAST_ONWARD, 1, 0 }, // 19
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 20
+    { SCENE_OP_WAIT_SCROLL, 318, 0, 0, 0 }, // 21
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_ISLAND, 0, 0, 0 }, // 22
 };
 
 static const SceneStep act1_coast_end_steps[] = {
@@ -71,14 +72,14 @@ static const SceneStep act1_coast_end_steps[] = {
     { SCENE_OP_CALL, HOOK_ACT1_COAST_END_AMBIENT, 0, 0, 0 }, // 12
     { SCENE_OP_MOVE, CHR_linus, 210, 160, 0 }, // 13
     { SCENE_OP_MOVE, CHR_clio, 250, 160, 0 }, // 14
-    { SCENE_OP_SAY, ACT1_COAST_END, A1_END_DIALOG, 1, 0 }, // 15
+    { SCENE_OP_SAY_CLUSTER, ACT1_COAST_END, A1_END_DIALOG, 1, 0 }, // 15
     { SCENE_OP_SAY, ACT1_COAST_END, A1_END_PAUSE, 0, 0 }, // 16
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 17
     { SCENE_OP_WAIT_PRESS, 0, 0, 0, 0 }, // 18
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 0, 0, 0 }, // 19
     { SCENE_OP_MOVE, CHR_clio, 120, 152, 0 }, // 20
     { SCENE_OP_MOVE, CHR_linus, 90, 144, 0 }, // 21
-    { SCENE_OP_SAY, ACT1_COAST_END, A1_END_BOBBIN, 1, 0 }, // 22
+    { SCENE_OP_SAY_CLUSTER, ACT1_COAST_END, A1_END_BOBBIN, 1, 0 }, // 22
     { SCENE_OP_SAY, ACT1_COAST_END, A1_END_FIN, 1, 0 }, // 23
     { SCENE_OP_FADE_OUT, 120, 0, 0, 0 }, // 24
     { SCENE_OP_HARD_RESET, 0, 0, 0, 0 }, // 25
@@ -195,22 +196,23 @@ static const SceneStep act1_hut_steps[] = {
     { SCENE_OP_FOLLOW, CHR_clio, 1, 0, 0 }, // 11
     { SCENE_OP_SHOW, CHR_linus, 1, 0, 0 }, // 12
     { SCENE_OP_SHOW, CHR_clio, 1, 0, 0 }, // 13
-    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_ENTER, 1, 0 }, // 14
+    { SCENE_OP_SAY_CLUSTER, ACT1_HUT, A1_HUT_ENTER, 1, 0 }, // 14
     { SCENE_OP_MOVE, CHR_linus, 50, 160, 0 }, // 15
-    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_LOOM, 1, 0 }, // 16
+    { SCENE_OP_SAY_CLUSTER, ACT1_HUT, A1_HUT_LOOM, 1, 0 }, // 16
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 17
     { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 18
     { SCENE_OP_CALL, HOOK_ACT1_HUT_ITEMS, 0, 0, 0 }, // 19
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 0, 0, 0 }, // 20
     { SCENE_OP_SET, SCENE_FLAG_SCROLL, 0, 0, 0 }, // 21
-    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_STAFF, 1, 0 }, // 22
+    { SCENE_OP_SAY_CLUSTER, ACT1_HUT, A1_HUT_STAFF, 1, 0 }, // 22
     { SCENE_OP_CALL, HOOK_ACT1_HUT_LIGHTNING, 0, 0, 0 }, // 23
-    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_SYSTEM, 1, 0 }, // 24
-    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_BOBBIN, 1, 0 }, // 25
-    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_LEAVE, 1, 0 }, // 26
-    { SCENE_OP_CALL, HOOK_ACT1_HUT_SHADOW, 0, 0, 0 }, // 27
-    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_SHADOW, 1, 0 }, // 28
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_RETURN, 0, 0, 0 }, // 29
+    { SCENE_OP_SAY_CLUSTER, ACT1_HUT, A1_HUT_SYSTEM, 1, 0 }, // 24
+    { SCENE_OP_SAY_CLUSTER, ACT1_HUT, A1_HUT_AWED, 1, 0 }, // 25
+    { SCENE_OP_SAY_CLUSTER, ACT1_HUT, A1_HUT_BOBBIN, 1, 0 }, // 26
+    { SCENE_OP_SAY_CLUSTER, ACT1_HUT, A1_HUT_LEAVE, 1, 0 }, // 27
+    { SCENE_OP_CALL, HOOK_ACT1_HUT_SHADOW, 0, 0, 0 }, // 28
+    { SCENE_OP_SAY, ACT1_HUT, A1_HUT_SHADOW, 1, 0 }, // 29
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_RETURN, 0, 0, 0 }, // 30
 };
 
 static const SceneStep act1_island_steps[] = {
@@ -232,22 +234,23 @@ static const SceneStep act1_island_steps[] = {
     { SCENE_OP_FOLLOW, CHR_clio, 1, 0, 0 }, // 15
     { SCENE_OP_SHOW, CHR_linus, 1, 0, 0 }, // 16
     { SCENE_OP_SHOW, CHR_clio, 1, 0, 0 }, // 17
-    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_ENTER, 1, 0 }, // 18
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_ENTER, 1, 0 }, // 18
     { SCENE_OP_MOVE, CHR_linus, 50, 154, 0 }, // 19
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 20
     { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 21
     { SCENE_OP_WAIT_SCROLL, 200, 0, 0, 0 }, // 22
-    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_COMBAT, 1, 0 }, // 23
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_COMBAT, 1, 0 }, // 23
     { SCENE_OP_CALL, HOOK_ACT1_FDAY_BOARS, 0, 0, 0 }, // 24
-    { SCENE_OP_IF_DEFEATED, 32, 0, 0, 0 }, // 25
-    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_HEAL, 1, 0 }, // 26
+    { SCENE_OP_IF_DEFEATED, 33, 0, 0, 0 }, // 25
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HURT, 1, 0 }, // 26
     { SCENE_OP_CALL, HOOK_ACT1_FDAY_HEAL, 0, 0, 0 }, // 27
-    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_ONWARD, 1, 0 }, // 28
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 29
-    { SCENE_OP_WAIT_SCROLL, 1110, 0, 0, 0 }, // 30
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 31
-    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_DEFEAT, 1, 0 }, // 32
-    { SCENE_OP_GOTO, 23, 0, 0, 0 }, // 33
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HEALED, 1, 0 }, // 28
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_ONWARD, 1, 0 }, // 29
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 30
+    { SCENE_OP_WAIT_SCROLL, 1110, 0, 0, 0 }, // 31
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 32
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_DEFEAT, 1, 0 }, // 33
+    { SCENE_OP_GOTO, 23, 0, 0, 0 }, // 34
 };
 
 static const SceneStep act1_return_steps[] = {
@@ -264,38 +267,41 @@ static const SceneStep act1_return_steps[] = {
     { SCENE_OP_SHOW, CHR_clio, 1, 0, 0 }, // 10
     { SCENE_OP_ENABLE_SPELL, SPELL_THUNDER, 0, 0, 0 }, // 11
     { SCENE_OP_CALL, HOOK_ACT1_RETURN_START, 0, 0, 0 }, // 12
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_START, 1, 0 }, // 13
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_START, 1, 0 }, // 13
     { SCENE_OP_MOVE, CHR_linus, 50, 154, 0 }, // 14
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 15
     { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 16
     { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 17
     { SCENE_OP_WAIT_SCROLL, 200, 0, 0, 0 }, // 18
     { SCENE_OP_SET, SCENE_FLAG_SPELLS, 0, 0, 0 }, // 19
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_BOARS, 1, 0 }, // 20
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_BOARS, 1, 0 }, // 20
     { SCENE_OP_CALL, HOOK_ACT1_RETURN_BOARS, 0, 0, 0 }, // 21
-    { SCENE_OP_IF_DEFEATED, 41, 0, 0, 0 }, // 22
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DARKOUT, 1, 0 }, // 23
-    { SCENE_OP_CALL, HOOK_ACT1_RETURN_TORCH_OUT, 0, 0, 0 }, // 24
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_SYSTEM_DARK, 1, 0 }, // 25
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_BOBBIN_DARK, 1, 0 }, // 26
-    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 27
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 28
-    { SCENE_OP_CALL, HOOK_ACT1_RETURN_WAIT_LIGHT, 0, 0, 0 }, // 29
-    { SCENE_OP_CALL, HOOK_ACT1_RETURN_TORCH_RELIGHT, 0, 0, 0 }, // 30
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_RELIT, 1, 0 }, // 31
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 32
-    { SCENE_OP_WAIT_SCROLL, 360, 0, 0, 0 }, // 33
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_GHOSTS, 1, 0 }, // 34
-    { SCENE_OP_CALL, HOOK_ACT1_RETURN_GHOSTS, 0, 0, 0 }, // 35
-    { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 36
-    { SCENE_OP_IF_DEFEATED, 43, 0, 0, 0 }, // 37
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DONE, 1, 0 }, // 38
-    { SCENE_OP_CALL, HOOK_ACT1_RETURN_END, 0, 0, 0 }, // 39
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_COAST_END, 0, 0, 0 }, // 40
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_BOBBIN_HINT, 1, 0 }, // 41
-    { SCENE_OP_GOTO, 19, 0, 0, 0 }, // 42
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DEFEAT, 1, 0 }, // 43
-    { SCENE_OP_GOTO, 34, 0, 0, 0 }, // 44
+    { SCENE_OP_IF_DEFEATED, 44, 0, 0, 0 }, // 22
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_BOARS_WON, 1, 0 }, // 23
+    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DARKOUT, 1, 0 }, // 24
+    { SCENE_OP_CALL, HOOK_ACT1_RETURN_TORCH_OUT, 0, 0, 0 }, // 25
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_SYSTEM_DARK, 1, 0 }, // 26
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_LISTENS, 1, 0 }, // 27
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_BOBBIN_DARK, 1, 0 }, // 28
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 29
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 30
+    { SCENE_OP_CALL, HOOK_ACT1_RETURN_WAIT_LIGHT, 0, 0, 0 }, // 31
+    { SCENE_OP_CALL, HOOK_ACT1_RETURN_TORCH_RELIGHT, 0, 0, 0 }, // 32
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_RELIT, 1, 0 }, // 33
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 34
+    { SCENE_OP_WAIT_SCROLL, 360, 0, 0, 0 }, // 35
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_GHOSTS, 1, 0 }, // 36
+    { SCENE_OP_CALL, HOOK_ACT1_RETURN_GHOSTS, 0, 0, 0 }, // 37
+    { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 38
+    { SCENE_OP_IF_DEFEATED, 46, 0, 0, 0 }, // 39
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_GHOSTS_WON, 1, 0 }, // 40
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_DONE, 1, 0 }, // 41
+    { SCENE_OP_CALL, HOOK_ACT1_RETURN_END, 0, 0, 0 }, // 42
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_COAST_END, 0, 0, 0 }, // 43
+    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_BOBBIN_HINT, 1, 0 }, // 44
+    { SCENE_OP_GOTO, 19, 0, 0, 0 }, // 45
+    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DEFEAT, 1, 0 }, // 46
+    { SCENE_OP_GOTO, 36, 0, 0, 0 }, // 47
 };
 
 static const SceneStep act1_test_steps[] = {
@@ -409,14 +415,14 @@ static const SceneStep act1_test_steps[] = {
 
 const SceneScript scenes[] = {
     { "act1_bedroom", act1_bedroom_steps, 19 },
-    { "act1_coast", act1_coast_steps, 22 },
+    { "act1_coast", act1_coast_steps, 23 },
     { "act1_coast_end", act1_coast_end_steps, 26 },
     { "act1_corridor", act1_corridor_steps, 23 },
     { "act1_forest", act1_forest_steps, 36 },
     { "act1_hall", act1_hall_steps, 28 },
-    { "act1_hut", act1_hut_steps, 30 },
-    { "act1_island", act1_island_steps, 34 },
-    { "act1_return", act1_return_steps, 45 },
+    { "act1_hut", act1_hut_steps, 31 },
+    { "act1_island", act1_island_steps, 35 },
+    { "act1_return", act1_return_steps, 48 },
     { "act1_test", act1_test_steps, 106 },
 };
 

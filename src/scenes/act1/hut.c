@@ -28,11 +28,11 @@ void act1_hut_items(void)
         case 0: // El bastón: arranca la cutscene del rayo
             last_interacted_item = ITEM_NONE;
             return;
-        case 1: // Bastidor roto (texto placeholder)
-            talk_dialog(&dialogs[ACT1_HUT][A1_HUT_DEBRIS], false);
+        case 1: // Bastidor roto ("Mira esos marcos...")
+            talk_cluster(&dialogs[ACT1_HUT][A1_HUT_DEBRIS], false);
             last_interacted_item = ITEM_NONE;
             break;
-        case 2: // Hilos ennegrecidos (texto placeholder)
+        case 2: // Hilos ennegrecidos
             talk_dialog(&dialogs[ACT1_HUT][A1_HUT_THREADS], false);
             last_interacted_item = ITEM_NONE;
             break;

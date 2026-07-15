@@ -112,37 +112,221 @@ act1_test,A1_TEST_COMBAT_MENU,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: ¿Qu�
 act1_test,A1_TEST_MELEE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST Jabalíes: sin vara.|Pulsa @[A@] para golpear|Seis golpes los ahuyentan,TEST Boars: no rod.|Press @[A@] to strike|Six hits drive them away
 act1_test,A1_TEST_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Te han derrotado|Reintentando el combate,TEST: You were defeated|Retrying the combat
 act1_test,A1_TEST_BYE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Fin del banco de pruebas|Volviendo al dormitorio,TEST: End of the test bench|Returning to the bedroom
-act1_coast,A1_COAST_ARRIVE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(llegada a la isla),SCENE 4 TEXT|(arrival at the island)
-act1_coast,A1_COAST_ONWARD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(hacia la choza),SCENE 4 TEXT|(towards the hut)
-act1_hut,A1_HUT_ENTER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(entrada en la choza),SCENE 5 TEXT|(entering the hut)
-act1_hut,A1_HUT_LOOM,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(el telar roto),SCENE 5 TEXT|(the broken loom)
-act1_hut,A1_HUT_STAFF,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(el bastón),SCENE 5 TEXT|(the staff)
-act1_hut,A1_HUT_SYSTEM,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(patrón inscrito: Electricidad),SCENE 5 TEXT|(pattern inscribed: Lightning)
-act1_hut,A1_HUT_LEAVE,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(hay que volver),SCENE 5 TEXT|(we must go back)
-act1_return,A1_RETURN_START,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(regreso con antorcha),SCENE 6 TEXT|(return with the torch)
-act1_return,A1_RETURN_BOARS,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(otra vez los jabalíes),SCENE 6 TEXT|(the boars again)
-act1_return,A1_RETURN_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(derrota: reintento),SCENE 6 TEXT|(defeat: retry)
-act1_return,A1_RETURN_GHOSTS,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(espectros: contrarresta|con SOL SOL FA MI),SCENE 6 TEXT|(spectres: counter|with SOL SOL FA MI)
-act1_return,A1_RETURN_DONE,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(la nave a la vista),SCENE 6 TEXT|(the ship in sight)
-act1_coast_end,A1_END_DIALOG,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 7|(cierre del acto),SCENE 7 TEXT|(act closing)
-act1_coast_end,A1_END_FIN,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 7|FIN DEL ACTO 1,SCENE 7 TEXT|END OF ACT 1
-act1_bedroom,A1_BEDROOM_PORTRAIT_PH,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 1|(retrato familiar),SCENE 1 TEXT|(family portrait)
-act1_bedroom,A1_BEDROOM_SHELF_PH,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 1|(estantería),SCENE 1 TEXT|(bookshelf)
-act1_bedroom,A1_BEDROOM_CHEST_PH,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 1|(baúl de infancia),SCENE 1 TEXT|(childhood chest)
-act1_coast,A1_COAST_TREE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(el árbol rojo),SCENE 4 TEXT|(the red tree)
-act1_hut,A1_HUT_DEBRIS,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(bastidor roto),SCENE 5 TEXT|(broken frame)
-act1_hut,A1_HUT_THREADS,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(hilos ennegrecidos),SCENE 5 TEXT|(blackened threads)
-act1_hut,A1_HUT_BOBBIN,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(voz de Bobbin:|el tejido se rompe),SCENE 5 TEXT|(Bobbin's voice:|the weave is breaking)
-act1_hut,A1_HUT_SHADOW,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 5|(algo se ha movido...),SCENE 5 TEXT|(something moved...)
-act1_return,A1_RETURN_BOBBIN_HINT,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(pista de Bobbin:|reintento del combate),SCENE 6 TEXT|(Bobbin's hint:|combat retry)
-act1_return,A1_RETURN_DARKOUT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(la antorcha se apaga),SCENE 6 TEXT|(the torch goes out)
-act1_return,A1_RETURN_SYSTEM_DARK,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(patrón inscrito: Luz|placeholder de Oscuridad),SCENE 6 TEXT|(pattern inscribed: Light|Darkness placeholder)
-act1_return,A1_RETURN_BOBBIN_DARK,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(Bobbin: canta la Luz|SOL LA SI DO),SCENE 6 TEXT|(Bobbin: sing the Light|SOL LA SI DO)
-act1_return,A1_RETURN_RELIT,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 6|(la antorcha reencendida),SCENE 6 TEXT|(the torch relit)
-act1_coast_end,A1_END_PAUSE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 7|(mira la isla por última vez|pulsa A para embarcar),SCENE 7 TEXT|(look at the island one last time|press A to board)
-act1_coast_end,A1_END_BOBBIN,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 7|(susurro de Bobbin:|el hilo ha sido tomado),SCENE 7 TEXT|(Bobbin's whisper:|the thread has been taken)
-act1_island,A1_ISLAND_ENTER,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(el bosque de la isla),SCENE 4 TEXT|(the island forest)
-act1_island,A1_ISLAND_COMBAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(jabalíes: golpea con A),SCENE 4 TEXT|(boars: strike with A)
-act1_island,A1_ISLAND_HEAL,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(Clio canta Curación),SCENE 4 TEXT|(Clio sings Healing)
-act1_island,A1_ISLAND_ONWARD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(la choza a lo lejos),SCENE 4 TEXT|(the hut in the distance)
-act1_island,A1_ISLAND_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEXTO DE LA ESCENA 4|(derrota: reintento),SCENE 4 TEXT|(defeat: retry)
+act1_bedroom,A1_BEDROOM_PORTRAIT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Padre, madre y yo","Father, Mother and me"
+act1_bedroom,A1_BEDROOM_PORTRAIT2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Es extraño cómo una imagen|puede parecer más viva|que una habitación entera,It's strange how a picture|can seem more alive|than a whole room
+act1_bedroom,A1_BEDROOM_PORTRAIT3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre siempre miraba un|poco más allá del marco,Father always looked|a little past the frame
+act1_bedroom,A1_BEDROOM_PORTRAIT4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Como si incluso entonces|ya estuviera pensando|en marcharse,As if even back then|he was already thinking|of leaving
+act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_bedroom,A1_BEDROOM_SHELF,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Crónicas, mapas,|inventarios, genealogías...","Chronicles, maps,|inventories, genealogies..."
+act1_bedroom,A1_BEDROOM_SHELF2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,El gremio guarda|el mundo en estantes,The guild keeps|the world on shelves
+act1_bedroom,A1_BEDROOM_SHELF3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Pero hay cosas que no caben|en un lomo con etiqueta,But some things don't fit|on a labelled spine
+act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_bedroom,A1_BEDROOM_CHEST,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Juguetes viejos,Old toys
+act1_bedroom,A1_BEDROOM_CHEST2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Cuerdas, tablillas,|una flauta rota...","Strings, small boards,|a broken flute..."
+act1_bedroom,A1_BEDROOM_CHEST3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre insistía en que|aprendiera música aunque|no fuera pastor,Father insisted I learn|music even if I was|no shepherd
+act1_bedroom,A1_BEDROOM_CHEST4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre decía que bastaba|con escuchar,Mother said listening|was enough
+act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast,A1_COAST_ARRIVE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[Isla desconocida@]|Un mes más tarde,@[Unknown island@]|One month later
+act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast,A1_COAST_L1,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Por fin llegamos, madre|Así que existía","We finally made it, Mother|So it did exist"
+act1_coast,A1_COAST_L2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Existe|Eso no implica|que nos quiera aquí,It exists|That doesn't mean|it wants us here
+act1_coast,A1_COAST_L3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Dónde llevará el camino?,Where does the path lead?
+act1_coast,A1_COAST_L4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Hacia el interior|Y de vuelta antes|del anochecer,Inland|And back before|nightfall
+act1_coast,A1_COAST_L5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Si has heredado|algo de mí,If you've inherited|anything from me
+act1_coast,A1_COAST_L6,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Según tú no he heredado|casi nada de ti,According to you I've|inherited almost nothing
+act1_coast,A1_COAST_L7,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"La tendencia|a responder, sí","The tendency|to answer back, yes"
+act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast,A1_COAST_TREE,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,El árbol de hojas rojas|Padre lo describía|exactamente así,The red-leaved tree|Father described it|exactly like this
+act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast,A1_COAST_ONWARD,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No te entretengas|El camino sigue|hacia el interior,Don't linger|The path goes on|inland
+act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_island,A1_ISLAND_ENTER,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Todo parece quieto,Everything seems still
+act1_island,A1_ISLAND_ENTER2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Demasiado quieto,Too still
+act1_island,A1_ISLAND_ENTER3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre describía este lugar|como si cantara,Father described this place|as if it sang
+act1_island,A1_ISLAND_ENTER4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Los lugares abandonados|también cantan,Abandoned places|sing too
+act1_island,A1_ISLAND_ENTER5,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Y qué dicen?,And what do they say?
+act1_island,A1_ISLAND_ENTER6,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,@[Llegaste tarde@],@[You came too late@]
+act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_island,A1_ISLAND_COMBAT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"¡Madre, detrás!","Mother, behind you!"
+act1_island,A1_ISLAND_COMBAT2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No tenemos tiempo|para contemplaciones,We have no time|for niceties
+act1_island,A1_ISLAND_COMBAT3,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Golpea con el botón @[A@],Strike with the @[A@] button
+act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_island,A1_ISLAND_HURT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¡Madre!|Estás herida,Mother!|You're hurt
+act1_island,A1_ISLAND_HURT2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No es grave,It's not serious
+act1_island,A1_ISLAND_HURT3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Está bien|Es grave,All right|It is serious
+act1_island,A1_ISLAND_HURT4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No podremos seguir así,We can't go on like this
+act1_island,A1_ISLAND_HURT5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"No sé si podré|continuar, hijo|Me duele mucho la pierna","I don't know if I can|go on, son|My leg hurts badly"
+act1_island,A1_ISLAND_HURT6,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Ahora no hay nadie mirando,No one is watching now
+act1_island,A1_ISLAND_HURT7,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Recuerdas el hechizo|que te enseñó papá?,Do you remember the spell|Father taught you?
+act1_island,A1_ISLAND_HURT8,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Linus...,Linus...
+act1_island,A1_ISLAND_HURT9,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Estamos solos|O tan solos como|vamos a estar nunca,We're alone|Or as alone as|we'll ever be
+act1_island,A1_ISLAND_HURT10,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No me gusta usarlo,I don't like using it
+act1_island,A1_ISLAND_HURT11,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Lo sé|Pero me gusta menos|verte sangrar,I know|But I like watching|you bleed even less
+act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_island,A1_ISLAND_HEALED,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Ya estoy mejor|Puedo seguir,I feel better now|I can go on
+act1_island,A1_ISLAND_HEALED2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Así que era verdad,So it was true
+act1_island,A1_ISLAND_HEALED3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Nunca dije|que fuera mentira,I never said|it was a lie
+act1_island,A1_ISLAND_HEALED4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Sólo hiciste que sonara|vergonzoso,You only made it|sound shameful
+act1_island,A1_ISLAND_HEALED5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Porque en nuestro tiempo|casi lo es,Because in our time|it almost is
+act1_island,A1_ISLAND_HEALED6,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Algún día entenderán que|la magia no siempre|es peligrosa,Someday they'll understand|magic isn't always|dangerous
+act1_island,A1_ISLAND_HEALED7,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,La magia nunca es|@[sólo@] peligrosa,Magic is never|@[only@] dangerous
+act1_island,A1_ISLAND_HEALED8,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,También es tentadora|También da excusas,It is also tempting|It also gives excuses
+act1_island,A1_ISLAND_HEALED9,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,También da poder|a quien cree merecerlo,It also gives power to those|who think they deserve it
+act1_island,A1_ISLAND_HEALED10,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre no la usó así,Father didn't use it|that way
+act1_island,A1_ISLAND_HEALED11,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"No|Tu padre la usó para curar,|escuchar, recordar caminos...","No|Your father used it to heal,|listen, remember roads..."
+act1_island,A1_ISLAND_HEALED12,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Y aun así la ocultó,And still he hid it
+act1_island,A1_ISLAND_HEALED13,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Por miedo?,Out of fear?
+act1_island,A1_ISLAND_HEALED14,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Por prudencia,Out of prudence
+act1_island,A1_ISLAND_HEALED15,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Prométeme que no|se lo contarás a Xander,Promise me you won't|tell Xander
+act1_island,A1_ISLAND_HEALED16,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Él no lo sabe?,He doesn't know?
+act1_island,A1_ISLAND_HEALED17,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Nunca supo que Aiden|sabía cantar patrones,He never knew Aiden|could sing patterns
+act1_island,A1_ISLAND_HEALED18,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Y no debe saberlo ahora,And he mustn't know now
+act1_island,A1_ISLAND_HEALED19,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Empezamos a perseguir|una isla prohibida,We set out to chase|a forbidden island
+act1_island,A1_ISLAND_HEALED20,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Y todavía fingimos que esto|puede seguir siendo|un secreto,And we still pretend this|can remain|a secret
+act1_island,A1_ISLAND_HEALED21,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Sí,Yes
+act1_island,A1_ISLAND_HEALED22,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Porque los secretos|no desaparecen cuando|dejan de ser cómodos,Because secrets don't vanish|when they stop being|convenient
+act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_island,A1_ISLAND_ONWARD,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Padre aprendió Curación|con los Pastores?,Did Father learn Healing|from the Shepherds?
+act1_island,A1_ISLAND_ONWARD2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Aprendió canciones|en muchos sitios,He learned songs|in many places
+act1_island,A1_ISLAND_ONWARD3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Algunas sólo eran canciones|Otras recordaban demasiado,Some were only songs|Others remembered too much
+act1_island,A1_ISLAND_ONWARD4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre|Allí,Mother|There
+act1_island,A1_ISLAND_ONWARD5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Una choza|O lo que quedó de una,A hut|Or what's left of one
+act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_island,A1_ISLAND_DEFEAT,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"¡En pie, Linus!|Vuelven a por nosotros","On your feet, Linus!|They're coming back for us"
+act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_ENTER,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Aquí vivió alguien,Someone lived here
+act1_hut,A1_HUT_ENTER2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Aquí trabajó alguien,Someone worked here
+act1_hut,A1_HUT_ENTER3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No suena igual,That doesn't sound|the same
+act1_hut,A1_HUT_ENTER4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"Para los Tejedores,|quizá sí","For the Weavers,|maybe it does"
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_LOOM,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre...|¿Será este el hogar|de los Tejedores?,Mother...|Could this be the home|of the Weavers?
+act1_hut,A1_HUT_LOOM2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Lo fue|O fue parte de él,It was|Or it was part of it
+act1_hut,A1_HUT_LOOM3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Poco podremos documentar|de estos hilos rotos,There's little to document|in these broken threads
+act1_hut,A1_HUT_LOOM4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No hablas como historiadora,You don't sound like|a historian
+act1_hut,A1_HUT_LOOM5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Hablo como alguien que ya|sabe cómo acaban|algunos hallazgos,I sound like someone who|knows how some findings|end up
+act1_hut,A1_HUT_LOOM6,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Se hace de noche,Night is falling
+act1_hut,A1_HUT_LOOM7,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Y el camino de vuelta|será peligroso,And the way back|will be dangerous
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_DEBRIS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Mira esos marcos|No son telares como los|de un artesano normal,Look at those frames|They're not looms like|a common craftsman's
+act1_hut,A1_HUT_DEBRIS2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"No|Si la leyenda decía verdad,|eran otra cosa","No|If the legend told the truth,|they were something else"
+act1_hut,A1_HUT_DEBRIS3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Instrumentos?,Instruments?
+act1_hut,A1_HUT_DEBRIS4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Altares,Altars
+act1_hut,A1_HUT_DEBRIS5,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Eso no es propio de ti,That's not like you
+act1_hut,A1_HUT_DEBRIS6,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Este lugar|tampoco lo es,Neither is|this place
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_THREADS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Hilos quemados|y símbolos que el gremio|jamás copió en sus libros,Burnt threads|and symbols the guild|never copied in its books
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_STAFF,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Qué es eso?,What is that?
+act1_hut,A1_HUT_STAFF2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No lo toques,Don't touch it
+act1_hut,A1_HUT_STAFF3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No parece madera normal,It doesn't look like|ordinary wood
+act1_hut,A1_HUT_STAFF4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,¡Linus!,Linus!
+act1_hut,A1_HUT_STAFF5,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Está vibrando,It's vibrating
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_SYSTEM,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Has obtenido|el @[bastón@],You have obtained|the @[staff@]
+act1_hut,A1_HUT_SYSTEM2,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Patrón inscrito:|@[Electricidad@],Pattern inscribed:|@[Lightning@]
+act1_hut,A1_HUT_SYSTEM3,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Ya puedes lanzar magia,You can now cast magic
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_AWED,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre...|Yo...|Lo he oído,Mother...|I...|I heard it
+act1_hut,A1_HUT_AWED2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No en mis oídos|Aquí,Not in my ears|Here
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_BOBBIN,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,El tejido|se está rompiendo,The weave|is breaking
+act1_hut,A1_HUT_BOBBIN2,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,No aguantará|mucho más,It will not hold|much longer
+act1_hut,A1_HUT_BOBBIN3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,¿Has oído eso?,Did you hear that?
+act1_hut,A1_HUT_BOBBIN4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Sí,Yes
+act1_hut,A1_HUT_BOBBIN5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Entonces no estamos|imaginando nada,Then we're not|imagining anything
+act1_hut,A1_HUT_BOBBIN6,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Era él,It was him
+act1_hut,A1_HUT_BOBBIN7,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,¿El cisne?,The swan?
+act1_hut,A1_HUT_BOBBIN8,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Sí,Yes
+act1_hut,A1_HUT_BOBBIN9,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Eso me preocupa|más de lo que debería,That worries me|more than it should
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_LEAVE,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,¿Estás bien?,Are you all right?
+act1_hut,A1_HUT_LEAVE2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Sí, madre|Creo que sí","Yes, Mother|I think so"
+act1_hut,A1_HUT_LEAVE3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Es muy tarde y va|a llegar la tormenta|Debemos volver,It's very late and|the storm is coming|We must go back
+act1_hut,A1_HUT_LEAVE4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Y dejar esto aquí?,And leave this here?
+act1_hut,A1_HUT_LEAVE5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No|Precisamente por eso|debemos volver ya,No|That's exactly why|we must go back now
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hut,A1_HUT_SHADOW,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,¿Has visto eso?|Algo se ha movido|entre los restos,Did you see that?|Something moved|among the remains
+act1_hut,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_START,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Camina|No mires atrás,Keep walking|Don't look back
+act1_return,A1_RETURN_START2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Por qué siempre dices eso|como si supieras|lo que hay detrás?,Why do you always say that|as if you knew|what's behind us?
+act1_return,A1_RETURN_START3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Porque la experiencia|ahorra tiempo,Because experience|saves time
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_BOARS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Otra vez,Again
+act1_return,A1_RETURN_BOARS2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Esta vez|no estamos igual,This time|we're not the same
+act1_return,A1_RETURN_BOARS3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No sé usar esto,I don't know how|to use this
+act1_return,A1_RETURN_BOARS4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Pues aprende deprisa,Then learn fast
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_BOARS_WON,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Han retrocedido,They've fallen back
+act1_return,A1_RETURN_BOARS_WON2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No los has herido del todo|Sólo les has enseñado que|no eres presa fácil,You haven't really hurt them|You've only taught them|you're no easy prey
+act1_return,A1_RETURN_BOARS_WON3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No sé si eso me tranquiliza,I'm not sure that|reassures me
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_BOBBIN_HINT,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Canta el patrón|de los cielos,Sing the pattern|of the skies
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_DARKOUT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,La antorcha...|El viento la ha apagado,The torch...|The wind has put it out
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_SYSTEM_DARK,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Patrón inscrito:|@[Oscuridad@],Pattern inscribed:|@[Darkness@]
+act1_return,A1_RETURN_SYSTEM_DARK2,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Invertir un patrón|puede alterar su efecto,Reversing a pattern|can alter its effect
+act1_return,A1_RETURN_SYSTEM_DARK3,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Algunas respuestas|están en el reverso,Some answers|lie on the reverse
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_LISTENS,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No me gusta eso,I don't like that
+act1_return,A1_RETURN_LISTENS2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿El qué?,What?
+act1_return,A1_RETURN_LISTENS3,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Que el bastón escuche,That the staff listens
+act1_return,A1_RETURN_LISTENS4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,O que recuerde,Or that it remembers
+act1_return,A1_RETURN_LISTENS5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Las dos cosas,Both
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_BOBBIN_DARK,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,La solución es a veces|lo contrario del problema,The solution is sometimes|the opposite of the problem
+act1_return,A1_RETURN_BOBBIN_DARK2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Lo contrario...|Si Oscuridad está aquí...|Entonces al revés...,The opposite...|If Darkness is here...|Then backwards...
+act1_return,A1_RETURN_BOBBIN_DARK3,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Canta @[SOL LA SI DO@]|para invertir la Oscuridad,Sing @[SOL LA SI DO@]|to reverse the Darkness
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_RELIT,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,La llama...|La has devuelto,The flame...|You brought it back
+act1_return,A1_RETURN_RELIT2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No|La he cantado,No|I sang it
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_GHOSTS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Qué son esas cosas?,What are those things?
+act1_return,A1_RETURN_GHOSTS2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No lo sé|Y preferiría seguir|sin saberlo,I don't know|And I'd rather keep|not knowing
+act1_return,A1_RETURN_GHOSTS3,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Contrarresta su trueno|con @[SOL SOL FA MI@],Counter their thunder|with @[SOL SOL FA MI@]
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_DEFEAT,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"¡Linus, en pie!|No dejes que te rodeen","Linus, on your feet!|Don't let them surround you"
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_GHOSTS_WON,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Se han ido,They're gone
+act1_return,A1_RETURN_GHOSTS_WON2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No|Se han retirado,No|They've withdrawn
+act1_return,A1_RETURN_GHOSTS_WON3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Hay diferencia?,Is there a difference?
+act1_return,A1_RETURN_GHOSTS_WON4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,La hay cuando algo|puede volver,There is when something|can come back
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_return,A1_RETURN_DONE,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Ahí está,There it is
+act1_return,A1_RETURN_DONE2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No aflojes aún,Don't slow down yet
+act1_return,A1_RETURN_DONE3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Después de hoy,|no creo que pueda","After today,|I don't think I can"
+act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast_end,A1_END_DIALOG,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Los Tejedores...|Todo era verdad,The Weavers...|It was all true
+act1_coast_end,A1_END_DIALOG2,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Salgamos cuanto antes|de esta isla,Let's leave this island|as soon as we can
+act1_coast_end,A1_END_DIALOG3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,En este bastón|resuena la magia,Magic resonates|in this staff
+act1_coast_end,A1_END_DIALOG4,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,La magia era peligrosa,Magic was dangerous
+act1_coast_end,A1_END_DIALOG5,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Y desapareció de los libros|hace muchos años,And it vanished from books|many years ago
+act1_coast_end,A1_END_DIALOG6,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,No desapareció|La borrasteis,It didn't vanish|You erased it
+act1_coast_end,A1_END_DIALOG7,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,La escondimos|No es lo mismo,We hid it|That's not the same
+act1_coast_end,A1_END_DIALOG8,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Para quien llega|después, sí","For those who come|after, it is"
+act1_coast_end,A1_END_DIALOG9,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Puede,Perhaps
+act1_coast_end,A1_END_DIALOG10,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Pero lo hicimos para que|el mundo no volviera|a romperse,But we did it so the world|would not break|again
+act1_coast_end,A1_END_DIALOG11,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"Por ambición, miedo|o fanatismo","Out of ambition, fear|or fanaticism"
+act1_coast_end,A1_END_DIALOG12,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Y ahora se está rompiendo|por ignorancia,And now it's breaking|out of ignorance
+act1_coast_end,A1_END_DIALOG13,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No podemos llevar este|artefacto al gremio como|si fuera un libro más,We can't take this artifact|to the guild as if it were|just another book
+act1_coast_end,A1_END_DIALOG14,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre sabía más|de lo que nos contó,Father knew more|than he told us
+act1_coast_end,A1_END_DIALOG15,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Sí|Mucho más,Yes|Much more
+act1_coast_end,A1_END_DIALOG16,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Y tú también,And so do you
+act1_coast_end,A1_END_DIALOG17,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Lo suficiente para haber|vivido tranquila|demasiado tiempo,Enough to have lived|in peace|for too long
+act1_coast_end,A1_END_DIALOG18,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Qué hacemos ahora?,What do we do now?
+act1_coast_end,A1_END_DIALOG19,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Reabrir viejas historias,Reopen old stories
+act1_coast_end,A1_END_DIALOG20,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Adónde iremos?,Where will we go?
+act1_coast_end,A1_END_DIALOG21,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Al @[Gremio de los Pastores@],To the @[Shepherds guild@]
+act1_coast_end,A1_END_DIALOG22,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Allí empezó la sangre|de tu padre,That's where your father's|blood began
+act1_coast_end,A1_END_DIALOG23,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Y quizá allí encontremos|la parte de la canción|que nos falta,And maybe there we'll find|the part of the song|we're missing
+act1_coast_end,A1_END_DIALOG24,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Entonces no volvemos|a casa,Then we're not|going home
+act1_coast_end,A1_END_DIALOG25,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No,No
+act1_coast_end,A1_END_DIALOG26,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Me temo que acabamos|de salir de ella,I'm afraid we have|just left it
+act1_coast_end,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast_end,A1_END_PAUSE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Mira la isla|por última vez|Pulsa @[A@] para embarcar,Look at the island|one last time|Press @[A@] to board
+act1_coast_end,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast_end,A1_END_BOBBIN,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,El hilo ha sido tomado,The thread has been taken
+act1_coast_end,A1_END_BOBBIN2,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Ahora debe ser tejido,Now it must be woven
+act1_coast_end,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_coast_end,A1_END_FIN,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[FIN DEL ACTO 1@],@[END OF ACT 1@]
+act1_coast_end,NULL,0,false,DEFAULT_TALK_TIME,,

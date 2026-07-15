@@ -79,18 +79,18 @@ void act1_bedroom_items(void)    // Bucle de items del dormitorio (lógica NO ex
             item_interacted[2] = true;
             scene_timeout = 0;
             break;
-        case 5: // Retrato familiar (guión definitivo, texto placeholder)
-            talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_PORTRAIT_PH], false);
+        case 5: // Retrato familiar
+            talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_PORTRAIT], false);
             last_interacted_item = ITEM_NONE;
             scene_timeout = 0;
             break;
-        case 6: // Estantería (guión definitivo, texto placeholder)
-            talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_SHELF_PH], false);
+        case 6: // Estantería
+            talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_SHELF], false);
             last_interacted_item = ITEM_NONE;
             scene_timeout = 0;
             break;
-        case 7: // Baúl de infancia (guión definitivo, texto placeholder)
-            talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_CHEST_PH], false);
+        case 7: // Baúl de infancia
+            talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_CHEST], false);
             last_interacted_item = ITEM_NONE;
             scene_timeout = 0;
             break;

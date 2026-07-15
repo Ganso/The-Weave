@@ -20,9 +20,9 @@ follow CHR_clio on
 show CHR_linus on
 show CHR_clio on
 
-say ACT1_HUT A1_HUT_ENTER sound
+say_cluster ACT1_HUT A1_HUT_ENTER sound   # "Aquí vivió alguien..."
 move CHR_linus 50 160
-say ACT1_HUT A1_HUT_LOOM sound
+say_cluster ACT1_HUT A1_HUT_LOOM sound    # el telar roto, se hace de noche
 
 # Exploración libre: inspecciones opcionales; tocar el bastón continúa
 set movement on
@@ -32,15 +32,16 @@ call act1_hut_items
 # Cutscene del bastón: el rayo, la recogida y el patrón Electricidad
 set movement off
 set scroll off
-say ACT1_HUT A1_HUT_STAFF sound
+say_cluster ACT1_HUT A1_HUT_STAFF sound   # "¿Qué es eso?" / "No lo toques"
 call act1_hut_lightning
-say ACT1_HUT A1_HUT_SYSTEM sound
+say_cluster ACT1_HUT A1_HUT_SYSTEM sound  # "Has obtenido el bastón..."
+say_cluster ACT1_HUT A1_HUT_AWED sound    # "Lo he oído... Aquí"
 
 # Primera llamada directa de Bobbin
-say ACT1_HUT A1_HUT_BOBBIN sound
+say_cluster ACT1_HUT A1_HUT_BOBBIN sound  # "El tejido se está rompiendo..."
 
 # Al salir, algo antiguo despierta entre los restos del telar
-say ACT1_HUT A1_HUT_LEAVE sound
+say_cluster ACT1_HUT A1_HUT_LEAVE sound   # "Es muy tarde... debemos volver ya"
 call act1_hut_shadow
 say ACT1_HUT A1_HUT_SHADOW sound
 next_scene act1_return
