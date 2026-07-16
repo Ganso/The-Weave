@@ -18,12 +18,14 @@ act1_corridor,A1_CORRIDOR_BOOK_HIST2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Se
 act1_corridor,A1_CORRIDOR_BOOK_HIST3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Cuando alguien lo escribe|después, todo parece|más ordenado","When someone writes it|down later, it all seems|more orderly"
 act1_corridor,A1_CORRIDOR_BOOK_ENDS_WITH_FATHER,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,El último capítulo|termina con el fallecimiento|de mi padre,The last chapter|ends with the passing|of my father
 act1_corridor,A1_CORRIDOR_BOOK_MOTHER_WRITES_NEXT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre dice que seré yo|quien deba escribir|la siguiente página,Mother says it will be me|who must write|the next page
+act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_corridor,A1_CORRIDOR_BOOK_AGAIN,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,La historia del gremio|Y una página aún en blanco,The history of the guild|And a page still blank
 act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_corridor,A1_CORRIDOR_MYTH_COLLECTION,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Una colección de|mitos y leyendas|de los distintos gremios,A collection of|myths and legends|from the different guilds
 act1_corridor,A1_CORRIDOR_MYTH2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Pastores que cantan|Herreros que forjan|Cristaleros que ven el mañana,Shepherds who sing|Blacksmiths who forge|Glassmakers who see tomorrow
 act1_corridor,A1_CORRIDOR_MYTH3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Se cuenta que faltan|algunos gremios|perdidos en el tiempo,"They say some guilds|are missing,|lost in time"
 act1_corridor,A1_CORRIDOR_MYTH_PASTORS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Gracias a mi padre|tenemos documentadas|las que cantaban los @[Pastores@],Thanks to my father|we have documented|those the @[Shepherds@] sang
+act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_corridor,A1_CORRIDOR_MYTH_AGAIN,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Mitos y leyendas|Y a veces verdades,Myths and legends|And sometimes truths
 act1_hall,A1_HALL_GUILD_YEAR,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[Gremio de los historiadores@]|Año 8121,@[Historians guild@]|Year 8121
 act1_hall,A1_HALL_MONDAY_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Lunes|Primera hora de la mañana,Monday|Early morning
@@ -88,9 +90,9 @@ act1_forest,A1_FOREST_TURN_OFF_CONSOLE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Apa
 act1_forest,A1_FOREST_ORGANIZE_SOCKS,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"o preparar la cena,|o organizar tu cajón de calcetines|alfabéticamente.","or cook dinner,|or organize your sock drawer|alphabetically."
 act1_bedroom,A1_BEDROOM_HUNDRED_YEARS,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Han pasado ya cien años,A hundred years have passed
 act1_bedroom,A1_BEDROOM_SWAN2,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Cien años desde que|cantamos para contenerle,A hundred years since|we sang to contain him
-act1_bedroom,A1_BEDROOM_SWAN3,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Pero el @[tejido@]|se está rompiendo,But the @[weave@]|is breaking
+act1_bedroom,A1_BEDROOM_SWAN3,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Pero el tejido|se está rompiendo,But the weave|is breaking
 act1_bedroom,A1_BEDROOM_CANT_STOP_LONG,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,No podremos detenerle|mucho más tiempo,We won't be able to|hold him much longer
-act1_bedroom,A1_BEDROOM_SWAN5,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,@[Linus Wordweaver@]...,@[Linus Wordweaver@]...
+act1_bedroom,A1_BEDROOM_SWAN5,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Linus Wordweaver...,Linus Wordweaver...
 act1_bedroom,A1_BEDROOM_SWAN6,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,"Cuando despiertes,|escucha lo que ya sabías","When you wake,|listen to what you already knew"
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,A1_BEDROOM_NEXT_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,A la mañana siguiente...,The next morning...

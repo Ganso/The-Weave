@@ -32,11 +32,12 @@ static void coast_gull_flies(void)
     release_item(0);
     Sprite *gull = SPR_addSpriteSafe(&item_coast_seagull, gx, gy,
                                      TILE_ATTR(PAL0, TRUE, false, false));
-    for (u16 i = 0; i < SCREEN_FPS * 2 && gull; i++) {
-        gx += 2; gy -= 1;
+    // Vuela hacia arriba y hacia el mar (izquierda), cruzando la pantalla
+    for (u16 i = 0; i < SCREEN_FPS * 3 && gull; i++) {
+        gx -= 2; gy -= 1;
         SPR_setPosition(gull, gx, gy);
         next_frame(false);
-        if (gx > SCREEN_WIDTH + 8) break;
+        if (gx < -24 || gy < -16) break;
     }
     if (gull) { SPR_releaseSprite(gull); SPR_update(); }
 }
@@ -48,12 +49,9 @@ void act1_coast_explore(void)    // Paseo por toda la playa: gaviota al llegar a
     while (FASTFIX32_TO_INT(offset_BGA) < COAST_END_SCROLL) {
         next_frame(true);
 
-        s16 world_x = FASTFIX32_TO_INT(obj_character[active_character].x) +
-                      obj_character[active_character].x_size / 2 +
-                      FASTFIX32_TO_INT(offset_BGA);
-
-        // Al alcanzar la altura del árbol, la gaviota alza el vuelo (guión 4.1)
-        if (!gull_flew && world_x > COAST_TREE_X - 130) {
+        // Al alcanzar la altura del árbol, la gaviota alza el vuelo (guión 4.1).
+        // Se dispara cuando su percha (mundo 520) YA está dentro de pantalla.
+        if (!gull_flew && FASTFIX32_TO_INT(offset_BGA) > 240) {
             gull_flew = true;
             coast_gull_flies();
         }

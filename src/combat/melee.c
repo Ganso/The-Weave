@@ -54,6 +54,8 @@ typedef enum {
 
 static u8  mb_state[MAX_ENEMIES];
 static u16 mb_timer[MAX_ENEMIES];
+static s8  mb_wander[MAX_ENEMIES];    // desvío vertical aleatorio del objetivo (evita atascos)
+static u16 mb_wander_t[MAX_ENEMIES];  // frames hasta re-sortear el desvío
 static s16 mb_exit_x[MAX_ENEMIES];  // x de pies destino de la huida en curso (lado más cercano)
 static u16 mb_pause[MAX_ENEMIES];   // pausa aleatoria en curso (frames quieto)
 static u16 mb_pause_cd[MAX_ENEMIES];// cooldown entre pausas aleatorias
@@ -254,6 +256,18 @@ static void melee_update_enemy(u16 e, u8 hits_to_win)
         break;
 
     case MB_CHASE: {
+        // Cada jabalí persigue con un desvío vertical aleatorio que se
+        // re-sortea periódicamente: variedad de movimiento y menos atascos
+        // contra Clio o entre ellos
+        if (mb_wander_t[e]) mb_wander_t[e]--;
+        else {
+            mb_wander[e] = (s8)(random() % 33) - 16;            // -16..+16
+            mb_wander_t[e] = SCREEN_FPS + (random() & 63);
+        }
+        s16 wy = py + mb_wander[e];
+        if (wy < (s16)y_limit_min) wy = y_limit_min;
+        if (wy > (s16)y_limit_max) wy = y_limit_max;
+
         s16 dx = px - enemy_feet_x(e);
         s16 dy = py - enemy_feet_y(e);
         if (abs(dx) <= MELEE_BITE_RANGE_X && abs(dy) <= MELEE_BITE_RANGE_Y) {
@@ -284,8 +298,9 @@ static void melee_update_enemy(u16 e, u8 hits_to_win)
             break;
         }
 
-        if (!melee_step_towards(e, px, py, MELEE_CHASE_SPEED, MELEE_CHASE_SPEED_Y, ANIM_WALK, true)) {
-            en->animation = ANIM_IDLE;  // bloqueado: esperar sin patalear
+        if (!melee_step_towards(e, px, wy, MELEE_CHASE_SPEED, MELEE_CHASE_SPEED_Y, ANIM_WALK, true)) {
+            mb_wander_t[e] = 0;         // bloqueado: re-sortear el desvío ya
+            en->animation = ANIM_IDLE;
             update_enemy(e);
         }
         break;
@@ -355,6 +370,8 @@ static void melee_run(u8 hits_to_win, u16 companion, bool thunder_wins)
             mb_timer[e] = e * MELEE_ENTER_STAGGER;
             mb_pause[e] = 0;
             mb_pause_cd[e] = SCREEN_FPS;   // sin pausas aleatorias nada más entrar
+            mb_wander[e] = 0;
+            mb_wander_t[e] = (random() & 31);
         } else {
             mb_state[e] = MB_GONE;
         }
@@ -373,6 +390,14 @@ static void melee_run(u8 hits_to_win, u16 companion, bool thunder_wins)
     bool running = true;
     while (running && !player_defeated) {
         next_frame(true);
+
+        // El motor de hechizos usa combat_state también FUERA del combate por
+        // patrones (un cast del jugador lo pone en PLAYER_EFFECT y set_idle lo
+        // deja en IDLE si ve enemigos activos). En el melee eso re-activaba el
+        // tutorial de "Eso ha dolido" y corrompía el estado del combate:
+        // aquí el director es melee.c, así que IDLE se normaliza a COMBAT_NO.
+        if (combat_state == COMBAT_STATE_IDLE) combat_state = COMBAT_NO;
+
         if (melee_thunder_wins) melee_update_thunder();   // el arma es el patrón
         else melee_update_player_attack();                // el arma es el golpe con A
 
@@ -400,6 +425,7 @@ static void melee_run(u8 hits_to_win, u16 companion, bool thunder_wins)
     if (spell_slot_active(SPELL_SLOT_PLAYER))
         spell_cancel(SPELL_SLOT_PLAYER);
     reset_note_queue();
+    combat_state = COMBAT_NO;   // nada de estados de combate residuales
 
     player_scroll_active = old_scroll;
 

@@ -121,15 +121,38 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds, bool sound_on)  
     next_frame(false);
 }
 
+// El HUD de hechizos se oculta SIEMPRE mientras hay un diálogo en pantalla y
+// se restaura al terminar. El contador de anidación evita que un cluster (que
+// llama a talk_dialog por cada caja) haga parpadear el HUD entre cajas.
+static u8 dialog_hud_depth;
+static bool dialog_hud_was_active;
+
+static void dialog_hud_push(void)
+{
+    if (dialog_hud_depth++ == 0) {
+        dialog_hud_was_active = interface_active;
+        if (dialog_hud_was_active) show_or_hide_interface(false);
+    }
+}
+
+static void dialog_hud_pop(void)
+{
+    if (--dialog_hud_depth == 0 && dialog_hud_was_active)
+        show_or_hide_interface(true);
+}
+
 void talk_dialog(const DialogItem *dialog, bool sound_on)    // Display a predefined dialog item with face and text
 {
+    dialog_hud_push();
     reset_character_animations();
     dprintf(2, "Reading text: %s", (char *)dialog->text[game_language]);
     talk(dialog->face, dialog->side != SIDE_RIGHT, (char *)dialog->text[game_language], dialog->max_seconds, sound_on); // B12: LEFT and NONE position left
+    dialog_hud_pop();
 }
 
 void talk_cluster(const DialogItem *start, bool sound_on)    // Display several dialog lines
 {
+    dialog_hud_push();
     dprintf(2, "Starting cluster");
     const DialogItem *it = start;
     while (it->text[0] != NULL) {
@@ -137,6 +160,7 @@ void talk_cluster(const DialogItem *start, bool sound_on)    // Display several 
         ++it;
     }
     dprintf(2, "NULL found. End of cluster");
+    dialog_hud_pop();
 }
 
 void split_text(char *text, char *line1, char *line2, char *line3)    // Break text into three lines using | as separator

@@ -496,10 +496,11 @@ void update_character_animations(void) {
             else {
                 obj_character[chr].state = STATE_IDLE;
                 anim_character(chr, ANIM_IDLE);
-                // Tutorial del combate por hechizos (forest). Solo ahí: en el
-                // combate físico (melee.c, combat_state==COMBAT_NO) el consejo
-                // no aplica y los diálogos bloqueantes congelarían el combate.
-                if (combat_state != COMBAT_NO) {
+                // Tutorial del combate por hechizos del forest DEMO. Solo ahí:
+                // se reconoce porque ESCONDERSE está desbloqueado (el consejo lo
+                // menciona y en el acto ese hechizo no existe). En el melee y en
+                // los combates del acto, un golpe no dispara ningún diálogo.
+                if (combat_state != COMBAT_NO && spell_defs[SPELL_HIDE].enabled) {
                     show_or_hide_interface(false);
                     talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_THAT_HURTS], false); // (ES) "Eso ha dolido" - (EN) "That hurts"
                     talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_TRY_HIDE_OR_THUNDER], false); // (ES) "Puedo probar a esconderme|o tratar de invocar|al trueno" - (EN) "I could try to hide|or attempt to summon|the thunder"

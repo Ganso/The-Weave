@@ -383,7 +383,14 @@ acortes al estilo terso de AGENTS.
 
 ## 12. Pendientes conocidos
 
-- Jingles de SLEEP y EN_BITE sin componer (TODO en `play_spell_jingle`).
+- Jingles de SLEEP, HEAL y EN_BITE sin componer (TODO en `play_spell_jingle`).
+- **TODO IMPORTANTE — paleta del cisne**: el cisne usa una paleta propia distinta
+  de la de personajes. Cuando habla en el dormitorio (PAL1 = swan_pal), los
+  resaltados @[...@] del texto salen con color equivocado (esperan la paleta de
+  Linus); y cuando su CARA aparece en escenas posteriores (PAL1 = characters_pal),
+  la cara sale con los colores mal (espera swan_pal). Pendiente de resolver
+  (¿colores de resaltado/cara en una paleta estable, o cara del cisne redibujada
+  con characters_pal?).
 - Mejor manejo de la derrota de un enemigo: la muerte actual es anim hurt ~1 s +
   release; una anim propia y recompensas es diseño de juego (el motor lo soporta vía
   `onFinish`/`hit_enemy`).

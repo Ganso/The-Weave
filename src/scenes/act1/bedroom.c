@@ -62,8 +62,12 @@ void act1_bedroom_items(void)    // Bucle de items del dormitorio (lógica NO ex
     {
         switch (last_interacted_item)
         {
-        case 0: // Bed
-            talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_SLEPT_BAD], false);
+        case 0: // Bed — en la esquina izquierda (junto al retrato) gana el retrato
+            if (FASTFIX32_TO_INT(obj_character[active_character].x) +
+                obj_character[active_character].x_size / 2 <= 60)
+                talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_PORTRAIT], false);
+            else
+                talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_SLEPT_BAD], false);
             last_interacted_item = ITEM_NONE;
             item_interacted[0] = true;
             scene_timeout = 0;
