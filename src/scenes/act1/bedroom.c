@@ -46,6 +46,7 @@ void act1_bedroom_wake(void)    // Amanece: paleta de día, Linus se levanta, co
     release_item(4); // Linus sleeping
     PAL_setPalette(PAL1, characters_pal.data, DMA);
     move_character_instant(CHR_linus, 35, 175);
+    talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_AWAKE], false); // (ES) "Otra vez|El mismo sueño..."
     show_character(CHR_linus, true);
 
     player_scroll_active = true;
@@ -89,13 +90,15 @@ void act1_bedroom_items(void)    // Bucle de items del dormitorio (lógica NO ex
             last_interacted_item = ITEM_NONE;
             scene_timeout = 0;
             break;
-        case 3: // Cabinet
-            talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_LULLABY], false);
-            last_interacted_item = ITEM_NONE;
-            if (item_interacted[3] == false) { // Solo la primera vez
+        case 3: // Cabinet (armario / partitura)
+            if (item_interacted[3] == false) { // Primera vez: la nana + el patrón
+                talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_LULLABY], false);
                 activate_spell(SPELL_SLEEP);
                 talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_LEARNED_PATTERN], true);
+            } else { // Relecturas: "Cuatro notas..."
+                talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_FOURNOTES], false);
             }
+            last_interacted_item = ITEM_NONE;
             item_interacted[3] = true;
             break;
         default:

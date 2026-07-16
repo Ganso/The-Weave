@@ -21,9 +21,9 @@ character CHR_linus
 
 say_cluster SYSTEM_DIALOG SYSMSG_DEMO_TITLE sound   # aviso de demo técnica
 
-# Entrada de Linus por la derecha (antes en act1_corridor_entry)
-move_instant CHR_linus 340 154
-move CHR_linus 270 154
+# Linus aparece justo bajo la puerta de la derecha (su habitación, guión 2.1)
+move_instant CHR_linus 232 154
+show CHR_linus on
 
 say_cluster ACT1_CORRIDOR A1_CORRIDOR_OVERSLEPT silent
 

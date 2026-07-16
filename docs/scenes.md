@@ -366,6 +366,9 @@ En estas órdenes, los personajes se nombran `CHR_linus`, `CHR_clio`, `CHR_xande
   que el escenario se haya desplazado esa cantidad. Ejemplo: `wait_scroll 360`.
   - **Cuándo:** en tramos "andables", para que el jugador avance por el escenario
     hasta llegar a un punto (por ejemplo, la zona donde empieza un combate).
+- **`wait_scroll_left <offset>`** — igual que `wait_scroll` pero para niveles que se
+  recorren hacia la IZQUIERDA (`user_left`): deja jugar hasta que el scroll baja
+  hasta ese offset. Ejemplo: el regreso del acto 1 (`return.scene`).
 - **`wait_spell`** — espera a que **termine** el hechizo que se está lanzando.
   - **Cuándo:** después de un `cast` guionizado, para no seguir hasta que el efecto
     acabe.

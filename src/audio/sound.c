@@ -92,6 +92,7 @@ void play_spell_jingle(u16 spellId)
             play_sample(snd_pattern_open, sizeof(snd_pattern_open));
             break;
         case SPELL_SLEEP:
+        case SPELL_HEAL:
         case SPELL_EN_BITE:
             // TODO: jingles propios pendientes (decisión docs/refactor/plan.md §15 / AGENTS.md)
             break;

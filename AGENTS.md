@@ -160,7 +160,7 @@ red de validación).
 ## 5. Sistema de hechizos (`spells/`)
 
 **Ids** (`constants_spells.h`): jugador THUNDER 0, HIDE 1, OPEN 2, SLEEP 3, FIRE 4,
-LIGHT 5 (`SPELL_PLAYER_COUNT` = 6); enemigo EN_THUNDER 6, EN_BITE 7
+LIGHT 5, HEAL 6 (`SPELL_PLAYER_COUNT` = 7); enemigo EN_THUNDER 7, EN_BITE 8
 (`SPELL_COUNT` = 8); `SPELL_NONE` = 254. Zonas: `ZONE_NONE` 0, `ZONE_CAULDRON` 1.
 Botón→nota: A→MI B→FA C→SOL X→LA Y→SI Z→DO.
 
@@ -174,8 +174,12 @@ cuerpo sin hechizos (acto 1 antes de la vara). No toca `combat_state` (queda en
 COMBAT_NO); dirige a los enemigos activos (persiguen con pausas aleatorias, muerden
 de cerca, y al ser golpeados huyen hacia el lado de pantalla más cercano y vuelven;
 locomoción con el enemigo en STATE_WALKING) y resuelve el golpe del jugador con A
-(reutiliza STATE_PLAYING_NOTE → ANIM_ACTION). El tutorial "Eso ha dolido" de
-update_character_animations solo salta con combat_state != COMBAT_NO.
+(reutiliza STATE_PLAYING_NOTE → ANIM_ACTION). Variante `melee_combat_run_thunder`:
+el golpe físico no cuenta y solo el patrón de TRUENO cantado entero ahuyenta a la
+manada (jabalíes del regreso, sin antorcha; habilitar `spells` en la escena). El
+acompañante recupera su `follows_character` al terminar el combate. El tutorial
+"Eso ha dolido" de update_character_animations solo salta con
+combat_state != COMBAT_NO.
 
 **Vida del jugador** (ambos combates): `player_hitpoints` se reinicia a
 `player_max_hitpoints` (5 por defecto; fijarla en el hook del combate si procede) en
@@ -189,7 +193,9 @@ a la escena mostrar el fallo y reintentar (ver act1_test).
   `spell_cancel`, `spell_reject` (feedback + resume del enemigo), y el lado enemigo
   (`spell_enemy_try_launch`, recargas por enemigo, cadencia de notas).
 - `notes.c` — cola de notas del jugador (debounce `MIN_TIME_BETWEEN_NOTES`, timeout
-  `MAX_PATTERN_WAIT_TIME`, lock global) y HUD de notas enemigas. `player_has_rod`
+  `MAX_PATTERN_WAIT_TIME`, lock global) y HUD de notas enemigas. `player_note_limit`
+  (por defecto NOTE_DO) limita la nota más alta disponible: por encima suena el beep
+  de inválido (el acto 1 lo baja a NOTE_LA al coger el bastón). `player_has_rod`
   vive aquí y decide el sprite de Linus (ver la trampa en §7).
 - `player_spells.c` / `enemy_spells.c` / `fire.c` / `light.c` — las `SpellDef` y los
   hooks de cada hechizo. Cada hechizo hace su `*_init()`, llamado desde

@@ -17,13 +17,13 @@ void act1_corridor_items(void)    // Bucle de libros/puertas/mapas + condición 
         {
         case 0: // Guild history book
             if (item_interacted[0] == false) talk_cluster(&dialogs[ACT1_CORRIDOR][A1_CORRIDOR_BOOK_HISTORY], false);
-            else talk_dialog(&dialogs[ACT1_CORRIDOR][A1_CORRIDOR_BOOK_HISTORY], false);
+            else talk_dialog(&dialogs[ACT1_CORRIDOR][A1_CORRIDOR_BOOK_AGAIN], false); // relectura (guión 2.2)
             item_interacted[0] = true;
             last_interacted_item = ITEM_NONE;
             break;
         case 1: // Myths and legends
             if (item_interacted[1] == false) talk_cluster(&dialogs[ACT1_CORRIDOR][A1_CORRIDOR_MYTH_COLLECTION], false);
-            else talk_dialog(&dialogs[ACT1_CORRIDOR][A1_CORRIDOR_MYTH_COLLECTION], false);
+            else talk_dialog(&dialogs[ACT1_CORRIDOR][A1_CORRIDOR_MYTH_AGAIN], false); // relectura (guión 2.2)
             item_interacted[1] = true;
             last_interacted_item = ITEM_NONE;
             break;

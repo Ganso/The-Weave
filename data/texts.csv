@@ -13,11 +13,17 @@ act1_corridor,A1_CORRIDOR_MAP_CHECK,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Tene
 act1_corridor,A1_CORRIDOR_REVISIT_MEMORIES,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Antes de irme quiero|repasar algunos recuerdos|Se lo debo a papá,Before I leave I want to|revisit some memories|I owe it to dad
 act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_corridor,A1_CORRIDOR_BOOK_HISTORY,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Este tomo narra la historia|de nuestro gremio|desde la @[Gran Separación@],This volume narrates the history|of our guild|since the @[Great Split@]
+act1_corridor,A1_CORRIDOR_BOOK_HIST2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Sequías, pactos, viajes,|fundaciones, incendios...","Droughts, pacts, journeys,|foundings, fires..."
+act1_corridor,A1_CORRIDOR_BOOK_HIST3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Cuando alguien lo escribe|después, todo parece|más ordenado","When someone writes it|down later, it all seems|more orderly"
 act1_corridor,A1_CORRIDOR_BOOK_ENDS_WITH_FATHER,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,El último capítulo|termina con el fallecimiento|de mi padre,The last chapter|ends with the passing|of my father
-act1_corridor,A1_CORRIDOR_BOOK_MOTHER_WRITES_NEXT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre dice que seré yo|el que deba escribir|el siguiente,Mother says it will be me|who has to write|the next one
+act1_corridor,A1_CORRIDOR_BOOK_MOTHER_WRITES_NEXT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre dice que seré yo|quien deba escribir|la siguiente página,Mother says it will be me|who must write|the next page
+act1_corridor,A1_CORRIDOR_BOOK_AGAIN,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,La historia del gremio|Y una página aún en blanco,The history of the guild|And a page still blank
 act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_corridor,A1_CORRIDOR_MYTH_COLLECTION,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Una colección de|mitos y leyendas|de los distintos gremios,A collection of|myths and legends|from the different guilds
+act1_corridor,A1_CORRIDOR_MYTH2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Pastores que cantan|Herreros que forjan|Cristaleros que ven el mañana,Shepherds who sing|Blacksmiths who forge|Glassmakers who see tomorrow
+act1_corridor,A1_CORRIDOR_MYTH3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Se cuenta que faltan|algunos gremios|perdidos en el tiempo,"They say some guilds|are missing,|lost in time"
 act1_corridor,A1_CORRIDOR_MYTH_PASTORS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Gracias a mi padre|tenemos documentadas|las que cantaban los @[Pastores@],Thanks to my father|we have documented|those the @[Shepherds@] sang
+act1_corridor,A1_CORRIDOR_MYTH_AGAIN,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Mitos y leyendas|Y a veces verdades,Myths and legends|And sometimes truths
 act1_hall,A1_HALL_GUILD_YEAR,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[Gremio de los historiadores@]|Año 8121,@[Historians guild@]|Year 8121
 act1_hall,A1_HALL_MONDAY_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Lunes|Primera hora de la mañana,Monday|Early morning
 act1_hall,NULL,0,false,DEFAULT_TALK_TIME,,
@@ -36,8 +42,19 @@ act1_hall,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_hall,A1_HALL_XANDER_ABILITY,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Según la leyenda|Fueron un gremio|capaz de tejer hechizos,According to the legend|They were a guild|able to weave spells
 act1_hall,A1_HALL_XANDER_NOT_LEGEND,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Para él no era una leyenda|Los @[Pastores@] la cantaban|como cierta,That was no legend for him|@[Shepherds@] sang it as a fact
 act1_hall,A1_HALL_XANDER_VANISHED,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Desaparecieron sin dejar rastro|Aunque muchos creen|que era solo un cuento,They vanished without a trace|Although many believe|it was just a tale
+act1_hall,A1_HALL_XANDER_WEAVE,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Tejían la luz|El sonido|La forma misma de las cosas,They wove light|Sound|The very shape of things
 act1_hall,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_hall,A1_HALL_XANDER_FATHER_WANTED,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Tu padre quería encontrar|@[la isla donde vivían@],Your father wanted to find|their @[home island@]
+act1_hall,A1_HALL_ENCARGO,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"Escúchame bien, Linus|Durante décadas este gremio|ha conservado la memoria","Listen well, Linus|For decades this guild|has kept the world's memory"
+act1_hall,A1_HALL_ENCARGO2,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Pero también ha decidido|qué recuerdos era|preferible no tocar,But it has also decided|which memories were|better left untouched
+act1_hall,A1_HALL_ENCARGO3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Estás diciendo|que lo ocultasteis?,Are you saying|you hid it?
+act1_hall,A1_HALL_ENCARGO4,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Los rumores debían|quedar como rumores|Pero ahora hay señales:,Rumours had to stay|rumours|But now there are signs:
+act1_hall,A1_HALL_ENCARGO5,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Canciones recordadas|que nadie ha enseñado|Sueños repetidos,Songs remembered|that no one has taught|Repeated dreams
+act1_hall,A1_HALL_ENCARGO6,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Yo también he tenido uno,I've had one too
+act1_hall,A1_HALL_ENCARGO7,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,El @[cisne@] dijo que habían|pasado @[cien años@]|Y que no podrían detenerle,The @[swan@] said a @[hundred|years@] had passed|And they couldn't hold him
+act1_hall,A1_HALL_ENCARGO8,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Entonces ya no hay tiempo|para fingir ignorancia|Iréis a la isla,Then there's no more time|to feign ignorance|You will go to the island
+act1_hall,A1_HALL_ENCARGO9,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Observaréis lo que quede del|@[Gremio de los Tejedores@]|Y volveréis a contar su historia,You'll see what remains of|the @[Weavers guild@]|And return to tell their story
+act1_hall,A1_HALL_ENCARGO10,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No tenemos mapa,We have no map
+act1_hall,A1_HALL_ENCARGO11,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,"@[Aiden@] dejó notas|Incompletas, pero suficientes","@[Aiden@] left notes|Incomplete, but enough"
 act1_hall,A1_HALL_CLIO_DESTINY,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"Nuestro destino es|documentar hechos,|no perseguirlos","Our destiny is to|document facts,|not to chase them"
 act1_hall,A1_HALL_XANDER_LINUS_AGE,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Linus tiene diecisiete años|Esa era mi edad cuando|viajé por el mundo,Linus is seventeen|That was my age when|I traveled the world
 act1_hall,A1_HALL_XANDER_FATHERS_AGE,FACE_xander,SIDE_LEFT,DEFAULT_TALK_TIME,Y la edad de su padre cuando|llegó aquí,And his father's age when|he came to us
@@ -46,6 +63,8 @@ act1_hall,A1_HALL_LINUS_MOTHER,FACE_linus,SIDE_RIGHT,100,Madre...,Mother...
 act1_hall,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_hall,A1_HALL_CLIO_IF_XANDER_WANTS,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"Si Xander lo quiere, así será|Pero no irás solo","If Xander wants it that way,|so it will be|But you'll not go alone"
 act1_hall,A1_HALL_CLIO_I_WONT_LET_YOU,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Nunca me ha gustado viajar|Pero no dejaré que vayas solo,I've never liked to travel|But I won't let you go alone
+act1_hall,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_hall,A1_HALL_CLIO_PREPARE,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Prepararé lo necesario,I'll prepare what we need
 act1_forest,A1_FOREST_SOME_TIME_LATER,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Algún tiempo después,Some time later
 act1_forest,A1_FOREST_ENEMIES_APPROACHING,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,"Se aproximan enemigos|Tenemos que estar atentos|Quédate cerca, madre","Enemies are approaching|We have to stay alert|Stay close, mother"
 act1_forest,A1_FOREST_NOTE_ABOUT_SCENE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[NOTA@]: Puede que esta escena o estos|hechizos no estén en el|juego cuando esté terminado,@[NOTE@]: This scene or these|spells may not be in the|game when finished
@@ -67,9 +86,14 @@ act1_forest,A1_FOREST_THANKS_FOR_PLAYING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,G
 act1_forest,A1_FOREST_TURN_OFF_CONSOLE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Apaga tu consola|y haz algo constructivo|como jugar un poco al frontón,Turn off your console|and do something constructive|like play a little racquetball
 act1_forest,A1_FOREST_ORGANIZE_SOCKS,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"o preparar la cena,|o organizar tu cajón de calcetines|alfabéticamente.","or cook dinner,|or organize your sock drawer|alphabetically."
 act1_bedroom,A1_BEDROOM_HUNDRED_YEARS,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Han pasado ya cien años,A hundred years have passed
-act1_bedroom,A1_BEDROOM_CANT_STOP_LONG,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,No podremos pararles|por mucho más tiempo,We won't be able to|stop them for much longer
+act1_bedroom,A1_BEDROOM_SWAN2,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Cien años desde que|cantamos para contenerle,A hundred years since|we sang to contain him
+act1_bedroom,A1_BEDROOM_SWAN3,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Pero el @[tejido@]|se está rompiendo,But the @[weave@]|is breaking
+act1_bedroom,A1_BEDROOM_CANT_STOP_LONG,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,No podremos detenerle|mucho más tiempo,We won't be able to|hold him much longer
+act1_bedroom,A1_BEDROOM_SWAN5,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,@[Linus Wordweaver@]...,@[Linus Wordweaver@]...
+act1_bedroom,A1_BEDROOM_SWAN6,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,"Cuando despiertes,|escucha lo que ya sabías","When you wake,|listen to what you already knew"
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,A1_BEDROOM_NEXT_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,A la mañana siguiente...,The next morning...
+act1_bedroom,A1_BEDROOM_AWAKE,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Otra vez|El mismo sueño|con la misma voz,Again|The same dream|with the same voice
 act1_bedroom,A1_BEDROOM_SLEPT_BAD,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,He dormido regular esta noche|Tuve horribles pesadillas,I've not slept well last night|I had terrible nightmares
 act1_bedroom,A1_BEDROOM_NO_TIME_TO_SIT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No tengo tiempo de sentarme|@[Madre@] me espera,I don't have time to sit down|@[Mother@] is waiting for me
 act1_bedroom,A1_BEDROOM_NOT_REAL,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No ha podido ser real|La ventana está cerrada,It couldn't be real|The windows is closed
@@ -77,6 +101,8 @@ act1_bedroom,A1_BEDROOM_LULLABY,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Esta es l
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,A1_BEDROOM_LEARNED_PATTERN,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Has aprendido|tu primer @[patrón@],You have learned|your first @[pattern@]
 act1_bedroom,A1_BEDROOM_ENTER_PAUSE_MENU,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Entra en el menú de|pausa para verlo,Enter the pause menu|to check it out
+act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
+act1_bedroom,A1_BEDROOM_FOURNOTES,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Cuatro notas|Parecen poco relevantes|Pero importan mucho,Four notes|They seem unimportant|But they matter a lot
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,A1_BEDROOM_MOTHER_CALLS,FACE_clio,SIDE_RIGHT,DEFAULT_TALK_TIME,"@[Linus@], ¿dónde estás?","@[Linus@], where are you?"
 act1_bedroom,A1_BEDROOM_TOO_LATE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Se me ha hecho demasiado tarde|tengo que ir al salón,It's gotten too late|I need to go the hall
@@ -114,14 +140,11 @@ act1_test,A1_TEST_DEFEAT,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Te han der
 act1_test,A1_TEST_BYE,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,TEST: Fin del banco de pruebas|Volviendo al dormitorio,TEST: End of the test bench|Returning to the bedroom
 act1_bedroom,A1_BEDROOM_PORTRAIT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Padre, madre y yo","Father, Mother and me"
 act1_bedroom,A1_BEDROOM_PORTRAIT2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Es extraño cómo una imagen|puede parecer más viva|que una habitación entera,It's strange how a picture|can seem more alive|than a whole room
-act1_bedroom,A1_BEDROOM_PORTRAIT3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre siempre miraba un|poco más allá del marco,Father always looked|a little past the frame
-act1_bedroom,A1_BEDROOM_PORTRAIT4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Como si incluso entonces|ya estuviera pensando|en marcharse,As if even back then|he was already thinking|of leaving
+act1_bedroom,A1_BEDROOM_PORTRAIT3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Parece que fue ayer|cuando @[Padre@] estaba|con nosotros,It seems like yesterday|when @[Father@] was|with us
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_bedroom,A1_BEDROOM_CHEST,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Juguetes viejos,Old toys
-act1_bedroom,A1_BEDROOM_CHEST2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Cuerdas, tablillas,|una flauta rota...","Strings, small boards,|a broken flute..."
-act1_bedroom,A1_BEDROOM_CHEST3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre insistía en que|aprendiera música aunque|no fuera pastor,Father insisted I learn|music even if I was|no shepherd
-act1_bedroom,A1_BEDROOM_CHEST4,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Madre decía que bastaba|con escuchar,Mother said listening|was enough
+act1_bedroom,A1_BEDROOM_CHEST,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"Juguetes viejos:|cuerdas, tablillas,|una flauta rota...","Old toys:|strings, small boards,|a broken flute..."
+act1_bedroom,A1_BEDROOM_CHEST2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Padre insistía en que|aprendiera música aunque|no fuera pastor,Father insisted I learn|music even if I was|no shepherd
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_coast,A1_COAST_ARRIVE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[Isla desconocida@]|Un mes más tarde,@[Unknown island@]|One month later
 act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
@@ -135,8 +158,6 @@ act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_coast,A1_COAST_ONWARD,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Todo parece quieto,Everything seems still
 act1_coast,A1_COAST_ONWARDb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Demasiado quieto,Too still
 act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_island,A1_ISLAND_ENTER,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Se hace de noche deprisa,Night falls fast
-act1_island,A1_ISLAND_ENTERb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No te separes de mí,Stay close to me
 act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_island,A1_ISLAND_COMBAT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"¡@[Madre@], detrás!","@[Mother@], behind you!"
 act1_island,A1_ISLAND_COMBATb,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Golpea con el botón @[A@],Strike with the @[A@] button
@@ -200,15 +221,12 @@ act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_return,A1_RETURN_BOARS_WON,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Han retrocedido,They've fallen back
 act1_return,A1_RETURN_BOARS_WONb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Volverán|No podemos perder tiempo,They'll return|We can't waste time
 act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_return,A1_RETURN_BOBBIN_HINT,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,No cedas|Mantente en pie,Don't give in|Stand your ground
+act1_return,A1_RETURN_BOBBIN_HINT,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Canta el patrón|de los cielos,Sing the pattern|of the skies
 act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_return,A1_RETURN_GHOSTS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Qué son esas cosas?,What are those things?
 act1_return,A1_RETURN_GHOSTSb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No sé si queremos saberlo,I'm not sure we want to know
-act1_return,A1_RETURN_GHOSTSc,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,El trueno directo|no les afecta,Direct thunder|doesn't touch them
-act1_return,A1_RETURN_GHOSTSd,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,La solución es a veces|lo contrario del problema,The answer is sometimes|the opposite of the problem
-act1_return,A1_RETURN_GHOSTSe,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Contrarréstalos con|@[SOL SOL FA MI@],Counter them with|@[SOL SOL FA MI@]
 act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_return,A1_RETURN_DEFEAT,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,"¡Linus, en pie!|No dejes que te rodeen","Linus, up!|Don't let them surround you"
+act1_return,A1_RETURN_DEFEAT,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,La solución es a veces|lo contrario del problema,The answer is sometimes|the opposite of the problem
 act1_return,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_return,A1_RETURN_GHOSTS_WON,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Se han ido,They're gone
 act1_return,A1_RETURN_GHOSTS_WONb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No|Se han retirado,No|They've withdrawn

@@ -77,6 +77,7 @@ OPS = {
     'look':         ('SCENE_OP_LOOK',         ['verbatim', 'leftright']),
     'wait':         ('SCENE_OP_WAIT',         ['int']),
     'wait_scroll':  ('SCENE_OP_WAIT_SCROLL',  ['int']),
+    'wait_scroll_left': ('SCENE_OP_WAIT_SCROLL_L', ['int']),
     'set':          ('SCENE_OP_SET',          ['flag', 'onoff']),
     'combat':       ('SCENE_OP_COMBAT',       []),
     'cast':         ('SCENE_OP_CAST',         ['spell', 'direction?']),

@@ -7,9 +7,11 @@ scene act1_hut
 
 level hut_bg_tile hut_bg_map hut_front_tile hut_front_map hut_pal 640 user_right 3
 limits 0 134 275 172
-item 0 item_hut_staff PAL0 430 150 0 0 0 0 CALCULATE_DEPTH          # el bastón (resonando)
-item 1 item_hut_loom_debris PAL0 200 110 0 0 24 48 CALCULATE_DEPTH  # bastidor roto
-item 2 item_hut_threads PAL0 500 146 0 0 0 0 CALCULATE_DEPTH        # hilos ennegrecidos
+# Cajas de colisión explícitas: cubren el sprite VISIBLE para que interactuar
+# no exija colocarse por encima de donde se ve el objeto
+item 0 item_hut_staff PAL0 430 150 40 0 10 8 CALCULATE_DEPTH        # el bastón (resonando)
+item 1 item_hut_loom_debris PAL0 200 110 48 0 6 16 FORCE_BACKGROUND # bastidor roto (apoyado en la pared)
+item 2 item_hut_threads PAL0 500 146 32 0 8 12 CALCULATE_DEPTH      # hilos ennegrecidos
 set rod off
 character CHR_linus
 character CHR_clio

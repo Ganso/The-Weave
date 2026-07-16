@@ -85,6 +85,10 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
     reinit_character_sprite(CHR_linus);
 
     activate_spell(SPELL_THUNDER);   // patrón inscrito: Electricidad (jingle + notas)
+
+    // De momento solo puede tocar las 4 primeras notas (guión 5.3): una nota
+    // superior suena como un beep de error hasta el final del juego
+    player_note_limit = NOTE_LA;
 }
 
 // Al salir, una sombra se mueve entre los restos del telar (placeholder:

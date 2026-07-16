@@ -12,9 +12,10 @@ item 1 item_bedroom_chair PAL0 236 110 26 0 43 0 FORCE_BACKGROUND           # si
 item 2 item_bedroom_windowsill PAL0 125 121 99 0 22 0 FORCE_BACKGROUND      # alféizar
 item 3 item_bedroom_cabinet PAL0 270 79 51 0 82 0 FORCE_BACKGROUND          # armario + partitura
 item 4 item_bedroom_linus_sleeping PAL0 30 112 0 0 0 0 FORCE_BACKGROUND     # Linus dormido
-# Items del guión definitivo (sprites PLACEHOLDER; cajas de interacción en la
-# franja baja del suelo para no pisar las de cama/ventana/armario)
-item 5 item_bedroom_portrait PAL0 0 40 36 8 12 124 FORCE_BACKGROUND         # retrato familiar
+# Items del guión definitivo (sprites PLACEHOLDER). El retrato cuelga sobre el
+# cajón de la izquierda; su caja de interacción queda por ENCIMA de la franja
+# andable (y<145) para no bloquear el paso por abajo.
+item 5 item_bedroom_portrait PAL0 32 100 24 0 8 36 FORCE_BACKGROUND         # retrato familiar
 item 7 item_bedroom_chest PAL0 176 148 40 0 12 16 CALCULATE_DEPTH          # baúl de infancia
 
 call act1_bedroom_swan       # cinemática del cisne (flash + diálogo + flash)

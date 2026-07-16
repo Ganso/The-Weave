@@ -18,13 +18,13 @@ void act1_return_start(void)    // Regreso nocturno: sopla el viento (ya no hay 
     play_sample(snd_ambient_wind, sizeof(snd_ambient_wind));
 }
 
-void act1_return_boars(void)    // Segunda emboscada: 3 jabalíes (con antorcha)
+void act1_return_boars(void)    // Segunda emboscada: sin antorcha, solo el TRUENO los ahuyenta
 {
     PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);
     static const s16 spawn[3][2] = {    // {x esquina, y de pies}
-        { SCREEN_WIDTH + 12, 146 },
-        { -60,               158 },
-        { SCREEN_WIDTH + 40, 170 },
+        { -60,               146 },     // vamos hacia la izquierda: la manada corta el paso
+        { SCREEN_WIDTH + 12, 158 },
+        { -84,               170 },
     };
     for (u16 i = 0; i < 3; i++) {
         init_enemy(i, ENEMY_CLS_BOAR);
@@ -32,7 +32,7 @@ void act1_return_boars(void)    // Segunda emboscada: 3 jabalíes (con antorcha)
         show_enemy(i, true);
     }
     player_max_hitpoints = 5;
-    melee_combat_run(4, CHR_clio);
+    melee_combat_run_thunder(2, CHR_clio);   // dos truenos completos y huyen
 }
 
 void act1_return_ghosts(void)    // Espectros del Caos (combate por hechizos)

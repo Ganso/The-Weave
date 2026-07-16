@@ -27,10 +27,8 @@ set movement on
 wait_press
 set movement off
 
-# Embarque y susurro final de Bobbin
+# Embarque; el susurro final de Bobbin suena YA EN NEGRO (guión: fundido y voz)
 move CHR_clio 120 152
 move CHR_linus 90 144
-say_cluster ACT1_COAST_END A1_END_BOBBIN sound  # el susurro final
-say ACT1_COAST_END A1_END_FIN sound
-fade_out 120
+call act1_end_epilogue
 hard_reset

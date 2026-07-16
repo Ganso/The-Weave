@@ -54,4 +54,8 @@ void act1_fday_heal(void)    // Clio canta el patrón de Curación (narrativo)
     }
     PAL_setColor(4, old);
     anim_character(CHR_clio, ANIM_IDLE);
+
+    // Linus reconoce el patrón y lo anota, como la nana del dormitorio
+    // (jingle + notas en el HUD + entrada en el menú de pausa)
+    activate_spell(SPELL_HEAL);
 }

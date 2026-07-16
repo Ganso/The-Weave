@@ -8,6 +8,7 @@
 
 // Globals del jugador
 extern bool player_has_rod;          // puede físicamente usar hechizos
+extern u8 player_note_limit;         // nota más alta disponible (beep de error por encima)
 extern bool player_patterns_enabled; // no silenciado por una cutscene
 
 // --- Input del jugador ---

@@ -20,7 +20,12 @@
 #include <genesis.h>
 
 // companion: personaje que se queda quieto detrás del jugador mirando a la
-// derecha (se recoloca andando si no estaba detrás). CHR_NONE si no hay.
+// derecha (se recoloca andando si no estaba detrás; al acabar vuelve a seguir).
+// CHR_NONE si no hay.
 void melee_combat_run(u8 hits_to_win, u16 companion);
+
+// Variante del regreso (guión 6.1): el golpe físico NO cuenta; solo el patrón
+// de TRUENO cantado entero ahuyenta a los jabalíes (habilitar spells antes).
+void melee_combat_run_thunder(u8 casts_to_win, u16 companion);
 
 #endif

@@ -99,43 +99,30 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
                            (dx > 0 && obj_character[active_character].flipH));
     }
 
-    // Check for collision at new position
+    // Check for collision at new position. Si el paso completo choca, probar
+    // cada eje por separado (deslizarse a lo largo del obstáculo). El sistema
+    // anterior empujaba al personaje en sentido CONTRARIO al movimiento, lo
+    // que producía andar hacia atrás con la animación de ir hacia delante.
     if ((detect_char_enemy_collision(active_character, new_x, new_y) != ENEMY_NONE) ||
         (detect_char_item_collision(active_character, new_x, new_y) != ITEM_NONE) ||
         (detect_char_char_collision(active_character, new_x, new_y) != CHR_NONE)) {
-        
-        num_colls = 0; // Reset collision counter
-        
-        // If changing direction, try moving in new direction
-        // If not changing direction, try moving in opposite direction
-        s16 move_dx = direction_changed ? dx : -dx;
-        s16 move_dy = direction_changed ? dy : -dy;
-        s16 test_x = direction_changed ? current_x : new_x;
-        s16 test_y = direction_changed ? current_y : new_y;
 
-        // Move pixel by pixel until no collision or MAX_COLLISIONS reached
-        while ((detect_char_enemy_collision(active_character, test_x, test_y) != ENEMY_NONE ||
-               detect_char_item_collision(active_character, test_x, test_y) != ITEM_NONE ||
-               detect_char_char_collision(active_character, test_x, test_y) != CHR_NONE) &&
-               num_colls < MAX_COLLISIONS) {
-            
-            test_x += move_dx;
-            test_y += move_dy;
-            num_colls++;
-
-            // Stay within screen boundaries
-            if ((use_x_limits &&
-                 (test_x < x_limit_min || test_x > x_limit_max)) ||
-                test_y + player_y_size < y_limit_min ||
-                test_y + player_y_size > y_limit_max)
-            {
-                break;
-            }
+        if (dx != 0 &&
+            detect_char_enemy_collision(active_character, new_x, current_y) == ENEMY_NONE &&
+            detect_char_item_collision(active_character, new_x, current_y) == ITEM_NONE &&
+            detect_char_char_collision(active_character, new_x, current_y) == CHR_NONE) {
+            new_y = current_y;                       // deslizar en horizontal
         }
-
-        // Update new position to where we found no collision
-        new_x = test_x;
-        new_y = test_y;
+        else if (dy != 0 &&
+            detect_char_enemy_collision(active_character, current_x, new_y) == ENEMY_NONE &&
+            detect_char_item_collision(active_character, current_x, new_y) == ITEM_NONE &&
+            detect_char_char_collision(active_character, current_x, new_y) == CHR_NONE) {
+            new_x = current_x;                       // deslizar en vertical
+        }
+        else {                                       // bloqueado del todo
+            new_x = current_x;
+            new_y = current_y;
+        }
         new_x_fixed = FASTFIX32_FROM_INT(new_x);
         new_y_fixed = FASTFIX32_FROM_INT(new_y);
     }

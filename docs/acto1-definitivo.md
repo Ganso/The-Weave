@@ -954,27 +954,33 @@ El acto 1 está **completo mecánicamente** y con los **textos definitivos** del
 guión ya vertidos en `data/texts.csv` (ES/EN, en clusters con caras alternadas);
 solo falta afinar posiciones/tiempos con playtest y el arte/audio definitivo:
 
-- **Esc. 1**: interacciones del guión — retrato y baúl. *(La estantería se
-  descartó: eliminada como objeto y recurso.)*
+- **Esc. 1**: cinemática del cisne y textos según el guión revisado; interacciones
+  de retrato (sobre el cajón izquierdo) y baúl; releer la partitura tiene texto
+  propio ("Cuatro notas..."). *(La estantería se descartó: eliminada como objeto
+  y recurso.)*
 - **Esc. 4** (`act1_coast` → `act1_island`): la playa es un **lugar de paso**
-  (rótulo, gaviota que alza el vuelo, árbol rojo examinable con A); el primer
-  ataque de los jabalíes y la **curación de Clio** ocurren en el tramo de
-  **bosque del atardecer** del interior (`act1_island`, con **Linus llevando la
-  antorcha**; reutiliza el fondo del bosque — la paleta de atardecer queda
-  pendiente de asset).
+  (rótulo; la gaviota alza el vuelo **al llegar a la altura del árbol rojo**, que
+  se puede examinar con A); el primer ataque de los jabalíes y la **curación de
+  Clio** ocurren en el bosque del atardecer (`act1_island`, con antorcha). Al
+  sanar, Linus **aprende el patrón de Curación** (SPELL_HEAL: jingle + notas +
+  menú de pausa, como la nana), aunque usa la nota más alta y no podrá cantarlo
+  en mucho tiempo.
 - **Esc. 5** (`act1_hut`): exploración libre con **inspecciones** (bastidor,
   hilos); interactuar con el **bastón** dispara el rayo, la recogida (ANIM_GRAB),
   el patrón **Electricidad** y la primera voz de Bobbin; al coger el bastón **se
-  apaga la antorcha** (a partir de aquí luce el bastón); al salir, la **sombra**
-  se mueve entre los restos.
-- **Esc. 6** (`act1_return`): regreso nocturno **sin antorcha** (mismo bosque,
-  paleta oscura). Emboscada de jabalíes (melee, con reintento) y los **espectros
-  del Caos** en combate por hechizos (se vencen con el **trueno invertido**),
-  también con reintento. *El hechizo de Luz/Oscuridad y el puzzle de la antorcha
-  se han eliminado de este acto por completo.*
+  apaga la antorcha** y queda activo el **límite de 4 notas** (una nota superior
+  suena como beep de error); al salir, la **sombra** se mueve entre los restos.
+- **Esc. 6** (`act1_return`): regreso nocturno **sin antorcha**, recorriendo el
+  mismo bosque **de derecha a izquierda** (`user_left` + op `wait_scroll_left`).
+  Emboscada de jabalíes que **solo se resuelve con el TRUENO** (melee en modo
+  trueno: el golpe físico no cuenta; pista de Bobbin al caer) y los **espectros
+  del Caos** en combate por hechizos (trueno invertido), ambos con reintento.
+  *El hechizo de Luz/Oscuridad y el puzzle de la antorcha se han eliminado de
+  este acto por completo.*
 - **Esc. 7** (`act1_coast_end`): tormenta, **pausa interactiva** (mirar la isla,
-  A para embarcar), susurro final de Bobbin ("Tranquilo, Linus. Nunca estarás
-  solo") y FIN DEL ACTO 1.
+  A para embarcar), embarque, **fundido a negro** y, ya en la oscuridad, el
+  susurro final de Bobbin ("Tranquilo, Linus. Nunca estarás solo") y FIN DEL
+  ACTO 1.
 
 ### Estado de los assets (julio 2026)
 

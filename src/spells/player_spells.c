@@ -154,7 +154,7 @@ static bool scripted_only_can_use(const SpellContext *ctx)
 // Registro en la tabla
 // =====================================================================
 
-void init_player_spells(void)    // Registra los 4 hechizos base (llamado desde init_spells)
+void init_player_spells(void)    // Registra los hechizos base (llamado desde init_spells)
 {
     spell_defs[SPELL_THUNDER] = (SpellDef){
         .id = SPELL_THUNDER,
@@ -191,6 +191,18 @@ void init_player_spells(void)    // Registra los 4 hechizos base (llamado desde 
         .notes = { NOTE_FA, NOTE_MI, NOTE_DO, NOTE_LA }, .noteCount = 4,
         .isPalindrome = false, .counterable = false,
         .baseDuration = SCREEN_FPS * 5 / 4,      // era 75 frames NTSC
+        .enabled = false,
+        .canUse = scripted_only_can_use,
+    };
+
+    // CURACIÓN: la canta Clio en el acto 1 (guión 4.3). Linus la anota como
+    // Dormir, pero usa la nota más alta (DO), que queda fuera de su límite de
+    // notas hasta el final del juego → solo guionizado por partida doble.
+    spell_defs[SPELL_HEAL] = (SpellDef){
+        .id = SPELL_HEAL,
+        .notes = { NOTE_LA, NOTE_SI, NOTE_DO, NOTE_SI }, .noteCount = 4,
+        .isPalindrome = false, .counterable = false,
+        .baseDuration = SCREEN_FPS * 5 / 4,
         .enabled = false,
         .canUse = scripted_only_can_use,
     };

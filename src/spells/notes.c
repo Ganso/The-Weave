@@ -11,6 +11,7 @@
 #include "res_all.h"
 
 bool player_has_rod;          // puede físicamente usar hechizos
+u8 player_note_limit = NOTE_DO; // nota más alta disponible (acto 1: hasta LA tras el bastón)
 bool player_patterns_enabled; // no silenciado por una cutscene
 
 // Cola del jugador
@@ -58,6 +59,12 @@ bool spell_note_input(u8 noteCode)    // El jugador pulsa una nota (desde contro
 {
     // --- Guards ------------------------------------------------------
     if (noteCode < NOTE_MI || noteCode > NOTE_DO)           return false;
+
+    if (noteCode > player_note_limit) {                     // nota aún no disponible
+        dprintf(2,"Reject %d: por encima del límite de notas (%u)", noteCode, player_note_limit);
+        play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+        return false;
+    }
 
     if (pattern_lock) {                                     // lock global
         dprintf(2,"Reject %d: pattern lock (%u frames left)", noteCode, pattern_lock);

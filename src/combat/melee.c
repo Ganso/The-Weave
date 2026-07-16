@@ -17,6 +17,7 @@
 #include "world/world.h"
 #include "actors/actors.h"
 #include "combat/combat.h"
+#include "spells/spells.h"
 #include "audio/audio.h"
 #include "res_all.h"
 #include "combat/melee.h"
@@ -60,6 +61,8 @@ static u16 melee_hits;              // golpes conectados (u16: legible por el dr
 static u16 attack_timer;            // frames restantes del golpe en curso (0 = ninguno)
 static u16 attack_cd;
 static u16 prev_joy;
+static bool melee_thunder_wins;     // true: solo el TRUENO ahuyenta (jabalíes de vuelta, sin antorcha)
+static bool melee_thunder_seen;     // el trueno del jugador está sonando
 
 static s16 chr_feet_x(u16 nchar)  { return FASTFIX32_TO_INT(obj_character[nchar].x) + obj_character[nchar].x_size / 2; }
 static s16 chr_feet_y(u16 nchar)  { return FASTFIX32_TO_INT(obj_character[nchar].y) + obj_character[nchar].y_size; }
@@ -68,10 +71,12 @@ static s16 enemy_feet_y(u16 e)    { return FASTFIX32_TO_INT(obj_enemy[e].obj_cha
 
 // El acompañante se queda inmóvil detrás (a la izquierda) del jugador mirando
 // a la derecha; si no estaba detrás, se recoloca andando (bloqueante).
-static void melee_stage_companion(u16 companion)
+// Devuelve el valor previo de follows_character para restaurarlo al terminar.
+static bool melee_stage_companion(u16 companion)
 {
-    if (companion >= MAX_CHR || !obj_character[companion].active) return;
+    if (companion >= MAX_CHR || !obj_character[companion].active) return false;
 
+    bool was_following = obj_character[companion].follows_character;
     obj_character[companion].follows_character = false;
     s16 px = FASTFIX32_TO_INT(obj_character[active_character].x);
     if (FASTFIX32_TO_INT(obj_character[companion].x) > px - (MELEE_COMPANION_GAP / 2))
@@ -79,6 +84,7 @@ static void melee_stage_companion(u16 companion)
     look_left(companion, false);   // mirando a la derecha
     obj_character[companion].state = STATE_IDLE;
     anim_character(companion, ANIM_IDLE);
+    return was_following;
 }
 
 // Lado de huida: hacia el borde de pantalla más cercano, sea cual sea
@@ -148,6 +154,27 @@ static u16 melee_find_attack_target(void)
         if (fwd < best_dist) { best_dist = fwd; best = e; }
     }
     return best;
+}
+
+// Modo trueno: cuando el TRUENO del jugador termina de sonar, ahuyenta a
+// TODOS los jabalíes en pantalla y cuenta como un "golpe" del combate
+static void melee_update_thunder(void)
+{
+    bool active = (spell_active_id(SPELL_SLOT_PLAYER) == SPELL_THUNDER);
+    if (active) { melee_thunder_seen = true; return; }
+    if (!melee_thunder_seen) return;
+    melee_thunder_seen = false;      // el efecto acaba de terminar: espantada general
+
+    dprintf(2, "Melee: trueno completado (%d)", melee_hits + 1);
+    melee_hits++;
+    play_sample(snd_player_hit_enemy, sizeof(snd_player_hit_enemy));
+    for (u16 e = 0; e < MAX_ENEMIES; e++) {
+        if (mb_state[e] == MB_CHASE || mb_state[e] == MB_BITE) {
+            obj_enemy[e].obj_character.state = STATE_HIT;   // flash de susto
+            obj_enemy[e].modeTimer = ENEMY_HURT_DURATION;
+            mb_state[e] = MB_HURT;
+        }
+    }
 }
 
 // Input del golpe + resolución del impacto
@@ -309,11 +336,13 @@ static void melee_update_enemy(u16 e, u8 hits_to_win)
     }
 }
 
-void melee_combat_run(u8 hits_to_win, u16 companion)
+static void melee_run(u8 hits_to_win, u16 companion, bool thunder_wins)
 {
-    dprintf(2, "Melee combat: start (%d hits to win)", hits_to_win);
+    dprintf(2, "Melee combat: start (%d hits to win, thunder=%d)", hits_to_win, thunder_wins);
 
-    melee_stage_companion(companion);
+    melee_thunder_wins = thunder_wins;
+    melee_thunder_seen = false;
+    bool comp_was_following = melee_stage_companion(companion);
 
     // Tomar el control de los enemigos ya spawneados
     for (u16 e = 0; e < MAX_ENEMIES; e++) {
@@ -340,7 +369,8 @@ void melee_combat_run(u8 hits_to_win, u16 companion)
     bool running = true;
     while (running && !player_defeated) {
         next_frame(true);
-        melee_update_player_attack();
+        if (melee_thunder_wins) melee_update_thunder();   // el arma es el patrón
+        else melee_update_player_attack();                // el arma es el golpe con A
 
         running = false;
         for (u16 e = 0; e < MAX_ENEMIES; e++) {
@@ -363,6 +393,21 @@ void melee_combat_run(u8 hits_to_win, u16 companion)
         obj_character[active_character].state = STATE_IDLE;
 
     player_scroll_active = old_scroll;
+
+    // El acompañante vuelve a seguir al jugador si lo hacía antes del combate
+    if (companion < MAX_CHR && obj_character[companion].active && comp_was_following)
+        obj_character[companion].follows_character = true;
+
     dprintf(2, "Melee combat: end (%d hits, %s)", melee_hits,
             player_defeated ? "derrota" : "victoria");
+}
+
+void melee_combat_run(u8 hits_to_win, u16 companion)
+{
+    melee_run(hits_to_win, companion, false);
+}
+
+void melee_combat_run_thunder(u8 casts_to_win, u16 companion)
+{
+    melee_run(casts_to_win, companion, true);
 }

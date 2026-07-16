@@ -27,15 +27,24 @@ show CHR_xander on
 move CHR_xander 40 174
 say_cluster ACT1_HALL A1_HALL_XANDER_AWAKE sound
 
-# Primer choice: la respuesta usa el texto base + la opción elegida
+# Primer choice: la respuesta usa el texto base + la opción elegida; la
+# opción "¿Los Tejedores?" añade una caja extra (guión 3.4)
 choice ACT1_HALL_CHOICE 0
 say_response ACT1_HALL A1_HALL_XANDER_ABILITY sound
-say_cluster ACT1_HALL A1_HALL_XANDER_FATHER_WANTED sound
+branch 0 goto weave_extra
+goto encargo
+label weave_extra
+say ACT1_HALL A1_HALL_XANDER_WEAVE sound
+
+# El encargo: el gremio ocultó recuerdos, hay señales, iréis a la isla (guión 3.4)
+label encargo
+say_cluster ACT1_HALL A1_HALL_ENCARGO sound
 
 # Segundo choice
 choice ACT1_HALL_CHOICE 1
 look CHR_clio right       # hacia Linus
 say_response ACT1_HALL A1_HALL_CLIO_IF_XANDER_WANTS sound
+say ACT1_HALL A1_HALL_CLIO_PREPARE sound
 
 wait 20
 

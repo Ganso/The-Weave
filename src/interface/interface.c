@@ -227,6 +227,7 @@ void show_pattern_icon(u16 npattern, bool show, bool priority)    // Display or 
         if (npattern==SPELL_SLEEP) nsprite = &int_pattern_sleep;
         if (npattern==SPELL_FIRE) nsprite = &int_pattern_fire;
         if (npattern==SPELL_LIGHT) nsprite = &int_pattern_light;
+        if (npattern==SPELL_HEAL) nsprite = &int_pattern_heal;
 
         if (nsprite==NULL) return; // Hechizo sin icono de HUD: no se dibuja (evita SPR_addSpriteSafe(NULL))
 
@@ -551,6 +552,7 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
         if (npattern==SPELL_SLEEP) nsprite = &int_pattern_sleep;
         if (npattern==SPELL_FIRE) nsprite = &int_pattern_fire;
         if (npattern==SPELL_LIGHT) nsprite = &int_pattern_light;
+        if (npattern==SPELL_HEAL) nsprite = &int_pattern_heal;
 
         if (nsprite==NULL) return; // Hechizo sin icono de HUD: no se dibuja
         if (spr_pause_icon[nicon]==NULL) spr_pause_icon[nicon] = SPR_addSpriteSafe(nsprite, x, 182, TILE_ATTR(npal, priority, false, false));

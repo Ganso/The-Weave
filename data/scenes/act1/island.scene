@@ -23,7 +23,6 @@ show CHR_linus on
 show CHR_clio on
 call act1_fday_start          # antorcha encendida + viento
 
-say_cluster ACT1_ISLAND A1_ISLAND_ENTER sound   # "Todo parece quieto..."
 move CHR_linus 50 154
 
 # Caminar hacia el interior

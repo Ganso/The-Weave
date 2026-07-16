@@ -78,10 +78,8 @@ static const SceneStep act1_coast_end_steps[] = {
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 0, 0, 0 }, // 19
     { SCENE_OP_MOVE, CHR_clio, 120, 152, 0 }, // 20
     { SCENE_OP_MOVE, CHR_linus, 90, 144, 0 }, // 21
-    { SCENE_OP_SAY_CLUSTER, ACT1_COAST_END, A1_END_BOBBIN, 1, 0 }, // 22
-    { SCENE_OP_SAY, ACT1_COAST_END, A1_END_FIN, 1, 0 }, // 23
-    { SCENE_OP_FADE_OUT, 120, 0, 0, 0 }, // 24
-    { SCENE_OP_HARD_RESET, 0, 0, 0, 0 }, // 25
+    { SCENE_OP_CALL, HOOK_ACT1_END_EPILOGUE, 0, 0, 0 }, // 22
+    { SCENE_OP_HARD_RESET, 0, 0, 0, 0 }, // 23
 };
 
 static const SceneStep act1_corridor_steps[] = {
@@ -101,8 +99,8 @@ static const SceneStep act1_corridor_steps[] = {
     { SCENE_OP_ITEM, 11, 19, 0, 0 }, // 13
     { SCENE_OP_CHARACTER, CHR_linus, 0, 0, 0 }, // 14
     { SCENE_OP_SAY_CLUSTER, SYSTEM_DIALOG, SYSMSG_DEMO_TITLE, 1, 0 }, // 15
-    { SCENE_OP_MOVE_INSTANT, CHR_linus, 340, 154, 0 }, // 16
-    { SCENE_OP_MOVE, CHR_linus, 270, 154, 0 }, // 17
+    { SCENE_OP_MOVE_INSTANT, CHR_linus, 232, 154, 0 }, // 16
+    { SCENE_OP_SHOW, CHR_linus, 1, 0, 0 }, // 17
     { SCENE_OP_SAY_CLUSTER, ACT1_CORRIDOR, A1_CORRIDOR_OVERSLEPT, 0, 0 }, // 18
     { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 19
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 20
@@ -172,12 +170,16 @@ static const SceneStep act1_hall_steps[] = {
     { SCENE_OP_SAY_CLUSTER, ACT1_HALL, A1_HALL_XANDER_AWAKE, 1, 0 }, // 19
     { SCENE_OP_CHOICE, ACT1_HALL_CHOICE, 0, 0, 0 }, // 20
     { SCENE_OP_SAY_RESPONSE, ACT1_HALL, A1_HALL_XANDER_ABILITY, 1, 0 }, // 21
-    { SCENE_OP_SAY_CLUSTER, ACT1_HALL, A1_HALL_XANDER_FATHER_WANTED, 1, 0 }, // 22
-    { SCENE_OP_CHOICE, ACT1_HALL_CHOICE, 1, 0, 0 }, // 23
-    { SCENE_OP_LOOK, CHR_clio, 0, 0, 0 }, // 24
-    { SCENE_OP_SAY_RESPONSE, ACT1_HALL, A1_HALL_CLIO_IF_XANDER_WANTS, 1, 0 }, // 25
-    { SCENE_OP_WAIT, 20, 0, 0, 0 }, // 26
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_COAST, 0, 0, 0 }, // 27
+    { SCENE_OP_BRANCH, 0, 24, 0, 0 }, // 22
+    { SCENE_OP_GOTO, 25, 0, 0, 0 }, // 23
+    { SCENE_OP_SAY, ACT1_HALL, A1_HALL_XANDER_WEAVE, 1, 0 }, // 24
+    { SCENE_OP_SAY_CLUSTER, ACT1_HALL, A1_HALL_ENCARGO, 1, 0 }, // 25
+    { SCENE_OP_CHOICE, ACT1_HALL_CHOICE, 1, 0, 0 }, // 26
+    { SCENE_OP_LOOK, CHR_clio, 0, 0, 0 }, // 27
+    { SCENE_OP_SAY_RESPONSE, ACT1_HALL, A1_HALL_CLIO_IF_XANDER_WANTS, 1, 0 }, // 28
+    { SCENE_OP_SAY, ACT1_HALL, A1_HALL_CLIO_PREPARE, 1, 0 }, // 29
+    { SCENE_OP_WAIT, 20, 0, 0, 0 }, // 30
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_COAST, 0, 0, 0 }, // 31
 };
 
 static const SceneStep act1_hut_steps[] = {
@@ -234,23 +236,22 @@ static const SceneStep act1_island_steps[] = {
     { SCENE_OP_SHOW, CHR_linus, 1, 0, 0 }, // 16
     { SCENE_OP_SHOW, CHR_clio, 1, 0, 0 }, // 17
     { SCENE_OP_CALL, HOOK_ACT1_FDAY_START, 0, 0, 0 }, // 18
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_ENTER, 1, 0 }, // 19
-    { SCENE_OP_MOVE, CHR_linus, 50, 154, 0 }, // 20
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 21
-    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 22
-    { SCENE_OP_WAIT_SCROLL, 200, 0, 0, 0 }, // 23
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_COMBAT, 1, 0 }, // 24
-    { SCENE_OP_CALL, HOOK_ACT1_FDAY_BOARS, 0, 0, 0 }, // 25
-    { SCENE_OP_IF_DEFEATED, 34, 0, 0, 0 }, // 26
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HURT, 1, 0 }, // 27
-    { SCENE_OP_CALL, HOOK_ACT1_FDAY_HEAL, 0, 0, 0 }, // 28
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HEALED, 1, 0 }, // 29
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_ONWARD, 1, 0 }, // 30
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 31
-    { SCENE_OP_WAIT_SCROLL, 1110, 0, 0, 0 }, // 32
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 33
-    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_DEFEAT, 1, 0 }, // 34
-    { SCENE_OP_GOTO, 24, 0, 0, 0 }, // 35
+    { SCENE_OP_MOVE, CHR_linus, 50, 154, 0 }, // 19
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 20
+    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 21
+    { SCENE_OP_WAIT_SCROLL, 200, 0, 0, 0 }, // 22
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_COMBAT, 1, 0 }, // 23
+    { SCENE_OP_CALL, HOOK_ACT1_FDAY_BOARS, 0, 0, 0 }, // 24
+    { SCENE_OP_IF_DEFEATED, 33, 0, 0, 0 }, // 25
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HURT, 1, 0 }, // 26
+    { SCENE_OP_CALL, HOOK_ACT1_FDAY_HEAL, 0, 0, 0 }, // 27
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HEALED, 1, 0 }, // 28
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_ONWARD, 1, 0 }, // 29
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 30
+    { SCENE_OP_WAIT_SCROLL, 1110, 0, 0, 0 }, // 31
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 32
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_DEFEAT, 1, 0 }, // 33
+    { SCENE_OP_GOTO, 23, 0, 0, 0 }, // 34
 };
 
 static const SceneStep act1_return_steps[] = {
@@ -260,27 +261,27 @@ static const SceneStep act1_return_steps[] = {
     { SCENE_OP_CHARACTER, CHR_linus, 0, 0, 0 }, // 3
     { SCENE_OP_CHARACTER, CHR_clio, 0, 0, 0 }, // 4
     { SCENE_OP_ACTIVE, CHR_linus, 0, 0, 0 }, // 5
-    { SCENE_OP_MOVE_INSTANT, CHR_linus, -30, 154, 0 }, // 6
-    { SCENE_OP_MOVE_INSTANT, CHR_clio, -60, 154, 0 }, // 7
+    { SCENE_OP_MOVE_INSTANT, CHR_linus, 350, 154, 0 }, // 6
+    { SCENE_OP_MOVE_INSTANT, CHR_clio, 380, 154, 0 }, // 7
     { SCENE_OP_FOLLOW, CHR_clio, 1, 0, 0 }, // 8
     { SCENE_OP_SHOW, CHR_linus, 1, 0, 0 }, // 9
     { SCENE_OP_SHOW, CHR_clio, 1, 0, 0 }, // 10
     { SCENE_OP_ENABLE_SPELL, SPELL_THUNDER, 0, 0, 0 }, // 11
     { SCENE_OP_CALL, HOOK_ACT1_RETURN_START, 0, 0, 0 }, // 12
     { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_START, 1, 0 }, // 13
-    { SCENE_OP_MOVE, CHR_linus, 50, 154, 0 }, // 14
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 15
-    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 16
-    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 17
-    { SCENE_OP_WAIT_SCROLL, 200, 0, 0, 0 }, // 18
-    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 0, 0, 0 }, // 19
-    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_BOARS, 1, 0 }, // 20
-    { SCENE_OP_CALL, HOOK_ACT1_RETURN_BOARS, 0, 0, 0 }, // 21
-    { SCENE_OP_IF_DEFEATED, 34, 0, 0, 0 }, // 22
-    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_BOARS_WON, 1, 0 }, // 23
-    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 24
+    { SCENE_OP_MOVE, CHR_linus, 250, 154, 0 }, // 14
+    { SCENE_OP_LOOK, CHR_linus, 1, 0, 0 }, // 15
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 16
+    { SCENE_OP_SET, SCENE_FLAG_SCROLL, 1, 0, 0 }, // 17
+    { SCENE_OP_SET, SCENE_FLAG_INTERFACE, 1, 0, 0 }, // 18
+    { SCENE_OP_SET, SCENE_FLAG_SPELLS, 1, 0, 0 }, // 19
+    { SCENE_OP_WAIT_SCROLL_L, 900, 0, 0, 0 }, // 20
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_BOARS, 1, 0 }, // 21
+    { SCENE_OP_CALL, HOOK_ACT1_RETURN_BOARS, 0, 0, 0 }, // 22
+    { SCENE_OP_IF_DEFEATED, 34, 0, 0, 0 }, // 23
+    { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_BOARS_WON, 1, 0 }, // 24
     { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 25
-    { SCENE_OP_WAIT_SCROLL, 360, 0, 0, 0 }, // 26
+    { SCENE_OP_WAIT_SCROLL_L, 400, 0, 0, 0 }, // 26
     { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_GHOSTS, 1, 0 }, // 27
     { SCENE_OP_CALL, HOOK_ACT1_RETURN_GHOSTS, 0, 0, 0 }, // 28
     { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 29
@@ -289,7 +290,7 @@ static const SceneStep act1_return_steps[] = {
     { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_DONE, 1, 0 }, // 32
     { SCENE_OP_NEXT_SCENE, SCENE_ACT1_COAST_END, 0, 0, 0 }, // 33
     { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_BOBBIN_HINT, 1, 0 }, // 34
-    { SCENE_OP_GOTO, 19, 0, 0, 0 }, // 35
+    { SCENE_OP_GOTO, 21, 0, 0, 0 }, // 35
     { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DEFEAT, 1, 0 }, // 36
     { SCENE_OP_GOTO, 27, 0, 0, 0 }, // 37
 };
@@ -406,12 +407,12 @@ static const SceneStep act1_test_steps[] = {
 const SceneScript scenes[] = {
     { "act1_bedroom", act1_bedroom_steps, 18 },
     { "act1_coast", act1_coast_steps, 23 },
-    { "act1_coast_end", act1_coast_end_steps, 26 },
+    { "act1_coast_end", act1_coast_end_steps, 24 },
     { "act1_corridor", act1_corridor_steps, 23 },
     { "act1_forest", act1_forest_steps, 36 },
-    { "act1_hall", act1_hall_steps, 28 },
+    { "act1_hall", act1_hall_steps, 32 },
     { "act1_hut", act1_hut_steps, 31 },
-    { "act1_island", act1_island_steps, 36 },
+    { "act1_island", act1_island_steps, 35 },
     { "act1_return", act1_return_steps, 38 },
     { "act1_test", act1_test_steps, 106 },
 };
@@ -432,7 +433,7 @@ const SceneLevel scene_levels[] = {
     { &historians_bg_tile, &historians_bg_map, &historians_front_tile, &historians_front_map, &historians_pal, SCREEN_WIDTH, BG_SCRL_AUTO_RIGHT, 3 }, // 5
     { &hut_bg_tile, &hut_bg_map, &hut_front_tile, &hut_front_map, &hut_pal, 640, BG_SCRL_USER_RIGHT, 3 }, // 6
     { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 7
-    { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_dark_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 8
+    { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_dark_pal, 1440, BG_SCRL_USER_LEFT, 3 }, // 8
     { &forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, &forest_pal, 1440, BG_SCRL_USER_RIGHT, 3 }, // 9
 };
 
@@ -442,7 +443,7 @@ const SceneItem scene_items[] = {
     { &item_bedroom_windowsill, PAL0, 125, 121, 99, 0, 22, 0, FORCE_BACKGROUND }, // 2
     { &item_bedroom_cabinet, PAL0, 270, 79, 51, 0, 82, 0, FORCE_BACKGROUND }, // 3
     { &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0, FORCE_BACKGROUND }, // 4
-    { &item_bedroom_portrait, PAL0, 0, 40, 36, 8, 12, 124, FORCE_BACKGROUND }, // 5
+    { &item_bedroom_portrait, PAL0, 32, 100, 24, 0, 8, 36, FORCE_BACKGROUND }, // 5
     { &item_bedroom_chest, PAL0, 176, 148, 40, 0, 12, 16, CALCULATE_DEPTH }, // 6
     { &item_coast_seagull, PAL0, 520, 112, 0, 0, 0, 0, FORCE_BACKGROUND }, // 7
     { &item_corridor_bookpedestal_sprite, PAL0, 600, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH }, // 8
@@ -464,9 +465,9 @@ const SceneItem scene_items[] = {
     { &item_forest_fg4_sprite, PAL0, 1400, 104, 0, 0, 0, 0, FORCE_FOREGROUND }, // 24
     { &item_forest_fg1_sprite, PAL0, 1050, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 25
     { &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 26
-    { &item_hut_staff, PAL0, 430, 150, 0, 0, 0, 0, CALCULATE_DEPTH }, // 27
-    { &item_hut_loom_debris, PAL0, 200, 110, 0, 0, 24, 48, CALCULATE_DEPTH }, // 28
-    { &item_hut_threads, PAL0, 500, 146, 0, 0, 0, 0, CALCULATE_DEPTH }, // 29
+    { &item_hut_staff, PAL0, 430, 150, 40, 0, 10, 8, CALCULATE_DEPTH }, // 27
+    { &item_hut_loom_debris, PAL0, 200, 110, 48, 0, 6, 16, FORCE_BACKGROUND }, // 28
+    { &item_hut_threads, PAL0, 500, 146, 32, 0, 8, 12, CALCULATE_DEPTH }, // 29
     { &item_forest_fg1_sprite, PAL0, 260, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 30
     { &item_forest_fg5_sprite, PAL0, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 31
     { &item_forest_fg2_sprite, PAL0, 440, 152, 0, 0, 0, 0, FORCE_FOREGROUND }, // 32

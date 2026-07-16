@@ -214,6 +214,10 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
                 if (player_defeated) { pc = st->a; continue; }
                 break;
 
+            case SCENE_OP_WAIT_SCROLL_L: // espera interactiva (avance hacia la IZQUIERDA)
+                while (FASTFIX32_TO_INT(offset_BGA) > (s16)st->a) next_frame(true);
+                break;
+
             case SCENE_OP_ANIM:
                 anim_character(st->a, st->b);
                 break;

@@ -66,7 +66,8 @@ typedef enum {
     SCENE_OP_FOLLOW       = 32,  // a=chr, b=on — follow_active_character
     SCENE_OP_ENABLE_SPELL = 33,  // a=SPELL_* — spell_enable (desbloqueo silencioso)
     SCENE_OP_ITEM         = 34,  // a=slot, b=índice en scene_items[] — init_item
-    SCENE_OP_IF_DEFEATED  = 35   // a=stepIdx — salta si el último combate acabó en derrota
+    SCENE_OP_IF_DEFEATED  = 35,  // a=stepIdx — salta si el último combate acabó en derrota
+    SCENE_OP_WAIT_SCROLL_L = 36  // a=offset — espera interactiva hasta offset_BGA <= a (scroll a la izquierda)
 } SceneOp;
 
 // Flags del op SET
