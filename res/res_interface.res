@@ -29,8 +29,7 @@ SPRITE int_pattern_open "gfx/interface/pattern_open.png" 4 4 BEST
 SPRITE int_pattern_sleep "gfx/interface/pattern_sleep.png" 4 4 BEST 
 SPRITE int_pattern_fire "gfx/interface/pattern_fire.png" 4 4 BEST
 SPRITE int_pattern_light "gfx/interface/pattern_light.png" 4 4 BEST
-# *** PLACEHOLDER: iconos de Oscuridad y Curación generados por código ***
-SPRITE int_pattern_dark "gfx/interface/pattern_dark.png" 4 4 BEST
+# *** PLACEHOLDER: icono de Curación generado por código ***
 SPRITE int_pattern_heal "gfx/interface/pattern_heal.png" 4 4 BEST
 
 # Others

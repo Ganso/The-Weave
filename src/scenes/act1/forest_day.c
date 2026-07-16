@@ -13,6 +13,13 @@
 #include "res_all.h"
 #include "scenes/act1/forest_day.h"
 
+void act1_fday_start(void)    // Bosque del atardecer: Linus lleva la antorcha
+{
+    linus_has_torch = true;
+    reinit_character_sprite(CHR_linus);
+    play_sample(snd_ambient_wind, sizeof(snd_ambient_wind));
+}
+
 void act1_fday_boars(void)    // Primer combate físico: 3 jabalíes (Linus sin vara)
 {
     PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);

@@ -21,7 +21,6 @@ SPRITE item_forest_fg5_sprite "gfx/items/act1/forest_fgsprite5.png" 4 22 BEST
 # Act 1 - Scene 1 (bedroom, interacciones del guión definitivo)
 # *** PLACEHOLDER (sprites generados por código; sustituir por .ase definitivo) ***
 SPRITE item_bedroom_portrait "gfx/items/act1/bedroom_portrait.png" 3 4 BEST
-SPRITE item_bedroom_bookshelf "gfx/items/act1/bedroom_bookshelf.png" 6 8 BEST
 SPRITE item_bedroom_chest "gfx/items/act1/bedroom_chest.png" 5 3 BEST
 
 # Act 1 - Scene 4/7 (costa)

@@ -84,11 +84,6 @@ void act1_bedroom_items(void)    // Bucle de items del dormitorio (lógica NO ex
             last_interacted_item = ITEM_NONE;
             scene_timeout = 0;
             break;
-        case 6: // Estantería
-            talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_SHELF], false);
-            last_interacted_item = ITEM_NONE;
-            scene_timeout = 0;
-            break;
         case 7: // Baúl de infancia
             talk_cluster(&dialogs[ACT1_BEDROOM][A1_BEDROOM_CHEST], false);
             last_interacted_item = ITEM_NONE;

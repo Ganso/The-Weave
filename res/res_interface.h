@@ -28,7 +28,6 @@ extern const SpriteDefinition int_pattern_open;
 extern const SpriteDefinition int_pattern_sleep;
 extern const SpriteDefinition int_pattern_fire;
 extern const SpriteDefinition int_pattern_light;
-extern const SpriteDefinition int_pattern_dark;
 extern const SpriteDefinition int_pattern_heal;
 extern const SpriteDefinition int_fadein_sprite;
 extern const SpriteDefinition int_life_counter_sprite;

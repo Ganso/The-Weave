@@ -1,6 +1,6 @@
 # Acto 1 — Escena 4b: interior de la isla, bosque de día (guión definitivo)
 # Tras la playa (lugar de paso), aquí atacan por primera vez los jabalíes y
-# Clio canta el patrón de Curación. Textos placeholder pendientes de guión.
+# Clio canta el patrón de Curación. Linus lleva la antorcha (atardecer).
 scene act1_island
 
 level forest_bg_tile forest_bg_map forest_front_tile forest_front_map forest_pal 1440 user_right 3
@@ -21,6 +21,7 @@ move_instant CHR_clio -60 154
 follow CHR_clio on
 show CHR_linus on
 show CHR_clio on
+call act1_fday_start          # antorcha encendida + viento
 
 say_cluster ACT1_ISLAND A1_ISLAND_ENTER sound   # "Todo parece quieto..."
 move CHR_linus 50 154

@@ -28,7 +28,7 @@ set scroll on
 call act1_coast_explore
 
 # La playa es un lugar de paso: seguir hacia el interior de la isla
-say ACT1_COAST A1_COAST_ONWARD sound
+say_cluster ACT1_COAST A1_COAST_ONWARD sound
 set movement on
 wait_scroll 318
 next_scene act1_island

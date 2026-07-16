@@ -1,13 +1,12 @@
 # Acto 1 — Escena 6: regreso hacia la nave (guión definitivo)
-# Vuelta nocturna con antorcha. Fases: emboscada de jabalíes (melee), la
-# antorcha se apaga (patrón inscrito; PLACEHOLDER: Luz en lugar de Oscuridad),
-# cantar Luz para reencenderla (puzzle) y los espectros del Caos (combate por
-# hechizos con counter). Textos placeholder.
+# Vuelta nocturna (mismo bosque, de derecha a izquierda), ya sin antorcha.
+# Fases: emboscada de jabalíes (melee) y los espectros del Caos (combate por
+# hechizos: se vencen con el trueno invertido). Sin Luz/Oscuridad.
 scene act1_return
 
 level forest_bg_tile forest_bg_map forest_front_tile forest_front_map forest_dark_pal 1440 user_right 3
 limits 0 134 275 172
-set rod on                    # ya tiene el bastón (la antorcha es visual)
+set rod on                    # ya tiene el bastón; la antorcha se apagó en la choza
 character CHR_linus
 character CHR_clio
 active CHR_linus
@@ -18,7 +17,7 @@ show CHR_linus on
 show CHR_clio on
 enable_spell SPELL_THUNDER
 
-call act1_return_start        # antorcha encendida + viento
+call act1_return_start         # viento
 say_cluster ACT1_RETURN A1_RETURN_START sound   # "Camina. No mires atrás"
 move CHR_linus 50 154
 
@@ -27,27 +26,16 @@ set scroll on
 set interface on
 wait_scroll 200
 
-# FASE 1 — Segunda emboscada de jabalíes (melee, sin notas)
+# FASE 1 — Emboscada de jabalíes (melee, sin notas)
 label ret_boars
 set spells off
-say_cluster ACT1_RETURN A1_RETURN_BOARS sound   # "Otra vez" / "Pues aprende deprisa"
+say_cluster ACT1_RETURN A1_RETURN_BOARS sound   # "Otra vez. Y ahora no tengo fuego"
 call act1_return_boars
 if_defeated goto ret_boars_fail
 say_cluster ACT1_RETURN A1_RETURN_BOARS_WON sound  # "Han retrocedido..."
 
-# FASE 2 — El viento apaga la antorcha: patrón inscrito y hay que cantar Luz
-say ACT1_RETURN A1_RETURN_DARKOUT sound
-call act1_return_torch_out    # antorcha fuera + activate_spell LUZ
-say_cluster ACT1_RETURN A1_RETURN_SYSTEM_DARK sound   # "Patrón inscrito: Oscuridad..."
-say_cluster ACT1_RETURN A1_RETURN_LISTENS sound       # "Que el bastón escuche..."
-say_cluster ACT1_RETURN A1_RETURN_BOBBIN_DARK sound   # pista de Bobbin + notas
+# FASE 2 — Espectros del Caos (combate por hechizos: trueno invertido)
 set spells on
-set movement on
-call act1_return_wait_light   # espera a que el jugador cante LUZ
-call act1_return_torch_relight
-say_cluster ACT1_RETURN A1_RETURN_RELIT sound   # "La llama... La he cantado" 
-
-# FASE 3 — Espectros del Caos (combate por hechizos)
 set movement on
 wait_scroll 360
 label ret_ghosts
@@ -55,10 +43,9 @@ say_cluster ACT1_RETURN A1_RETURN_GHOSTS sound  # "¿Qué son esas cosas?" + pis
 call act1_return_ghosts
 combat
 if_defeated goto ret_ghosts_fail
-say_cluster ACT1_RETURN A1_RETURN_GHOSTS_WON sound  # "Se han ido / Se han retirado"
+say_cluster ACT1_RETURN A1_RETURN_GHOSTS_WON sound  # "Han retrocedido / Volverán"
 
 say_cluster ACT1_RETURN A1_RETURN_DONE sound    # la nave a la vista
-call act1_return_end          # se apaga la antorcha para la escena final
 next_scene act1_coast_end
 
 label ret_boars_fail

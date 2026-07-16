@@ -15,7 +15,6 @@ item 4 item_bedroom_linus_sleeping PAL0 30 112 0 0 0 0 FORCE_BACKGROUND     # Li
 # Items del guión definitivo (sprites PLACEHOLDER; cajas de interacción en la
 # franja baja del suelo para no pisar las de cama/ventana/armario)
 item 5 item_bedroom_portrait PAL0 0 40 36 8 12 124 FORCE_BACKGROUND         # retrato familiar
-item 6 item_bedroom_bookshelf PAL0 44 60 40 86 12 104 FORCE_BACKGROUND     # estantería
 item 7 item_bedroom_chest PAL0 176 148 40 0 12 16 CALCULATE_DEPTH          # baúl de infancia
 
 call act1_bedroom_swan       # cinemática del cisne (flash + diálogo + flash)

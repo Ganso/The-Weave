@@ -74,11 +74,6 @@ Un cisne blanco aparece suspendido sobre la cama.
 
 > **Cisne:**  
 > Cien años  
-> desde que el Telar  
-> fue partido.
-
-> **Cisne:**  
-> Cien años  
 > desde que cantamos  
 > para contenerle.
 
@@ -95,28 +90,11 @@ Linus se remueve entre sueños. Frunce el ceño, como si reconociera la voz.
 > **Cisne:**  
 > Linus Wordweaver...
 
-> **Cisne:**  
-> Hijo de historia.  
-> Hijo de canción.
-
-> **Cisne:**  
-> Tu padre buscó  
-> la isla perdida.
-
-> **Cisne:**  
-> No la encontró.  
-> Pero dejó el camino  
-> abierto para ti.
-
 El cisne inclina la cabeza hacia el armario.
 
 > **Cisne:**  
 > Cuando despiertes,  
 > escucha lo que ya sabías.
-
-> **Cisne:**  
-> La memoria duerme.  
-> La música no.
 
 Fundido a blanco.
 
@@ -135,19 +113,9 @@ Rótulo:
 Linus se incorpora lentamente.
 
 > **Linus:**  
-> Otra vez.
-
-> **Linus:**  
-> El mismo cisne.
-
-> **Linus:**  
-> La misma voz.
-
-> **Linus:**  
-> Y siempre esa sensación  
-> de que el sueño  
-> me conoce mejor  
-> que yo mismo.
+> Otra vez
+> El mismo sueño con
+> la misma voz
 
 Se activa el control del jugador.
 
@@ -162,39 +130,18 @@ Se activa el control del jugador.
 > **Linus:**  
 > Tuve horribles pesadillas.
 
-> **Linus:**  
-> O recuerdos.  
-> A veces cuesta distinguirlos.
-
 #### Interacción: silla
 
 > **Linus:**  
 > No tengo tiempo  
 > de sentarme.
-
-> **Linus:**  
 > **Madre** me espera.
-
-> **Linus:**  
-> Y cuando madre espera,  
-> el mundo entero  
-> parece llegar tarde.
 
 #### Interacción: ventana
 
 > **Linus:**  
 > No ha podido ser real.
-
-> **Linus:**  
 > La ventana está cerrada.
-
-> **Linus:**  
-> Si ese cisne entró aquí,  
-> no lo hizo por el cristal.
-
-> **Linus:**  
-> Padre decía que hay puertas  
-> que no necesitan bisagras.
 
 #### Interacción: retrato familiar
 
@@ -208,15 +155,11 @@ Se activa el control del jugador.
 > que una habitación entera.
 
 > **Linus:**  
-> Padre siempre miraba  
-> un poco más allá del marco.
+> Parece que fue ayer
+> cuando **Padre** estaba
+> con nosotros
 
-> **Linus:**  
-> Como si incluso entonces  
-> ya estuviera pensando  
-> en marcharse.
-
-#### Interacción: estantería
+#### Interacción: estantería <<<---- DESCARTADA: ELIMINAR LA ESTANTERÍA COMO OBJETO CON SUS RECURSOS ASOCIADOS
 
 > **Linus:**  
 > Crónicas, mapas,  
@@ -234,9 +177,7 @@ Se activa el control del jugador.
 #### Interacción: baúl de infancia
 
 > **Linus:**  
-> Juguetes viejos.
-
-> **Linus:**  
+> Juguetes viejos: 
 > Cuerdas, tablillas,  
 > una flauta rota...
 
@@ -245,10 +186,6 @@ Se activa el control del jugador.
 > en que aprendiera música  
 > aunque no fuera pastor.
 
-> **Linus:**  
-> Madre decía  
-> que bastaba con escuchar.
-
 #### Interacción: armario / partitura
 
 > **Linus:**  
@@ -256,94 +193,30 @@ Se activa el control del jugador.
 > que me cantaban  
 > cada noche.
 
-> **Linus:**  
-> Siempre me hizo gracia  
-> que una canción tan simple  
-> estuviera escrita  
-> como si fuera importante.
-
-> **Linus:**  
-> Padre no la llamaba nana.
-
-> **Linus:**  
-> La llamaba  
-> “patrón de descanso”.
 
 Pequeño silencio.
 
 Las notas de la partitura parecen resonar levemente.
 
-> **Linus:**  
-> No...
-
-> **Linus:**  
-> No puede ser.
-
-> **Linus:**  
-> Es la melodía  
-> del sueño.
-
-> **Linus:**  
-> La del cisne.
-
 **Aviso de sistema:**
 
 > **Sistema:**  
-> Has reconocido  
-> un **patrón**.
+[mensaje que ya está en el juego]
 
-> **Sistema:**  
-> Patrón inscrito:  
-> **Dormir**
-
-> **Sistema:**  
-> No puedes usar magia  
-> sin un bastón.
-
-> **Sistema:**  
-> Consulta el patrón  
-> en el menú de pausa.
-
-Linus, tras cerrar el aviso:
-
-> **Linus:**  
-> Así que era cierto.
-
-> **Linus:**  
-> O al menos  
-> fue cierto para alguien.
 
 Si el jugador vuelve a examinar la partitura:
 
 > **Linus:**  
 > Cuatro notas.
-
-> **Linus:**  
-> Tan poca cosa  
-> para sostener  
-> un secreto tan grande.
+> Parecen poco relevantes
+> Pero importan mucho
 
 ### 1.4 Cierre de escena
 
 Desde fuera se oye la voz de Clio.
 
 > **Clio (fuera de escena):**  
-> **Linus**, ¿dónde estás?
-
-> **Clio:**  
-> No todos los días  
-> se cumplen diecisiete años.
-
-> **Clio:**  
-> Y no todos los días  
-> se llega tarde a ellos.
-
-> **Linus:**  
-> Se me ha hecho  
-> demasiado tarde.
-
-> **Linus:**  
-> Tengo que ir al salón.
+[mensaje que ya está en el juego]
 
 Transición a la escena 2.
 
@@ -362,12 +235,10 @@ Pasillo largo con lámparas de pared, varios mapas, tres puertas y dos pedestale
 
 ### 2.1 Entrada
 
-Linus aparece por la derecha.
+Linus aparece justo bajo la puerta de la derecha (su habitación) <--- CAMBIAR ESTO EN LA DEFINICIÓN DE LA ESCENA
 
 > **Linus:**  
 > Creo que he dormido demasiado.
-
-> **Linus:**  
 > Debo llegar rápido al salón.
 
 > **Linus:**  
@@ -391,11 +262,8 @@ Primera lectura:
 > fundaciones, incendios...
 
 > **Linus:**  
-> Todo parece ordenado  
-> cuando alguien lo escribe  
-> después.
-
-Pasa de página.
+> Cuando alguien lo escribe después
+> todo parece más ordendado
 
 > **Linus:**  
 > El último capítulo  
@@ -403,31 +271,15 @@ Pasa de página.
 > de mi padre.
 
 > **Linus:**  
-> Qué forma tan limpia  
-> de decirlo.
-
-> **Linus:**  
-> Como si una vida  
-> pudiera cerrarse  
-> con una sola línea.
-
-Pasa otra página. No hay nada.
-
-> **Linus:**  
 > Madre dice  
 > que seré yo  
 > quien deba escribir  
-> el siguiente.
-
-> **Linus:**  
-> Supongo que hoy empieza.
+> la siguiente página
 
 Relectura:
 
 > **Linus:**  
-> Historia del gremio.
-
-> **Linus:**  
+> La historia del gremio.
 > Y una página  
 > aún en blanco.
 
@@ -442,19 +294,13 @@ Primera lectura:
 
 > **Linus:**  
 > Pastores que cantan  
-> a los cisnes.
-
-> **Linus:**  
 > Herreros que forjan  
-> hojas para dioses.
+> Cristaleros que ven el mañana.
 
 > **Linus:**  
-> Cristaleros que ven  
-> el mañana.
-
-> **Linus:**  
-> Y Tejedores que cosen  
-> la música al mundo.
+> Se cuenta que faltan
+> algunos gremos perdidos
+> en el tiempo
 
 Cierra un poco el libro, pensativo.
 
@@ -464,21 +310,11 @@ Cierra un poco el libro, pensativo.
 > las canciones  
 > que cantaban los **Pastores**.
 
-> **Linus:**  
-> Siempre dijo  
-> que las leyendas  
-> son recuerdos  
-> que han aprendido  
-> a disfrazarse.
-
 Relectura:
 
 > **Linus:**  
 > Mitos y leyendas.
-
-> **Linus:**  
-> O verdades  
-> que avergüenza recordar.
+> y a veces verdades  
 
 #### Puerta del cuarto de los ancianos
 
@@ -487,10 +323,6 @@ Relectura:
 > en el cuarto  
 > de los ancianos  
 > sin su permiso.
-
-> **Linus:**  
-> Y hoy no sabría  
-> si quiero pedirlo.
 
 #### Puerta de la biblioteca
 
@@ -501,13 +333,6 @@ Relectura:
 > **Linus:**  
 > Me paso allí  
 > media vida.
-
-> **Linus:**  
-> A veces pienso  
-> que la otra media  
-> está escondida  
-> en una estantería  
-> que aún no me dejan tocar.
 
 #### Puerta de su cuarto
 
@@ -525,20 +350,6 @@ Relectura:
 > de mapas  
 > de todos los gremios.
 
-> **Linus:**  
-> Costas, caminos,  
-> rutas de comercio,  
-> tierras baldías...
-
-> **Linus:**  
-> Y ni uno solo  
-> de la Isla de los Tejedores.
-
-> **Linus:**  
-> Curioso, para un gremio  
-> que presume  
-> de no olvidar nada.
-
 ### 2.3 Gating de salida
 
 Si intenta salir sin leer ambos libros:
@@ -549,17 +360,6 @@ Si intenta salir sin leer ambos libros:
 
 > **Linus:**  
 > Se lo debo a papá.
-
-Cuando ya ha leído ambos y se acerca a la salida:
-
-> **Linus:**  
-> Ya está.
-
-> **Linus:**  
-> Sea lo que sea  
-> lo que quieran decirme,  
-> ya no podrán fingir  
-> que empezó hoy.
 
 Transición a la escena 3.
 
@@ -586,8 +386,6 @@ Clio está esperando.
 
 > **Clio:**  
 > Es tarde, Linus.
-
-> **Clio:**  
 > Y uno no debe llegar tarde  
 > a su cumpleaños.
 
@@ -601,23 +399,7 @@ Clio está esperando.
 
 > **Clio:**  
 > Luego me lo cuentas.
-
-> **Clio:**  
 > Xander nos espera.
-
-> **Clio:**  
-> Y hoy preferiría  
-> no hacer esperar  
-> a un anciano  
-> con autoridad.
-
-> **Linus:**  
-> No parece  
-> una petición razonable.
-
-> **Clio:**  
-> En esta casa  
-> casi nunca lo son.
 
 ### 3.3 Entrada de Xander
 
@@ -628,8 +410,6 @@ Xander entra por la izquierda.
 
 > **Linus:**  
 > Perdóname, maestro.
-
-> **Linus:**  
 > Un extraño sueño  
 > me ha mantenido despierto.
 
@@ -648,8 +428,6 @@ Xander entra por la izquierda.
 > **Linus:**  
 > He leído sus historias  
 > mil veces.
-
-> **Linus:**  
 > ¿De cuál hablamos?
 
 > **Xander:**  
@@ -669,18 +447,13 @@ Opciones:
 - Era mi leyenda favorita.
 - ¿Qué pasó con ellos?
 
-Respuesta convergente:
+Respuesta según la elección:
 
+- ¿Los Tejedores?
 > **Xander:**  
 > Según la leyenda,  
 > fueron un gremio  
 > capaz de tejer hechizos.
-
-> **Xander:**  
-> No sólo telas.
-
-> **Xander:**  
-> No sólo estandartes.
 
 > **Xander:**  
 > Tejían la luz.  
@@ -688,53 +461,70 @@ Respuesta convergente:
 > La forma misma  
 > de las cosas.
 
-> **Xander:**  
-> Para muchos,  
-> eso los convirtió  
-> en un cuento.
+- Era mi leyenda favorita.
+
+> [lo que ya tenemos en el juego, quizá completado con alguna línea más]
+
+- ¿Qué pasó con ellos?
+
+> [lo que ya tenemos en el juego, quizá completado con alguna línea más]
 
 > **Xander:**  
-> Para tu padre, no.
+> Escúchame bien, Linus.
+> Durante décadas  
+> este gremio ha conservado  
+> la memoria del mundo.
+> Pero también ha decidido  
+> qué recuerdos  
+> era preferible no tocar.
+
+> **Linus:**  
+> ¿Estás diciendo  
+> que lo ocultasteis?
 
 > **Xander:**  
-> Los **Pastores**  
-> cantaban su historia  
-> como cierta.
+> Los rumores debían quedar como rumores
+> Pero ahora hay señales:
+> Canciones recordadas que no se han eseñado
+> Sueños repetidos.
+
+> **Linus:**  
+> Yo también he tenido uno.
+
+> **Linus:**  
+> El cisne dijo que habían pasado cien años.
+> Dijo que no podrían detenerle mucho más.
+
+Xander guarda silencio. No parece sorprendido; sólo cansado.
 
 > **Xander:**  
-> Aiden los creyó.
+> Entonces ya no hay tiempo  
+> para fingir ignorancia.
+> Iréis a la isla.
+> Observaréis lo que quede  
+> del Gremio de los Tejedores.
+> Y volveréis a contar su historia.
+
+> **Clio:**  
+> No tenemos mapa.
 
 > **Xander:**  
-> Y quiso encontrar  
-> la isla donde vivían.
+> Aiden dejó notas.
+> Incompletas,pero suficientes  
 
 > **Clio:**  
 > Nuestro destino  
 > es documentar hechos,  
 > no perseguirlos.
 
-> **Xander:**  
-> A veces no hay hechos  
-> hasta que alguien  
-> se atreve a perseguirlos.
-
-> **Clio:**  
-> O a morir tras ellos.
-
 Xander sostiene la mirada.
 
 > **Xander:**  
 > Linus tiene diecisiete años.
-
-> **Xander:**  
 > Esa era mi edad  
 > cuando viajé por el mundo.
-
-> **Xander:**  
 > Y la edad de tu padre  
 > cuando llegó aquí.
-
-> **Xander:**  
 > Un año antes  
 > de que le acogiéramos  
 > como uno  
@@ -749,170 +539,14 @@ Opciones:
 - Tengo que ir a la isla.
 - ¿Vendrías conmigo?
 
-Respuesta convergente de Clio:
-
-> **Clio:**  
-> Si Xander lo quiere,  
-> así será.
-
-> **Clio:**  
-> Pero no irás solo.
-
-> **Linus:**  
-> ¿Entonces es verdad?
-
-> **Clio:**  
-> Es suficientemente verdad  
-> como para preocuparme.
-
-> **Linus:**  
-> Eso no responde.
-
-> **Clio:**  
-> Responde más  
-> de lo que me gustaría.
-
-### 3.6 Encargo completo
-
-> **Xander:**  
-> Escúchame bien, Linus.
-
-> **Xander:**  
-> Durante décadas  
-> este gremio ha conservado  
-> la memoria del mundo.
-
-> **Xander:**  
-> Y durante décadas  
-> también ha decidido  
-> qué recuerdos  
-> era preferible no tocar.
-
-> **Linus:**  
-> ¿Estás diciendo  
-> que lo ocultasteis?
-
-> **Xander:**  
-> Estoy diciendo  
-> que sobrevivimos.
-
-> **Xander:**  
-> A veces, tras una catástrofe,  
-> los pueblos confunden  
-> prudencia con verdad.
-
-> **Clio:**  
-> Y a veces no se equivocan.
-
-> **Xander:**  
-> Tal vez.
-
-> **Xander:**  
-> Pero ahora hay señales.
-
-> **Xander:**  
-> Rumores de cosas  
-> que se mueven  
-> donde no deberían.
-
-> **Xander:**  
-> Canciones antiguas  
-> recordadas por niños  
-> que nadie se las enseñó.
-
-> **Xander:**  
-> Animales huidos.  
-> Luces en los bosques.  
-> Sueños repetidos.
-
-> **Linus:**  
-> Yo también he tenido uno.
-
-Clio lo mira de inmediato.
-
-> **Clio:**  
-> Linus...
-
-> **Xander:**  
-> Cuéntalo.
-
-> **Linus:**  
-> El cisne.
-
-> **Linus:**  
-> Dijo que habían pasado  
-> cien años.
-
-> **Linus:**  
-> Dijo que no podrían  
-> detenerle mucho más.
-
-Xander guarda silencio. No parece sorprendido; sólo cansado.
-
-> **Xander:**  
-> Entonces ya no hay tiempo  
-> para fingir ignorancia.
-
-> **Xander:**  
-> Iréis a la isla.
-
-> **Xander:**  
-> Observaréis lo que quede  
-> del Gremio de los Tejedores.
-
-> **Xander:**  
-> Y volveréis  
-> con historias honestas.
-
-> **Linus:**  
-> ¿Nada más?
-
-> **Xander:**  
-> Si encontráis algo  
-> que el mundo no haya olvidado,  
-> sabrás reconocerlo.
-
-> **Clio:**  
-> No tenemos mapa.
-
-> **Xander:**  
-> Aiden dejó notas.
-
-> **Xander:**  
-> Incompletas, por supuesto.
-
-> **Xander:**  
-> Pero suficientes  
-> para encontrar la costa.
-
-> **Linus:**  
-> ¿Y si mi padre tenía razón?
-
-> **Clio:**  
-> Entonces habremos reabierto  
-> una puerta  
-> que costó un siglo cerrar.
-
-> **Xander:**  
-> Y si estaba equivocado,  
-> al menos el silencio  
-> dejará de parecer sabiduría.
-
-Pausa.
+Respuesta:
+[texto que ya está en el juego]
 
 > **Clio:**  
 > Prepararé lo necesario.
 
-> **Linus:**  
-> ¿De verdad vas a venir?
-
-> **Clio:**  
-> No pienso dejar  
-> que mi hijo persiga  
-> los sueños de su padre  
-> sin testigo.
-
 Fundido.
+
 
 ---
 
@@ -928,38 +562,28 @@ Fundido.
 > **Isla desconocida**  
 > Un mes más tarde
 
-La cámara muestra la costa, la barca con motor de vapor y elementos steampunk, y el árbol de hojas rojas. Una gaviota alza el vuelo.
+La cámara muestra la costa, la barca con motor de vapor y elementos steampunk, y el árbol de hojas rojas.
+
+Al alcanzar la altura del árbol, una gaviota alza el vuelo.
 
 > **Linus:**  
 > Por fin llegamos, madre.
 
-> **Linus:**  
+> **Clio:**  
 > Así que existía.
-
-> **Clio:**  
-> Existe.
-
-> **Clio:**  
-> Eso no implica  
-> que nos quiera aquí.
 
 > **Linus:**  
 > ¿Dónde llevará el camino?
 
 > **Clio:**  
-> Hacia el interior.
+> Está a punto de anochecer.
+> Tendremos que averiguarlo rápido.
 
-> **Clio:**  
-> Y de vuelta antes del anochecer,  
-> si has heredado algo de mí.
+**OBJETOS**
 
-> **Linus:**  
-> Según tú no he heredado  
-> casi nada de ti.
-
-> **Clio:**  
-> La tendencia  
-> a responder, sí.
+Al examinar el árbol:
+> **Linus:**
+> Este año el 
 
 ### 4.2 Exploración inicial
 
@@ -971,66 +595,28 @@ Mientras avanzan:
 > **Clio:**  
 > Demasiado quieto.
 
-> **Linus:**  
-> Padre describía este lugar  
-> como si cantara.
+## NUEVA ESCENA: FOREST (ATARDECER)
+### Liuns lleva una antorcha
 
-> **Clio:**  
-> Los lugares abandonados  
-> también cantan.
+### 4.3 Primer combate: jabalíes
 
-> **Linus:**  
-> ¿Y qué dicen?
-
-> **Clio:**  
-> “Llegaste tarde”.
-
-### 4.3 Primer combate: lobos
-
-Aparecen lobos.
+Tras avanzar un poco, aparecen jabalíeas
 
 > **Linus:**  
 > ¡Madre, detrás!
 
-> **Clio:**  
-> No tenemos tiempo  
-> para contemplaciones.
-
 Aquí Linus combate sólo con la acción principal.
-
-Durante el combate:
-
-> **Linus:**  
-> ¡Atrás!
-
-> **Linus:**  
-> ¡Vamos!
-
-> **Clio:**  
-> Mantente en pie.
-
-> **Clio:**  
-> No dejes que te rodeen.
 
 Tras ahuyentar a varios, aparece uno por detrás y muerde a Clio.
 
 > **Linus:**  
 > ¡Madre!
-
-> **Clio:**  
-> Ah...
-
-> **Linus:**  
 > Estás herida.
 
 > **Clio:**  
 > No es grave.
 
-Intenta dar un paso y falla.
-
-> **Clio:**  
-> Está bien.  
-> Es grave.
+Intenta levantarse y cae de nuevo.
 
 > **Linus:**  
 > No podremos seguir así.
@@ -1038,48 +624,22 @@ Intenta dar un paso y falla.
 > **Clio:**  
 > No sé si podré continuar, hijo.
 
-> **Clio:**  
-> Me duele mucho la pierna.
-
-Linus baja la voz.
-
-> **Linus:**  
-> Ahora no hay nadie mirando.
-
-> **Linus:**  
-> ¿Recuerdas el hechizo  
-> que te enseñó papá?
-
-Clio se tensa de inmediato.
+> **Linus:**
+> Madre, no puedes dejarme solo.
+> Sé que Padre te enseñó sus canciones.
 
 > **Clio:**  
 > Linus...
 
 > **Linus:**  
-> Estamos solos.
-
-> **Linus:**  
-> O tan solos  
-> como vamos a estar nunca.
-
-> **Clio:**  
-> No me gusta usarlo.
-
-> **Linus:**  
-> Lo sé.
-
-> **Linus:**  
-> Pero me gusta menos  
-> verte sangrar.
+> No me puedes dejar.
 
 Clio cierra los ojos. Canta el patrón de Curación.
-
-La herida remite.
+El patrón utiliza la nota más alta, que Linus no podrá usar hasta el final del juego.
+Lo aprende y lo anota en su lista de hechizos, igual que el de sueño, aunque todavía no tiene bastón (solo antorcha) así que no puede usar hechizos.
 
 > **Clio:**  
 > Ya estoy mejor.
-
-> **Clio:**  
 > Puedo seguir.
 
 > **Linus:**  
@@ -1088,114 +648,25 @@ La herida remite.
 > **Clio:**  
 > Nunca dije que fuera mentira.
 
-> **Linus:**  
-> Sólo hiciste  
-> que sonara vergonzoso.
-
-> **Clio:**  
-> Porque en nuestro tiempo  
-> casi lo es.
-
-> **Linus:**  
-> Algún día entenderán  
-> que la magia  
-> no siempre es peligrosa.
-
-> **Clio:**  
-> La magia nunca es  
-> “sólo” peligrosa.
-
-> **Clio:**  
-> También es tentadora.
-
-> **Clio:**  
-> También da excusas.
-
-> **Clio:**  
-> También da poder  
-> a quien cree merecerlo.
-
-> **Linus:**  
-> Padre no la usó así.
-
-> **Clio:**  
-> No.
-
-> **Clio:**  
-> Tu padre la usó  
-> para curar, escuchar,  
-> recordar caminos...
-
-> **Clio:**  
-> Y aun así la ocultó.
-
-> **Linus:**  
-> ¿Por miedo?
-
-> **Clio:**  
-> Por prudencia.
+[TODO EL RESTO DEL DIÁLOGO DESAPARECE, ERA UN PEÑAZO]
 
 > **Clio:**  
 > Prométeme  
 > que no se lo contarás  
 > a Xander.
 
-> **Linus:**  
-> ¿Él no lo sabe?
-
-> **Clio:**  
-> Nunca supo  
-> que Aiden sabía cantar patrones.
-
-> **Clio:**  
-> Y no debe saberlo ahora.
-
-> **Linus:**  
-> Empezamos a perseguir  
-> una isla prohibida  
-> y todavía fingimos  
-> que esto puede seguir  
-> siendo un secreto.
-
-> **Clio:**  
-> Sí.
-
-> **Clio:**  
-> Porque los secretos  
-> no desaparecen  
-> cuando dejan de ser cómodos.
-
 ### 4.4 Avance hacia la choza
 
 Siguen caminando.
-
-> **Linus:**  
-> ¿Padre aprendió Curación  
-> con los Pastores?
-
-> **Clio:**  
-> Aprendió canciones  
-> en muchos sitios.
-
-> **Clio:**  
-> Algunas sólo eran canciones.
-
-> **Clio:**  
-> Otras recordaban demasiado.
-
 A lo lejos aparece una construcción arruinada.
 
 > **Linus:**  
 > Madre.
-
-> **Linus:**  
 > Allí.
-
-> **Clio:**  
 > Una choza.
 
 > **Clio:**  
-> O lo que quedó de una.
+> O lo que queda de ella.
 
 Transición a la escena 5.
 
@@ -1213,45 +684,11 @@ Transición a la escena 5.
 La choza está quemada y abierta a la intemperie. Hay restos de telares, madera astillada, un ventanal roto y hilos ennegrecidos pegados a las paredes.
 
 > **Linus:**  
-> Aquí vivió alguien.
-
-> **Clio:**  
-> Aquí trabajó alguien.
-
-> **Linus:**  
-> No suena igual.
-
-> **Clio:**  
-> Para los Tejedores, quizá sí.
-
-Avanzan entre restos.
-
-> **Linus:**  
 > Mira esos marcos.
-
-> **Linus:**  
 > No son telares  
 > como los de un artesano normal.
 
-> **Clio:**  
-> No.
-
-> **Clio:**  
-> Si la leyenda decía verdad,  
-> eran otra cosa.
-
-> **Linus:**  
-> ¿Instrumentos?
-
-> **Clio:**  
-> Altares.
-
-> **Linus:**  
-> Eso no es propio de ti.
-
-> **Clio:**  
-> Este lugar  
-> tampoco lo es.
+[cárgate el resto del diálogo]
 
 ### 5.2 El telar roto
 
@@ -1259,33 +696,14 @@ Llegan al fondo. El techo está roto; por la abertura se ven la luna y las prime
 
 > **Linus:**  
 > Madre...
-
-> **Linus:**  
 > ¿Será este  
 > el hogar de los Tejedores?
 
 > **Clio:**  
-> Lo fue.
+> En algún momento lo fue.
 
 > **Clio:**  
-> O fue parte de él.
-
-> **Clio:**  
-> Poco podremos documentar  
-> de estos hilos rotos.
-
-> **Linus:**  
-> No hablas como historiadora.
-
-> **Clio:**  
-> Hablo como alguien  
-> que ya sabe  
-> cómo acaban algunos hallazgos.
-
-> **Linus:**  
 > Se hace de noche.
-
-> **Clio:**  
 > Y el camino de vuelta  
 > será peligroso.
 
@@ -1303,11 +721,6 @@ Linus se acerca igualmente.
 
 > **Linus:**  
 > No parece madera normal.
-
-> **Clio:**  
-> Linus.
-
-> **Linus:**  
 > Está vibrando.
 
 Lo toma.
@@ -1322,37 +735,18 @@ Las marcas del báculo resplandecen.
 
 Resuenan cuatro notas.
 
-**Aviso de sistema:**
+[[APARECE EL BASTÓN EN EL INTERFAZ]]
 
-> **Sistema:**  
-> Has obtenido  
-> el **bastón**
+[[LINUS APRENDE ELECTRICIDAD]]
 
-> **Sistema:**  
-> Patrón inscrito:  
-> **Electricidad**
-
-> **Sistema:**  
-> Ya puedes lanzar magia
+NOTA: De momento solo podemos tocar las 4 primeras notas. Si intentamos tocar una superior suena un beep de error.
 
 Linus retrocede un paso, atónito.
 
 > **Linus:**  
 > Madre...
-
-> **Linus:**  
-> Yo...
-
-> **Linus:**  
 > Lo he oído.
-
-> **Linus:**  
-> No en mis oídos.
-
-> **Linus:**  
-> Aquí.
-
-Se toca el pecho.
+> No con mis oídos.
 
 ### 5.4 Voz de Bobbin
 
@@ -1361,24 +755,11 @@ La luz del bastón palpita.
 > **Bobbin (voz):**  
 > El tejido  
 > se está rompiendo.
-
-> **Bobbin (voz):**  
 > No aguantará  
 > mucho más.
 
-Clio mira alrededor.
-
-> **Clio:**  
+> **Liuns:**  
 > ¿Has oído eso?
-
-> **Linus:**  
-> Sí.
-
-> **Clio:**  
-> Entonces no estamos  
-> imaginando nada.
-
-> **Linus:**  
 > Era él.
 
 > **Clio:**  
@@ -1388,38 +769,9 @@ Clio mira alrededor.
 > Sí.
 
 > **Clio:**  
-> Eso me preocupa  
-> más de lo que debería.
-
-### 5.5 Decisión de retirada
-
-> **Clio:**  
-> ¿Estás bien?
-
-> **Linus:**  
-> Sí, madre.
-
-> **Linus:**  
-> Creo que sí.
-
-> **Clio:**  
+> Tenemos que volver ahora.
 > Es muy tarde  
 > y va a llegar la tormenta.
-
-> **Clio:**  
-> Debemos volver.
-
-> **Linus:**  
-> ¿Y dejar esto aquí?
-
-Levanta el bastón.
-
-> **Clio:**  
-> No.
-
-> **Clio:**  
-> Precisamente por eso  
-> debemos volver ya.
 
 Al salir, una sombra se mueve entre los restos del telar roto. No se muestra del todo, pero algo antiguo despierta.
 
@@ -1434,39 +786,20 @@ Transición a la escena 6.
 **Objetivo dramático:** Forzar a Linus a usar el bastón, revelar la lógica de los patrones y mostrar que Caos ya actúa.  
 **Objetivo jugable:** Tutorial de Electricidad, de inversión de patrón mediante Luz/Oscuridad y de combate de retorno.
 
+NOTA: AHORA ES DE NOCHE. RECORREMOS EL MISMO ESCENARIO DEL BOSQUE, PERO DE DERECHA A IZQUIERDA.
+
 ### 6.1 Primera emboscada en el camino de vuelta
 
 Vuelven por el sendero. Truena a lo lejos.
 
 > **Clio:**  
 > Camina.
-
-> **Clio:**  
 > No mires atrás.
 
-> **Linus:**  
-> ¿Por qué siempre  
-> dices eso  
-> como si supieras  
-> lo que hay detrás?
-
-> **Clio:**  
-> Porque la experiencia  
-> ahorra tiempo.
-
-Aparece otra manada de lobos.
+Aparece otra manada de jabalíes.
 
 > **Linus:**  
-> Otra vez.
-
-> **Clio:**  
-> Esta vez no estamos igual.
-
-> **Linus:**  
-> No sé usar esto.
-
-> **Clio:**  
-> Pues aprende deprisa.
+> Otra vez. Y ahora no tengo fuego.
 
 Si el jugador intenta resolver sólo a golpes y fracasa, se oye la voz de Bobbin y se reinicia el encuentro:
 
@@ -1476,82 +809,20 @@ Si el jugador intenta resolver sólo a golpes y fracasa, se oye la voz de Bobbin
 
 Reintento.
 
-> **Linus:**  
-> El patrón del bastón...
-
-> **Linus:**  
-> De acuerdo.
-
 Durante el uso exitoso de Electricidad:
-
-> **Linus:**  
-> ¡Ahora!
 
 > **Linus:**  
 > ¡Fuera de aquí!
 
-> **Clio:**  
-> No te detengas.
-
-> **Clio:**  
-> No es fuerza.  
-> Es ritmo.
-
-> **Linus:**  
-> Lo sé.
-
-> **Linus:**  
-> O eso espero.
-
-Cuando los lobos huyen:
+Los enemigos huyen.
 
 > **Linus:**  
 > Han retrocedido.
 
 > **Clio:**  
-> No los has herido del todo.
+> Volverán. No podemos perder tiempo.
 
-> **Clio:**  
-> Sólo les has enseñado  
-> que no eres presa fácil.
-
-> **Linus:**  
-> No sé si eso me tranquiliza.
-
-### 6.2 La antorcha y la oscuridad
-
-El viento arrecia. La antorcha de Clio se apaga.
-
-Resuenan nuevas notas.
-
-**Aviso de sistema:**
-
-> **Sistema:**  
-> Patrón inscrito:  
-> **Oscuridad**
-
-> **Sistema:**  
-> Invertir un patrón  
-> puede alterar su efecto
-
-> **Sistema:**  
-> Algunas respuestas  
-> están en el reverso
-
-> **Clio:**  
-> No me gusta eso.
-
-> **Linus:**  
-> ¿El qué?
-
-> **Clio:**  
-> Que el bastón escuche.
-
-> **Linus:**  
-> O que recuerde.
-
-> **Clio:**  
-> Las dos cosas.
+[[[OLVIDA TODO LO RELATIVO AL HECHIZO LUZ/OSCURIDAD. NO LO VAMOS A USAR ]]]
 
 ### 6.3 Aparición de los espectros
 
@@ -1561,23 +832,12 @@ Surgen espectros del Caos.
 > ¿Qué son esas cosas?
 
 > **Clio:**  
-> No lo sé.
+> No sé si queremos saberlo.
 
-> **Clio:**  
-> Y preferiría seguir  
-> sin saberlo.
-
-Si el jugador intenta usar Electricidad en la oscuridad total y fracasa:
+Si el jugador intenta usar Electricidad:
 
 > **Linus:**  
-> No funciona.
-
-> **Linus:**  
-> El rayo no cae.
-
-> **Linus:**  
-> No mientras todo  
-> siga a oscuras.
+> No les afecta.
 
 Los espectros acaban imponiéndose. Reintento. Bobbin da la pista:
 
@@ -1589,97 +849,9 @@ Los espectros acaban imponiéndose. Reintento. Bobbin da la pista:
 
 Reintento.
 
-> **Linus:**  
-> Lo contrario...
+Al hacer el hechizo inverso podemos con ellos.
+[combate tal y como ya está programado]
 
-> **Linus:**  
-> Si Oscuridad está aquí...
-
-> **Linus:**  
-> Entonces al revés...
-
-Linus invierte el patrón y enciende la antorcha: **Luz**.
-
-> **Clio:**  
-> La llama...
-
-> **Clio:**  
-> La has devuelto.
-
-> **Linus:**  
-> No.
-
-> **Linus:**  
-> La he cantado.
-
-Con luz, los espectros se frenan.
-
-> **Clio:**  
-> ¡Ahora, Linus!
-
-> **Linus:**  
-> ¡Lo intento!
-
-Durante el combate:
-
-> **Linus:**  
-> ¡Atrás!
-
-> **Linus:**  
-> ¡No os acerquéis!
-
-> **Clio:**  
-> Mantén la distancia.
-
-> **Clio:**  
-> No dejes  
-> que la luz caiga.
-
-Cuando la antorcha vuelve a apagarse:
-
-> **Linus:**  
-> Otra vez no.
-
-> **Clio:**  
-> Entonces vuelve a cantarla.
-
-> **Linus:**  
-> Empiezo a odiar  
-> que tengas razón.
-
-Al vencer la segunda oleada:
-
-> **Linus:**  
-> Se han ido.
-
-> **Clio:**  
-> No.
-
-> **Clio:**  
-> Se han retirado.
-
-> **Linus:**  
-> ¿Hay diferencia?
-
-> **Clio:**  
-> La hay cuando algo  
-> puede volver.
-
-### 6.4 Llegada a la costa
-
-Se ve la nave.
-
-> **Linus:**  
-> Ahí está.
-
-> **Clio:**  
-> No aflojes aún.
-
-> **Linus:**  
-> Después de hoy,  
-> no creo que pueda.
-
-Transición a la escena final.
 
 ---
 
@@ -1694,8 +866,6 @@ La tormenta ruge a lo lejos. Linus sostiene el bastón; aún emite pulsos tenues
 
 > **Linus:**  
 > Los Tejedores...
-
-> **Linus:**  
 > Todo era verdad.
 
 > **Clio:**  
@@ -1708,67 +878,30 @@ La tormenta ruge a lo lejos. Linus sostiene el bastón; aún emite pulsos tenues
 
 > **Clio:**  
 > La magia era peligrosa.
-
-> **Clio:**  
 > Y desapareció  
 > de los libros  
 > hace muchos años.
 
 > **Linus:**  
 > No desapareció.
-
-> **Linus:**  
 > La borrasteis.
-
-Clio tarda en responder.
 
 > **Clio:**  
 > La escondimos.
-
-> **Clio:**  
 > No es lo mismo.
-
-> **Linus:**  
-> Para quien llega después, sí.
-
-> **Clio:**  
-> Puede.
 
 > **Clio:**  
 > Pero lo hicimos  
 > para que el mundo  
 > no volviera a romperse  
-> por ambición, miedo  
-> o fanatismo.
-
-> **Linus:**  
-> Y ahora se está rompiendo  
-> por ignorancia.
-
-Silencio.
-
-> **Clio:**  
-> No podemos llevar  
-> este artefacto al gremio  
-> como si fuera un libro más.
 
 > **Linus:**  
 > Padre sabía más  
 > de lo que nos contó.
-
-> **Clio:**  
-> Sí.
-
-> **Clio:**  
-> Mucho más.
-
-> **Linus:**  
 > Y tú también.
 
 > **Clio:**  
 > Lo suficiente  
-> para haber vivido  
-> tranquila demasiado tiempo.
 
 > **Linus:**  
 > ¿Qué hacemos ahora?
@@ -1781,40 +914,18 @@ Silencio.
 
 > **Clio:**  
 > Al Gremio de los Pastores.
-
-> **Clio:**  
 > Allí empezó  
 > la sangre de tu padre.
-
-> **Clio:**  
 > Y quizá allí  
 > encontremos la parte  
 > de la canción  
 > que nos falta.
 
-> **Linus:**  
-> Entonces no volvemos  
-> a casa.
-
-> **Clio:**  
-> No.
-
-> **Clio:**  
-> Me temo  
-> que acabamos de salir  
-> de ella.
-
-La cámara se aleja lentamente. La nave se prepara para partir.
-
-Último susurro, apenas audible, quizá sólo para Linus:
+Ambos se dirigien al barco. Fundido a negro.
 
 > **Bobbin (voz):**  
-> El hilo ha sido tomado.
-
-> **Bobbin (voz):**  
-> Ahora debe ser tejido.
-
-Fundido a negro.
+> Tranquilo, Linus.
+> Nunca estarás solo.
 
 **FIN DEL ACTO 1**
 
@@ -1827,6 +938,8 @@ Fundido a negro.
 - **Dormir**: descubierto en el dormitorio como patrón teórico; no usable todavía.
 - **Curación**: usado por Clio en escena narrativa; queda reconocido por Linus, pero no necesariamente jugable aún.
 - **Electricidad**: primer patrón realmente jugable tras obtener el bastón.
+
+(DESCARTADO)
 - **Oscuridad / Luz**: aprendizaje en el regreso desde la choza, incluyendo la idea de inversión de patrón.
 
 ### Ideas de interacción secundaria compatibles con el guión
@@ -1837,26 +950,31 @@ Fundido a negro.
 
 ### Estado de las escenas (julio 2026)
 
-El acto 1 está **completo mecánicamente** con textos placeholder ("TEXTO DE LA
-ESCENA N"); solo falta verter el guión en `data/texts.csv` y afinar con playtest:
+El acto 1 está **completo mecánicamente** y con los **textos definitivos** del
+guión ya vertidos en `data/texts.csv` (ES/EN, en clusters con caras alternadas);
+solo falta afinar posiciones/tiempos con playtest y el arte/audio definitivo:
 
-- **Esc. 1**: interacciones nuevas del guión — retrato, estantería y baúl (items
-  placeholder en el dormitorio).
+- **Esc. 1**: interacciones del guión — retrato y baúl. *(La estantería se
+  descartó: eliminada como objeto y recurso.)*
 - **Esc. 4** (`act1_coast` → `act1_island`): la playa es un **lugar de paso**
   (rótulo, gaviota que alza el vuelo, árbol rojo examinable con A); el primer
   ataque de los jabalíes y la **curación de Clio** ocurren en el tramo de
-  **bosque de día** del interior (`act1_island`, reutiliza el fondo del bosque
-  con su paleta diurna).
+  **bosque del atardecer** del interior (`act1_island`, con **Linus llevando la
+  antorcha**; reutiliza el fondo del bosque — la paleta de atardecer queda
+  pendiente de asset).
 - **Esc. 5** (`act1_hut`): exploración libre con **inspecciones** (bastidor,
   hilos); interactuar con el **bastón** dispara el rayo, la recogida (ANIM_GRAB),
-  el patrón **Electricidad** y la primera voz de Bobbin; al salir, la **sombra**
+  el patrón **Electricidad** y la primera voz de Bobbin; al coger el bastón **se
+  apaga la antorcha** (a partir de aquí luce el bastón); al salir, la **sombra**
   se mueve entre los restos.
-- **Esc. 6** (`act1_return`): antorcha + jabalíes (melee, pista de Bobbin al
-  fallar), la **antorcha se apaga** (se inscribe LUZ — *placeholder de Oscuridad
-  hasta que exista SPELL_DARK*), hay que **cantar Luz** para reencenderla, y los
-  **espectros** en combate por hechizos con reintento.
+- **Esc. 6** (`act1_return`): regreso nocturno **sin antorcha** (mismo bosque,
+  paleta oscura). Emboscada de jabalíes (melee, con reintento) y los **espectros
+  del Caos** en combate por hechizos (se vencen con el **trueno invertido**),
+  también con reintento. *El hechizo de Luz/Oscuridad y el puzzle de la antorcha
+  se han eliminado de este acto por completo.*
 - **Esc. 7** (`act1_coast_end`): tormenta, **pausa interactiva** (mirar la isla,
-  A para embarcar), susurro de Bobbin y FIN DEL ACTO 1.
+  A para embarcar), susurro final de Bobbin ("Tranquilo, Linus. Nunca estarás
+  solo") y FIN DEL ACTO 1.
 
 ### Estado de los assets (julio 2026)
 
@@ -1865,9 +983,9 @@ Todo lo listado existe en `res/` y compila. Lo marcado *(placeholder)* es arte f
 - **Fondos**: dormitorio, pasillo, salón y bosque (definitivos); **costa** (`coast_bg_*`, paletas `coast_day`/`coast_storm` para las escenas 4 y 7) y **choza del telar** (`hut_bg_*`, con agujero del techo que deja ver luna y estrellas de la capa trasera) *(placeholder)*.
 - **Personajes**: Linus (vara/sin vara/antorcha), Clio, Xander, cisne. **Pendiente**: animaciones de Clio herida/cojeando y cantando Curación (escena 4.3).
 - **Enemigos**: jabalí (con sombra) y WeaverGhost (sirve como espectro del Caos).
-- **Items**: dormitorio del guión definitivo (retrato `bedroom_portrait`, estantería `bedroom_bookshelf`, baúl `bedroom_chest`), choza (bastón `hut_staff` con frame «resonando», bastidor `hut_loom_debris`, hilos `hut_threads`), gaviota `coast_seagull` *(placeholder)*.
+- **Items**: dormitorio (retrato `bedroom_portrait`, baúl `bedroom_chest`; la estantería se descartó), choza (bastón `hut_staff` con frame «resonando», bastidor `hut_loom_debris`, hilos `hut_threads`), gaviota `coast_seagull` *(placeholder)*.
 - **FX**: rayo `fx_lightning_sprite` (3 frames, paleta propia) *(placeholder)*. Flashes/resplandores restantes se hacen por paleta, sin asset.
-- **Interfaz**: iconos de patrón `pattern_dark` (Oscuridad) y `pattern_heal` (Curación) *(placeholder)*.
+- **Interfaz**: icono de patrón `pattern_heal` (Curación) *(placeholder)*. *(El icono `pattern_dark` de Oscuridad ya no se usa: el hechizo se eliminó del acto.)*
 - **Audio**: SFX ambientales `snd_ambient_waves/wind/seagull/thunder/steam` *(placeholder procedural)*. **Pendiente**: música de las escenas (composición VGM) y jingles de SLEEP/EN_BITE.
 
 ### Tono
