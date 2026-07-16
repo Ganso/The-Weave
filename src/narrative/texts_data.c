@@ -14,6 +14,9 @@ const DialogItem system_dialog[] = {
     [SYSMSG_CANT_USE_PATTERN] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"No puedo usar ese patrón|ahora mismo",
          "I can't use that pattern|right now"} },
+    [SYSMSG_NOTE_LOCKED] = { FACE_linus, SIDE_LEFT, DEFAULT_TALK_TIME,
+        {"Aún no soy capaz|de tocar esa nota",
+         "I'm not yet able|to play that note"} },
     [SYSMSG_COUNT] = { 0, false, DEFAULT_TALK_TIME, { NULL, NULL } }
 };
 

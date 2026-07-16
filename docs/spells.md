@@ -659,7 +659,7 @@ mientras pruebas y acuérdate de desactivarlos antes de la versión final.
 | FUEGO | MI FA SOL LA (A B C X) | 2 s | Ejemplo completo: zona (solo junto al caldero) + se come el trueno enemigo + fases. Empieza bloqueado. |
 | LUZ | SOL LA SI DO (C X Y Z) | 1,5 s | Muestra fases de dos tramos de color (cian→blanco). Se puede lanzar directo E invertido. |
 | EN_THUNDER | (trueno enemigo) | 1 s | Es `counterable`; hace daño al jugador al terminar de forma natural. |
-| EN_BITE | (mordisco enemigo) | 1 s | No es counterable. Lo usa el jabalí (`ENEMY_CLS_BOAR`). |
+| EN_BITE | (mordisco enemigo) | 1 s | No es counterable. Solo lo usa la clase de TEST (el jabalí muerde por contacto en melee.c). |
 
 Los dos mejores ejemplos para copiar y aprender son **FUEGO** (`src/spells/fire.c`)
 y **LUZ** (`src/spells/light.c`): están muy comentados y cubren casi todo lo que

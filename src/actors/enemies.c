@@ -32,9 +32,11 @@ void init_enemy_classes(void)    // Setup enemy class definitions with HP, patte
 {
     obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_NONE}}; // 2 HP, lanza thunder, no sigue
     obj_enemy_class[ENEMY_CLS_TESTGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_EN_BITE}}; // SOLO TEST: multi-hechizo (recargas alternas)
-    obj_enemy_class[ENEMY_CLS_BOAR]=(Enemy_Class) { 2, false, 0, {SPELL_EN_BITE, SPELL_NONE}}; // 2 HP, muerde (no counterable), no sigue
-    // Note (B2, decision docs/refactor/plan.md §15): el jabalí es la primera clase de juego
-    // con SPELL_EN_BITE; ajustar rechargeInit/follow con playtest.
+    // El jabalí es un enemigo DE CONTACTO puro: muerde en el combate físico
+    // (combat/melee.c) y NO canta patrones. Doctrina de combate: cada enemigo
+    // es "por contacto" (melee) o "a distancia" (patrones); el jugador puede
+    // o no cantar según la escena (flag spells). Ver AGENTS.md §5.
+    obj_enemy_class[ENEMY_CLS_BOAR]=(Enemy_Class) { 2, false, 0, {SPELL_NONE, SPELL_NONE}};
 }
 
 

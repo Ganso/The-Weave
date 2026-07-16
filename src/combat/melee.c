@@ -69,17 +69,19 @@ static s16 chr_feet_y(u16 nchar)  { return FASTFIX32_TO_INT(obj_character[nchar]
 static s16 enemy_feet_x(u16 e)    { return FASTFIX32_TO_INT(obj_enemy[e].obj_character.x) + obj_enemy[e].obj_character.x_size / 2; }
 static s16 enemy_feet_y(u16 e)    { return FASTFIX32_TO_INT(obj_enemy[e].obj_character.y) + obj_enemy[e].obj_character.y_size; }
 
-// El acompañante se queda inmóvil detrás (a la izquierda) del jugador mirando
-// a la derecha; si no estaba detrás, se recoloca andando (bloqueante).
+// El acompañante deja de seguir y se queda inmóvil durante el combate.
+// reposition=true: si no estaba detrás (a la izquierda) del jugador, se
+// recoloca andando (bloqueante); false: se queda donde esté.
 // Devuelve el valor previo de follows_character para restaurarlo al terminar.
-static bool melee_stage_companion(u16 companion)
+static bool melee_stage_companion(u16 companion, bool reposition)
 {
     if (companion >= MAX_CHR || !obj_character[companion].active) return false;
 
     bool was_following = obj_character[companion].follows_character;
     obj_character[companion].follows_character = false;
     s16 px = FASTFIX32_TO_INT(obj_character[active_character].x);
-    if (FASTFIX32_TO_INT(obj_character[companion].x) > px - (MELEE_COMPANION_GAP / 2))
+    if (reposition &&
+        FASTFIX32_TO_INT(obj_character[companion].x) > px - (MELEE_COMPANION_GAP / 2))
         move_character(companion, px - MELEE_COMPANION_GAP, chr_feet_y(active_character));
     look_left(companion, false);   // mirando a la derecha
     obj_character[companion].state = STATE_IDLE;
@@ -342,7 +344,9 @@ static void melee_run(u8 hits_to_win, u16 companion, bool thunder_wins)
 
     melee_thunder_wins = thunder_wins;
     melee_thunder_seen = false;
-    bool comp_was_following = melee_stage_companion(companion);
+    // En modo trueno Clio se queda donde esté (guión 6.1); en el cuerpo a
+    // cuerpo normal se recoloca detrás del jugador
+    bool comp_was_following = melee_stage_companion(companion, !thunder_wins);
 
     // Tomar el control de los enemigos ya spawneados
     for (u16 e = 0; e < MAX_ENEMIES; e++) {
@@ -388,9 +392,14 @@ static void melee_run(u8 hits_to_win, u16 companion, bool thunder_wins)
         }
     }
 
-    // Dejar al jugador limpio
+    // Dejar al jugador limpio: estado, y ningún hechizo o patrón a medias
+    // (un trueno en vuelo seguiría parpadeando el cielo durante los diálogos
+    // y rompería el siguiente combate)
     if (obj_character[active_character].state == STATE_PLAYING_NOTE)
         obj_character[active_character].state = STATE_IDLE;
+    if (spell_slot_active(SPELL_SLOT_PLAYER))
+        spell_cancel(SPELL_SLOT_PLAYER);
+    reset_note_queue();
 
     player_scroll_active = old_scroll;
 

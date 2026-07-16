@@ -13,6 +13,7 @@ item 0 item_hut_staff PAL0 430 150 40 0 10 8 CALCULATE_DEPTH        # el bastón
 item 1 item_hut_loom_debris PAL0 200 110 48 0 6 16 FORCE_BACKGROUND # bastidor roto (apoyado en la pared)
 item 2 item_hut_threads PAL0 500 146 32 0 8 12 CALCULATE_DEPTH      # hilos ennegrecidos
 set rod off
+call act1_hut_start           # dentro de la choza no hay antorcha: sprite norod
 character CHR_linus
 character CHR_clio
 active CHR_linus

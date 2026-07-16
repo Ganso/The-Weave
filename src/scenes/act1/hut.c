@@ -18,6 +18,11 @@
 #define HUT_STAFF_X   430   // x (mundo) del bastón (item 0)
 #define HUT_LOOM_X    350   // x (mundo) del centro del telar roto
 
+void act1_hut_start(void)    // Dentro de la choza no se lleva la antorcha (sprite norod)
+{
+    linus_has_torch = false;
+}
+
 // Exploración libre: bastidor (item 1) e hilos (item 2) son inspecciones
 // opcionales; interactuar con el bastón (item 0) dispara la cutscene y sale.
 void act1_hut_items(void)
@@ -86,9 +91,9 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
 
     activate_spell(SPELL_THUNDER);   // patrón inscrito: Electricidad (jingle + notas)
 
-    // De momento solo puede tocar las 4 primeras notas (guión 5.3): una nota
-    // superior suena como un beep de error hasta el final del juego
-    player_note_limit = NOTE_LA;
+    // De momento solo puede tocar las 3 primeras notas: el resto se irán
+    // habilitando más adelante (una nota superior avisa y cancela el patrón)
+    player_note_limit = NOTE_SOL;
 }
 
 // Al salir, una sombra se mueve entre los restos del telar (placeholder:

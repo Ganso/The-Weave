@@ -7,7 +7,7 @@ limits 20 145 278 176
 palette PAL1 swan_pal         # usar la paleta del cisne en lugar de la de personajes
 character CHR_swan
 character CHR_linus
-item 0 item_bedroom_bed PAL0 31 139 93 0 23 0 FORCE_BACKGROUND              # cama
+item 0 item_bedroom_bed PAL0 31 139 65 28 23 0 FORCE_BACKGROUND             # cama (caja sin el cabecero: deja sitio al retrato)
 item 1 item_bedroom_chair PAL0 236 110 26 0 43 0 FORCE_BACKGROUND           # silla
 item 2 item_bedroom_windowsill PAL0 125 121 99 0 22 0 FORCE_BACKGROUND      # alféizar
 item 3 item_bedroom_cabinet PAL0 270 79 51 0 82 0 FORCE_BACKGROUND          # armario + partitura
@@ -15,7 +15,7 @@ item 4 item_bedroom_linus_sleeping PAL0 30 112 0 0 0 0 FORCE_BACKGROUND     # Li
 # Items del guión definitivo (sprites PLACEHOLDER). El retrato cuelga sobre el
 # cajón de la izquierda; su caja de interacción queda por ENCIMA de la franja
 # andable (y<145) para no bloquear el paso por abajo.
-item 5 item_bedroom_portrait PAL0 32 100 24 0 8 36 FORCE_BACKGROUND         # retrato familiar
+item 5 item_bedroom_portrait PAL0 4 100 32 0 8 36 FORCE_BACKGROUND          # retrato familiar (izquierda del todo, sobre el cajón)
 item 7 item_bedroom_chest PAL0 176 148 40 0 12 16 CALCULATE_DEPTH          # baúl de infancia
 
 call act1_bedroom_swan       # cinemática del cisne (flash + diálogo + flash)

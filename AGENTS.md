@@ -169,6 +169,12 @@ Botón→nota: A→MI B→FA C→SOL X→LA Y→SI Z→DO.
 counter). `combat_state` (combat.c) es el director del combate; el motor consulta y
 actualiza ese FSM.
 
+**Doctrina de combate** (decisión de diseño con Javier): el jugador puede o no
+cantar patrones según la escena (flag `spells`), y cada enemigo es **de contacto**
+(muerde/embiste: lo dirige melee.c — jabalí) o **a distancia** (canta patrones: lo
+dirige el FSM de combat.c — espectros). La unificación de ambos directores en un
+solo combate mixto queda como refactor futuro.
+
 Aparte existe el **combate físico** (`combat/melee.c`, `melee_combat_run`): cuerpo a
 cuerpo sin hechizos (acto 1 antes de la vara). No toca `combat_state` (queda en
 COMBAT_NO); dirige a los enemigos activos (persiguen con pausas aleatorias, muerden
@@ -212,8 +218,8 @@ a la escena mostrar el fallo y reintentar (ver act1_test).
   `canUse` la reciben en `ctx->zoneId`.
 - Desbloqueo: `spell_enable(id)` (silencioso; op `enable_spell` del DSL) o
   `activate_spell(id)` (con jingle y notas, para cutscenes).
-- **`EN_BITE`** lo usa el jabalí (`ENEMY_CLS_BOAR`), primera clase de juego con
-  mordisco (no counterable); ajustar `rechargeInit`/follow con playtest.
+- **`EN_BITE`** queda solo en la clase de TEST: el jabalí es un enemigo **de
+  contacto** (muerde en el combate físico de melee.c, sin patrones).
 
 → **Para crear un hechizo nuevo**: guía paso a paso en `docs/spells.md`. Puntos que
 tocan el motor: `SPELL_*` en `constants_spells.h` (los de jugador antes de

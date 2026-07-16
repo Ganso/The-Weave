@@ -16,7 +16,7 @@
 #include "scenes/act1/coast.h"
 
 #define COAST_TREE_X       490   // x (mundo) del árbol rojo
-#define COAST_COMBAT_SCROLL 200  // offset de scroll donde salta el combate
+#define COAST_END_SCROLL   316   // offset de scroll donde acaba el paseo por la playa
 
 void act1_coast_arrive(void)    // Llegada: el rumor de las olas
 {
@@ -41,12 +41,11 @@ static void coast_gull_flies(void)
     if (gull) { SPR_releaseSprite(gull); SPR_update(); }
 }
 
-void act1_coast_explore(void)    // Paseo: la gaviota vuela al llegar al árbol, que se puede examinar
+void act1_coast_explore(void)    // Paseo por toda la playa: gaviota al llegar al árbol; árbol examinable
 {
-    u16 prev_joy = JOY_readJoypad(JOY_ALL);
     bool gull_flew = false;
 
-    while (FASTFIX32_TO_INT(offset_BGA) < COAST_COMBAT_SCROLL) {
+    while (FASTFIX32_TO_INT(offset_BGA) < COAST_END_SCROLL) {
         next_frame(true);
 
         s16 world_x = FASTFIX32_TO_INT(obj_character[active_character].x) +
@@ -59,13 +58,11 @@ void act1_coast_explore(void)    // Paseo: la gaviota vuela al llegar al árbol,
             coast_gull_flies();
         }
 
-        u16 joy = JOY_readJoypad(JOY_ALL);
-        u16 pressed = joy & ~prev_joy;
-        prev_joy = joy;
-
-        // Examinar el árbol rojo (pintado en el fondo: zona por posición)
-        if ((pressed & BUTTON_A) && world_x > COAST_TREE_X - 60 && world_x < COAST_TREE_X + 60)
+        // El árbol rojo es un objeto (item 1: las hojas al pie del tronco)
+        if (last_interacted_item == 1) {
             talk_dialog(&dialogs[ACT1_COAST][A1_COAST_TREE], false);
+            last_interacted_item = ITEM_NONE;
+        }
     }
 }
 

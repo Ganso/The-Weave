@@ -29,6 +29,7 @@ const SceneHook scene_hook_table[HOOK_COUNT] = {
     [HOOK_ACT1_COAST_END_AMBIENT] = act1_coast_end_ambient,
     [HOOK_ACT1_END_EPILOGUE]     = act1_end_epilogue,
     [HOOK_ACT1_COAST_EXPLORE]    = act1_coast_explore,
+    [HOOK_ACT1_HUT_START]        = act1_hut_start,
     [HOOK_ACT1_HUT_ITEMS]        = act1_hut_items,
     [HOOK_ACT1_HUT_LIGHTNING]    = act1_hut_lightning,
     [HOOK_ACT1_HUT_SHADOW]       = act1_hut_shadow,

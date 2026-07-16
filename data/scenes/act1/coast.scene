@@ -6,7 +6,8 @@ scene act1_coast
 
 level coast_bg_tile coast_bg_map coast_front_tile coast_front_map coast_pal 640 user_right 3
 limits 0 134 275 172
-item 0 item_coast_seagull PAL0 520 112 0 0 0 0 FORCE_BACKGROUND    # gaviota (alza el vuelo al llegar)
+item 0 item_coast_seagull PAL0 520 112 0 0 0 0 FORCE_BACKGROUND    # gaviota (alza el vuelo al llegar al árbol)
+item 1 item_coast_leaves PAL0 478 156 24 0 8 8 CALCULATE_DEPTH      # el árbol rojo (hojas al pie: objeto examinable)
 set rod off                   # Linus aún no tiene el bastón
 character CHR_linus
 character CHR_clio
@@ -22,13 +23,12 @@ call act1_coast_arrive        # olas + la gaviota sale volando
 move CHR_linus 60 160
 say_cluster ACT1_COAST A1_COAST_L1 sound  # "Por fin llegamos, madre..." 
 
-# Exploración: el árbol rojo se puede examinar con A (hook con zona por posición)
+# Exploración de TODO el tramo: la gaviota vuela al llegar al árbol, y el
+# árbol (item 1) se puede examinar; el hook termina al final del mapa
 set movement on
 set scroll on
 call act1_coast_explore
 
-# La playa es un lugar de paso: seguir hacia el interior de la isla
+# La playa es un lugar de paso: hacia el interior de la isla
 say_cluster ACT1_COAST A1_COAST_ONWARD sound
-set movement on
-wait_scroll 318
 next_scene act1_island

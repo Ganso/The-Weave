@@ -39,10 +39,12 @@ if_defeated goto fday_fail
 # Clio ha sido mordida: Linus le pide que cante el patrón de Curación
 say_cluster ACT1_ISLAND A1_ISLAND_HURT sound     # "¡Madre! Estás herida..."
 call act1_fday_heal
-say_cluster ACT1_ISLAND A1_ISLAND_HEALED sound   # "Ya estoy mejor..." (la charla sobre la magia)
+say_cluster ACT1_ISLAND A1_ISLAND_HEALED sound   # "Ya estoy mejor..." + la promesa
 
-# Seguir hasta el fondo del bosque: allí aparece la choza
-say_cluster ACT1_ISLAND A1_ISLAND_ONWARD sound   # "¿Padre aprendió Curación...?" ... "Una choza" 
+# Seguir hasta casi el final del bosque: ALLÍ aparece la choza a lo lejos
+set movement on
+wait_scroll 1000
+say_cluster ACT1_ISLAND A1_ISLAND_ONWARD sound   # "Madre. Allí. Una choza"
 set movement on
 wait_scroll 1110
 next_scene act1_hut

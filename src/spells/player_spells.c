@@ -86,6 +86,12 @@ static bool thunder_on_update(SpellContext *ctx)
     return false;
 }
 
+static void thunder_on_cancel(SpellContext *ctx)    // cancelado a mitad: restaurar el cielo
+{
+    (void)ctx;
+    PAL_setColor(PAL0_COL4, thunder_saved_color);
+}
+
 // =====================================================================
 // HIDE — el jugador parpadea invisible; corta el hechizo enemigo en curso
 // =====================================================================
@@ -164,6 +170,7 @@ void init_player_spells(void)    // Registra los hechizos base (llamado desde in
         .enabled = false,
         .canUse = thunder_can_use, .onRejected = thunder_on_rejected,
         .onLaunch = thunder_on_launch, .onUpdate = thunder_on_update,
+        .onCancel = thunder_on_cancel,
     };
 
     spell_defs[SPELL_HIDE] = (SpellDef){

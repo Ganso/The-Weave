@@ -9,7 +9,8 @@ enum SystemDialogId {
     SYSMSG_DISCLAIMER = 1,
     SYSMSG_TERM_1 = 2,
     SYSMSG_CANT_USE_PATTERN = 3,
-    SYSMSG_COUNT = 4
+    SYSMSG_NOTE_LOCKED = 4,
+    SYSMSG_COUNT = 5
 };
 
 enum Act1CorridorId {

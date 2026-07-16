@@ -5,6 +5,7 @@
 #include "core/core.h"
 #include "actors/actors.h"
 #include "combat/combat.h"
+#include "narrative/narrative.h"
 #include "spells/spells.h"
 #include "interface/interface.h"
 #include "audio/audio.h"
@@ -63,6 +64,8 @@ bool spell_note_input(u8 noteCode)    // El jugador pulsa una nota (desde contro
     if (noteCode > player_note_limit) {                     // nota aún no disponible
         dprintf(2,"Reject %d: por encima del límite de notas (%u)", noteCode, player_note_limit);
         play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+        reset_note_queue();                                 // cancela el patrón en curso
+        talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_NOTE_LOCKED], false); // "Aún no soy capaz de tocar esa nota"
         return false;
     }
 

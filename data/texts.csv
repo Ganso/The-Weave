@@ -3,6 +3,7 @@ system_dialog,SYSMSG_DEMO_TITLE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[The Weav
 system_dialog,SYSMSG_DISCLAIMER,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final","Graphics, mechanics or sounds|aren't final, nor they|represent the final result"
 system_dialog,NULL,0,false,DEFAULT_TALK_TIME,,
 system_dialog,SYSMSG_CANT_USE_PATTERN,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,No puedo usar ese patrón|ahora mismo,I can't use that pattern|right now
+system_dialog,SYSMSG_NOTE_LOCKED,FACE_linus,SIDE_LEFT,DEFAULT_TALK_TIME,Aún no soy capaz|de tocar esa nota,I'm not yet able|to play that note
 act1_corridor,A1_CORRIDOR_OVERSLEPT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Creo que he dormido demasiado|Debo llegar rápido al salón,I think I've overslept|I should go to the hall quickly
 act1_corridor,A1_CORRIDOR_MEMORIES,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Aunque siendo el día que es|este pasillo me trae|@[demasiados recuerdos@],Although in a day like this|this hallway brings back|too @[many memories@]
 act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
