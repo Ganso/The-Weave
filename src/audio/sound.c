@@ -94,7 +94,7 @@ void play_spell_jingle(u16 spellId)
         case SPELL_SLEEP:
         case SPELL_HEAL:
         case SPELL_EN_BITE:
-            // TODO: jingles propios pendientes (decisión docs/refactor/plan.md §15 / AGENTS.md)
+            // TODO: jingles propios pendientes (SLEEP/HEAL/EN_BITE); ver docs/acto1.md (pendientes)
             break;
         default: // SPELL_NONE u otro: sonido de "patrón inválido"
             play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));

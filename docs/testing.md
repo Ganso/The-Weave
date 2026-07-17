@@ -67,9 +67,9 @@ playtest** de abajo.
 
 ## Referencia
 
-El comportamiento de referencia está recogido en `docs/refactor/baseline.md`
-(histórico). Las comparaciones son funcionales/visuales — nunca binarias
-(`GAMEVERSION` incrusta la fecha de build).
+Las comparaciones entre builds son funcionales/visuales — nunca binarias
+(`GAMEVERSION` incrusta la fecha de build, así que dos builds nunca son
+byte-idénticos).
 
 Capturas de referencia: pendiente de añadir en `docs/testing/` (hacerlas en el
 próximo playtest completo).

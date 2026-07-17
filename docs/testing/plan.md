@@ -27,9 +27,9 @@ driver MCP de RetroArch, seam de input override y menú de debug runtime.
 
 - **Referencia de código**: `../RedPlanet_MD` — `src/smoke/`, `src/debug/`,
   `src/core/input.c`, `tools/retroarch/mcp_driver.py`, `docs/retroarch-mcp.md`.
-- **Convenciones**: las mismas del refactor v2.0 (`docs/refactor/plan.md`):
-  fases completas, un commit por hito `Testing Fase N: <resumen>`, verificación
-  al cierre de cada fase antes de pasar a la siguiente.
+- **Convenciones**: fases completas, un commit por hito
+  `Testing Fase N: <resumen>`, verificación al cierre de cada fase antes de
+  pasar a la siguiente.
 - **Reparto de verificación**: los builds (`--no-run`), greps y comprobaciones de
   `symbol.txt` los hace el agente; todo lo que requiere emulador con GUI
   (BlastEm, RetroArch) lo ejecuta Javier y reporta el resultado.

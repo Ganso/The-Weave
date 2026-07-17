@@ -89,7 +89,7 @@ void hit_enemy(u8 enemyId, u8 damage)
 
     // Reduce enemy HP (B25: compare first — hitpoints is u16 and would underflow if damage > HP)
     if (damage >= obj_enemy[enemyId].hitpoints) { // If enemy is defeated
-        // TODO: Better enemy defeat handling (pospuesto a Fase 4, decisión docs/refactor/plan.md §15)
+        // TODO: Better enemy defeat handling (diferido)
         dprintf(2, "Enemy %d defeated", enemyId);
         obj_enemy[enemyId].hitpoints = 0; // Marks the enemy as dying
         SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter sprite

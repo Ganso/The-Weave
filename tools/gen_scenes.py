@@ -2,7 +2,7 @@
 # gen_scenes.py – convierte data/scenes/*.scene en src/scenes/scene_data.{h,c}
 # Ejecutar desde la raíz del repo: python3 tools/gen_scenes.py
 #
-# Diseño: docs/refactor/fase5_design.md. Validación FATAL (nunca warnings):
+# Validación FATAL (nunca warnings):
 #  - sintaxis y aridad de cada op
 #  - labels de goto/branch existen (dos pasadas)
 #  - say*: set + id existen en data/texts.csv

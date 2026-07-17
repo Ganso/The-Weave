@@ -51,9 +51,6 @@
 - **Estado**: acto 1 montado con textos/arte placeholder. Pilares del motor:
   hechizos de dos slots (§5), VM de cutscenes con DSL propio (§6), codegen validado
   desde `data/` (§4), y una smoke ROM para probar hechizos/escenas aislados.
-- Hay una bitácora histórica del rediseño que dio lugar a esta arquitectura en
-  `docs/refactor/` (baseline, bugs numerados B\*, plan). Es **referencia histórica**,
-  no hace falta para el día a día.
 
 ### Estructura del juego (mapa para entender el todo sin leer el código)
 
@@ -64,7 +61,7 @@ El toggle `HACK_START_SCENE` (core/hack.h) salta el logo/intro y arranca en la e
 que le digas.
 
 **Flujo del acto 1** (cada fila = una escena; el guión narrativo está en
-`docs/acto1-definitivo.md`, la implementación en `data/scenes/act1/<escena>.scene` +
+`docs/acto1.md`, la implementación en `data/scenes/act1/<escena>.scene` +
 `src/scenes/act1/<escena>.c`):
 
 | Escena | Qué es | Mecánica que estrena |
@@ -369,9 +366,8 @@ trabajo tienen guías dedicadas — no dupliques su contenido aquí, enlázalas:
 | `docs/scenes.md`   | Guía para no técnicos: crear una escena (todos los ops del DSL, formatos de texts.csv/choices.csv, recetas). |
 | `docs/texts.md`    | Guía para no técnicos: escribir diálogos, clusters, choices y voces. |
 | `docs/combat.md`   | Referencia canónica del COMBATE: los dos directores (patrones/contacto), sus FSM, vida/derrota/reintento, recetas de encuentros y trampas. |
-| `docs/acto1-definitivo.md` | Guión narrativo completo del acto 1 (diálogos, acciones, estado de escenas y assets). |
+| `docs/acto1.md`    | Acto 1: estado escena por escena y lo que queda por hacer (arte, audio, bugs). |
 | `docs/test_scene.md` | Desglose de qué prueba cada sección de `act1_test`. |
-| `docs/refactor/`   | Histórico del rediseño (baseline, bugs B\*, plan). Referencia, no día a día. |
 
 Las guías `spells.md`/`scenes.md`/`texts.md` son **deliberadamente autocontenidas y no
 técnicas** (no remiten a otros documentos): al mantenerlas, conserva ese tono y no las
