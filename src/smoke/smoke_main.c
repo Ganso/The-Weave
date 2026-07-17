@@ -82,19 +82,44 @@ int main(bool hard)
         while (!(wait_joy_press() & BUTTON_A)) { }     // resultados en pantalla hasta A
     }
 
+    // Navegación con auto-repetición: al MANTENER arriba/abajo el cursor avanza
+    // solo (retardo inicial y luego repetición rápida). A selecciona por flanco.
+    #define MENU_REPEAT_DELAY 15   // frames que hay que mantener antes de repetir
+    #define MENU_REPEAT_RATE   3   // frames entre repeticiones mientras se mantiene
+
+    u16 prev = 0;    // estado del pad el frame anterior (flanco de A)
+    u16 hold = 0;    // cuenta atrás para la próxima repetición de dirección
+    menu_draw();
     while (true)
     {
-        menu_draw();
-        u16 joy = wait_joy_press();
+        SYS_doVBlankProcess();
+        u16 joy = JOY_readJoypad(JOY_1);
 
-        if (joy & BUTTON_UP)   cursor = (cursor == 0) ? (u8)(SMOKE_CASE_COUNT - 1) : cursor - 1;
-        if (joy & BUTTON_DOWN) cursor = (cursor + 1) % SMOKE_CASE_COUNT;
-        if (joy & BUTTON_A)
+        // A: seleccionar (solo en el flanco de subida, no mientras se mantiene)
+        if ((joy & BUTTON_A) && !(prev & BUTTON_A))
         {
             smoke_run_case(&smoke_cases[cursor]);
-            // El runner deja el resultado en pantalla; A para volver al menú
-            while (!(wait_joy_press() & BUTTON_A)) { }
+            while (!(wait_joy_press() & BUTTON_A)) { } // resultado en pantalla hasta A
+            prev = 0; hold = 0;
+            menu_draw();
+            continue;
         }
+
+        // Arriba/abajo con auto-repetición
+        u16 dir  = joy  & (BUTTON_UP | BUTTON_DOWN);
+        u16 pdir = prev & (BUTTON_UP | BUTTON_DOWN);
+        bool move = false;
+        if (dir == 0)            hold = 0;                              // soltado
+        else if (dir != pdir)  { move = true; hold = MENU_REPEAT_DELAY; } // pulsación nueva
+        else if (--hold == 0)  { move = true; hold = MENU_REPEAT_RATE; }  // mantenido: repetir
+
+        if (move)
+        {
+            if (dir & BUTTON_UP) cursor = (cursor == 0) ? (u8)(SMOKE_CASE_COUNT - 1) : cursor - 1;
+            else                 cursor = (cursor + 1) % SMOKE_CASE_COUNT;
+            menu_draw();
+        }
+        prev = joy;
     }
 }
 
