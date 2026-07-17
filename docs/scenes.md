@@ -405,17 +405,41 @@ set spells on
 
 ### 7.7. Combate
 
-- **`combat`** — lanza un **combate interactivo completo** y no sigue hasta que el
-  combate termine: porque el jugador **gana** o porque su **vida llega a cero**
-  (empieza cada combate con 5 puntos; cada golpe enemigo resta uno). Antes de esta
-  orden, normalmente habrás hecho aparecer a los enemigos con un `call` a un gancho
-  de C (ver sección 9).
-  - **Cuándo:** cuando toca pelear. Es tan simple como poner `combat`; toda la
-    mecánica de la pelea la gestiona el juego.
-- **`if_defeated goto <etiqueta>`** — salta a una etiqueta **si el último combate
-  terminó en derrota** (la vida del jugador llegó a cero). Ponla justo después de un
-  `combat` (o de un `call` a un gancho que corra un combate físico) para mostrar un
-  mensaje de fallo y repetir la pelea. Si el jugador ganó, el guion sigue de largo.
+Hay **dos tipos de combate**, y cada uno se pone en el guion de una forma. En los
+dos, el jugador empieza con **5 puntos de vida** (cada golpe enemigo resta uno) y,
+si llega a cero, el combate termina en **derrota**.
+
+**Tipo A — de patrones (enemigos a distancia, como los espectros).** Los enemigos
+cantan hechizos y el jugador los contrarresta. Se pone en dos pasos: primero un
+`call` a un gancho de C que hace **aparecer** a los enemigos (ver sección 9), y
+luego la orden `combat`.
+
+- **`combat`** — lanza el combate y **no sigue hasta que termina** (el jugador gana
+  o cae derrotado). Toda la mecánica la gestiona el juego.
+
+    ```
+    call act1_return_ghosts    # gancho: hace aparecer a los espectros
+    combat
+    ```
+
+**Tipo B — de contacto (enemigos que persiguen y muerden/embisten, como los
+jabalíes).** Aquí NO se usa `combat`: **un solo gancho de C corre la pelea entera**
+(hace aparecer a la manada y la gestiona hasta que huye o te derrota). En el guion
+solo pones el `call` a ese gancho.
+
+    ```
+    set spells off             # el arma es el golpe con A (o "on" si es con hechizos)
+    call act1_fday_boars       # gancho: aparece la manada Y corre el combate
+    ```
+
+*(Cómo se escribe ese gancho —incluidas las dos variantes de arma, golpe o
+patrón— es trabajo de programación: el patrón exacto está en el código de los
+ganchos de combate existentes.)*
+
+- **`if_defeated goto <etiqueta>`** — vale para los dos tipos. Salta a una etiqueta
+  **si el último combate terminó en derrota**. Ponla justo después del `combat`
+  (tipo A) o del `call` al gancho (tipo B) para mostrar un mensaje de fallo y
+  repetir. Si el jugador ganó, el guion sigue de largo.
   - Ejemplo de combate con reintento:
 
     ```

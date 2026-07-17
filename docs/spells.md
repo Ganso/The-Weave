@@ -658,9 +658,21 @@ mientras pruebas y acuérdate de desactivarlos antes de la versión final.
 | DORMIR | FA MI DO LA (B A Z X) | 1,25 s | Solo guionizado. |
 | FUEGO | MI FA SOL LA (A B C X) | 2 s | Ejemplo completo: zona (solo junto al caldero) + se come el trueno enemigo + fases. Empieza bloqueado. |
 | LUZ | SOL LA SI DO (C X Y Z) | 1,5 s | Muestra fases de dos tramos de color (cian→blanco). Se puede lanzar directo E invertido. |
+| CURACIÓN | LA SI DO SI (X Y Z Y) | 1,25 s | Solo guionizado. La canta Clio en el acto 1; usa la nota más alta (DO), fuera del límite de notas del jugador hasta el final del juego. |
 | EN_THUNDER | (trueno enemigo) | 1 s | Es `counterable`; hace daño al jugador al terminar de forma natural. |
 | EN_BITE | (mordisco enemigo) | 1 s | No es counterable. Solo lo usa la clase de TEST (el jabalí muerde por contacto en melee.c). |
 
 Los dos mejores ejemplos para copiar y aprender son **FUEGO** (`src/spells/fire.c`)
 y **LUZ** (`src/spells/light.c`): están muy comentados y cubren casi todo lo que
 necesitarás.
+
+### El límite de notas (progresión del jugador)
+
+Aunque el mando tiene seis notas (MI FA SOL LA SI DO), el jugador **no siempre
+puede tocarlas todas**. Una variable del juego (`player_note_limit`) marca la nota
+más alta disponible; al intentar una por encima, suena un pitido de error, aparece
+un aviso y se cancela el patrón que estuviera tocando. En el acto 1, al conseguir el
+bastón el límite se fija en **SOL** (las tres primeras notas): por eso hechizos como
+CURACIÓN, que usan notas más altas, quedan "vistos pero no tocables" hasta que una
+escena posterior suba el límite. Esto se ajusta desde un gancho de C (por ejemplo al
+recoger el bastón), no desde el guion.

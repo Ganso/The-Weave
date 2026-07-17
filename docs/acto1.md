@@ -1,8 +1,10 @@
-# The Weave — Guión del Acto 1
+# The Weave — Guión del Acto 1 (HISTÓRICO / OBSOLETO)
 
-> Documento vivo. Recoge **todas las escenas del Acto 1 que existen hoy** en el juego,
-> con sus diálogos íntegros, la puesta en escena y lo que ocurre en cada momento.
-> El objetivo es que este fichero evolucione hasta ser el **guión definitivo del Acto 1**.
+> ⚠️ **Este documento está superado.** El guión vigente del acto 1 es
+> **`docs/acto1-definitivo.md`** (diálogos, acciones y estado real de las escenas).
+> Este fichero se conserva solo como referencia histórica de una versión anterior
+> (todavía menciona mecánicas descartadas, como el hechizo de Luz/Oscuridad). No lo
+> uses para saber cómo debe quedar el juego.
 >
 > Fuentes de verdad actuales:
 > - Secuencia de cada escena: `data/scenes/act1/*.scene` (DSL declarativo).

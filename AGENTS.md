@@ -48,15 +48,38 @@
 
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
 - **C plano** sobre **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
-- **Estado**: acto 1 montado con textos/arte placeholder. Flujo narrativo:
-  `act1_bedroom → act1_corridor → act1_hall → act1_coast → act1_island → act1_hut
-  → act1_return → act1_coast_end → reset` (act1_forest queda fuera del flujo:
-  accesible desde la smoke ROM o HACK_START_SCENE). Pilares del motor:
+- **Estado**: acto 1 montado con textos/arte placeholder. Pilares del motor:
   hechizos de dos slots (§5), VM de cutscenes con DSL propio (§6), codegen validado
   desde `data/` (§4), y una smoke ROM para probar hechizos/escenas aislados.
 - Hay una bitácora histórica del rediseño que dio lugar a esta arquitectura en
   `docs/refactor/` (baseline, bugs numerados B\*, plan). Es **referencia histórica**,
   no hace falta para el día a día.
+
+### Estructura del juego (mapa para entender el todo sin leer el código)
+
+**Arranque** (`src/core/main.c`): logo GeeseBumps → intro (`theweave_intro`) →
+`initialize(true)` → bucle de escenas empezando en `act1_bedroom`. Cada escena deja
+`current_scene_id` apuntando a la siguiente (transiciones por NOMBRE, op `next_scene`).
+El toggle `HACK_START_SCENE` (core/hack.h) salta el logo/intro y arranca en la escena
+que le digas.
+
+**Flujo del acto 1** (cada fila = una escena; el guión narrativo está en
+`docs/acto1-definitivo.md`, la implementación en `data/scenes/act1/<escena>.scene` +
+`src/scenes/act1/<escena>.c`):
+
+| Escena | Qué es | Mecánica que estrena |
+|---|---|---|
+| `act1_bedroom`   | Dormitorio; visita del cisne | exploración de items; aprende el patrón DORMIR (teórico) |
+| `act1_corridor`  | Pasillo del gremio | gating: leer dos libros para salir |
+| `act1_hall`      | Salón; Clio y Xander | escena narrativa con `choice`/`say_response` |
+| `act1_coast`     | Playa (lugar de paso) | exploración; objeto examinable (árbol) |
+| `act1_island`    | Bosque de la isla (atardecer) | 1.er combate de CONTACTO (jabalíes, golpe con A); Clio canta CURACIÓN |
+| `act1_hut`       | Choza / telar roto | coge el bastón → patrón ELECTRICIDAD; límite de notas |
+| `act1_return`    | Regreso nocturno (scroll a la izquierda) | combate de CONTACTO con arma TRUENO; combate de PATRONES (espectros) |
+| `act1_coast_end` | Cierre en la nave | pausa interactiva + fundido + FIN |
+
+`act1_forest` es la vieja demo técnica y `act1_test` el banco de pruebas del motor:
+ambas fuera del flujo, accesibles por smoke ROM o `HACK_START_SCENE`.
 
 ## 2. Compilar, ejecutar y debugear
 
@@ -345,6 +368,8 @@ trabajo tienen guías dedicadas — no dupliques su contenido aquí, enlázalas:
 | `docs/spells.md`   | Guía para no técnicos: crear un hechizo de principio a fin (hooks, fases, zonas, receta). |
 | `docs/scenes.md`   | Guía para no técnicos: crear una escena (todos los ops del DSL, formatos de texts.csv/choices.csv, recetas). |
 | `docs/texts.md`    | Guía para no técnicos: escribir diálogos, clusters, choices y voces. |
+| `docs/combat.md`   | Referencia canónica del COMBATE: los dos directores (patrones/contacto), sus FSM, vida/derrota/reintento, recetas de encuentros y trampas. |
+| `docs/acto1-definitivo.md` | Guión narrativo completo del acto 1 (diálogos, acciones, estado de escenas y assets). |
 | `docs/test_scene.md` | Desglose de qué prueba cada sección de `act1_test`. |
 | `docs/refactor/`   | Histórico del rediseño (baseline, bugs B\*, plan). Referencia, no día a día. |
 
