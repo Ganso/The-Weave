@@ -26,7 +26,9 @@ Tipos de caso (`src/smoke/smoke_cases.h`):
   "fire en ZONE_CAULDRON → permitido"). PASS/FAIL instantáneo en pantalla.
 - **CAST** — lanza el hechizo con un cast scripted en un nivel de pruebas y mide
   los frames hasta terminar. PASS si acaba en `baseDuration ± 2`. El efecto visual
-  lo juzga el humano.
+  lo juzga el humano. Cada hechizo se prueba en su **contexto real**: el TRUENO en
+  el bosque OSCURO (`forest_dark`), donde su destello cambia toda la paleta; el
+  resto en el bosque de día.
 - **SCENE** — ejecuta la escena completa (interactiva: se juega). Al terminar
   vuelve al menú. Nota: `act1_forest` termina con reset de consola (es su final
   real) — es el comportamiento esperado.

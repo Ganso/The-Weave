@@ -47,9 +47,12 @@ static void run_check(const SmokeCase *c)
 // cuenta frames hasta que el slot se libera y devuelve PASS/FAIL (baseDuration±2).
 static bool cast_run(const SmokeCase *c, u16 *out_frames)
 {
-    // Nivel de pruebas: bosque + Linus visible (los efectos usan paleta y sprite)
-    // Anchura 1440 + BG_SCRL_USER_RIGHT (trampa del scroll: AGENTS.md §7).
-    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
+    // Nivel de pruebas: bosque + Linus visible (los efectos usan paleta y sprite).
+    // Cada hechizo se prueba en SU contexto real: el TRUENO en el bosque OSCURO
+    // (forest_dark), donde su destello cambia toda la paleta; el resto en el
+    // bosque de día. Anchura 1440 + BG_SCRL_USER_RIGHT (trampa del scroll §7).
+    Palette level_pal = (c->spellId == SPELL_THUNDER) ? forest_dark_pal : forest_pal;
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map, level_pal, 1440, BG_SCRL_USER_RIGHT, 3);
     init_character(CHR_linus);
     move_character_instant(CHR_linus, 140, 154);
     show_character(CHR_linus, true);
@@ -200,6 +203,9 @@ static void run_auto(void)
     hold(30);
 
     smoke_phase = PH_CAST_THUNDER;
+    // El TRUENO es el hechizo del bosque OSCURO: cambiar a forest_dark para ver
+    // su destello real (toda la paleta de fondo alternando con la clara)
+    PAL_setPalette(PAL0, forest_dark_pal.data, DMA);
     u16 thunder_expected = spell_defs[SPELL_THUNDER].baseDuration;
     u16 thunder_frames = 0;
     spell_narrative_cast(SPELL_THUNDER, false);

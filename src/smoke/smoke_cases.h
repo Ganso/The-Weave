@@ -39,7 +39,7 @@ static const SmokeCase smoke_cases[] = {
     {"CHK light inverso  - SI",  SMOKE_CHECK, SPELL_LIGHT,   true,  ZONE_NONE,     true,  NULL}, // único invertido libre
 
     // --- Casts scripted (duración medida + efecto visual a ojo) ---
-    {"CAST thunder (4s flash)",   SMOKE_CAST,  SPELL_THUNDER, false, 0, false, NULL},
+    {"CAST thunder (bosque osc.)",SMOKE_CAST,  SPELL_THUNDER, false, 0, false, NULL},
     {"CAST hide (4s parpadeo)",   SMOKE_CAST,  SPELL_HIDE,    false, 0, false, NULL},
     {"CAST open (0.75s)",         SMOKE_CAST,  SPELL_OPEN,    false, 0, false, NULL},
     {"CAST sleep (1.25s)",        SMOKE_CAST,  SPELL_SLEEP,   false, 0, false, NULL},
