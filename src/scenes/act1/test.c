@@ -35,7 +35,12 @@ void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabal�
     }
 
     player_max_hitpoints = 5;        // vida del jugador en este combate
-    melee_combat_run(6, CHR_clio);   // 6 golpes los ahuyentan; Clio espera detrás
+    melee_combat_run(&(MeleeConfig){
+        .hits_to_win = 6,            // 6 golpes los ahuyentan
+        .companion = CHR_clio,       // Clio espera detrás
+        .reposition_companion = true,
+        .weapon_is_thunder = false,  // el arma es el golpe con A
+    });
 
     // Restaurar la vara: el resto del banco de pruebas la necesita
     linus_has_torch = false;

@@ -1,31 +1,31 @@
 /*
- * src/combat/melee.h — Combate físico (sin hechizos)
- * ----------------------------------------------------
- * Combate cuerpo a cuerpo del acto 1 (Linus sin vara): los enemigos activos
- * persiguen al jugador y muerden de cerca; el jugador golpea con el botón A.
- * Cada golpe conectado ahuyenta al enemigo (corre a su punto de entrada y
- * vuelve). Al acumular hits_to_win golpes, todos huyen por la derecha y el
- * combate termina.
+ * src/combat/melee.h — Combate de CONTACTO (la manada)
+ * ------------------------------------------------------
+ * Director del combate contra enemigos de contacto (jabalíes): persiguen al
+ * jugador, muerden de cerca y huyen cuando el arma del jugador los alcanza.
+ * El arma se elige por configuración: el golpe físico (botón A) o el patrón
+ * de TRUENO cantado (para escenas donde Linus ya tiene el bastón).
  *
- * No usa el FSM de combate por hechizos: combat_state queda en COMBAT_NO y
- * ni las notas ni el motor de hechizos intervienen (desactiva `spells` antes).
+ * Cómo funciona por dentro, con dibujos: docs/combat.md
  *
- * melee_combat_run() es BLOQUEANTE (estilo cutscene, B5): toma el control de
- * todos los enemigos ya spawneados (init_enemy + move_enemy_instant + show
- * antes de llamar) y devuelve cuando todos se han ido.
+ * Uso: spawnear los enemigos (init_enemy + move_enemy_instant + show_enemy)
+ * y llamar a melee_combat_run(), que BLOQUEA hasta la victoria (todos huyen)
+ * o la derrota (player_defeated: la escena decide el reintento con el op
+ * if_defeated del DSL).
  */
 #ifndef _MELEE_H_
 #define _MELEE_H_
 
 #include <genesis.h>
 
-// companion: personaje que se queda quieto detrás del jugador mirando a la
-// derecha (se recoloca andando si no estaba detrás; al acabar vuelve a seguir).
-// CHR_NONE si no hay.
-void melee_combat_run(u8 hits_to_win, u16 companion);
+typedef struct {
+    u8   hits_to_win;          // golpes (o truenos) que ahuyentan a la manada
+    u16  companion;            // CHR_* que espera quieto durante el combate (CHR_NONE si no hay)
+    bool reposition_companion; // true: si no está detrás del jugador, se recoloca andando
+    bool weapon_is_thunder;    // true: el TRUENO ahuyenta (habilitar spells en la escena);
+                               // false: el golpe físico con A (deshabilitar spells)
+} MeleeConfig;
 
-// Variante del regreso (guión 6.1): el golpe físico NO cuenta; solo el patrón
-// de TRUENO cantado entero ahuyenta a los jabalíes (habilitar spells antes).
-void melee_combat_run_thunder(u8 casts_to_win, u16 companion);
+void melee_combat_run(const MeleeConfig *cfg);
 
 #endif

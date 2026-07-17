@@ -6,6 +6,7 @@
 #include "actors/actors.h"
 #include "combat/combat.h"
 #include "spells/spells.h"
+#include "res_all.h"
 #include "narrative/narrative.h"
 #include "interface/interface.h"
 #include "audio/audio.h"
@@ -38,29 +39,29 @@ static bool thunder_can_use(const SpellContext *ctx)
 // Hint contextual al rechazar thunder (B18: antes vivía incrustado en el flujo de notas)
 static void thunder_on_rejected(SpellContext *ctx)
 {
-    const DialogItem *dialog = &dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN]; // (ES) "No puedo usar ese patrón|ahora mismo" - (EN) "I can't use that pattern|right now"
-
-    // Si hay un WeaverGhost en pantalla, dar pistas específicas
+    // ¿Hay un espectro (WeaverGhost) en pantalla? Solo entonces damos pistas.
+    bool ghost_present = false;
     for (u8 i = 0; i < MAX_ENEMIES; i++)
+        if (obj_enemy[i].obj_character.active &&
+            obj_enemy[i].class_id == ENEMY_CLS_WEAVERGHOST) { ghost_present = true; break; }
+
+    if (ctx->reversed)
     {
-        if (obj_enemy[i].class_id == ENEMY_CLS_WEAVERGHOST)
-        {
-            if (!ctx->reversed)
-            {
-                dialog = &dialogs[ACT1_FOREST][A1_FOREST_REVERSE_NOTES_COUNTER]; // pista: tócalo al revés
-                break;
-            }
-            if (ctx->reversed &&
-                (combat_state != COMBAT_STATE_ENEMY_EFFECT ||
-                 spell_active_id(SPELL_SLOT_ENEMY) != SPELL_EN_THUNDER))
-            {
-                dialog = &dialogs[ACT1_FOREST][A1_FOREST_REVERSE_HINT]; // pista: espera su momento
-                break;
-            }
-        }
+        // Trueno invertido fuera de su ventana de counter: si hay espectros,
+        // la pista de esperar el momento; si no, el hechizo falla y ya está
+        // (el sonido de patrón inválido basta como feedback).
+        if (ghost_present)
+            talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_REVERSE_HINT], false); // pista: espera su momento
+        else
+            play_sample(snd_pattern_invalid, sizeof(snd_pattern_invalid));
+        return;
     }
 
-    talk_dialog(dialog, false);
+    // Trueno directo rechazado (solo pasa contra espectros): pista del counter
+    if (ghost_present)
+        talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_REVERSE_NOTES_COUNTER], false); // pista: tócalo al revés
+    else
+        talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN], false);
 }
 
 static void thunder_on_launch(SpellContext *ctx)

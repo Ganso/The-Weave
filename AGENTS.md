@@ -169,30 +169,13 @@ Botón→nota: A→MI B→FA C→SOL X→LA Y→SI Z→DO.
 counter). `combat_state` (combat.c) es el director del combate; el motor consulta y
 actualiza ese FSM.
 
-**Doctrina de combate** (decisión de diseño con Javier): el jugador puede o no
-cantar patrones según la escena (flag `spells`), y cada enemigo es **de contacto**
-(muerde/embiste: lo dirige melee.c — jabalí) o **a distancia** (canta patrones: lo
-dirige el FSM de combat.c — espectros). La unificación de ambos directores en un
-solo combate mixto queda como refactor futuro.
-
-Aparte existe el **combate físico** (`combat/melee.c`, `melee_combat_run`): cuerpo a
-cuerpo sin hechizos (acto 1 antes de la vara). No toca `combat_state` (queda en
-COMBAT_NO); dirige a los enemigos activos (persiguen con pausas aleatorias, muerden
-de cerca, y al ser golpeados huyen hacia el lado de pantalla más cercano y vuelven;
-locomoción con el enemigo en STATE_WALKING) y resuelve el golpe del jugador con A
-(reutiliza STATE_PLAYING_NOTE → ANIM_ACTION). Variante `melee_combat_run_thunder`:
-el golpe físico no cuenta y solo el patrón de TRUENO cantado entero ahuyenta a la
-manada (jabalíes del regreso, sin antorcha; habilitar `spells` en la escena). El
-acompañante recupera su `follows_character` al terminar el combate. El tutorial
-"Eso ha dolido" de update_character_animations solo salta con
-combat_state != COMBAT_NO.
-
-**Vida del jugador** (ambos combates): `player_hitpoints` se reinicia a
-`player_max_hitpoints` (5 por defecto; fijarla en el hook del combate si procede) en
-cada `combat_init`/`melee_combat_run`; `hit_player` la resta y a 0 marca
-`player_defeated`. El op `combat` del DSL sale entonces vía `combat_abort()` (libera
-enemigos y cierra), y el melee libera y retorna. El op **`if_defeated goto`** permite
-a la escena mostrar el fallo y reintentar (ver act1_test).
+**Doctrina y funcionamiento del COMBATE → `docs/combat.md`** (referencia canónica
+del dominio: los dos directores — patrones en combat.c/spell.c y contacto en
+melee.c con `MeleeConfig` —, la vida del jugador y el reintento con `if_defeated`,
+las recetas de encuentros y las trampas, incluida la normalización de
+`combat_state` que hace el melee). Resumen de doctrina: el jugador canta o no según
+la escena (flag `spells`); cada enemigo es de CONTACTO (jabalí, melee.c) o A
+DISTANCIA (espectro, FSM de combat.c). Unificar ambos directores es refactor futuro.
 
 - `spell.c` — motor: `spell_validate` → `spell_player_cast` (counter o launch),
   `spell_update` (cada frame desde `update_combat`), `spell_try_counter`,

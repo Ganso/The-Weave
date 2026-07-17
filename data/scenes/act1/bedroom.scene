@@ -18,8 +18,8 @@ item 4 item_bedroom_linus_sleeping PAL0 30 112 0 0 0 0 FORCE_BACKGROUND     # Li
 # La caja del retrato rellena el hueco a la izquierda de la cama (bloquea
 # subirse a ella); la interacción del retrato la arbitra el hook: pulsar A en
 # la esquina izquierda (sobre la cabecera o junto al cajón) muestra el retrato
-item 5 item_bedroom_portrait PAL0 4 100 27 0 23 39 FORCE_BACKGROUND         # retrato familiar (izquierda del todo)
-item 7 item_bedroom_chest PAL0 176 148 40 0 12 16 CALCULATE_DEPTH          # baúl de infancia
+item 5 item_bedroom_portrait PAL0 4 120 27 0 23 39 FORCE_BACKGROUND         # retrato familiar (izquierda del todo)
+item 7 item_bedroom_chest PAL0 176 148 40 0 7 17 CALCULATE_DEPTH          # baúl de infancia
 
 call act1_bedroom_swan       # cinemática del cisne (flash + diálogo + flash)
 call act1_bedroom_wake       # amanece, Linus se levanta, control al jugador

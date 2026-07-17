@@ -32,7 +32,12 @@ void act1_return_boars(void)    // Segunda emboscada: sin antorcha, solo el TRUE
         show_enemy(i, true);
     }
     player_max_hitpoints = 5;
-    melee_combat_run_thunder(2, CHR_clio);   // dos truenos completos y huyen
+    melee_combat_run(&(MeleeConfig){
+        .hits_to_win = 1,            // UN trueno y la manada huye (guión 6.1)
+        .companion = CHR_clio,       // Clio se queda donde esté
+        .reposition_companion = false,
+        .weapon_is_thunder = true,   // el arma es el patrón de TRUENO
+    });
 }
 
 void act1_return_ghosts(void)    // Espectros del Caos (combate por hechizos)
