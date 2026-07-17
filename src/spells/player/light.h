@@ -1,5 +1,5 @@
-#ifndef _LIGHT_H_
-#define _LIGHT_H_
+#ifndef _PLAYER_LIGHT_H_
+#define _PLAYER_LIGHT_H_
 
 // LUZ — hechizo de test/demostración: el primero definido casi íntegramente por
 // FASES declarativas (dos flashes de paleta encadenados), y el primero casteable

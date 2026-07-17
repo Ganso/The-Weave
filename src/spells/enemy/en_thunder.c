@@ -1,4 +1,4 @@
-// enemy_spells.c — en_thunder y en_bite: datos + hooks.
+// en_thunder.c — TRUENO enemigo: datos + hooks.
 
 #include <genesis.h>
 #include "core/core.h"
@@ -6,11 +6,7 @@
 #include "combat/combat.h"
 #include "spells/spells.h"
 #include "audio/audio.h"
-#include "spells/enemy_spells.h"
-
-// =====================================================================
-// EN_THUNDER — flash del cielo; al terminar golpea al jugador; counterable
-// =====================================================================
+#include "spells/enemy/en_thunder.h"
 
 #define COLOR_INITIAL_SKY     RGB24_TO_VDPCOLOR(0x1585c2) // color inicial del cielo
 #define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0x4444a3) // color de flash del thunder enemigo
@@ -37,6 +33,7 @@ static bool en_thunder_on_update(SpellContext *ctx)
     }
 
     // El fin natural lo detecta el motor por baseDuration; los efectos del final van en onFinish
+    (void)ctx;
     return false;
 }
 
@@ -59,28 +56,12 @@ static void en_thunder_on_counter(SpellContext *ctx)    // contrarrestado: el ra
 static void en_thunder_on_cancel(SpellContext *ctx)    // cancelado (hide, rechazo): solo limpiar
 {
     dprintf(2, "Enemy %d: Thunder cancelled", ctx->enemyId);
+    (void)ctx;
     PAL_setColor(PAL0_COL4, COLOR_INITIAL_SKY);
     en_thunder_flash_on = false;
 }
 
-// =====================================================================
-// EN_BITE — mordisco; sin clase en el JUEGO por decisión de diseño (bugs.md B2)
-// =====================================================================
-// La clase de TEST (ENEMY_CLS_TESTGHOST) sí lo usa: es el primer hechizo
-// enemigo NO counterable funcional. Para el juego: añadir SPELL_EN_BITE a la
-// lista spell[] de una clase y ajustar rechargeInit con playtest.
-
-static void en_bite_on_finish(SpellContext *ctx)    // fin natural: el mordisco alcanza al jugador
-{
-    SPR_setAnim(spr_enemy[ctx->enemyId], ANIM_IDLE);
-    hit_player(1);
-}
-
-// =====================================================================
-// Registro en la tabla
-// =====================================================================
-
-void init_enemy_spell_defs(void)    // Registra los hechizos de enemigo (llamado desde init_spells)
+void en_thunder_init(void)
 {
     spell_defs[SPELL_EN_THUNDER] = (SpellDef){
         .id = SPELL_EN_THUNDER,
@@ -94,15 +75,5 @@ void init_enemy_spell_defs(void)    // Registra los hechizos de enemigo (llamado
         .onFinish  = en_thunder_on_finish,
         .onCounter = en_thunder_on_counter,
         .onCancel  = en_thunder_on_cancel,
-    };
-
-    spell_defs[SPELL_EN_BITE] = (SpellDef){
-        .id = SPELL_EN_BITE,
-        .notes = { NOTE_MI, NOTE_SOL, NOTE_DO }, .noteCount = 3,
-        .isPalindrome = false,
-        .counterable = false,
-        .baseDuration = SCREEN_FPS,
-        .rechargeInit = SCREEN_FPS * 2,
-        .onFinish = en_bite_on_finish,   // daño al jugador (antes heredaba un no-op)
     };
 }

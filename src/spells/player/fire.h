@@ -1,5 +1,5 @@
-#ifndef _FIRE_H_
-#define _FIRE_H_
+#ifndef _PLAYER_FIRE_H_
+#define _PLAYER_FIRE_H_
 
 // FIRE — hechizo de ejemplo end-to-end del motor nuevo:
 // canUse por zona, comportamiento distinto según el hechizo enemigo activo,

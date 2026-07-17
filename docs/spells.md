@@ -312,14 +312,19 @@ Si tu hechizo no depende del sitio, no toques nada de esto.
 
 ## 7. Mapa de archivos: qué vas a tocar y para qué
 
+Los hechizos están **separados por dueño y uno por fichero**: los del jugador en
+`src/spells/player/` y los del enemigo en `src/spells/enemy/`. Un hechizo nuevo es
+un fichero `.c`/`.h` en la carpeta que le toque (aquí usaremos VIENTO, un hechizo
+del jugador → `src/spells/player/`).
+
 Crear un hechizo toca varios archivos. Aquí tienes el mapa completo para que sepas
 a dónde vas antes de empezar:
 
 | Archivo | Qué haces en él |
 |---|---|
 | `src/spells/constants_spells.h` | Reservar el nombre/número del hechizo (`SPELL_LOQUESEA`). |
-| `src/spells/loquesea.c` y `.h` | **El hechizo en sí**: su ficha y sus ganchos. Los creas nuevos. |
-| `src/spells/spell.c` | Una línea para que el juego "registre" tu hechizo al arrancar. |
+| `src/spells/player/loquesea.c` y `.h` | **El hechizo en sí**: su ficha y sus ganchos. Los creas nuevos. (Un hechizo de enemigo iría en `src/spells/enemy/`.) |
+| `src/spells/player/player_spells.c` | Una línea para que el juego "registre" tu hechizo al arrancar. |
 | `res/res_interface.res` | Declarar el dibujo (icono) del hechizo. |
 | `src/interface/interface.c` | Dos líneas para que el icono se pinte en el HUD y en la pausa. |
 | `src/audio/sound.c` | El efecto de sonido (jingle) que suena al lanzarlo. |
@@ -382,15 +387,15 @@ son solo cuentas internas; correrlos no rompe nada):
 Regla sencilla: **cada número debe ser único y la lista, consecutiva**. Si insertas
 uno, todos los de debajo suben en uno.
 
-### Paso 2 — Crear el hechizo: `src/spells/wind.h` y `src/spells/wind.c`
+### Paso 2 — Crear el hechizo: `src/spells/player/wind.h` y `.c`
 
 Primero el archivo `.h`, que es una simple "tarjeta de presentación" del hechizo:
 
 ```c
-// wind.h
-#ifndef _WIND_H_
-#define _WIND_H_
-void wind_init(void); // Registra el hechizo VIENTO (lo llamará el juego al arrancar)
+// src/spells/player/wind.h
+#ifndef _PLAYER_WIND_H_
+#define _PLAYER_WIND_H_
+void wind_init(void); // Registra el hechizo VIENTO (lo llamará el registrador)
 #endif
 ```
 
@@ -399,7 +404,7 @@ Ahora el archivo `.c`, que es el hechizo de verdad. Empieza con una lista de
 tal cual**; sirve para casi cualquier hechizo:
 
 ```c
-// wind.c
+// src/spells/player/wind.c
 #include <genesis.h>
 #include "core/core.h"
 #include "actors/actors.h"
@@ -407,7 +412,7 @@ tal cual**; sirve para casi cualquier hechizo:
 #include "spells/spells.h"
 #include "narrative/narrative.h"
 #include "audio/audio.h"
-#include "spells/wind.h"       // la tarjeta de presentación de arriba
+#include "spells/player/wind.h"   // la tarjeta de presentación de arriba
 
 #define COLOR_WIND_VDP  RGB24_TO_VDPCOLOR(0x66FF88)   // verde ráfaga (color en formato de la consola)
 
@@ -502,20 +507,25 @@ como qué poner. No hay `onUpdate` porque el efecto se describe con fases; no ha
 cortan a mitad, no nos importa que el cielo se quede verde un instante (si te
 importara, añadirías `onCancel` restaurando el color igual que en `onFinish`).
 
-### Paso 3 — Registrar el hechizo en el juego: `src/spells/spell.c`
+### Paso 3 — Registrar el hechizo: `src/spells/player/player_spells.c`
 
-El juego necesita "conocer" tu hechizo al arrancar. Abre `src/spells/spell.c`,
-busca la función `init_spells()` (donde se llama a `fire_init()`, `light_init()`,
-etc.) y añade dos cosas:
+El juego necesita "conocer" tu hechizo al arrancar. Abre el **registrador de los
+hechizos del jugador**, `src/spells/player/player_spells.c`, y añade dos cosas
+(un hechizo de enemigo iría en `src/spells/enemy/enemy_spells.c`, igual):
 
 ```c
-#include "spells/wind.h"    // arriba, junto a los otros includes
+#include "spells/player/wind.h"    // arriba, junto a los otros includes
 
-// ... dentro de init_spells(), junto a los demás *_init():
+// ... dentro de init_player_spells(), junto a los demás *_init():
     wind_init();
 ```
 
 Si te olvidas de este paso, tu hechizo sencillamente no existirá en el juego.
+
+> **Hechizos "solo de guion"** (sin efecto propio, que solo se lanzan desde una
+> escena con `cast`, como ABRIR/DORMIR/CURACIÓN): no necesitan `canUse` propio;
+> reutiliza el del motor con `.canUse = spell_scripted_only_can_use` y omite el
+> resto de ganchos. Su fichero es mínimo (mira `src/spells/player/sleep.c`).
 
 ### Paso 4 — El icono del HUD: `res/res_interface.res` + `src/interface/interface.c`
 
@@ -622,7 +632,7 @@ tres maneras de "activar" un hechizo, según lo que quieras:
 ## 10. Errores frecuentes y cómo se notan
 
 - **El hechizo no existe / el juego no compila:** casi siempre falta llamar a
-  `wind_init()` en `init_spells()`, o falta un `#include`. El proceso de compilación
+  `wind_init()` en `init_player_spells()`, o falta un `#include`. El proceso de compilación
   te dice el archivo y la línea.
 - **Los números de `constants_spells.h` no cuadran:** si insertaste un nombre pero
   no subiste en uno los de abajo, habrá dos hechizos con el mismo número y el
@@ -662,8 +672,8 @@ mientras pruebas y acuérdate de desactivarlos antes de la versión final.
 | EN_THUNDER | (trueno enemigo) | 1 s | Es `counterable`; hace daño al jugador al terminar de forma natural. |
 | EN_BITE | (mordisco enemigo) | 1 s | No es counterable. Solo lo usa la clase de TEST (el jabalí muerde por contacto en melee.c). |
 
-Los dos mejores ejemplos para copiar y aprender son **FUEGO** (`src/spells/fire.c`)
-y **LUZ** (`src/spells/light.c`): están muy comentados y cubren casi todo lo que
+Los dos mejores ejemplos para copiar y aprender son **FUEGO**
+(`src/spells/player/fire.c`) y **LUZ** (`src/spells/player/light.c`): están muy comentados y cubren casi todo lo que
 necesitarás.
 
 ### El límite de notas (progresión del jugador)

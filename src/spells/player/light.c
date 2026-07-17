@@ -13,7 +13,7 @@
 #include "core/core.h"
 #include "spells/spells.h"
 #include "audio/audio.h"
-#include "spells/light.h"
+#include "spells/player/light.h"
 
 #define COLOR_LIGHT_CYAN   RGB24_TO_VDPCOLOR(0x66DDFF)   // primer tramo: cian
 #define COLOR_LIGHT_WHITE  RGB24_TO_VDPCOLOR(0xFFFFFF)   // segundo tramo: blanco

@@ -143,7 +143,8 @@ src/
   actors/        → entity (base común), characters, enemies, items, collisions
   combat/        → FSM de combate por hechizos (combat_state, hit_enemy/hit_player)
                    + melee.c (combate físico sin hechizos: jabalíes, golpe con A)
-  spells/        → motor de hechizos (§5)
+  spells/        → motor de hechizos (§5): spell.c (motor 2 slots), notes.c (input),
+                   player/ (un fichero por hechizo del jugador), enemy/ (idem enemigo)
   narrative/     → texts, texts_data (GEN), choices_data (GEN), dialogs, encode
   scenes/        → scene_vm (intérprete), scene_hooks (enum+tabla), scene_data (GEN),
                    <acto>/<escena>.c/.h (hooks de lógica por escena), intro, geesebumps
@@ -206,9 +207,12 @@ DISTANCIA (espectro, FSM de combat.c). Unificar ambos directores es refactor fut
   (por defecto NOTE_DO) limita la nota más alta disponible: por encima suena el beep
   de inválido (el acto 1 lo baja a NOTE_LA al coger el bastón). `player_has_rod`
   vive aquí y decide el sprite de Linus (ver la trampa en §7).
-- `player_spells.c` / `enemy_spells.c` / `fire.c` / `light.c` — las `SpellDef` y los
-  hooks de cada hechizo. Cada hechizo hace su `*_init()`, llamado desde
-  `init_spells()` en `spell.c`.
+- **Un hechizo por fichero**, separados por dueño: `spells/player/<nombre>.c` (thunder,
+  hide, open, sleep, heal, fire, light) y `spells/enemy/<nombre>.c` (en_thunder,
+  en_bite). Cada uno tiene su `<nombre>_init()` que rellena su `SpellDef`. Los
+  registradores `player/player_spells.c` y `enemy/enemy_spells.c` los llaman a todos;
+  `init_spells()` (spell.c) llama a esos dos. Helper de motor `spell_scripted_only_can_use`
+  (spell.c) para los hechizos solo-guion (open/sleep/heal).
 - **Hooks (todos opcionales)**: `canUse` → `onRejected` (hint con diálogo si no se
   puede) → `onLaunch` → `onUpdate` (por frame; el auto-fin por `baseDuration` aplica
   siempre) → `onFinish` (SOLO fin natural) / `onCounter` (contrarrestado) /

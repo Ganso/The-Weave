@@ -10,10 +10,8 @@
 #include "scenes/scenes.h"
 #include "interface/interface.h"
 #include "audio/audio.h"
-#include "spells/player_spells.h"
-#include "spells/enemy_spells.h"
-#include "spells/fire.h"
-#include "spells/light.h"
+#include "spells/player/player_spells.h"
+#include "spells/enemy/enemy_spells.h"
 
 SpellDef spell_defs[SPELL_COUNT];
 u8 spell_zone = ZONE_NONE;
@@ -66,13 +64,17 @@ void spell_engine_reset(void)    // Libera slots y resetea el input (new_level /
     notes_input_reset();
 }
 
+bool spell_scripted_only_can_use(const SpellContext *ctx)   // hechizo solo-guion
+{
+    (void)ctx;
+    return false; // solo se lanza desde cutscenes con `cast` (origin NARRATIVE)
+}
+
 void init_spells(void)    // Rellena la tabla (runtime: baseDuration escala con SCREEN_FPS)
 {
     memset(spell_defs, 0, sizeof(spell_defs));
-    init_player_spells();   // thunder, hide, open, sleep
-    init_enemy_spell_defs();// en_thunder, en_bite
-    fire_init();            // ejemplo end-to-end
-    light_init();           // showcase de fases (test)
+    init_player_spells();    // spells/player/: thunder, hide, open, sleep, heal, fire, light
+    init_enemy_spell_defs(); // spells/enemy/:  en_thunder, en_bite
 
     if (HACK_ALL_SPELLS) { // Dev hack (core/hack.h): todos los hechizos + vara desde el principio
         for (u8 i = 0; i < SPELL_PLAYER_COUNT; i++) spell_defs[i].enabled = true;

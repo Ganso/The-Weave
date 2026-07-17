@@ -127,6 +127,10 @@ extern SpellDef spell_defs[SPELL_COUNT];
 // Zona narrativa actual (ZONE_*; la fija la escena; ZONE_NONE por defecto)
 extern u8 spell_zone;
 
+// canUse reutilizable: hechizo SOLO guionizado (el jugador nunca puede tocarlo
+// libremente; se lanza desde cutscenes con `cast`). Lo usan OPEN, SLEEP, HEAL.
+bool spell_scripted_only_can_use(const SpellContext *ctx);
+
 // --- Ciclo de vida ---
 void init_spells(void);            // Rellena spell_defs y resetea el motor (una vez, en initialize)
 void spell_engine_reset(void);     // Libera slots y resetea input (new_level/end_level)

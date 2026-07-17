@@ -7,7 +7,7 @@
 //   - hooks solo para lo que las fases no expresan (guardar/restaurar color)
 //
 // Para crear un hechizo nuevo: copiar este archivo, añadir su SPELL_* en
-// constants_spells.h, llamar a su *_init() desde init_spells() (spell.c) y
+// constants_spells.h, llamar a su *_init() desde init_player_spells (player_spells.c) y
 // añadir un caso a la smoke ROM (Fase 7). Ver también AGENTS.md.
 
 #include <genesis.h>
@@ -15,7 +15,7 @@
 #include "combat/combat.h"
 #include "spells/spells.h"
 #include "audio/audio.h"
-#include "spells/fire.h"
+#include "spells/player/fire.h"
 
 #define COLOR_FIRE_VDP  RGB24_TO_VDPCOLOR(0xE08020)   // naranja fuego
 
