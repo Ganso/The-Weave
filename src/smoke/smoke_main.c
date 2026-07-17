@@ -35,7 +35,7 @@ static void menu_draw(void)
     {
         u16 i = first + row;
         VDP_drawText(smoke_cases[i].name, 4, 3 + row);
-        VDP_drawText((i == cursor) ? "-" : " ", 2, 3 + row); // cursor: '-' es seguro ('>' saldría como ¡ en la fuente ES)
+        VDP_drawText((i == cursor) ? "}" : " ", 2, 3 + row); // '}' = mismo glifo de selección que los diálogos
     }
     if (first + MENU_ROWS < SMOKE_CASE_COUNT) VDP_drawText("...", 4, 3 + MENU_ROWS);
 }
@@ -87,7 +87,10 @@ int main(bool hard)
     #define MENU_REPEAT_DELAY 15   // frames que hay que mantener antes de repetir
     #define MENU_REPEAT_RATE   3   // frames entre repeticiones mientras se mantiene
 
-    u16 prev = 0;    // estado del pad el frame anterior (flanco de A)
+    // prev arranca con los botones que YA estén pulsados al entrar (A viene
+    // pulsado de llegar aquí): así un botón mantenido no cuenta como flanco
+    // nuevo hasta soltarlo y volver a pulsarlo.
+    u16 prev = JOY_readJoypad(JOY_1);
     u16 hold = 0;    // cuenta atrás para la próxima repetición de dirección
     menu_draw();
     while (true)
@@ -100,7 +103,8 @@ int main(bool hard)
         {
             smoke_run_case(&smoke_cases[cursor]);
             while (!(wait_joy_press() & BUTTON_A)) { } // resultado en pantalla hasta A
-            prev = 0; hold = 0;
+            prev = JOY_readJoypad(JOY_1);   // A sigue pulsado: no lo cuentes como flanco
+            hold = 0;
             menu_draw();
             continue;
         }
@@ -109,9 +113,9 @@ int main(bool hard)
         u16 dir  = joy  & (BUTTON_UP | BUTTON_DOWN);
         u16 pdir = prev & (BUTTON_UP | BUTTON_DOWN);
         bool move = false;
-        if (dir == 0)            hold = 0;                              // soltado
-        else if (dir != pdir)  { move = true; hold = MENU_REPEAT_DELAY; } // pulsación nueva
-        else if (--hold == 0)  { move = true; hold = MENU_REPEAT_RATE; }  // mantenido: repetir
+        if (dir == 0)                     hold = 0;                              // soltado
+        else if (dir != pdir)           { move = true; hold = MENU_REPEAT_DELAY; } // pulsación nueva
+        else if (hold > 0 && --hold == 0) { move = true; hold = MENU_REPEAT_RATE; } // mantenido: repetir
 
         if (move)
         {
