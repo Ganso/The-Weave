@@ -348,44 +348,49 @@ icono, jingle, desbloqueo, pruebas).
 
 ### Paso 1 — Reservar el nombre del hechizo
 
-Abre `src/spells/constants_spells.h`. Verás una lista de nombres con números:
+Abre `src/spells/constants_spells.h`. Ese archivo es **la fuente de verdad** de la
+lista de hechizos: verás los nombres del jugador con sus números, luego los del
+enemigo, y al final dos totales (`SPELL_PLAYER_COUNT` y `SPELL_COUNT`). La lista tiene
+esta forma (mírala en el archivo para ver los hechizos exactos que hay hoy, que van
+creciendo con el juego):
 
 ```c
+// Player spells (0 .. SPELL_PLAYER_COUNT-1)
 #define SPELL_THUNDER      0
 #define SPELL_HIDE         1
 #define SPELL_OPEN         2
 #define SPELL_SLEEP        3
 #define SPELL_FIRE         4
 #define SPELL_LIGHT        5
-#define SPELL_PLAYER_COUNT 6
+#define SPELL_HEAL         6
+#define SPELL_PLAYER_COUNT 7      // = cuántos hechizos de jugador hay
 // Enemy spells
-#define SPELL_EN_THUNDER   6
-#define SPELL_EN_BITE      7
-#define SPELL_COUNT        8
+#define SPELL_EN_THUNDER   7
+#define SPELL_EN_BITE      8
+#define SPELL_COUNT        9      // = total (jugador + enemigo)
 ```
 
 Los hechizos **de jugador** van arriba, antes de `SPELL_PLAYER_COUNT`. Los de
 enemigo van después. Como VIENTO es de jugador, lo insertamos justo antes de
-`SPELL_PLAYER_COUNT` y **subimos en uno todos los números de abajo** (esos números
-son solo cuentas internas; correrlos no rompe nada):
+`SPELL_PLAYER_COUNT` (detrás del último hechizo de jugador) y **subimos en uno todos
+los números de abajo** (esos números son solo cuentas internas; correrlos no rompe
+nada):
 
 ```c
-#define SPELL_THUNDER      0
-#define SPELL_HIDE         1
-#define SPELL_OPEN         2
-#define SPELL_SLEEP        3
-#define SPELL_FIRE         4
 #define SPELL_LIGHT        5
-#define SPELL_WIND         6      // ← nuevo
-#define SPELL_PLAYER_COUNT 7      // era 6
+#define SPELL_HEAL         6
+#define SPELL_WIND         7      // ← nuevo
+#define SPELL_PLAYER_COUNT 8      // era 7
 // Enemy spells
-#define SPELL_EN_THUNDER   7      // era 6
-#define SPELL_EN_BITE      8      // era 7
-#define SPELL_COUNT        9      // era 8
+#define SPELL_EN_THUNDER   8      // era 7
+#define SPELL_EN_BITE      9      // era 8
+#define SPELL_COUNT        10     // era 9
 ```
 
 Regla sencilla: **cada número debe ser único y la lista, consecutiva**. Si insertas
-uno, todos los de debajo suben en uno.
+uno, todos los de debajo suben en uno. Para comprobar de un vistazo que quedó bien,
+`SPELL_PLAYER_COUNT` tiene que ser igual al número del primer hechizo de enemigo, y
+`SPELL_COUNT` el número siguiente al último hechizo de enemigo.
 
 ### Paso 2 — Crear el hechizo: `src/spells/player/wind.h` y `.c`
 
@@ -686,3 +691,15 @@ bastón el límite se fija en **SOL** (las tres primeras notas): por eso hechizo
 CURACIÓN, que usan notas más altas, quedan "vistos pero no tocables" hasta que una
 escena posterior suba el límite. Esto se ajusta desde un gancho de C (por ejemplo al
 recoger el bastón), no desde el guion.
+
+---
+
+## 12. Lo que queda por hacer (hechizos)
+
+- **Jingles propios sin componer**: SLEEP, HEAL y EN_BITE aún no tienen su melodía
+  propia en `play_spell_jingle` (`src/audio/sound.c`); mientras tanto reutilizan un
+  sonido o suenan callados. Para saber cuáles faltan hoy, mira los `case` de esa
+  función y compáralos con la lista de hechizos de `constants_spells.h`.
+- **Subir el límite de notas para CURACIÓN**: hoy el juego nunca eleva
+  `player_note_limit` por encima de SOL, así que CURACIÓN (que usa DO) queda
+  aprendida pero no jugable. Falta la escena/gancho posterior que suba el límite.

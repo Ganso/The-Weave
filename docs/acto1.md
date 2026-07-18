@@ -141,13 +141,13 @@ sin tocar código (mismo archivo, mismas dimensiones y paleta).
 **Bugs / pulido conocidos**:
 - **Paleta del cisne**: usa una paleta propia distinta de la de personajes. Cuando
   habla en el dormitorio los textos resaltados salen con color equivocado, y su cara
-  en escenas posteriores sale con los colores mal. (Detalle técnico en AGENTS §9.)
+  en escenas posteriores sale con los colores mal. (Detalle técnico en AGENTS §12.)
 - Playtest de posiciones y tiempos de las cutscenes (paradas de personajes, X de los
   combates, duración de flashes).
 
 **Diseño pendiente (no bloquea)**:
 - Subir el límite de notas más adelante en el juego para que CURACIÓN sea jugable.
-- Unificar los dos directores de combate en uno solo (ver `docs/combat.md` §1).
+- Unificar los dos directores de combate en uno solo (ver `docs/combat.md` §8).
 
 ---
 

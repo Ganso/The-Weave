@@ -30,9 +30,8 @@ batuta del combate):
 | Se invoca desde la escena | `call <hook>` (el hook spawnea y llama a `melee_combat_run`) | `call <hook de spawn>` + op `combat` |
 | Estado global que gobierna | ninguno (normaliza `combat_state` a `COMBAT_NO`) | `combat_state` (el FSM de abajo) |
 
-Los dos directores **no corren a la vez**. La unificación en un único director
-con "tipo de ataque" como propiedad del enemigo es un refactor futuro aceptado;
-mientras tanto la frontera entre ambos está sellada (ver §6, trampas).
+Los dos directores **no corren a la vez** y la frontera entre ambos está sellada
+(ver §6, trampas). Unificarlos en un único director es trabajo futuro (§8).
 
 **Común a ambos**: la vida del jugador (§4) y el reintento por derrota (op
 `if_defeated` del DSL).
@@ -263,3 +262,15 @@ contacto) y el sprite en el switch de `init_enemy`.
 Verificación desatendida: el melee expone `melee_hits` y usa variables
 observables por RAM (RetroArch NCI, `docs/retroarch-mcp.md`); la suite AUTO de
 la smoke ROM cubre el combate de patrones completo.
+
+---
+
+## 8. Lo que queda por hacer (combate)
+
+- **Unificar los dos directores** en uno solo, con el "tipo de ataque" (contacto vs
+  patrones) como propiedad del enemigo en vez de dos módulos separados
+  (`melee.c` y `combat.c`+`spell.c`) que no corren a la vez. Es un refactor aceptado
+  pero no hecho; la doctrina y la frontera actual (§1, §6) son el punto de partida.
+- **Muerte de enemigo más rica**: la actual es flash de daño ~1 s + release; una
+  animación propia y recompensas es diseño de juego que el motor ya soporta vía
+  `onFinish`/`hit_enemy`.

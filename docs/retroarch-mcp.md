@@ -254,9 +254,10 @@ sola. Los offsets de todas estas globales se leen dinámicamente de `out/symbol.
 
 ### Run automatizada con el driver host (la vía recomendada)
 
-`tools/retroarch/mcp_driver.py` conduce la ROM y ejercita **todos** los comandos NCI que
-expone el MCP (mapeo tool→comando en la tabla de abajo), sincronizando capturas con
-`smoke_phase` y probando `write_ram` sobre `smoke_scratch`:
+`tools/retroarch/mcp_driver.py` conduce la ROM y ejercita **todas** las tools que
+expone el MCP (una por cada comando NCI; el mapeo tool→comando es la tabla del final de
+esta sección), sincronizando capturas con `smoke_phase` y probando `write_ram` sobre
+`smoke_scratch`:
 
 ```bash
 ./build-theweave.sh smoke --no-run                                         # -> out/smoke.bin
@@ -269,13 +270,12 @@ pkill -x retroarch
   (en `.gitignore`), con la fecha de la run en el nombre
   (`2026-07-09_2139_cast_light.png`, `…_results.png`, `…_report.txt`). La carpeta se
   vacía al empezar: lo que contiene es siempre la última run.
-- **Exit code**: `0` si las 16 tools se ejercitaron Y el recorrido pasó por todas las
-  fases hasta resultados; `1` en caso contrario (útil para scripts/CI).
+- **Exit code**: `0` si todas las tools del MCP se ejercitaron Y el recorrido pasó por
+  todas las fases hasta resultados; `1` en caso contrario (útil para scripts/CI).
 - **Arranque en frío robusto** (`wait_running`): RetroArch puede lanzar la ventana sin
   ejecutar frames todavía (`frame_counter` congelado aunque `GET_STATUS` diga `PLAYING`,
   por foco/`pause_nonactive`). El driver espera a que `frame_counter` avance antes del
   handshake del gate — despausando y, si sigue helada, forzando frames con `FRAMEADVANCE`.
-  Sin esto el handshake de `PH_WAIT_GATE` hacía timeout porque la fase no salía de 0.
 - El driver **despausa solo** el emulador si lo encuentra en PAUSED (al inicio y
   vigilando durante toda la run).
 - **Capturas anti-stale**: `screenshot()` solo acepta un PNG cuyo mtime sea posterior al
@@ -320,61 +320,40 @@ ls -t ~/.config/retroarch/screenshots/*.png | head -1     # <- leer este PNG
 
 ---
 
-## 10. Estado de la implementación y TODOs
+## 10. Qué cubre y qué queda
 
-**Funciona (verificado en ejecución):**
-- Registro del MCP y NCI (§1-3); read/write RAM con byte-swap (§4); frame-advance
-  determinista; screenshots leídas por el agente.
-- smoke ROM opción **AUTO completa**: 7 invariantes `canUse` + movimiento + cast de
-  `SPELL_LIGHT` y `SPELL_THUNDER` (duración medida) + **combate** contra `WeaverGhost`
-  con counter de trueno invertido → pantalla `RESULT: ALL PASS`. Estable, sin input,
-  verificada tanto con driver como a mano (§9).
+### Qué cubre hoy
+
+- **Inspección de RAM y captura** (§1-4): read/write RAM con byte-swap, frame-advance
+  determinista, screenshots que el agente puede leer.
+- **Suite AUTO de la smoke ROM** (§9): invariantes `canUse` + movimiento + cast de
+  `SPELL_LIGHT` y `SPELL_THUNDER` (duración medida) + combate contra `WeaverGhost` con
+  counter de trueno invertido → `RESULT: ALL PASS`. Sin input, tanto con driver como a
+  mano.
 - **RAM Gate** (`smoke_gate`): la ROM se congela en `PH_WAIT_GATE` hasta que el host
-  escribe un valor no nulo, garantizando arranque sincronizado y sin pérdida de frames.
-  Con **timeout de ~10 s** para que una run a mano (sin host) arranque sola.
-- **Despausado forzado** automático en el driver (`GET_STATUS`; si `PAUSED`,
-  `PAUSE_TOGGLE`), al inicio y vigilando durante toda la run.
-- **Fixes de estabilidad** en el recorrido: `player_has_rod` antes de `init_character`
-  (trampa de la vara) y `1440`/`BG_SCRL_USER_RIGHT` en `new_level` (trampa del scroll),
-  aplicados también a `cast_run` (casos CAST del menú). Ambos son correcciones según
-  AGENTS.md §7; verificados visualmente (capturas del test).
-- Driver host: **16/16 tools** del MCP ejercitadas en una pasada; capturas sincronizadas
-  por `smoke_phase` (read_ram) con la fecha de la run en el nombre, guardadas en
-  `docs/testing/smoke-latest/` (en `.gitignore`); `write_ram` confirmado (`CA FE` leído
-  de vuelta); exit code 0/1 para scripts.
-- **Endurecido y verificado** (2026-07-13): handshake del gate determinista tras espera
-  de arranque en frío (`wait_running`) y capturas anti-stale (mtime > comando). Corridas
-  repetidas dan `gate abierto (phase 0xFFFE)`, 16/16 tools, recorrido completo, exit 0,
-  con las 10 capturas frescas — reproducible desde shell (`DISPLAY=:0`, GenesisPlusGX).
-
-**La automatización de la smoke ROM (Fases 1-2 del plan de testing) está completa.** El
-resto del roadmap (`docs/testing/plan.md`) es **trabajo futuro**:
-1. **Fase 3** — embudo `pad_read()` + override de input por RAM (`g_inputOverride*`): permite
-   pilotar la ROM real desde fuera y meter las **escenas** (`scene_run`) en la verificación
-   desatendida (hoy son playtest manual).
-2. **Fase 4** — dominio `src/debug/`: hacks runtime (`g_hacks`) + menú oculto sobre el
-   Window plane; cablear de paso los 6 toggles de `hack.h` que hoy no se consultan.
-3. **Fases 5-6** — cierre de documentación y (opcional) escenas bajo guion de input.
-
-*(Nota menor ya resuelta: los offsets cambian en cada build; el driver los lee de
-`out/symbol.txt`, no los fijes si lo llevas a CI.)*
-
-*Notas de depuración (resueltas):*
-- El supuesto "cuelgue al arrancar" de la ROM era un crash (`ILLEGAL INSTRUCTION` en
-  `F90001` por desreferenciación `NULL` de `background_BGA` en `next_frame` antes de
-  `new_level`). Arreglado con la comprobación `background_BGA != NULL` en `update_bg`
-  (`src/world/background.c`).
-- El histórico "cuelgue del sprite engine al encadenar cast/combate tras
-  new_level+movimiento" no se reprodujo una vez aplicados los fixes anteriores (crash
-  de arranque + vara + scroll): las fases de cast y combate se reactivaron en
-  `run_auto` y pasan de forma estable. Las "capturas corruptas" y "pausas a mitad de
-  run" que confundían el diagnóstico eran del emulador, no de la ROM (§2b:
-  `video_gpu_screenshot` y `pause_nonactive`).
+  inyecta un valor no nulo (arranque sincronizado, sin pérdida de frames), con timeout
+  de ~10 s para que una run a mano arranque sola.
+- **Driver host** (`tools/retroarch/mcp_driver.py`): ejercita todas las tools del MCP en
+  una pasada, sincroniza capturas por `smoke_phase`, despausa solo, resiste el arranque
+  en frío (`wait_running`) y descarta capturas viejas (anti-stale); exit code 0/1 para
+  scripts. Los offsets de las globales los lee de `out/symbol.txt` en cada run (cambian
+  en cada build), así que no los fijes si lo llevas a CI.
 
 **Ficheros clave:** `src/smoke/smoke_runner.c` (`run_auto`, globales `smoke_phase`/
 `smoke_scratch`/`smoke_gate`), `src/smoke/smoke_main.c` (ventana de arranque),
-`src/smoke/smoke_cases.h`
-(fila `SMOKE_AUTO`), `tools/retroarch/mcp_driver.py` (driver host).
+`src/smoke/smoke_cases.h` (fila `SMOKE_AUTO`), `tools/retroarch/mcp_driver.py` (driver
+host).
 
 Añadir una invariante nueva = una fila `SMOKE_CHECK` en `smoke_cases.h` (entra sola en
 la suite AUTO; ver `docs/testing.md`).
+
+### Lo que queda por hacer
+
+Lo que falta para llevar la verificación desatendida más allá de los hechizos y el
+combate de patrones tiene su roadmap detallado en **`docs/testing/plan.md`**:
+
+- **Pilotar la ROM real con input** (embudo `pad_read()` + override por RAM): mete las
+  **escenas** en la verificación automática, hoy 100 % playtest manual.
+- **Menú de debug runtime**: cambiar los toggles de `hack.h` en caliente sin recompilar.
+- **Escenas bajo guion de input** (opcional): recorrer las escenas `SCENE` de la smoke
+  con guiones frame→máscara.

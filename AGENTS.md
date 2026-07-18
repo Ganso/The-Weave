@@ -48,9 +48,11 @@
 
 - **The Weave**: fangame secuela de *Loom* (LucasArts) para **Sega Mega Drive / Genesis**.
 - **C plano** sobre **SGDK 2.x**. Docs SGDK: https://stephane-d.github.io/SGDK/
-- **Estado**: acto 1 montado con textos/arte placeholder. Pilares del motor:
-  hechizos de dos slots (§5), VM de cutscenes con DSL propio (§6), codegen validado
-  desde `data/` (§4), y una smoke ROM para probar hechizos/escenas aislados.
+- **Estado**: acto 1 completo mecánicamente, con textos definitivos (ES/EN) y arte/
+  audio en parte definitivo y en parte placeholder (detalle en `docs/acto1.md`).
+  Pilares del motor: hechizos de dos slots (§5), VM de cutscenes con DSL propio (§6),
+  codegen validado desde `data/` (§4), y una smoke ROM para probar hechizos/escenas
+  aislados.
 
 ### Estructura del juego (mapa para entender el todo sin leer el código)
 
@@ -180,9 +182,10 @@ red de validación).
 
 ## 5. Sistema de hechizos (`spells/`)
 
-**Ids** (`constants_spells.h`): jugador THUNDER 0, HIDE 1, OPEN 2, SLEEP 3, FIRE 4,
-LIGHT 5, HEAL 6 (`SPELL_PLAYER_COUNT` = 7); enemigo EN_THUNDER 7, EN_BITE 8
-(`SPELL_COUNT` = 8); `SPELL_NONE` = 254. Zonas: `ZONE_NONE` 0, `ZONE_CAULDRON` 1.
+**Ids** — la lista viva está en `constants_spells.h` (fuente de verdad): los de
+jugador ocupan `[0, SPELL_PLAYER_COUNT)` y los de enemigo van a continuación hasta
+`SPELL_COUNT`; ambos contadores se ajustan solos al añadir un hechizo. `SPELL_NONE` =
+254. Zonas: `ZONE_NONE` 0, `ZONE_CAULDRON` 1.
 Botón→nota: A→MI B→FA C→SOL X→LA Y→SI Z→DO.
 
 **Arquitectura**: tabla única `spell_defs[SPELL_COUNT]` + motor con **dos slots**
@@ -196,7 +199,7 @@ melee.c con `MeleeConfig` —, la vida del jugador y el reintento con `if_defeat
 las recetas de encuentros y las trampas, incluida la normalización de
 `combat_state` que hace el melee). Resumen de doctrina: el jugador canta o no según
 la escena (flag `spells`); cada enemigo es de CONTACTO (jabalí, melee.c) o A
-DISTANCIA (espectro, FSM de combat.c). Unificar ambos directores es refactor futuro.
+DISTANCIA (espectro, FSM de combat.c).
 
 - `spell.c` — motor: `spell_validate` → `spell_player_cast` (counter o launch),
   `spell_update` (cada frame desde `update_combat`), `spell_try_counter`,
@@ -301,12 +304,14 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   (early-out); acumula cambios y deja que el `SPR_update` global los recoja. En
   helpers de SETUP/cutscene (poco frecuentes) sí es aceptable.
 - **`SPR_setAnim` con un índice que el sprite no tiene** lee un puntero fuera de rango
-  y congela el VDP (crash constante). Caso histórico: la **vara de Linus** (hoy los
-  tres sprites tienen las 6 filas, pero la regla sigue). Linus tiene TRES formas:
-  antorcha (`linus_has_torch`, override visual) > vara (`player_has_rod`, además
-  puerta de la magia) > sin nada. Fija ambas ANTES de crear a Linus
+  y congela el VDP (crash constante): cada forma de un personaje debe tener todas las
+  animaciones que se le vayan a pedir. El caso a vigilar es la **vara de Linus**: tiene
+  TRES formas — antorcha (`linus_has_torch`, override visual) > vara (`player_has_rod`,
+  además puerta de la magia) > sin nada. Fija ambas ANTES de crear a Linus
   (`character CHR_linus` / `init_character`); para cambiar de forma a mitad de
-  escena usa `reinit_character_sprite` (ver el hook del melee de act1_test).
+  escena usa `reinit_character_sprite` (ver el hook del melee de act1_test). La
+  solución de raíz (igualar el set de animaciones de todas las formas, con
+  placeholders si hace falta) está pendiente en §12.
 - **Scroll y `new_level`/op `level`**: la anchura y el modo deben cuadrar con el mapa.
   `auto_*` sobre una anchura menor que el mapa deriva cada frame y acaba leyendo fuera
   del tilemap → cuelgue *"unmapped read"*. Fondos anchos → `user_*` con la anchura
@@ -389,19 +394,32 @@ acortes al estilo terso de AGENTS.
   (`phonemes_animalese/`, `synthesis_animalese/`) son salida de exploración,
   gitignored. Los `typewriter*.wav` NO los genera este script (son efectos externos).
 
-## 12. Pendientes conocidos
+## 12. Lo que queda por hacer (motor)
 
-- Jingles de SLEEP, HEAL y EN_BITE sin componer (TODO en `play_spell_jingle`).
-- **TODO IMPORTANTE — paleta del cisne**: el cisne usa una paleta propia distinta
-  de la de personajes. Cuando habla en el dormitorio (PAL1 = swan_pal), los
-  resaltados @[...@] del texto salen con color equivocado (esperan la paleta de
-  Linus); y cuando su CARA aparece en escenas posteriores (PAL1 = characters_pal),
-  la cara sale con los colores mal (espera swan_pal). Pendiente de resolver
-  (¿colores de resaltado/cara en una paleta estable, o cara del cisne redibujada
-  con characters_pal?).
-- Mejor manejo de la derrota de un enemigo: la muerte actual es anim hurt ~1 s +
-  release; una anim propia y recompensas es diseño de juego (el motor lo soporta vía
-  `onFinish`/`hit_enemy`).
-- No hay escena entre `act1_hall` y `act1_forest` para una posible ampliación; el DSL
-  permite añadirla sin C si es lineal.
-- Capturas de referencia de playtest pendientes (`docs/testing/`).
+> Pendientes a nivel de motor/arquitectura. El trabajo de contenido del acto 1 (arte,
+> audio, playtest) está en `docs/acto1.md`; el de testing automatizado en
+> `docs/testing/plan.md`; el detalle de cada dominio, en su guía.
+
+- **Unificar los dos directores de combate**: hoy contacto (`melee.c`) y patrones
+  (`combat.c`+`spell.c`) son módulos separados que no corren a la vez. Un único
+  director con "tipo de ataque" como propiedad del enemigo es refactor aceptado pero
+  no hecho (doctrina y frontera actual en `docs/combat.md`).
+- **Paleta del cisne**: usa una paleta propia distinta de la de personajes. Cuando
+  habla en el dormitorio (PAL1 = swan_pal), los resaltados @[...@] del texto salen con
+  color equivocado (esperan la paleta de Linus); y cuando su CARA aparece en escenas
+  posteriores (PAL1 = characters_pal), la cara sale con los colores mal (espera
+  swan_pal). Sin resolver (¿colores de resaltado/cara en una paleta estable, o cara
+  del cisne redibujada con characters_pal?).
+- **Jingles de SLEEP, HEAL y EN_BITE sin componer**: falta su melodía propia en
+  `play_spell_jingle` (`src/audio/sound.c`).
+- **Muerte de enemigo más rica**: la actual es anim hurt ~1 s + release; una anim
+  propia y recompensas es diseño de juego (el motor lo soporta vía `onFinish`/
+  `hit_enemy`).
+- **Igualar el set de animaciones de los sprites multi-estado**: toda forma de un
+  personaje con varias versiones (Linus: vara / antorcha / sin nada) debe tener
+  **exactamente las mismas filas de animación**, aunque alguna no se use en esa forma
+  (rellénala con un placeholder que reapunte a IDLE). Así se elimina de raíz la clase
+  de cuelgue de `SPR_setAnim` con índice fuera de rango (trampa §7): cualquier
+  `anim`/estado que pida una forma queda garantizado en todas. Revisar Linus y aplicar
+  la misma regla a cualquier futuro actor con formas.
+- **Capturas de referencia de playtest** pendientes de añadir en `docs/testing/`.
