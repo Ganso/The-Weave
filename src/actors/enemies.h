@@ -27,13 +27,29 @@ typedef enum {
     ENEMY_MODE_COOLDOWN     /* post-spell recovery */
 } EnemyMode;
 
+// El ROL decide qué subsistema de combate dirige al enemigo (docs/combat.md)
+typedef enum {
+    ENEMY_ROLE_CONTACT,   // persigue y ataca de cerca (combat/contact.c)
+    ENEMY_ROLE_RANGED     // canta patrones desde lejos (combat_state + spells)
+} EnemyRole;
+
+// Perfil del ataque de contacto (datos por clase): el del jabalí es el
+// mordisco; otra clase tendrá otro alcance/ritmo/daño con la misma FSM
+typedef struct {
+    u16 range_x;       // alcance del ataque en X (entre centros de pies)
+    u16 range_y;       // alcance en Y
+    u16 attack_time;   // duración del ciclo de la anim de ataque (frames)
+    u16 hit_at;        // frame del ciclo en el que golpea de verdad
+    u8  damage;        // daño al jugador por impacto
+} ContactProfile;
+
 // Enemy classes
 typedef struct
 {
     u16 max_hitpoints;
-    bool follows_character; // If true, the enemy will follow the character
-    u8 follow_speed;
-    u8 spell[MAX_SPELLS_PER_ENEMY]; // SPELL_* que puede lanzar (SPELL_NONE = hueco vacío)
+    u8  role;                        // EnemyRole: contacto o a distancia
+    const ContactProfile *contact;   // perfil de ataque de contacto (NULL si ranged)
+    u8 spell[MAX_SPELLS_PER_ENEMY];  // SPELL_* que puede lanzar (SPELL_NONE = hueco; solo ranged)
 } Enemy_Class;
 extern Enemy_Class obj_enemy_class[MAX_ENEMY_CLASSES]; // Enemy class object
 
@@ -68,8 +84,5 @@ void look_enemy_left(u16 nenemy, bool direction_right); // Turn enemy left or ri
 void move_enemy(u16 nenemy, fastfix32 newx, fastfix32 newy); // Move enemy smoothly
 void move_enemy_instant(u16 nenemy, fastfix32 x, fastfix32 y); // Instantly move enemy
 void update_enemy_animations(void); // Update enemy animations based on their current state
-
-/* --- AI movement --- */
-void approach_enemies(void); // Make enemies walk towards the player
 
 #endif

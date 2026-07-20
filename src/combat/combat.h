@@ -61,6 +61,8 @@ void hit_player(u8 damage); // Hit the player
 void update_combat(void); // Update combat state,
 void set_idle(void); // Set combat state to idle or none, depending on the context
 
-#include "combat/melee.h"   // combate físico (sin hechizos): melee_combat_run
+#include "combat/contact.h"  // FSM de los enemigos de contacto
+#include "combat/weapons.h"  // armas del jugador y reglas prefab
+#include "combat/melee.h"    // director de contacto (transitorio: hito 1 del refactor)
 
 #endif

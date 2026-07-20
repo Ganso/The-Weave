@@ -28,15 +28,22 @@ void update_enemy_shadow(u16 nenemy)    // Update shadow sprite position based o
     }
 }
 
-void init_enemy_classes(void)    // Setup enemy class definitions with HP, patterns, and behavior
+// Perfil de contacto del jabalí: el mordisco (valores afinados en playtest)
+static const ContactProfile boar_bite = {
+    .range_x = 34, .range_y = 8,
+    .attack_time = 48,   // ciclo de ANIM_ACTION (6 frames x timer 8)
+    .hit_at = 24,        // muerde a mitad del ciclo
+    .damage = 1,
+};
+
+// Doctrina de combate (docs/combat.md): cada enemigo es de CONTACTO (persigue
+// y ataca de cerca, con su ContactProfile) o A DISTANCIA (canta patrones, con
+// sus spells); el jugador puede o no cantar según la escena (flag spells).
+void init_enemy_classes(void)    // Setup enemy class definitions
 {
-    obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_NONE}}; // 2 HP, lanza thunder, no sigue
-    obj_enemy_class[ENEMY_CLS_TESTGHOST]=(Enemy_Class) { 2, false, 0, {SPELL_EN_THUNDER, SPELL_EN_BITE}}; // SOLO TEST: multi-hechizo (recargas alternas)
-    // El jabalí es un enemigo DE CONTACTO puro: muerde en el combate físico
-    // (combat/melee.c) y NO canta patrones. Doctrina de combate: cada enemigo
-    // es "por contacto" (melee) o "a distancia" (patrones); el jugador puede
-    // o no cantar según la escena (flag spells). Ver AGENTS.md §5.
-    obj_enemy_class[ENEMY_CLS_BOAR]=(Enemy_Class) { 2, false, 0, {SPELL_NONE, SPELL_NONE}};
+    obj_enemy_class[ENEMY_CLS_WEAVERGHOST]=(Enemy_Class) { 2, ENEMY_ROLE_RANGED, NULL, {SPELL_EN_THUNDER, SPELL_NONE}};
+    obj_enemy_class[ENEMY_CLS_TESTGHOST]=(Enemy_Class) { 2, ENEMY_ROLE_RANGED, NULL, {SPELL_EN_THUNDER, SPELL_EN_BITE}}; // SOLO TEST: multi-hechizo
+    obj_enemy_class[ENEMY_CLS_BOAR]=(Enemy_Class) { 2, ENEMY_ROLE_CONTACT, &boar_bite, {SPELL_NONE, SPELL_NONE}};
 }
 
 
@@ -85,11 +92,11 @@ void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of give
     obj_enemy[numenemy].obj_character = (Entity) {
         true, nsprite, nsprite_shadow,
         FASTFIX32_FROM_INT(0), FASTFIX32_FROM_INT(0),
-        FASTFIX32_FROM_INT(obj_enemy_class[class].follow_speed),
+        FASTFIX32_FROM_INT(0),           // speed: la locomoción la dirige el combate
         x_size, y_size, npal, false, false,
         ANIM_IDLE, false, collision_x_offset, collision_y_offset,
         collision_width, collision_height, STATE_IDLE,
-        obj_enemy_class[class].follows_character,
+        false,                           // follows_character: solo lo usan los personajes
         drops_shadow, 0
     };
 
@@ -148,7 +155,7 @@ void update_enemy(u16 nenemy)    // Update enemy sprite properties from current 
     SPR_setAnim(spr_enemy[nenemy], obj_enemy[nenemy].obj_character.animation);
     update_enemy_shadow(nenemy);
     // OJO: aquí NO va SPR_update(). Esta función se llama por enemigo y por frame
-    // (melee, approach_enemies); el SPR_update() global de next_frame ya recoge
+    // (combate de contacto); el SPR_update() global de next_frame ya recoge
     // los cambios. Un SPR_update() por enemigo hundía el framerate: con 5
     // jabalíes el melee caía de 50 a ~25 FPS (medido en RetroArch).
 }
@@ -214,47 +221,6 @@ void move_enemy_instant(u16 nenemy, fastfix32 x, fastfix32 y)    // Set enemy po
     next_frame(false);
 }
 
-void approach_enemies(void)    // Update enemy positions to follow player during combat
-{
-    u16 nenemy;
-    s16 newx, newy;
-    s16 dx, dy;
-    u16 collision_result;
-    bool has_moved;
-
-    if (combat_state == COMBAT_STATE_IDLE && spell_active_id(SPELL_SLOT_PLAYER) != SPELL_HIDE) { // Only move enemies during combat when the player is not hidden
-        for (nenemy = 0; nenemy < MAX_ENEMIES; nenemy++) {
-            has_moved = false;
-            if (obj_enemy[nenemy].obj_character.follows_character) {
-                // Calculate direction towards active character
-                dx = FASTFIX32_TO_INT(obj_character[active_character].x) - FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.x);
-                dy = (FASTFIX32_TO_INT(obj_character[active_character].y) + obj_character[active_character].y_size) -
-                    (FASTFIX32_TO_INT(obj_enemy[nenemy].obj_character.y) + obj_enemy[nenemy].obj_character.y_size);
-
-                fastfix32 step = obj_enemy[nenemy].obj_character.speed;
-                fastfix32 newx_fixed = obj_enemy[nenemy].obj_character.x + (dx != 0 ? (dx > 0 ? step : -step) : 0);
-                fastfix32 newy_fixed = obj_enemy[nenemy].obj_character.y + (dy != 0 ? (dy > 0 ? step : -step) : 0);
-                newx = FASTFIX32_TO_INT(newx_fixed);
-                newy = FASTFIX32_TO_INT(newy_fixed);
-
-                // Check for collision at new position
-                collision_result = detect_enemy_char_collision(nenemy, newx, newy);
-
-                // Move the enemy if there's no collision and it's not currently attacking
-                if (collision_result == CHR_NONE && spell_enemy_caster() == ENEMY_NONE) {
-                    obj_enemy[nenemy].obj_character.x = newx_fixed;
-                    obj_enemy[nenemy].obj_character.y = newy_fixed;
-                    obj_enemy[nenemy].obj_character.animation = ANIM_WALK;
-                    obj_enemy[nenemy].obj_character.flipH = (dx < 0);
-                    update_enemy(nenemy);
-                    has_moved = true;
-                }
-                if (!has_moved && spell_enemy_caster() != nenemy)
-                    anim_enemy(nenemy, ANIM_IDLE); // Set to idle if not moved and not attacking
-            }
-        }
-    }
-}
 
 // Update enemy animations based on their current state
 void update_enemy_animations(void)
