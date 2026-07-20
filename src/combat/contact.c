@@ -204,8 +204,12 @@ static void tick_enemy(u16 e)
             ct_wander_t[e] = SCREEN_FPS + (random() & 63);
         }
         s16 wy = py + ct_wander[e];
-        if (wy < (s16)y_limit_min) wy = y_limit_min;
-        if (wy > (s16)y_limit_max) wy = y_limit_max;
+        // Respetar la franja andable SOLO si la escena fijó límites (en un
+        // nivel sin op `limits` valen 0 y clampar mandaría a todos a y=0)
+        if (y_limit_max > y_limit_min) {
+            if (wy < (s16)y_limit_min) wy = y_limit_min;
+            if (wy > (s16)y_limit_max) wy = y_limit_max;
+        }
 
         // ¿A distancia de ataque (medida contra el jugador real)?
         s16 dx = px - enemy_feet_x(e);

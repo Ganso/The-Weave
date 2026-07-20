@@ -1,6 +1,6 @@
 // act1/ret.c — hooks del regreso hacia la nave (escena 6 del guión).
 // La secuencia está en return.scene: vuelta nocturna (sin antorcha), segunda
-// emboscada de jabalíes (melee) y los espectros del Caos (combate por hechizos).
+// emboscada de jabalíes (contacto, arma trueno) y los espectros del Caos (patrones).
 
 #include <genesis.h>
 #include "core/core.h"
@@ -32,12 +32,14 @@ void act1_return_boars(void)    // Segunda emboscada: sin antorcha, solo el TRUE
         show_enemy(i, true);
     }
     player_max_hitpoints = 5;
-    melee_combat_run(&(MeleeConfig){
+    combat_configure(&(CombatConfig){
+        .weapon_strike = false,      // el golpe no cuenta: el arma es el TRUENO
         .hits_to_win = 1,            // UN trueno y la manada huye (guión 6.1)
         .companion = CHR_clio,       // Clio se queda donde esté
         .reposition_companion = false,
-        .weapon_is_thunder = true,   // el arma es el patrón de TRUENO
+        .onTick = combat_rule_thunder_scares,   // regla prefab: el trueno ahuyenta
     });
+    // El combate lo ejecuta el op `combat` de la escena, justo tras este hook
 }
 
 void act1_return_ghosts(void)    // Espectros del Caos (combate por hechizos)

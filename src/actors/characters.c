@@ -498,7 +498,7 @@ void update_character_animations(void) {
                 anim_character(chr, ANIM_IDLE);
                 // Tutorial del combate por hechizos del forest DEMO. Solo ahí:
                 // se reconoce porque ESCONDERSE está desbloqueado (el consejo lo
-                // menciona y en el acto ese hechizo no existe). En el melee y en
+                // menciona y en el acto ese hechizo no existe). En el contacto y en
                 // los combates del acto, un golpe no dispara ningún diálogo.
                 if (combat_state != COMBAT_NO && spell_defs[SPELL_HIDE].enabled) {
                     show_or_hide_interface(false);

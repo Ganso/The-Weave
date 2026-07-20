@@ -7,6 +7,7 @@
 
 void act1_test_ghost(void);  // Oleada 1: WeaverGhost clásico (counterable)
 void act1_test_ghost2(void); // Oleada 2: TESTGHOST con dos hechizos (thunder + mordisco)
-void act1_test_boars(void);  // Combate físico: 3 jabalíes, Linus sin vara (melee.c)
+void act1_test_boars(void);        // Combate de contacto: 5 jabalíes, Linus sin vara (spawn + config)
+void act1_test_boars_after(void);  // Tras el combate: restaurar la vara para el resto del banco
 
 #endif

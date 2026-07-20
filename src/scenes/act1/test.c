@@ -11,7 +11,7 @@
 #include "res_all.h"
 #include "scenes/act1/test.h"
 
-void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabalíes (melee.c)
+void act1_test_boars(void)    // Combate de contacto: Linus sin vara contra 5 jabalíes
 {
     // Linus pierde la vara y saca la antorcha (cambia también su sprite)
     player_has_rod = false;
@@ -35,14 +35,17 @@ void act1_test_boars(void)    // Combate físico: Linus sin vara contra 3 jabal�
     }
 
     player_max_hitpoints = 5;        // vida del jugador en este combate
-    melee_combat_run(&(MeleeConfig){
+    combat_configure(&(CombatConfig){
+        .weapon_strike = true,       // el arma es el golpe con A
         .hits_to_win = 6,            // 6 golpes los ahuyentan
         .companion = CHR_clio,       // Clio espera detrás
         .reposition_companion = true,
-        .weapon_is_thunder = false,  // el arma es el golpe con A
     });
+    // El combate lo ejecuta el op `combat` de la escena, justo tras este hook
+}
 
-    // Restaurar la vara: el resto del banco de pruebas la necesita
+void act1_test_boars_after(void)    // Tras el combate: restaurar la vara (el banco la necesita)
+{
     linus_has_torch = false;
     player_has_rod = true;
     reinit_character_sprite(CHR_linus);

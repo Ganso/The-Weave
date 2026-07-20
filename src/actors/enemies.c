@@ -157,7 +157,7 @@ void update_enemy(u16 nenemy)    // Update enemy sprite properties from current 
     // OJO: aquí NO va SPR_update(). Esta función se llama por enemigo y por frame
     // (combate de contacto); el SPR_update() global de next_frame ya recoge
     // los cambios. Un SPR_update() por enemigo hundía el framerate: con 5
-    // jabalíes el melee caía de 50 a ~25 FPS (medido en RetroArch).
+    // jabalíes el framerate caía de 50 a ~25 FPS (medido en RetroArch).
 }
 
 void show_enemy(u16 nenemy, bool show)    // Toggle visibility of enemy and its shadow
@@ -266,7 +266,7 @@ void update_enemy_animations(void)
                 break;
 
             case STATE_WALKING:
-                // Locomoción dirigida desde fuera (combate físico, melee.c):
+                // Locomoción dirigida desde fuera (combate de contacto, contact.c):
                 // el módulo que mueve al enemigo es dueño de su animación.
                 break;
 

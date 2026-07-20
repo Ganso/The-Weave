@@ -169,10 +169,8 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
                 set_scene_flag(st->a, st->b);
                 break;
 
-            case SCENE_OP_COMBAT: // combate interactivo completo (el FSM manda)
-                combat_init();
-                while (combat_state != COMBAT_NO && !player_defeated) next_frame(true);
-                if (player_defeated) combat_abort();   // la escena decide el reintento (op if_defeated)
+            case SCENE_OP_COMBAT: // combate interactivo completo (director de combat.c)
+                combat_run();   // usa la config que dejó el hook (o la de por defecto)
                 break;
 
             case SCENE_OP_CAST: // lanzamiento scripted (puzzles / demostraciones)

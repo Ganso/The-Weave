@@ -33,7 +33,8 @@ wait_scroll 200
 # Primer ataque de los jabalíes (reintento si la vida llega a cero)
 label fday_combat
 say_cluster ACT1_ISLAND A1_ISLAND_COMBAT sound   # "¡Madre, detrás!"
-call act1_fday_boars
+call act1_fday_boars                             # spawnea y deja la config del encuentro
+combat
 if_defeated goto fday_fail
 
 # Clio ha sido mordida: Linus le pide que cante el patrón de Curación

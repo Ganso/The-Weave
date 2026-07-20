@@ -405,41 +405,28 @@ set spells on
 
 ### 7.7. Combate
 
-Hay **dos tipos de combate**, y cada uno se pone en el guion de una forma. En los
-dos, el jugador empieza con **5 puntos de vida** (cada golpe enemigo resta uno) y,
-si llega a cero, el combate termina en **derrota**.
+Todos los combates se escriben **igual**: un `call` a un gancho de C que hace
+aparecer a los enemigos (y deja preparada la configuración de la pelea: qué armas
+tiene el jugador, cuántos golpes ahuyentan a la manada, si hay un acompañante...;
+eso es trabajo de programación, ver sección 9), y después la orden `combat`. El
+jugador empieza con **5 puntos de vida** (cada golpe enemigo resta uno) y, si
+llega a cero, el combate termina en **derrota**.
 
-**Tipo A — de patrones (enemigos a distancia, como los espectros).** Los enemigos
-cantan hechizos y el jugador los contrarresta. Se pone en dos pasos: primero un
-`call` a un gancho de C que hace **aparecer** a los enemigos (ver sección 9), y
-luego la orden `combat`.
-
-- **`combat`** — lanza el combate y **no sigue hasta que termina** (el jugador gana
-  o cae derrotado). Toda la mecánica la gestiona el juego.
+- **`combat`** — ejecuta el combate completo y **no sigue hasta que termina** (el
+  jugador gana o cae derrotado). Da igual que los enemigos sean de los que
+  persiguen y muerden (jabalíes), de los que cantan hechizos desde lejos
+  (espectros) o una mezcla: toda la mecánica la gestiona el juego con lo que el
+  gancho dejó configurado.
 
     ```
-    call act1_return_ghosts    # gancho: hace aparecer a los espectros
+    set spells off             # ¿puede cantar el jugador en esta pelea? (on/off)
+    call act1_fday_boars       # gancho: aparecen los enemigos + configuración
     combat
     ```
 
-**Tipo B — de contacto (enemigos que persiguen y muerden/embisten, como los
-jabalíes).** Aquí NO se usa `combat`: **un solo gancho de C corre la pelea entera**
-(hace aparecer a la manada y la gestiona hasta que huye o te derrota). En el guion
-solo pones el `call` a ese gancho.
-
-    ```
-    set spells off             # el arma es el golpe con A (o "on" si es con hechizos)
-    call act1_fday_boars       # gancho: aparece la manada Y corre el combate
-    ```
-
-*(Cómo se escribe ese gancho —incluidas las dos variantes de arma, golpe o
-patrón— es trabajo de programación: el patrón exacto está en el código de los
-ganchos de combate existentes.)*
-
-- **`if_defeated goto <etiqueta>`** — vale para los dos tipos. Salta a una etiqueta
-  **si el último combate terminó en derrota**. Ponla justo después del `combat`
-  (tipo A) o del `call` al gancho (tipo B) para mostrar un mensaje de fallo y
-  repetir. Si el jugador ganó, el guion sigue de largo.
+- **`if_defeated goto <etiqueta>`** — salta a una etiqueta **si el último combate
+  terminó en derrota**. Ponla justo después del `combat` para mostrar un mensaje
+  de fallo y repetir. Si el jugador ganó, el guion sigue de largo.
   - Ejemplo de combate con reintento:
 
     ```

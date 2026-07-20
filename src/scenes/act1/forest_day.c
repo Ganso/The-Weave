@@ -34,12 +34,13 @@ void act1_fday_boars(void)    // Primer combate físico: 3 jabalíes (Linus sin 
         show_enemy(i, true);
     }
     player_max_hitpoints = 5;
-    melee_combat_run(&(MeleeConfig){
+    combat_configure(&(CombatConfig){
+        .weapon_strike = true,       // sin bastón: el arma es el golpe con A
         .hits_to_win = 4,            // 4 golpes los ahuyentan
         .companion = CHR_clio,       // Clio espera detrás
         .reposition_companion = true,
-        .weapon_is_thunder = false,  // sin bastón: el arma es el golpe con A
     });
+    // El combate lo ejecuta el op `combat` de la escena, justo tras este hook
 }
 
 void act1_fday_heal(void)    // Clio canta el patrón de Curación (narrativo)

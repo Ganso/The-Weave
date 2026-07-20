@@ -18,7 +18,7 @@ sección:
 1. **Diálogos y quiz**
 2. **Hechizos y puzzles**
 3. **Combate** → menú anidado: **por hechizos** (dos oleadas) o **físico: jabalíes**
-   (melee, Linus sin vara). En ambos, el jugador tiene **5 puntos de vida** por
+   (contacto, Linus sin vara). En ambos, el jugador tiene **5 puntos de vida** por
    combate; al llegar a cero, mensaje de derrota y reintento.
 4. **Terminar test** → fade + `next_scene` al dormitorio.
 
@@ -65,9 +65,9 @@ sección:
   vuelve a empezar (por oleada: perder en la 2 repite solo la 2).
 - Vuelta al hub.
 
-### 3b. Combate físico: jabalíes (`combat/melee.c`)
+### 3b. Combate de contacto: jabalíes (`combat/contact.c`)
 - Al entrar en Combate, **Clio aparece y sigue a Linus** (en ambos combates).
-- Al empezar el melee, Linus pierde la vara y saca la **antorcha** (`linus_torch`; el
+- Al empezar el combate, Linus pierde la vara y saca la **antorcha** (`linus_torch`; el
   golpe con A es el de antorcha) y Clio, si estaba delante, se recoloca andando detrás
   de él mirando a la derecha y se queda inmóvil todo el combate.
 - Entran **5 jabalíes**: tres por la derecha y dos por la izquierda, a distintas

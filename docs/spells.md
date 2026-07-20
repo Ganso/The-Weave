@@ -675,7 +675,7 @@ mientras pruebas y acuérdate de desactivarlos antes de la versión final.
 | LUZ | SOL LA SI DO (C X Y Z) | 1,5 s | Muestra fases de dos tramos de color (cian→blanco). Se puede lanzar directo E invertido. |
 | CURACIÓN | LA SI DO SI (X Y Z Y) | 1,25 s | Solo guionizado. La canta Clio en el acto 1; usa la nota más alta (DO), fuera del límite de notas del jugador hasta el final del juego. |
 | EN_THUNDER | (trueno enemigo) | 1 s | Es `counterable`; hace daño al jugador al terminar de forma natural. |
-| EN_BITE | (mordisco enemigo) | 1 s | No es counterable. Solo lo usa la clase de TEST (el jabalí muerde por contacto en melee.c). |
+| EN_BITE | (mordisco enemigo) | 1 s | No es counterable. Solo lo usa la clase de TEST (el jabalí muerde por contacto: combat/contact.c). |
 
 Los dos mejores ejemplos para copiar y aprender son **FUEGO**
 (`src/spells/player/fire.c`) y **LUZ** (`src/spells/player/light.c`): están muy comentados y cubren casi todo lo que

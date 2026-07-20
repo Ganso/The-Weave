@@ -205,6 +205,7 @@ void end_level() {    // Clean up level resources and reset game state
 
     // Reset combat/spell state
     combat_state = COMBAT_NO;
+    combat_config_clear();   // ninguna config de encuentro sobrevive al nivel
     spell_engine_reset();
 
     // player_patterns_enabled = false; // Mantener habilitado para permitir lanzar hechizos

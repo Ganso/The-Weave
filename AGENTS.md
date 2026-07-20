@@ -37,7 +37,7 @@
 **Cómo se hacen los commits (bien):**
 - Un commit por hito, asunto concreto en imperativo (qué cambia y por qué), nunca "wip"/"cambios".
 - Actualiza este AGENTS.md y las guías de `docs/` **en la misma tanda** que el código que describen.
-- Cierra el mensaje con el trailer `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+- Cierra el mensaje con el trailer `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.
 
 **Antes de TERMINAR la sesión — subir TODO (obligatorio):**
 - No dejes commits locales sin empujar: otro ordenador los va a necesitar. `git push`.
@@ -143,8 +143,8 @@ src/
                    (next_frame/timing), config.h (SCREEN_WIDTH…), hack.h (toggles)
   world/         → background: scroll, límites, new_level/end_level
   actors/        → entity (base común), characters, enemies, items, collisions
-  combat/        → FSM de combate por hechizos (combat_state, hit_enemy/hit_player)
-                   + melee.c (combate físico sin hechizos: jabalíes, golpe con A)
+  combat/        → el director de combate (combat.c: CombatConfig + start/tick/end/run)
+                   + contact.c (FSM de enemigos de contacto) + weapons.c (golpe A, reglas prefab)
   spells/        → motor de hechizos (§5): spell.c (motor 2 slots), notes.c (input),
                    player/ (un fichero por hechizo del jugador), enemy/ (idem enemigo)
   narrative/     → texts, texts_data (GEN), choices_data (GEN), dialogs, encode
@@ -190,16 +190,18 @@ Botón→nota: A→MI B→FA C→SOL X→LA Y→SI Z→DO.
 
 **Arquitectura**: tabla única `spell_defs[SPELL_COUNT]` + motor con **dos slots**
 (`SPELL_SLOT_PLAYER`, `SPELL_SLOT_ENEMY`), ambos pueden estar vivos a la vez (para el
-counter). `combat_state` (combat.c) es el director del combate; el motor consulta y
-actualiza ese FSM.
+counter). `combat_state` (combat.c) es el FSM de turnos del LADO DE PATRONES (también
+sirve a los cast libres); el estado del ENCUENTRO es del director (`combat_running`).
 
 **Doctrina y funcionamiento del COMBATE → `docs/combat.md`** (referencia canónica
-del dominio: los dos directores — patrones en combat.c/spell.c y contacto en
-melee.c con `MeleeConfig` —, la vida del jugador y el reintento con `if_defeated`,
-las recetas de encuentros y las trampas, incluida la normalización de
-`combat_state` que hace el melee). Resumen de doctrina: el jugador canta o no según
-la escena (flag `spells`); cada enemigo es de CONTACTO (jabalí, melee.c) o A
-DISTANCIA (espectro, FSM de combat.c).
+del dominio: el director único de combat.c con encuentros declarativos —
+`CombatConfig`: datos + hooks opcionales onStart/onTick/isWon/onEnd, patrón
+SpellDef —, los roles de enemigo, la vida y el reintento con `if_defeated`, las
+recetas y las trampas). Resumen de doctrina: combate = enemigos presentes; el
+jugador canta o no según la escena (flag `spells`) y golpea o no según la config;
+cada enemigo es de CONTACTO (rol + ContactProfile de su clase → contact.c) o A
+DISTANCIA (spells de su clase → patrones), y pueden convivir. Receta única en
+escena: `call hook_spawn` → `combat` → `if_defeated`.
 
 - `spell.c` — motor: `spell_validate` → `spell_player_cast` (counter o launch),
   `spell_update` (cada frame desde `update_combat`), `spell_try_counter`,
@@ -229,7 +231,7 @@ DISTANCIA (espectro, FSM de combat.c).
 - Desbloqueo: `spell_enable(id)` (silencioso; op `enable_spell` del DSL) o
   `activate_spell(id)` (con jingle y notas, para cutscenes).
 - **`EN_BITE`** queda solo en la clase de TEST: el jabalí es un enemigo **de
-  contacto** (muerde en el combate físico de melee.c, sin patrones).
+  contacto** (su mordisco es el ContactProfile de su clase, sin patrones).
 
 → **Para crear un hechizo nuevo**: guía paso a paso en `docs/spells.md`. Puntos que
 tocan el motor: `SPELL_*` en `constants_spells.h` (los de jugador antes de
@@ -299,7 +301,7 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   esperas → timers con `modeTimer`.
 - **`SPR_update()` es CARO: exactamente uno por frame** (el de `next_frame`). Jamás
   lo llames en helpers por-entidad que corren cada frame: recorre y reprocesa TODOS
-  los sprites. Caso real: `update_enemy()` lo llamaba y el melee con 5 jabalíes caía
+  los sprites. Caso real: `update_enemy()` lo llamaba y el combate con 5 jabalíes caía
   de 50 a ~25 FPS (medido con el contador de la smoke). Los `SPR_set*` son baratos
   (early-out); acumula cambios y deja que el `SPR_update` global los recoja. En
   helpers de SETUP/cutscene (poco frecuentes) sí es aceptable.
@@ -309,7 +311,7 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   TRES formas — antorcha (`linus_has_torch`, override visual) > vara (`player_has_rod`,
   además puerta de la magia) > sin nada. Fija ambas ANTES de crear a Linus
   (`character CHR_linus` / `init_character`); para cambiar de forma a mitad de
-  escena usa `reinit_character_sprite` (ver el hook del melee de act1_test). La
+  escena usa `reinit_character_sprite` (ver act1_test_boars/act1_test_boars_after). La
   solución de raíz (igualar el set de animaciones de todas las formas, con
   placeholders si hace falta) está pendiente en §12.
 - **Scroll y `new_level`/op `level`**: la anchura y el modo deben cuadrar con el mapa.
@@ -343,7 +345,7 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   → metalibrerías (ese orden) → headers específicos que no estén en ninguna meta
   (p.ej. `scenes/act1/<escena>.h`, o `spells/player_spells.h` que solo usa spell.c).
   - Los **`.h` NO incluyen metalibrerías**: solo sus dependencias mínimas de tipos.
-  - `combat` e `interface` usan `combat.h`/`interface.h` como metalibrería (combat.h reexporta melee.h).
+  - `combat` e `interface` usan `combat.h`/`interface.h` como metalibrería (combat.h reexporta contact.h y weapons.h).
 - Sin `malloc/free`: pools y buffers estáticos. `static const` para datos inmutables.
   Funciones privadas `static`. Guards `_FOO_H_`. Designated initializers en tablas.
 - **No editar generados**: `narrative/texts_data.*`, `narrative/choices_data.*`,
@@ -374,7 +376,7 @@ trabajo tienen guías dedicadas — no dupliques su contenido aquí, enlázalas:
 | `docs/spells.md`   | Guía para no técnicos: crear un hechizo de principio a fin (hooks, fases, zonas, receta). |
 | `docs/scenes.md`   | Guía para no técnicos: crear una escena (todos los ops del DSL, formatos de texts.csv/choices.csv, recetas). |
 | `docs/texts.md`    | Guía para no técnicos: escribir diálogos, clusters, choices y voces. |
-| `docs/combat.md`   | Referencia canónica del COMBATE: los dos directores (patrones/contacto), sus FSM, vida/derrota/reintento, recetas de encuentros y trampas. |
+| `docs/combat.md`   | Referencia canónica del COMBATE: el director único, CombatConfig (datos+hooks), roles y perfiles de enemigo, FSMs, recetas y trampas. |
 | `docs/acto1.md`    | Acto 1: estado escena por escena y lo que queda por hacer (arte, audio, bugs). |
 | `docs/test_scene.md` | Desglose de qué prueba cada sección de `act1_test`. |
 
@@ -400,10 +402,6 @@ acortes al estilo terso de AGENTS.
 > audio, playtest) está en `docs/acto1.md`; el de testing automatizado en
 > `docs/testing/plan.md`; el detalle de cada dominio, en su guía.
 
-- **Unificar los dos directores de combate**: hoy contacto (`melee.c`) y patrones
-  (`combat.c`+`spell.c`) son módulos separados que no corren a la vez. Un único
-  director con "tipo de ataque" como propiedad del enemigo es refactor aceptado pero
-  no hecho (doctrina y frontera actual en `docs/combat.md`).
 - **Paleta del cisne**: usa una paleta propia distinta de la de personajes. Cuando
   habla en el dormitorio (PAL1 = swan_pal), los resaltados @[...@] del texto salen con
   color equivocado (esperan la paleta de Linus); y cuando su CARA aparece en escenas

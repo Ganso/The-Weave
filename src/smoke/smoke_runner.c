@@ -228,7 +228,7 @@ static void run_auto(void)
     move_enemy_instant(0, FASTFIX32_FROM_INT(250), FASTFIX32_FROM_INT(154));
     show_enemy(0, true);
 
-    combat_init();
+    combat_start();   // sin config previa: encuentro por defecto (solo patrones)
 
     u16 guard = SCREEN_FPS * 30;   // techo total del combate (30 s)
 
@@ -248,7 +248,7 @@ static void run_auto(void)
     while (combat_state != COMBAT_NO && guard) { next_frame(true); guard--; }
 
     bool combat_ok = (combat_state == COMBAT_NO) && !obj_enemy[0].obj_character.active;
-    combat_finish();
+    combat_end();
 
     dprintf(3, "AUTO: pre end_level");
     end_level();

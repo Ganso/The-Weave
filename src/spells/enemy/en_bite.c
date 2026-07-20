@@ -1,5 +1,5 @@
 // en_bite.c — MORDISCO enemigo (patrón): datos + hooks.
-// El jabalí del juego muerde por CONTACTO (combat/melee.c) y no usa patrones;
+// El jabalí del juego muerde por CONTACTO (combat/contact.c) y no usa patrones;
 // este EN_BITE de patrón lo usa solo la clase de TEST (ENEMY_CLS_TESTGHOST).
 
 #include <genesis.h>

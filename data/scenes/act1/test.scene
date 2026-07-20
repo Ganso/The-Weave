@@ -159,8 +159,10 @@ label sec_melee
 set spells off                            # sin notas: el botón A es el golpe
 say ACT1_TEST A1_TEST_MELEE sound
 label melee_retry
-call act1_test_boars                      # quita la vara, coloca a Clio y corre el melee
+call act1_test_boars                      # quita la vara, spawnea y deja la config
+combat
 if_defeated goto melee_fail
+call act1_test_boars_after                # restaurar la vara para el resto del banco
 set spells on                             # restaurar para el resto del banco
 say ACT1_TEST A1_TEST_VICTORY sound
 goto hub

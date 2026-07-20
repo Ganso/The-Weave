@@ -33,7 +33,8 @@ wait_scroll_left 900
 # FASE 1 — Emboscada de jabalíes: sin fuego, solo el TRUENO los ahuyenta
 label ret_boars
 say_cluster ACT1_RETURN A1_RETURN_BOARS sound   # "Otra vez. Y ahora no tengo fuego"
-call act1_return_boars
+call act1_return_boars                          # spawnea y deja la config (trueno ahuyenta)
+combat
 if_defeated goto ret_boars_fail
 say_cluster ACT1_RETURN A1_RETURN_BOARS_WON sound  # "Han retrocedido / Volverán"
 

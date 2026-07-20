@@ -44,7 +44,7 @@ typedef enum {
     SCENE_OP_WAIT         = 11,  // a=décimas de segundo (frames no-interactivos)
     SCENE_OP_WAIT_SCROLL  = 12,  // a=offset — espera interactiva hasta offset_BGA >= a
     SCENE_OP_SET          = 13,  // a=SCENE_FLAG_*, b=on
-    SCENE_OP_COMBAT       = 14,  // combat_init + espera hasta COMBAT_NO o derrota (combat_abort)
+    SCENE_OP_COMBAT       = 14,  // combat_run(): el encuentro completo (config del hook o defecto)
     SCENE_OP_CAST         = 15,  // a=spell, b=reversed — cast scripted (origin NARRATIVE)
     SCENE_OP_WAIT_SPELL   = 16,  // espera a que el slot PLAYER quede libre
     SCENE_OP_ZONE         = 17,  // a=ZONE_* — fija spell_zone
