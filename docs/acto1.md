@@ -139,6 +139,9 @@ sin tocar código (mismo archivo, mismas dimensiones y paleta).
 - Jingles propios de SLEEP, HEAL y EN_BITE (hoy silenciosos).
 
 **Bugs / pulido conocidos**:
+- **VRAM del bosque**: el fondo del bosque no está bien dividido en tiles y llena
+  la VRAM (tiles corruptos visibles al forzar redibujados grandes). Pendiente de
+  re-trocear el asset.
 - **Paleta del cisne**: usa una paleta propia distinta de la de personajes. Cuando
   habla en el dormitorio los textos resaltados salen con color equivocado, y su cara
   en escenas posteriores sale con los colores mal. (Detalle técnico en AGENTS §12.)
