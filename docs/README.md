@@ -23,6 +23,7 @@ con una tabla de "si algo va mal" al final.
 
 | Tema | Documento |
 |---|---|
+| El **apartado gráfico** (VRAM, índice de tiles, planos, paletas, scroll) | [graphics.md](graphics.md) |
 | El **combate** (director único, encuentros declarativos, roles) | [combat.md](combat.md) |
 | El **motor** entero, la arquitectura y las trampas | [../AGENTS.md](../AGENTS.md) |
 | En qué **estado** está el acto 1 y qué falta | [acto1.md](acto1.md) |

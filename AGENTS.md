@@ -303,6 +303,7 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   *(Ejemplo real corregido: `PAL_getColors(0, buf, 16)` con el 0 a mano pasó a
   `PAL_getPalette(PAL_BACKGROUND, buf)`.)*
 - **`tile_ind` es un puntero de asignación, no un contador para sumar y restar.**
+  (Todo el reparto de VRAM y el diagnóstico de corrupción, en `docs/graphics.md`.)
   `new_level` lo pone en `TILE_USER_INDEX` y va reservando: fondo trasero → fondo
   delantero → interfaz (`interface_reserve_tiles`). Quien necesite VRAM de tiles
   **reserva una vez** y guarda su índice; NUNCA `tile_ind += ...` al mostrar algo y
@@ -413,6 +414,7 @@ del arte al `.res`, al código y a la escena):
 
 | Documento | Cubre |
 |---|---|
+| `docs/graphics.md` | Referencia del APARTADO GRÁFICO: mapa de VRAM, `tile_ind`, planos, paletas, sprites, scroll y guía de diagnóstico ante corrupción. |
 | `docs/combat.md`   | Referencia canónica del COMBATE: el director único, CombatConfig (datos+hooks), roles y perfiles de enemigo, FSMs, recetas y trampas. |
 | `docs/build.md`    | Pipeline de build completo, configuración personal, VS Code, problemas típicos. |
 | `docs/testing.md`  | Smoke ROM (tipos de caso, cómo añadir uno) y checklist de playtest. |
