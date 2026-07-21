@@ -57,6 +57,21 @@ Tasks en `.vscode/tasks.json`: Build (Incremental) · Clean + Build (Release) ·
 Clean · Build + Run · Run ROM (BlastEm) · Generate Texts · Consolidate.
 
 
+## Cambiar entre build normal y smoke
+
+Las dos ROMs se compilan del mismo código con `-DHACK_SMOKE_BUILD`, que decide
+cuál de los dos `main()` entra (`src/core/main.c` o `src/smoke/smoke_main.c`).
+Como make **no recompila por un cambio de flags** (las fuentes no cambian), al
+volver de un build smoke sobrevivían los objetos con el otro `main` y el
+enlazado fallaba con `multiple definition of main`.
+
+Lo gestiona el script solo: guarda el último modo en `out/.last_build_mode` y,
+si el anterior fue smoke, limpia antes de compilar. No hace falta acordarse de
+nada, y los builds normales seguidos siguen siendo incrementales.
+
+> No sirve mirar si existen `out/src/smoke/*.o`: el build normal también los
+> genera (vacíos, porque el `#ifdef` deja el fichero sin contenido).
+
 ## Versiones de SGDK (el Makefile es autocontenido)
 
 El `Makefile` del repo **no incluye el `makefile.gen` de SGDK**: define sus

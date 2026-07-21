@@ -46,6 +46,9 @@ fi
 DOCKER_RUN="docker run --rm -v $PROJECT_DIR:/src $SGDK_MOUNT -u $(id -u):$(id -g) -w /src --entrypoint make $SGDK_IMAGE GDK=$GDK_PATH -f /src/Makefile"
 
 # MiSTer FPGA (MISTER_IP vacío = sin MiSTer, va directo a BlastEm)
+# Marca del último modo compilado (normal/smoke): ver el caso `build`
+BUILD_MODE_STAMP="$PROJECT_DIR/out/.last_build_mode"
+
 MISTER_IP="${MISTER_IP:-}"
 MISTER_USER="${MISTER_USER:-root}"
 MISTER_PASS="${MISTER_PASS:-}"
@@ -116,18 +119,30 @@ case "$MODE" in
     release|full)
         echo -e "${YELLOW}🔨 Compilando (release)...${NC}"
         $DOCKER_RUN clean && $DOCKER_RUN release
+        mkdir -p "$(dirname "$BUILD_MODE_STAMP")" && echo normal > "$BUILD_MODE_STAMP"
         ;;
     smoke)
         # El flag cambia el binario entero: siempre clean + release
         echo -e "${YELLOW}🔨 Compilando smoke ROM (-DHACK_SMOKE_BUILD)...${NC}"
         $DOCKER_RUN clean && $DOCKER_RUN release EXTRA_FLAGS=-DHACK_SMOKE_BUILD
+        mkdir -p "$(dirname "$BUILD_MODE_STAMP")" && echo smoke > "$BUILD_MODE_STAMP"
         mv out/rom.bin out/smoke.bin
         echo -e "${GREEN}📦 Smoke ROM: out/smoke.bin${NC}"
-        echo -e "${YELLOW}⚠ out/ contiene objetos smoke: haz 'release' antes del siguiente build normal.${NC}"
         ;;
     build|*)
+        # Volver de un build smoke exige limpiar: sus objetos siguen en out/ y
+        # make NO los recompila (solo cambió un -D, no las fuentes), así que
+        # smoke_main.o y core/main.o traerían cada uno su main() y el enlazado
+        # falla con "multiple definition of main". Lo detectamos con la marca
+        # del último modo (mirar si existen los .o no vale: el build normal
+        # también los genera, vacíos).
+        if [ "$(cat "$BUILD_MODE_STAMP" 2>/dev/null)" = "smoke" ]; then
+            echo -e "${YELLOW}🧹 El build anterior fue smoke: limpiando antes de compilar...${NC}"
+            $DOCKER_RUN clean
+        fi
         echo -e "${YELLOW}🔨 Compilando (incremental)...${NC}"
         $DOCKER_RUN release
+        mkdir -p "$(dirname "$BUILD_MODE_STAMP")" && echo normal > "$BUILD_MODE_STAMP"
         ;;
 esac
 
