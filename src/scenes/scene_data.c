@@ -289,14 +289,24 @@ static const SceneStep act1_return_steps[] = {
     { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_GHOSTS, 1, 0 }, // 28
     { SCENE_OP_CALL, HOOK_ACT1_RETURN_GHOSTS, 0, 0, 0 }, // 29
     { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 30
-    { SCENE_OP_IF_DEFEATED, 37, 0, 0, 0 }, // 31
+    { SCENE_OP_IF_DEFEATED, 42, 0, 0, 0 }, // 31
     { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_GHOSTS_WON, 1, 0 }, // 32
     { SCENE_OP_SAY_CLUSTER, ACT1_RETURN, A1_RETURN_DONE, 1, 0 }, // 33
     { SCENE_OP_NEXT_SCENE, SCENE_ACT1_COAST_END, 0, 0, 0 }, // 34
     { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_BOBBIN_HINT, 1, 0 }, // 35
-    { SCENE_OP_GOTO, 21, 0, 0, 0 }, // 36
-    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DEFEAT, 1, 0 }, // 37
-    { SCENE_OP_GOTO, 28, 0, 0, 0 }, // 38
+    { SCENE_OP_FADE_OUT, 30, 0, 0, 0 }, // 36
+    { SCENE_OP_WAIT, 5, 0, 0, 0 }, // 37
+    { SCENE_OP_PALETTE, PAL_BACKGROUND, 1, 0, 0 }, // 38
+    { SCENE_OP_PALETTE, PAL_CHARACTERS, 2, 0, 0 }, // 39
+    { SCENE_OP_PALETTE, PAL_INTERFACE, 3, 0, 0 }, // 40
+    { SCENE_OP_GOTO, 21, 0, 0, 0 }, // 41
+    { SCENE_OP_SAY, ACT1_RETURN, A1_RETURN_DEFEAT, 1, 0 }, // 42
+    { SCENE_OP_FADE_OUT, 30, 0, 0, 0 }, // 43
+    { SCENE_OP_WAIT, 5, 0, 0, 0 }, // 44
+    { SCENE_OP_PALETTE, PAL_BACKGROUND, 4, 0, 0 }, // 45
+    { SCENE_OP_PALETTE, PAL_CHARACTERS, 5, 0, 0 }, // 46
+    { SCENE_OP_PALETTE, PAL_INTERFACE, 6, 0, 0 }, // 47
+    { SCENE_OP_GOTO, 28, 0, 0, 0 }, // 48
 };
 
 static const SceneStep act1_test_steps[] = {
@@ -419,7 +429,7 @@ const SceneScript scenes[] = {
     { "act1_hall", act1_hall_steps, 32 },
     { "act1_hut", act1_hut_steps, 32 },
     { "act1_island", act1_island_steps, 38 },
-    { "act1_return", act1_return_steps, 39 },
+    { "act1_return", act1_return_steps, 49 },
     { "act1_test", act1_test_steps, 108 },
 };
 
@@ -486,6 +496,12 @@ const SceneItem scene_items[] = {
 
 const ScenePalette scene_palettes[] = {
     { &swan_pal }, // 0
+    { &forest_dark_pal }, // 1
+    { &characters_pal }, // 2
+    { &interface_pal }, // 3
+    { &forest_dark_pal }, // 4
+    { &characters_pal }, // 5
+    { &interface_pal }, // 6
 };
 
 s16 scene_id_by_name(const char *name)    // SceneId, o -1 si no existe

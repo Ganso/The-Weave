@@ -51,10 +51,23 @@ say_cluster ACT1_RETURN A1_RETURN_GHOSTS_WON sound  # "Se han ido / Se han retir
 say_cluster ACT1_RETURN A1_RETURN_DONE sound    # la nave a la vista
 next_scene act1_coast_end
 
+# Tras el consejo del cisne, fundido a negro y respiro antes de reintentar.
+# OJO: no hay op de fundido de entrada, así que hay que devolver las paletas a
+# mano o la pantalla se queda negra (PAL_ENEMIES la recarga el hook al spawnear).
 label ret_boars_fail
 say ACT1_RETURN A1_RETURN_BOBBIN_HINT sound     # Bobbin: "Canta el patrón de los cielos"
+fade_out 30
+wait 5
+palette PAL_BACKGROUND forest_dark_pal
+palette PAL_CHARACTERS characters_pal
+palette PAL_INTERFACE interface_pal
 goto ret_boars
 
 label ret_ghosts_fail
 say ACT1_RETURN A1_RETURN_DEFEAT sound          # Bobbin: "La solución es a veces..."
+fade_out 30
+wait 5
+palette PAL_BACKGROUND forest_dark_pal
+palette PAL_CHARACTERS characters_pal
+palette PAL_INTERFACE interface_pal
 goto ret_ghosts

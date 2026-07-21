@@ -8,14 +8,19 @@
 #include "audio/audio.h"
 #include "spells/enemy/en_thunder.h"
 
-#define COLOR_INITIAL_SKY     RGB24_TO_VDPCOLOR(0x1585c2) // color inicial del cielo
 #define COLOR_ENEMY_FLASH     RGB24_TO_VDPCOLOR(0x4444a3) // color de flash del thunder enemigo
 
 static bool en_thunder_flash_on; // true = el CRAM está en color de flash
+// El color del cielo se GUARDA al lanzar, no se cablea: cada escenario tiene el
+// suyo (el bosque de día y el de noche no coinciden) y antes se restauraba
+// siempre un azul fijo que no era el de ninguno — el cielo se quedaba mal tras
+// cada trueno enemigo.
+static u16 en_thunder_saved_sky;
 
 static void en_thunder_on_launch(SpellContext *ctx)
 {
     dprintf(2, "Enemy %d: Thunder spell launched", ctx->enemyId);
+    en_thunder_saved_sky = PAL_getColor(PAL_BACKGROUND_COL4);   // el de ESTE escenario
     en_thunder_flash_on = false;
     SPR_setAnim(spr_enemy[ctx->enemyId], ANIM_ACTION);
 }
@@ -28,8 +33,8 @@ static bool en_thunder_on_update(SpellContext *ctx)
         en_thunder_flash_on = true;
     } else if ((frame_counter & 1) == 0) {         // alternar cada 2 frames
         u16 col = PAL_getColor(PAL_BACKGROUND_COL4);
-        PAL_setColor(PAL_BACKGROUND_COL4, (col == COLOR_ENEMY_FLASH) ? COLOR_INITIAL_SKY
-                                                           : COLOR_ENEMY_FLASH);
+        PAL_setColor(PAL_BACKGROUND_COL4, (col == COLOR_ENEMY_FLASH) ? en_thunder_saved_sky
+                                                                     : COLOR_ENEMY_FLASH);
     }
 
     // El fin natural lo detecta el motor por baseDuration; los efectos del final van en onFinish
@@ -39,7 +44,7 @@ static bool en_thunder_on_update(SpellContext *ctx)
 
 static void en_thunder_on_finish(SpellContext *ctx)    // fin natural: el rayo alcanza al jugador
 {
-    PAL_setColor(PAL_BACKGROUND_COL4, COLOR_INITIAL_SKY);    // restaurar cielo
+    PAL_setColor(PAL_BACKGROUND_COL4, en_thunder_saved_sky);    // restaurar el cielo de la escena
     en_thunder_flash_on = false;
     SPR_setAnim(spr_enemy[ctx->enemyId], ANIM_IDLE);
     hit_player(1);
@@ -48,7 +53,7 @@ static void en_thunder_on_finish(SpellContext *ctx)    // fin natural: el rayo a
 static void en_thunder_on_counter(SpellContext *ctx)    // contrarrestado: el rayo vuelve al lanzador
 {
     dprintf(2, "Enemy %d: Thunder countered", ctx->enemyId);
-    PAL_setColor(PAL_BACKGROUND_COL4, COLOR_INITIAL_SKY);
+    PAL_setColor(PAL_BACKGROUND_COL4, en_thunder_saved_sky);
     en_thunder_flash_on = false;
     hit_enemy(ctx->enemyId, 1);
 }
@@ -57,7 +62,7 @@ static void en_thunder_on_cancel(SpellContext *ctx)    // cancelado (hide, recha
 {
     dprintf(2, "Enemy %d: Thunder cancelled", ctx->enemyId);
     (void)ctx;
-    PAL_setColor(PAL_BACKGROUND_COL4, COLOR_INITIAL_SKY);
+    PAL_setColor(PAL_BACKGROUND_COL4, en_thunder_saved_sky);
     en_thunder_flash_on = false;
 }
 

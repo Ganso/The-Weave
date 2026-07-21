@@ -56,7 +56,17 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
     reset_character_animations();
     SPR_update();
 
-    // El rayo cae por el agujero del techo sobre el bastón (posición según scroll)
+    // Linus recoge el bastón: animación de agacharse, el item desaparece y
+    // cambia al sprite con vara
+    anim_character(CHR_linus, ANIM_GRAB);
+    wait_seconds(1);
+    release_item(0);
+    linus_has_torch = false;   // la antorcha se apaga: ahora luce el bastón
+    player_has_rod = true;
+    reinit_character_sprite(CHR_linus);
+
+    // Ya con el bastón en la mano, el rayo cae por el agujero del techo
+    // (guión 5.3: "Lo toma. Silencio brusco. Un rayo cae desde el cielo")
     s16 bolt_x = HUT_STAFF_X - FASTFIX32_TO_INT(offset_BGA) - 12;
     PAL_setPalette(PAL_ENEMIES, fx_lightning_sprite.palette->data, DMA);
     Sprite *bolt = SPR_addSpriteSafe(&fx_lightning_sprite, bolt_x, 8,
@@ -79,15 +89,6 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
         SPR_releaseSprite(bolt);
         SPR_update();
     }
-
-    // Linus recoge el bastón: animación de agacharse, el item desaparece y
-    // cambia al sprite con vara
-    anim_character(CHR_linus, ANIM_GRAB);
-    wait_seconds(1);
-    release_item(0);
-    linus_has_torch = false;   // la antorcha se apaga: ahora luce el bastón
-    player_has_rod = true;
-    reinit_character_sprite(CHR_linus);
 
     activate_spell(SPELL_THUNDER);   // patrón inscrito: Electricidad (jingle + notas)
 

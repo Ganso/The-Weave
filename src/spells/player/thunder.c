@@ -76,9 +76,11 @@ static void thunder_on_rejected(SpellContext *ctx)
         return;
     }
 
-    // Trueno directo rechazado (solo pasa contra espectros): pista del counter
+    // Trueno DIRECTO contra espectros: son inmunes. Linus solo constata que no
+    // les hace nada; la pista de cómo vencerlos la da Bobbin al caer derrotado
+    // (guión 6.3), para no regalar la solución al primer intento.
     if (ghost_present)
-        talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_REVERSE_NOTES_COUNTER], false); // pista: tócalo al revés
+        talk_dialog(&dialogs[ACT1_FOREST][A1_FOREST_NO_EFFECT], false);
     else
         talk_dialog(&dialogs[SYSTEM_DIALOG][SYSMSG_CANT_USE_PATTERN], false);
 }
