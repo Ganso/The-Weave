@@ -243,18 +243,19 @@ static const SceneStep act1_island_steps[] = {
     { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_COMBAT, 1, 0 }, // 23
     { SCENE_OP_CALL, HOOK_ACT1_FDAY_BOARS, 0, 0, 0 }, // 24
     { SCENE_OP_COMBAT, 0, 0, 0, 0 }, // 25
-    { SCENE_OP_IF_DEFEATED, 36, 0, 0, 0 }, // 26
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HURT, 1, 0 }, // 27
-    { SCENE_OP_CALL, HOOK_ACT1_FDAY_HEAL, 0, 0, 0 }, // 28
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HEALED, 1, 0 }, // 29
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 30
-    { SCENE_OP_WAIT_SCROLL, 1000, 0, 0, 0 }, // 31
-    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_ONWARD, 1, 0 }, // 32
-    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 33
-    { SCENE_OP_WAIT_SCROLL, 1110, 0, 0, 0 }, // 34
-    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 35
-    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_DEFEAT, 1, 0 }, // 36
-    { SCENE_OP_GOTO, 23, 0, 0, 0 }, // 37
+    { SCENE_OP_IF_DEFEATED, 37, 0, 0, 0 }, // 26
+    { SCENE_OP_CALL, HOOK_ACT1_FDAY_BITE, 0, 0, 0 }, // 27
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HURT, 1, 0 }, // 28
+    { SCENE_OP_CALL, HOOK_ACT1_FDAY_HEAL, 0, 0, 0 }, // 29
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_HEALED, 1, 0 }, // 30
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 31
+    { SCENE_OP_WAIT_SCROLL, 1000, 0, 0, 0 }, // 32
+    { SCENE_OP_SAY_CLUSTER, ACT1_ISLAND, A1_ISLAND_ONWARD, 1, 0 }, // 33
+    { SCENE_OP_SET, SCENE_FLAG_MOVEMENT, 1, 0, 0 }, // 34
+    { SCENE_OP_WAIT_SCROLL, 1110, 0, 0, 0 }, // 35
+    { SCENE_OP_NEXT_SCENE, SCENE_ACT1_HUT, 0, 0, 0 }, // 36
+    { SCENE_OP_SAY, ACT1_ISLAND, A1_ISLAND_DEFEAT, 1, 0 }, // 37
+    { SCENE_OP_GOTO, 23, 0, 0, 0 }, // 38
 };
 
 static const SceneStep act1_return_steps[] = {
@@ -428,7 +429,7 @@ const SceneScript scenes[] = {
     { "act1_forest", act1_forest_steps, 36 },
     { "act1_hall", act1_hall_steps, 32 },
     { "act1_hut", act1_hut_steps, 32 },
-    { "act1_island", act1_island_steps, 38 },
+    { "act1_island", act1_island_steps, 39 },
     { "act1_return", act1_return_steps, 49 },
     { "act1_test", act1_test_steps, 108 },
 };

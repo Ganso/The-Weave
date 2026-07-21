@@ -456,11 +456,29 @@ void idle_all_characters(void)
     }
 }
 
+// Fija una animación que el motor NO tocará (ni siquiera durante los diálogos):
+// para poses que deben aguantar, como Clio herida. Se suelta con
+// release_character_anim().
+void set_character_anim(u16 nchar, u8 animation)
+{
+    if (!obj_character[nchar].active) return;
+    anim_character(nchar, animation);
+    obj_character[nchar].state = STATE_FIXED_ANIM;
+}
+
+void release_character_anim(u16 nchar)    // Devuelve el control de la animación al motor
+{
+    if (!obj_character[nchar].active) return;
+    obj_character[nchar].state = STATE_IDLE;
+    anim_character(nchar, ANIM_IDLE);
+}
+
 void reset_character_animations()
 {
     for (u16 i = 0; i < MAX_CHR; i++)
     {
-        if (obj_character[i].active && i != active_character)
+        if (obj_character[i].active && i != active_character &&
+            obj_character[i].state != STATE_FIXED_ANIM)   // la pose fijada aguanta los diálogos
         {
             obj_character[i].state = STATE_IDLE;
         }
@@ -528,6 +546,9 @@ void update_character_animations(void) {
                 }
                 obj_character[chr].state = STATE_IDLE;
                 break;
+        case STATE_FIXED_ANIM:
+            break;   // la escena manda: no tocar la animación
+
         case STATE_HIT:
             if (obj_character[chr].animation != ANIM_HURT)
                 anim_character(chr, ANIM_HURT);

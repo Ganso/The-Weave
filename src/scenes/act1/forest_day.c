@@ -43,13 +43,71 @@ void act1_fday_boars(void)    // Primer combate físico: 3 jabalíes (Linus sin 
     // El combate lo ejecuta el op `combat` de la escena, justo tras este hook
 }
 
+#define BITE_GAP     26   // a qué distancia de Clio se planta el jabalí
+#define BITE_RUN_IN   3   // px/frame de la carrera de entrada
+#define BITE_RUN_OUT  4   // px/frame de la huida
+
+// Un jabalí rezagado entra corriendo por la IZQUIERDA, se planta junto a Clio,
+// la muerde, y ella queda herida hasta que se cure (guión 4.3). La pose de
+// herida se fija con set_character_anim para que aguante los diálogos que
+// vienen después; act1_fday_heal la suelta.
+void act1_fday_bite(void)
+{
+    idle_all_characters();               // que nadie se quede andando
+
+    s16 clio_x    = FASTFIX32_TO_INT(obj_character[CHR_clio].x);
+    s16 clio_feet = FASTFIX32_TO_INT(obj_character[CHR_clio].y) +
+                    obj_character[CHR_clio].y_size;
+
+    PAL_setPalette(PAL_ENEMIES, boar_sprite.palette->data, DMA);
+    init_enemy(0, ENEMY_CLS_BOAR);
+    move_enemy_instant(0, FASTFIX32_FROM_INT(-64), FASTFIX32_FROM_INT(clio_feet));
+    show_enemy(0, true);
+
+    // La locomoción la lleva este gancho: STATE_WALKING evita que
+    // update_enemy_animations le cambie la animación de galope
+    Entity *boar = &obj_enemy[0].obj_character;
+    boar->state = STATE_WALKING;
+    boar->flipH = false;                 // el arte mira a la DERECHA
+    anim_enemy(0, ANIM_RUN);
+
+    s16 stop_x = clio_x - BITE_GAP;
+    while (FASTFIX32_TO_INT(boar->x) < stop_x) {
+        boar->x += FASTFIX32_FROM_INT(BITE_RUN_IN);
+        update_enemy(0);
+        next_frame(false);
+    }
+
+    // El mordisco
+    anim_enemy(0, ANIM_ACTION);
+    play_sample(snd_player_hurt, sizeof(snd_player_hurt));
+    wait_seconds(1);
+
+    // Clio encaja el golpe UNA vez y se queda herida en el suelo
+    look_left(CHR_clio, true);           // mirando al jabalí (a su izquierda)
+    anim_character(CHR_clio, ANIM_HURT);
+    wait_seconds(1);
+    set_character_anim(CHR_clio, ANIM_WOUNDED);
+
+    // El jabalí se larga por donde vino
+    boar->flipH = true;
+    anim_enemy(0, ANIM_RUN);
+    while (FASTFIX32_TO_INT(boar->x) > -64) {
+        boar->x -= FASTFIX32_FROM_INT(BITE_RUN_OUT);
+        update_enemy(0);
+        next_frame(false);
+    }
+    release_enemy(0);
+}
+
 void act1_fday_heal(void)    // Clio canta el patrón de Curación (narrativo)
 {
     obj_character[active_character].state = STATE_IDLE;
     anim_character(CHR_linus, ANIM_IDLE);
     look_left(CHR_clio, false);          // mirando a Linus (a su derecha)
 
-    anim_character(CHR_clio, ANIM_MAGIC);
+    // Sale de la pose de herida para cantar (sigue fijada: el motor no la toca)
+    set_character_anim(CHR_clio, ANIM_MAGIC);
     play_sample(snd_effect_magic_appear, sizeof(snd_effect_magic_appear));
 
     // Destello verde en el cielo del bosque mientras canta
@@ -59,7 +117,7 @@ void act1_fday_heal(void)    // Clio canta el patrón de Curación (narrativo)
         next_frame(false);
     }
     PAL_setColor(4, old);
-    anim_character(CHR_clio, ANIM_IDLE);
+    release_character_anim(CHR_clio);    // curada: el motor recupera el control
 
     // Linus reconoce el patrón y lo anota, como la nana del dormitorio
     // (jingle + notas en el HUD + entrada en el menú de pausa)

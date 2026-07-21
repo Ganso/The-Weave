@@ -6,6 +6,7 @@
 
 void act1_fday_start(void);  // antorcha encendida + viento
 void act1_fday_boars(void);  // combate físico: 3 jabalíes sin vara
+void act1_fday_bite(void);   // un jabalí muerde a Clio: queda herida hasta curarse
 void act1_fday_heal(void);   // Clio canta Curación (narrativo)
 
 #endif

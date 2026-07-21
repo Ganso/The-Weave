@@ -37,6 +37,8 @@ call act1_fday_boars                             # spawnea y deja la config del 
 combat
 if_defeated goto fday_fail
 
+# Un jabalí rezagado entra por la izquierda y la muerde: queda herida
+call act1_fday_bite
 # Clio ha sido mordida: Linus le pide que cante el patrón de Curación
 say_cluster ACT1_ISLAND A1_ISLAND_HURT sound     # "¡Madre! Estás herida..."
 call act1_fday_heal

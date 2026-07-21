@@ -55,6 +55,8 @@ void update_sprites_depth(void); // Update characters, items and enemies depth
 void update_character_shadow(u16 nchar); // Update shadow position for a character
 void follow_active_character(u16 nchar, bool follow); // Follow (or unfollow active character)
 void approach_characters(void); // Move following characters towards the active character
+void set_character_anim(u16 nchar, u8 animation); // Fija una animación que el motor no toca (poses que aguantan diálogos)
+void release_character_anim(u16 nchar);           // Devuelve el control de la animación al motor (vuelve a idle)
 void idle_all_characters(void); // Deja a TODOS los personajes quietos y en idle (cinemáticas)
 void reset_character_animations(void); // Estado de reposo salvo el personaje activo (diálogos, spawns)
 void update_character_animations(void); //Update the character's animation based on its current state

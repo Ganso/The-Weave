@@ -26,6 +26,7 @@ const SceneHook scene_hook_table[HOOK_COUNT] = {
     [HOOK_ACT1_COAST_ARRIVE]     = act1_coast_arrive,
     [HOOK_ACT1_FDAY_START]       = act1_fday_start,
     [HOOK_ACT1_FDAY_BOARS]       = act1_fday_boars,
+    [HOOK_ACT1_FDAY_BITE]        = act1_fday_bite,
     [HOOK_ACT1_FDAY_HEAL]        = act1_fday_heal,
     [HOOK_ACT1_COAST_END_AMBIENT] = act1_coast_end_ambient,
     [HOOK_ACT1_END_EPILOGUE]     = act1_end_epilogue,

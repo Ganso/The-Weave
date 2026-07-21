@@ -30,6 +30,7 @@
 // La fila 5 es opcional y su significado depende del sprite:
 #define ANIM_RUN        5   // jabalí: galope (huida/retirada del combate físico)
 #define ANIM_GRAB       5   // Linus sin vara: coger el bastón
+#define ANIM_WOUNDED    5   // Clio: herida en el suelo tras el mordisco del jabalí
 
 // Global variables
 extern bool movement_active;
@@ -46,6 +47,10 @@ typedef enum {
     STATE_PATTERN_EFFECT,
     STATE_PATTERN_EFFECT_FINISH,
     STATE_HIT,
+    // La ESCENA fija la animación y el motor no la toca: para poses que deben
+    // aguantar mientras corren diálogos (Clio herida tras el mordisco). Se sale
+    // devolviendo el personaje a STATE_IDLE.
+    STATE_FIXED_ANIM,
 } GameState;
 
 // Game entity definition
