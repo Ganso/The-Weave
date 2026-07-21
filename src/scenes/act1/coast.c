@@ -28,6 +28,7 @@ void act1_coast_arrive(void)    // Llegada: el rumor de las olas
 static void coast_gull_flies(void)
 {
     play_sample(snd_ambient_seagull, sizeof(snd_ambient_seagull));
+    idle_all_characters();   // que nadie se quede andando mientras vuela
     s16 gx = 520 - FASTFIX32_TO_INT(offset_BGA), gy = 112;
     release_item(0);
     Sprite *gull = SPR_addSpriteSafe(&item_coast_seagull, gx, gy,

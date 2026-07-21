@@ -437,6 +437,25 @@ void approach_characters(void)    // Move NPCs that follow the hero
 }
 
 
+// Deja QUIETOS a todos los personajes: estado de reposo y animación de idle.
+// Para cinemáticas dentro de un gancho (el vuelo de la gaviota en la playa),
+// donde el bucle usa next_frame(false) y, si alguien venía andando, se quedaría
+// con la animación de andar congelada mientras dura la escena.
+//
+// Diferencia con reset_character_animations(): aquella respeta al personaje
+// ACTIVO (la usan los diálogos y los spawns de enemigos, donde el protagonista
+// puede estar lanzando un hechizo y no se le debe tocar) y solo cambia el
+// estado. Ésta incluye a todos y fija además la animación.
+void idle_all_characters(void)
+{
+    for (u16 i = 0; i < MAX_CHR; i++)
+    {
+        if (!obj_character[i].active) continue;
+        obj_character[i].state = STATE_IDLE;
+        anim_character(i, ANIM_IDLE);
+    }
+}
+
 void reset_character_animations()
 {
     for (u16 i = 0; i < MAX_CHR; i++)

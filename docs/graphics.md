@@ -293,7 +293,30 @@ binario y no la encontrarás en `out/symbol.txt`.
 
 ---
 
-## 8. Mapa de archivos
+## 8. Cinemáticas dentro de un gancho: dejar quietos a los personajes
+
+Un gancho que anima algo por su cuenta (el vuelo de la gaviota en la playa)
+corre su propio bucle con `next_frame(false)`: no se lee el mando, así que el
+jugador no puede moverse. Pero **quien viniera andando se queda con la
+animación de andar congelada** todo lo que dure la escena, porque
+`update_character_animations()` sí sigue corriendo y respeta el estado.
+
+Por eso, antes de empezar la animación:
+
+```c
+idle_all_characters();   // todos quietos y en reposo
+```
+
+Hay dos funciones parecidas y conviene no confundirlas:
+
+| Función | Qué hace | Cuándo |
+|---|---|---|
+| `idle_all_characters()` | pone a **todos** en `STATE_IDLE` **y** con `ANIM_IDLE` | cinemáticas de un gancho |
+| `reset_character_animations()` | pone en reposo a todos **menos al personaje activo**, y solo el estado | diálogos y spawns de enemigos, donde el protagonista puede estar lanzando un hechizo y no se le debe tocar |
+
+---
+
+## 9. Mapa de archivos
 
 | Archivo | Qué hace |
 |---|---|
