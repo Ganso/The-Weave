@@ -1,4 +1,5 @@
 #include <genesis.h>
+
 #ifndef _RES_RES_INTRO_H_
 #define _RES_RES_INTRO_H_
 

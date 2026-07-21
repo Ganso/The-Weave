@@ -1,4 +1,5 @@
 #include <genesis.h>
+
 #ifndef _RES_RES_CHARACTERS_H_
 #define _RES_RES_CHARACTERS_H_
 

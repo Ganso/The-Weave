@@ -56,6 +56,45 @@ menú de smoke (`src/smoke/`). Ver `docs/testing.md`.
 Tasks en `.vscode/tasks.json`: Build (Incremental) · Clean + Build (Release) ·
 Clean · Build + Run · Run ROM (BlastEm) · Generate Texts · Consolidate.
 
+
+## Versiones de SGDK (el Makefile es autocontenido)
+
+El `Makefile` del repo **no incluye el `makefile.gen` de SGDK**: define sus
+propias reglas y solo usa `common.mk` (rutas de herramientas). El motivo es que
+`makefile.gen` cambia entre versiones y rompía el build al usar un SGDK local
+más moderno que el de la imagen Docker. Diferencias reales que nos afectaron:
+
+| | SGDK antiguo (imagen Docker) | SGDK nuevo (local) |
+|---|---|---|
+| `-Isrc` en los includes | lo ponía él | **ya no** (nuestro código incluye `"core/core.h"`) |
+| Cabecera de la ROM | `src/boot/rom_head.c` | `src/rom_header.c` |
+| `sega.s` | el del proyecto | el de SGDK, copiado a `out/` |
+| Binario que incrusta `sega.s` | `out/rom_head.bin` | `out/rom_header.bin` |
+| Carpeta de includes en `common.mk` | `INCLUDE_LIB` | `INC_LIB` |
+| Salida | `out/` | `out/<tipo>/` |
+
+Cómo lo resuelve nuestro Makefile, para que **compile con cualquiera de las dos**:
+
+- Pone `-I$(SRC)` en `INCS` él mismo (y deja `EXTRA_FLAGS` libre, que es por
+  donde `build-theweave.sh smoke` pasa `-DHACK_SMOKE_BUILD`).
+- La cabecera vive en **`src/boot/rom_header.c`** y es NUESTRA (título "The
+  Weave", "Geesebumps 2024", región). Se excluye del wildcard y tiene regla
+  propia.
+- El `sega.s` lo aporta SGDK (`$(SRC_LIB)/boot/sega.s`), así no arrastramos una
+  copia que se queda vieja. El nuestro se borró.
+- Genera la cabecera con **los dos nombres** (`rom_header.bin` y
+  `rom_head.bin`), porque cada `sega.s` la incrusta por nombre de fichero.
+- `INC_LIB ?= $(INCLUDE_LIB)` salva el renombrado de la variable.
+- Mantiene la salida plana en `out/` (que es lo que espera el script y las
+  herramientas de verificación: `out/rom.bin`, `out/symbol.txt`).
+
+También hubo un cambio de **API**: `Z80_loadDriver(Z80_DRIVER_XGM2, ...)` quedó
+obsoleta y las versiones nuevas la rechazan al compilar. Se usa
+`XGM2_loadDriver(1)` / `XGM_loadDriver(1)`, que existen en ambas.
+
+> Si al cambiar de SGDK algo deja de compilar, mira primero estas diferencias
+> antes de tocar el código del juego.
+
 ## Problemas típicos
 
 - **"escena/id no existe"** al compilar → validación fatal de un generador:

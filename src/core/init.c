@@ -20,12 +20,16 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Initialize audio driver
     Z80_init();
+    // Cada driver se carga con SU propia función: Z80_loadDriver(Z80_DRIVER_*)
+    // quedó obsoleta en SGDK y las versiones nuevas la rechazan al compilar.
+    // XGM_loadDriver/XGM2_loadDriver existen en ambas, así que esto vale para
+    // cualquier versión.
     if (XGM_VERSION==2) {
-        Z80_loadDriver(Z80_DRIVER_XGM2, 1);
+        XGM2_loadDriver(1);
         dprintf(2,"XGM2 driver loaded\n");
     }
     else {
-        Z80_loadDriver(Z80_DRIVER_XGM, 1);
+        XGM_loadDriver(1);
         dprintf(2,"XGM driver loaded\n");
     }
 
