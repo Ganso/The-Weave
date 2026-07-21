@@ -130,6 +130,9 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL_BACKGROUND, false, false, false, tile_ind));
     tile_ind += tile_front->numTile;
 
+    // El interfaz tiene su sitio FIJO justo detrás de los fondos (ver interface.c)
+    tile_ind = interface_reserve_tiles(tile_ind);
+
     // Set palettes after loading all tiles to avoid flicker
     dprintf(2,"Loading palettes (new level)\n");
     PAL_setPalette(PAL_BACKGROUND, new_pal.data, DMA);

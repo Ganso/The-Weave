@@ -293,6 +293,24 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   `initialize`). Nada de tablas `const` con duraciones en frames: rellénalas en
   runtime (`SCREEN_FPS * n`). Milisegundos → ticks con `calc_ticks(ms)`.
 - **`u16` y restas**: compara antes de restar HP/contadores (underflow silencioso).
+- **NUNCA accedas a memoria o VRAM a pelo si existe una función de SGDK que lo
+  haga.** Nada de escribir puertos del VDP, punteros a CRAM/VRAM ni aritmética de
+  índices crudos: usa la API (`PAL_getPalette`/`PAL_setPalette` por NÚMERO de
+  paleta, `VDP_loadTileSet`, `SPR_*`, `DMA_*`…). SGDK gestiona colas de DMA,
+  regiones de VRAM y el momento del vblank; saltárselo rompe cosas lejos del
+  punto donde escribiste, y de forma intermitente. Si de verdad no hay función
+  para lo que necesitas, coméntalo en el código explicando por qué.
+  *(Ejemplo real corregido: `PAL_getColors(0, buf, 16)` con el 0 a mano pasó a
+  `PAL_getPalette(PAL_BACKGROUND, buf)`.)*
+- **`tile_ind` es un puntero de asignación, no un contador para sumar y restar.**
+  `new_level` lo pone en `TILE_USER_INDEX` y va reservando: fondo trasero → fondo
+  delantero → interfaz (`interface_reserve_tiles`). Quien necesite VRAM de tiles
+  **reserva una vez** y guarda su índice; NUNCA `tile_ind += ...` al mostrar algo y
+  `tile_ind -= ...` al ocultarlo. Bug real: el interfaz hacía justo eso, y un
+  `show`/`hide` desparejado (los hay: `act1_return_ghosts`, `combat_start`) metía el
+  índice **dentro del fondo** (bajó a 742 con el fondo en 16..847) o **dentro de los
+  sprites** (subió a 1166): el interfaz escribía sus tiles encima y salían el
+  pentagrama y las letras dibujados en el suelo del bosque.
 - **Las paletas se nombran, no se numeran**: usa `PAL_BACKGROUND` /
   `PAL_CHARACTERS` / `PAL_INTERFACE` / `PAL_ENEMIES` (definidos en `core/config.h`),
   nunca `PAL0..PAL3` a pelo. Mismo reparto en el DSL (`item` y `palette` los validan

@@ -92,24 +92,37 @@ static void restore_animation_states(void)
 }
 
 
+// Reserva de VRAM del interfaz. Sus tres imágenes son SIEMPRE las mismas, así
+// que ocupan un sitio FIJO que se aparta una vez por nivel (interface_reserve_tiles).
+// Antes se sumaba y restaba al `tile_ind` compartido en cada mostrar/ocultar: bastaba
+// un desequilibrio (un hide sin su show, o un show de más) para que el índice se
+// metiera en la zona del fondo o en la de sprites y el interfaz escribiese encima.
+// Síntoma real: pentagrama y letras apareciendo en el suelo del bosque.
+static u16 interface_tile_ind;   // primer tile reservado para el interfaz
+
+u16 interface_reserve_tiles(u16 from_tile)    // Aparta su sitio; devuelve el siguiente tile libre
+{
+    interface_tile_ind = from_tile;
+    return from_tile + int_screen_limit.tileset->numTile
+                     + int_rod_image.tileset->numTile
+                     + int_pentagram_image.tileset->numTile;
+}
+
 void show_or_hide_interface(bool visible)    // Toggle visibility of game's bottom interface
 {
     if (!interface_active) return; // If interface is not active, do nothing
 
     if (visible == true) {
-        // Draw the rod and pentagram images in the window plane
-        VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, tile_ind), 0, 22, false, true);
-        tile_ind+=int_screen_limit.tileset->numTile;
-        VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, tile_ind), 0, 24, false, true);
-        tile_ind+=int_rod_image.tileset->numTile;
-        VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, tile_ind), 27, 22, false, true);
-        tile_ind+=int_pentagram_image.tileset->numTile;
+        // Se redibuja siempre en el MISMO sitio: llamarlo dos veces es inofensivo
+        u16 ind = interface_tile_ind;
+        VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, ind), 0, 22, false, true);
+        ind += int_screen_limit.tileset->numTile;
+        VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, ind), 0, 24, false, true);
+        ind += int_rod_image.tileset->numTile;
+        VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, ind), 27, 22, false, true);
     } 
     else {
         // Clear the window plane and hide rod and pentagram icons
-        tile_ind-=int_rod_image.tileset->numTile;
-        tile_ind-=int_pentagram_image.tileset->numTile;
-        tile_ind-=int_screen_limit.tileset->numTile;
         VDP_clearPlane(WINDOW, true);
         hide_rod_icons();
         hide_pentagram_icons();

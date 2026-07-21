@@ -36,7 +36,7 @@ static void thunder_set_bright(bool bright)
         if (thunder_in_forest) PAL_setPalette(PAL_BACKGROUND, forest_pal.data, DMA);
         PAL_setColor(PAL_BACKGROUND_COL4, COLOR_WHITE_VDP);                 // destello del cielo
     } else {
-        if (thunder_in_forest) PAL_setColors(0, thunder_saved_pal, 16, DMA);
+        if (thunder_in_forest) PAL_setPalette(PAL_BACKGROUND, thunder_saved_pal, DMA);
         else PAL_setColor(PAL_BACKGROUND_COL4, thunder_saved_pal[4]);      // solo el cielo
     }
 }
@@ -86,7 +86,7 @@ static void thunder_on_rejected(SpellContext *ctx)
 static void thunder_on_launch(SpellContext *ctx)
 {
     (void)ctx;
-    PAL_getColors(0, thunder_saved_pal, 16);   // guardar el fondo de la escena
+    PAL_getPalette(PAL_BACKGROUND, thunder_saved_pal);   // guardar el fondo de la escena
     // ¿Estamos en el bosque? (fondo == forest_dark) → parpadeo de fondo completo
     thunder_in_forest = true;
     for (u16 i = 0; i < 16; i++)

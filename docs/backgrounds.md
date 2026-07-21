@@ -105,6 +105,10 @@ repetidos y los volteados, que no cuentan doble):
 El bosque es el más caro y **aun así entra y funciona** (verificado recorriéndolo
 entero). Si tu fondo se acerca a esa cifra, aplica los consejos de arriba.
 
+> Si ves **basura gráfica** en un escenario, antes de culpar al dibujo comprueba
+> que no sea otra cosa escribiendo encima de sus tiles: es lo que pasaba con el
+> interfaz del juego (ver la nota de `tile_ind` en AGENTS §7).
+
 ### Dónde va
 
 ```

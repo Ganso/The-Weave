@@ -26,6 +26,10 @@ extern Sprite *spr_pattern_list_note[4]; // The 4 notes in right of the pattern 
 
 // Others
 extern bool interface_active; // Do we have to show the interface?
+
+// Aparta la VRAM del interfaz (sitio FIJO). La llama new_level tras cargar los
+// fondos; devuelve el siguiente tile libre. Ver la nota en interface.c.
+u16 interface_reserve_tiles(u16 from_tile);
 extern bool player_has_paused; // Has the player paused the game since last reset?
 
 void show_or_hide_interface(bool visible); // Show or hide the bottom interface
