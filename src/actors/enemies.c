@@ -294,5 +294,9 @@ void update_enemy_animations(void)
         }
     }
 
-    update_life_counter();    // Update life counter sprite if needed
+    // QUITADO: los corazones de vida sobre la cabeza de los enemigos. La lógica
+    // sigue entera en interface.c (update_life_counter); solo se han comentado
+    // las llamadas. Para recuperarlos, descomenta esta línea y la de
+    // combat.c (hit_enemy).
+    // update_life_counter();    // Update life counter sprite if needed
 }

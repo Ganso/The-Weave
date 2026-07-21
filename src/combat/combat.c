@@ -64,7 +64,10 @@ void hit_enemy(u8 enemyId, u8 damage)
         // TODO: Better enemy defeat handling (diferido)
         dprintf(2, "Enemy %d defeated", enemyId);
         obj_enemy[enemyId].hitpoints = 0; // Marks the enemy as dying
-        SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter sprite
+        // QUITADO: corazones de vida sobre los enemigos (ver enemies.c). OJO al
+        // recuperarlo: esta llamada NO comprueba NULL, y con los corazones
+        // desactivados el sprite nunca se crea.
+        // SPR_setVisibility(spr_int_life_counter, HIDDEN); // Hide life counter sprite
         anim_enemy(enemyId, ANIM_HURT); // Death animation (via entity field so update_enemy keeps it)
         play_sample(snd_effect_magic_disappear, sizeof(snd_effect_magic_disappear)); // Play hit sound
         // B4: no blocking wait here. STATE_HIT pauses AI/pattern launches; the release

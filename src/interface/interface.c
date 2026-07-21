@@ -578,7 +578,14 @@ void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool prio
     }
 }
 
-// Check the status of the current pattern, including note playing and expiration
+// DESACTIVADA (decisión de diseño): los corazones de vida sobre la cabeza de
+// los enemigos ya no se muestran. La función se conserva ENTERA y funcional;
+// lo único que se ha hecho es comentar quien la llamaba:
+//   - actors/enemies.c, al final de update_enemy_animations (la de cada frame)
+//   - combat/combat.c, en hit_enemy (ocultarlo al morir el enemigo)
+// Descomentando esas dos vuelve el comportamiento anterior. La de hit_enemy no
+// comprueba NULL, así que las dos van juntas o ninguna.
+//
 // Update the face and life counter sprite for the enemies
 void update_life_counter(void) {
     u16 life_counter = 0;
