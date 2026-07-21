@@ -90,9 +90,9 @@ act1_forest,A1_FOREST_TURN_OFF_CONSOLE,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Apa
 act1_forest,A1_FOREST_ORGANIZE_SOCKS,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,"o preparar la cena,|o organizar tu cajón de calcetines|alfabéticamente.","or cook dinner,|or organize your sock drawer|alphabetically."
 act1_bedroom,A1_BEDROOM_HUNDRED_YEARS,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Han pasado ya cien años,A hundred years have passed
 act1_bedroom,A1_BEDROOM_SWAN2,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Cien años desde que|cantamos para contenerle,A hundred years since|we sang to contain him
-act1_bedroom,A1_BEDROOM_SWAN3,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Pero el tejido|se está rompiendo,But the weave|is breaking
+act1_bedroom,A1_BEDROOM_SWAN3,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Pero @[el tejido@]|se está rompiendo,But @[the weave@]|is breaking
 act1_bedroom,A1_BEDROOM_CANT_STOP_LONG,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,No podremos detenerle|mucho más tiempo,We won't be able to|hold him much longer
-act1_bedroom,A1_BEDROOM_SWAN5,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,Linus Wordweaver...,Linus Wordweaver...
+act1_bedroom,A1_BEDROOM_SWAN5,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,@[Linus Wordweaver@]...,@[Linus Wordweaver@]...
 act1_bedroom,A1_BEDROOM_SWAN6,FACE_swan,SIDE_LEFT,DEFAULT_TALK_TIME,"Cuando despiertes,|escucha lo que ya sabías","When you wake,|listen to what you already knew"
 act1_bedroom,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_bedroom,A1_BEDROOM_NEXT_MORNING,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,A la mañana siguiente...,The next morning...

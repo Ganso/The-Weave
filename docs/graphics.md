@@ -174,8 +174,9 @@ La solución adoptada tiene dos mitades:
 
 1. **En el dormitorio**, donde el cisne es lo único que se ve, la escena carga su
    paleta (`palette PAL_CHARACTERS swan_pal` en `bedroom.scene`) y la devuelve al
-   despertar (`act1_bedroom_wake`). Ningún texto mostrado en ese tramo lleva
-   resaltado, así que el índice 15 no molesta.
+   despertar (`act1_bedroom_wake`). Para que eso no rompa nada, `swan_pal` está
+   **ordenada a propósito** de forma que los índices con función compartida
+   coincidan con `characters.pal` (ver el recuadro de abajo).
 2. **En el resto de escenas** Bobbin habla sin que su paleta esté cargada, así que
    su cara existe **repintada con `characters.pal`**
    (`swan_face_charpal_sprite`). `init_face` elige una u otra **comparando la
@@ -187,6 +188,26 @@ La solución adoptada tiene dos mitades:
 > reevalúa en **cada** `init_face`, no solo la primera vez. Fue justo lo que hacía
 > que Bobbin saliera con los colores mal en todas las escenas posteriores al
 > dormitorio.
+
+#### La técnica: reservar los índices de función compartida
+
+Cuando cargas una paleta propia en `PAL_CHARACTERS`, **el motor sigue usando dos
+índices concretos de esa ranura** aunque tú hayas cambiado el resto:
+
+| Índice | Para qué lo usa el motor | `characters.pal` | `swan_pal` |
+|---|---|---|---|
+| **13** | el color de las **sombras** | negro `(0,0,0)` | casi negro `(16,4,24)` |
+| **15** | el **texto resaltado** `@[...@]` | rojo `(205,80,65)` | naranja `(246,109,65)` |
+
+Ordenando la paleta propia para que esos dos huecos lleven colores **del mismo
+tipo**, todo lo del motor sigue funcionando y solo cambian los colores del
+personaje. Fue lo que se hizo con el cisne: antes tenía el casi-negro en el 15,
+y sus frases resaltadas salían ilegibles sobre la caja oscura; moviéndolo al 13
+(donde hace falta oscuro, para las sombras) y poniendo el naranja en el 15, los
+resaltes de Bobbin funcionan igual que los de cualquiera.
+
+**Regla para el arte**: si un elemento necesita paleta propia, deja los índices
+13 y 15 con un oscuro y un color de resalte legible.
 
 ---
 

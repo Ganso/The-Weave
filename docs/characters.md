@@ -62,10 +62,16 @@ Los personajes **comparten una paleta común**: `res/gfx/characters/characters.p
 (16 colores). Dibuja tu personaje usando **solo esos colores** y todo encajará
 sin tocar nada más.
 
-> Si tu personaje necesita colores propios (como el cisne, que tiene su
-> `swan_pal`), díselo a quien programe: hay que cargar su paleta al mostrarlo y
-> devolverla después, y eso trae complicaciones (mira el aviso de la paleta del
-> cisne en `docs/acto1.md`).
+> Si tu personaje necesita **colores propios** (como el cisne, que tiene su
+> `swan_pal`), se puede: la escena carga su paleta al mostrarlo y la devuelve
+> después. Pero deja dos huecos con el color que toca, porque el juego los usa
+> para otras cosas aunque cambies el resto:
+>
+> - **el índice 13** debe ser un color **oscuro** (es el de las sombras),
+> - **el índice 15**, un color **legible sobre la caja de diálogo** (es el de las
+>   palabras resaltadas con `@[...@]`).
+>
+> Con eso hecho, todo funciona igual. Es lo que se hizo con el cisne.
 
 ### 2.3 La sombra
 
