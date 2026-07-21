@@ -368,21 +368,38 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
 AGENTS.md es la biblia del **motor**. La **autoría de contenido** y los flujos de
 trabajo tienen guías dedicadas — no dupliques su contenido aquí, enlázalas:
 
+`docs/README.md` es el índice de entrada. Las guías se agrupan así:
+
+**Cómo crear cada elemento del juego** (una guía por elemento, para no técnicos:
+del arte al `.res`, al código y a la escena):
+
 | Documento | Cubre |
 |---|---|
+| `docs/characters.md` | Personajes: hoja de sprites, sombra, cara, `CHR_*`, uso en escena. |
+| `docs/enemies.md`  | Enemigos: rol contacto/distancia, `ContactProfile`, clase, gancho de aparición. |
+| `docs/items.md`    | Objetos del decorado e interactuables: caja de interacción, profundidad, gancho. |
+| `docs/backgrounds.md` | Fondos: dos capas, área jugable 176 px, tiles/VRAM, paletas, `level` y scroll. |
+| `docs/audio.md`    | Efectos (.wav + resample automático), música (.vgm) y jingles de hechizos. |
+| `docs/spells.md`   | Hechizos de principio a fin (hooks, fases, zonas, receta). |
+| `docs/scenes.md`   | Escenas: todos los ops del DSL, formatos de texts.csv/choices.csv, recetas. |
+| `docs/texts.md`    | Diálogos, clusters, choices y voces. |
+
+**Sistemas y flujos de trabajo:**
+
+| Documento | Cubre |
+|---|---|
+| `docs/combat.md`   | Referencia canónica del COMBATE: el director único, CombatConfig (datos+hooks), roles y perfiles de enemigo, FSMs, recetas y trampas. |
 | `docs/build.md`    | Pipeline de build completo, configuración personal, VS Code, problemas típicos. |
 | `docs/testing.md`  | Smoke ROM (tipos de caso, cómo añadir uno) y checklist de playtest. |
 | `docs/retroarch-mcp.md` | Depuración desatendida vía RetroArch + `mcp-retroarch` (NCI UDP :55355): detección, leer/escribir RAM con byte-swap, frame-advance, capturas. |
-| `docs/spells.md`   | Guía para no técnicos: crear un hechizo de principio a fin (hooks, fases, zonas, receta). |
-| `docs/scenes.md`   | Guía para no técnicos: crear una escena (todos los ops del DSL, formatos de texts.csv/choices.csv, recetas). |
-| `docs/texts.md`    | Guía para no técnicos: escribir diálogos, clusters, choices y voces. |
-| `docs/combat.md`   | Referencia canónica del COMBATE: el director único, CombatConfig (datos+hooks), roles y perfiles de enemigo, FSMs, recetas y trampas. |
 | `docs/acto1.md`    | Acto 1: estado escena por escena y lo que queda por hacer (arte, audio, bugs). |
 | `docs/test_scene.md` | Desglose de qué prueba cada sección de `act1_test`. |
 
-Las guías `spells.md`/`scenes.md`/`texts.md` son **deliberadamente autocontenidas y no
-técnicas** (no remiten a otros documentos): al mantenerlas, conserva ese tono y no las
-acortes al estilo terso de AGENTS.
+Las guías de **creación de elementos** son **deliberadamente autocontenidas y no
+técnicas** (no remiten a otros documentos salvo para temas vecinos claramente
+acotados): al mantenerlas, conserva ese tono y no las acortes al estilo terso de
+AGENTS. Todas siguen la misma estructura: arte → `.res` → código → escena →
+comprobación (con tabla de "si algo va mal") → resumen final.
 
 ## 11. Voces (animalese)
 
