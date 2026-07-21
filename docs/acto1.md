@@ -139,9 +139,6 @@ sin tocar código (mismo archivo, mismas dimensiones y paleta).
 - Jingles propios de SLEEP, HEAL y EN_BITE (hoy silenciosos).
 
 **Bugs / pulido conocidos**:
-- **Paleta del cisne**: usa una paleta propia distinta de la de personajes. Cuando
-  habla en el dormitorio los textos resaltados salen con color equivocado, y su cara
-  en escenas posteriores sale con los colores mal. (Detalle técnico en AGENTS §12.)
 - Playtest de posiciones y tiempos de las cutscenes (paradas de personajes, X de los
   combates, duración de flashes).
 

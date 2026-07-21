@@ -167,6 +167,22 @@ void reinit_character_sprite(u16 nchar)
     show_character(nchar, visible);
 }
 
+// El CISNE es el único personaje con paleta propia (swan_pal): sus colores no
+// coinciden en NINGÚN índice con characters.pal. El dormitorio carga swan_pal en
+// PAL_CHARACTERS (op `palette` de bedroom.scene) porque allí el cisne es lo único
+// en pantalla; el resto de escenas dejan characters_pal. Por eso su cara existe
+// en dos versiones y aquí se elige la que case con la paleta que esté cargada
+// AHORA, comparándola con swan_pal. Así no hay banderas que mantener: si algún
+// día otra escena carga swan_pal, funciona sola.
+static const SpriteDefinition *swan_face_for_current_palette(void)
+{
+    u16 live[16];
+    PAL_getPalette(PAL_CHARACTERS, live);
+    for (u16 i = 0; i < 16; i++)
+        if (live[i] != swan_pal.data[i]) return &swan_face_charpal_sprite;
+    return &swan_face_sprite;
+}
+
 void init_face(u16 nface)    // Create new character face sprite for dialogs
 {
     u8 npal = PAL_CHARACTERS;
@@ -185,7 +201,7 @@ void init_face(u16 nface)    // Create new character face sprite for dialogs
             nsprite = &xander_face_sprite;
             break;
         case CHR_swan:
-            nsprite = &swan_face_sprite;
+            nsprite = swan_face_for_current_palette();
             break;
         default:
             return;
@@ -196,6 +212,13 @@ void init_face(u16 nface)    // Create new character face sprite for dialogs
     } else {
         nsprite = obj_face[nface].sd;
         obj_face[nface].active=true;
+    }
+
+    // release_face NO limpia sd, así que la cara del cisne elegida en el
+    // dormitorio se quedaría cacheada para todo el juego: se reevalúa siempre.
+    if (nface == CHR_swan) {
+        nsprite = swan_face_for_current_palette();
+        obj_face[nface].sd = nsprite;
     }
 
     spr_face[nface] = SPR_addSpriteSafe(nsprite, obj_face[nface].x, obj_face[nface].y, 

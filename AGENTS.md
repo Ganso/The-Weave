@@ -446,12 +446,6 @@ comprobación (con tabla de "si algo va mal") → resumen final.
 > audio, playtest) está en `docs/acto1.md`; el de testing automatizado en
 > `docs/testing/plan.md`; el detalle de cada dominio, en su guía.
 
-- **Paleta del cisne**: usa una paleta propia distinta de la de personajes. Cuando
-  habla en el dormitorio (PAL_CHARACTERS = swan_pal), los resaltados @[...@] del texto salen con
-  color equivocado (esperan la paleta de Linus); y cuando su CARA aparece en escenas
-  posteriores (PAL_CHARACTERS = characters_pal), la cara sale con los colores mal (espera
-  swan_pal). Sin resolver (¿colores de resaltado/cara en una paleta estable, o cara
-  del cisne redibujada con characters_pal?).
 - **Jingles de SLEEP, HEAL y EN_BITE sin componer**: falta su melodía propia en
   `play_spell_jingle` (`src/audio/sound.c`).
 - **Muerte de enemigo más rica**: la actual es anim hurt ~1 s + release; una anim

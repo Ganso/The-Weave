@@ -163,6 +163,31 @@ Detalles útiles:
 - Usa siempre la API por número de paleta (`PAL_getPalette`/`PAL_setPalette`), no
   índices crudos de CRAM.
 
+### Cuando algo necesita una paleta propia: el caso del cisne
+
+`PAL_CHARACTERS` la comparten Linus, Clio, Xander, sus caras, sus sombras, los
+marcos del bocadillo y **el color del texto resaltado** `@[...@]` (que es el
+índice 15 de esa paleta). El **cisne** es la excepción: su arte usa `swan_pal`,
+que no coincide con `characters.pal` en **ninguno** de los 16 colores.
+
+La solución adoptada tiene dos mitades:
+
+1. **En el dormitorio**, donde el cisne es lo único que se ve, la escena carga su
+   paleta (`palette PAL_CHARACTERS swan_pal` en `bedroom.scene`) y la devuelve al
+   despertar (`act1_bedroom_wake`). Ningún texto mostrado en ese tramo lleva
+   resaltado, así que el índice 15 no molesta.
+2. **En el resto de escenas** Bobbin habla sin que su paleta esté cargada, así que
+   su cara existe **repintada con `characters.pal`**
+   (`swan_face_charpal_sprite`). `init_face` elige una u otra **comparando la
+   paleta que hay viva** con `swan_pal`: sin banderas que mantener, y si algún día
+   otra escena carga `swan_pal`, funciona sola.
+
+> Ojo: `release_face` no limpia el `sd` de la entidad, así que un sprite elegido
+> una vez se quedaría cacheado para siempre. Por eso la cara del cisne se
+> reevalúa en **cada** `init_face`, no solo la primera vez. Fue justo lo que hacía
+> que Bobbin saliera con los colores mal en todas las escenas posteriores al
+> dormitorio.
+
 ---
 
 ## 5. Los sprites
