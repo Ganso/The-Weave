@@ -260,7 +260,22 @@ patrones completo, y el de contacto se verificó conduciéndolo por RAM
 
 ---
 
-## 9. Lo que queda por hacer (combate)
+## 9. Los corazones de vida del enemigo: QUITADOS
+
+Los enemigos ya no muestran corazones sobre la cabeza (decisión de diseño). La
+lógica sigue entera y funcional en `interface.c` (`update_life_counter`); lo
+único que se hizo fue **comentar sus dos llamadas**:
+
+- `actors/enemies.c`, al final de `update_enemy_animations` — la de cada frame.
+- `combat/combat.c`, en `hit_enemy` — ocultarlo al morir el enemigo.
+
+> **Las dos van juntas o ninguna.** La de `hit_enemy` no comprueba NULL y, con
+> los corazones desactivados, el sprite nunca se crea: descomentar solo una
+> provocaría un fallo al morir un enemigo. Está avisado en el propio código.
+
+---
+
+## 10. Lo que queda por hacer (combate)
 
 - **Muerte de enemigo más rica**: la actual es flash de daño ~1 s + release;
   una animación propia y recompensas es diseño de juego que el motor ya

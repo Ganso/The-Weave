@@ -37,7 +37,7 @@ El juego espera las filas **en este orden**:
 | 2 | `ACTION` | acción genérica (golpear, señalar, tocar notas) |
 | 3 | `MAGIC` | lanzar un hechizo |
 | 4 | `HURT` | recibir daño |
-| 5 | *extra* | opcional: agacharse a coger algo, correr… |
+| 5 | *extra* | opcional; su significado lo decide cada personaje: agacharse a coger algo, correr, o una **pose sostenida** (Clio herida en el suelo tras el mordisco) |
 
 Reglas de oro:
 
@@ -52,6 +52,11 @@ Reglas de oro:
   **primer color de la paleta**.
 - Si una fila tiene menos fotogramas que las demás, **repite el último** hasta
   completar la rejilla.
+
+> Si la fila extra es una **pose que debe mantenerse** (un personaje herido que
+> sigue en el suelo mientras hablan), díselo a quien programe: hace falta fijarla
+> para que ni el motor ni los diálogos la deshagan. Ya está resuelto, es una
+> línea de código.
 
 Ejemplo real: `res/gfx/characters/linus.png` mide 816×384 con fotogramas de
 136×48 (6 columnas × 8 filas).

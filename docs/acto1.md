@@ -77,15 +77,22 @@ interior.
 
 ### Esc. 4b — Bosque del atardecer (`act1_island`)
 Linus lleva **antorcha**. Primer **combate de contacto**: los **jabalíes**
-(persiguen y muerden; arma = golpe con A). Tras la pelea, Clio es mordida y canta el
-patrón de **CURACIÓN**: Linus lo aprende y lo anota (jingle + notas + menú de pausa,
-como la nana), aunque usa la nota más alta y no podrá cantarlo hasta mucho más
-adelante. Al final del tramo aparece la choza a lo lejos.
+(persiguen y muerden; el arma es el golpe con A). Al empezar avisa *"Pulsa A para
+actuar"* y Clio suelta la pista: *"A lo mejor les asusta el fuego"* — ambas se
+repiten en cada reintento.
+
+Ganado el combate, **un jabalí rezagado entra corriendo por la izquierda**, se
+planta junto a Clio y la muerde: ella encaja el golpe y **queda herida en el
+suelo** (pose sostenida) durante todo el diálogo, hasta que canta el patrón de
+**CURACIÓN** y se levanta. Linus lo aprende y lo anota (jingle + notas + menú de
+pausa, como la nana), aunque usa la nota más alta y no podrá cantarlo hasta mucho
+más adelante. Al final del tramo aparece la choza a lo lejos.
 
 ### Esc. 5 — Choza / telar roto (`act1_hut`)
 Sin antorcha dentro (sprite norod). Exploración libre con **inspecciones** opcionales
-(bastidor, hilos). Interactuar con el **bastón** dispara la cutscene: rayo, recogida
-(anim GRAB), patrón **ELECTRICIDAD** inscrito y primera **voz de Bobbin**. Al coger
+(bastidor, hilos). Interactuar con el **bastón** dispara la cutscene: Linus lo **coge** (anim GRAB)
+y **entonces** cae el rayo, se inscribe el patrón **ELECTRICIDAD** y suena la
+primera **voz de Bobbin**. Al coger
 el bastón se apaga la antorcha y entra el **límite de notas** (solo las 3 primeras:
 una superior avisa y cancela el patrón). Al salir, una **sombra** cruza entre los
 restos.
@@ -94,8 +101,11 @@ restos.
 Mismo bosque **de derecha a izquierda** (scroll `user_left`), ya sin antorcha.
 Emboscada de **jabalíes** que solo se ahuyenta con el **TRUENO** (combate de contacto
 en modo trueno; pista de Bobbin al caer). Después, los **espectros del Caos**
-(combate de patrones: se vencen con el trueno invertido). Ambos con reintento por
-derrota.
+(combate de patrones: se vencen con el trueno invertido). Lanzarles el trueno
+directo no les hace nada y Linus lo constata (*"No parece afectarles"*): la
+solución la da Bobbin al caer derrotado, no se regala antes. Ambos combates con
+reintento por derrota, y tras el consejo del cisne hay **fundido a negro y una
+pausa** antes de volver a intentarlo.
 
 ### Esc. 7 — Cierre en la nave (`act1_coast_end`)
 Tormenta. Diálogo final sobre la magia escondida y el rumbo al Gremio de los
@@ -114,7 +124,8 @@ sin tocar código (mismo archivo, mismas dimensiones y paleta).
 - **Fondos**: dormitorio, pasillo, salón y bosque (definitivos); **costa**
   (`coast_bg_*`, paletas `coast_day`/`coast_storm`) y **choza** (`hut_bg_*`, con
   agujero del techo que deja ver la luna) *(placeholder)*.
-- **Personajes**: Linus (vara/sin vara/antorcha), Clio, Xander, cisne.
+- **Personajes**: Linus (vara/sin vara/antorcha), Clio (con su pose de herida en
+  la fila extra), Xander, cisne.
 - **Enemigos**: jabalí (con sombra) y WeaverGhost (hace de espectro del Caos).
 - **Items**: retrato y baúl (dormitorio), bastón (con frame «resonando»), bastidor
   e hilos (choza), gaviota y hojas del árbol (costa) *(placeholder)*.
@@ -132,7 +143,6 @@ sin tocar código (mismo archivo, mismas dimensiones y paleta).
 - Fondos de costa y choza; paleta de atardecer propia para `act1_island` (hoy usa la
   diurna del bosque).
 - Items de costa/choza, FX del rayo e icono de Curación.
-- **Animaciones de Clio** herida/cojeando y cantando Curación (esc. 4b).
 
 **Audio**:
 - Música de las escenas (composición VGM).

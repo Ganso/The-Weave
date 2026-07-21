@@ -95,9 +95,11 @@ referencian los .res — 13300 Hz mono para XGM2) → `make` dentro de
 `docs/testing.md`.
 
 Datos que conviene tener a mano aquí:
-- El `Makefile` del repo solo **envuelve** el `makefile.gen` de SGDK, que hace
-  wildcard de `src/**/*.c` y `res/*.res` con `-Isrc -Ires`. **Añadir un `.c` o un
-  `.res` NO requiere tocar el Makefile.**
+- El `Makefile` del repo es **autocontenido**: incluye solo `common.mk` de SGDK
+  (rutas de herramientas) y define sus propias reglas, con wildcard de
+  `src/**/*.c` y `res/*.res`. **Añadir un `.c` o un `.res` NO requiere tocarlo.**
+  Se hizo así porque el `makefile.gen` de SGDK cambia entre versiones y rompía el
+  build; el detalle de las diferencias está en `docs/build.md`.
 - Los generadores validan en **FATAL** con `archivo:línea`: una referencia rota
   (id de diálogo, hook, escena, hechizo) corta el build antes de compilar.
 
@@ -138,7 +140,8 @@ data/            → autoría editable: texts.csv (diálogos), choices.csv,
 tools/           → codegen python (gen_texts.py, gen_choices.py, gen_scenes.py) +
                    voice/ (síntesis de voces animalese)
 src/
-  boot/          → rom_head.c, sega.s
+  boot/          → rom_header.c (cabecera de la ROM: título, autor, región).
+                   El sega.s lo aporta SGDK; ver docs/build.md
   core/          → main (bucle de escenas), init, controller, frame
                    (next_frame/timing), config.h (SCREEN_WIDTH, PAL_*), hack.h (toggles)
   world/         → background: scroll, límites, new_level/end_level

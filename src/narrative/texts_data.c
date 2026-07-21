@@ -5,8 +5,8 @@
 
 const DialogItem system_dialog[] = {
     [SYSMSG_DEMO_TITLE] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
-        {"@[The Weave@]|Demo técnica|Junio de 2025",
-         "@[The Weave@]|Tech demo|June 2025"} },
+        {"@[The Weave@]|Demo técnica|Verano de 2026",
+         "@[The Weave@]|Tech demo|Summer 2026"} },
     [SYSMSG_DISCLAIMER] = { FACE_none, SIDE_LEFT, DEFAULT_TALK_TIME,
         {"Los gráficos, mecánicas o sonidos|no son definitivos, ni|representan el resultado final",
          "Graphics, mechanics or sounds|aren't final, nor they|represent the final result"} },

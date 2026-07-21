@@ -162,6 +162,12 @@ Detalles útiles:
   alterna entre ellas para simular el relámpago.
 - Usa siempre la API por número de paleta (`PAL_getPalette`/`PAL_setPalette`), no
   índices crudos de CRAM.
+- **Un efecto que cambia un color GUARDA el original, no lo cablea.** El mismo
+  escenario tiene paletas distintas (el bosque de día y el de noche no comparten
+  el color del cielo), así que restaurar un valor fijo deja el color mal. Pasó de
+  verdad: el trueno enemigo reponía un azul cableado que no era el de ninguna de
+  las dos, y el cielo quedaba raro tras cada ataque. Guarda con `PAL_getColor()`
+  al empezar el efecto y restaura ESE.
 
 ### Cuando algo necesita una paleta propia: el caso del cisne
 
@@ -313,6 +319,29 @@ Hay dos funciones parecidas y conviene no confundirlas:
 |---|---|---|
 | `idle_all_characters()` | pone a **todos** en `STATE_IDLE` **y** con `ANIM_IDLE` | cinemáticas de un gancho |
 | `reset_character_animations()` | pone en reposo a todos **menos al personaje activo**, y solo el estado | diálogos y spawns de enemigos, donde el protagonista puede estar lanzando un hechizo y no se le debe tocar |
+
+### Poses que tienen que AGUANTAR: `STATE_FIXED_ANIM`
+
+Poner una animación con `anim_character()` no basta si debe mantenerse un rato,
+porque el motor la deshace por dos vías:
+
+1. `update_character_animations()` devuelve a `ANIM_IDLE` en cuanto la animación
+   termina, si el personaje está en `STATE_IDLE`.
+2. `talk_dialog()` llama a `reset_character_animations()`, que pone en reposo a
+   todos menos al activo — o sea, **el propio diálogo deshace la pose**.
+
+Para eso está `STATE_FIXED_ANIM`: en ese estado **la escena es dueña de la
+animación** y el motor no la toca (mismo principio que el `STATE_WALKING` de los
+enemigos durante el combate de contacto). Con dos ayudantes:
+
+```c
+set_character_anim(CHR_clio, ANIM_WOUNDED);  // fija la pose; aguanta los diálogos
+...
+release_character_anim(CHR_clio);            // la suelta: vuelve a idle
+```
+
+Caso real: Clio herida tras el mordisco del jabalí (`act1_fday_bite`), que debe
+seguir en el suelo durante todo el diálogo hasta que canta Curación.
 
 ---
 
