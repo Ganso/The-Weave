@@ -320,6 +320,26 @@ ls -t ~/.config/retroarch/screenshots/*.png | head -1     # <- leer este PNG
 
 ---
 
+
+## Trampa: no muevas la cámara escribiendo `offset_BGA`
+
+Escribir `offset_BGA` por RAM para "teletransportar" el scroll **parece**
+funcionar (la pantalla se mueve) pero **produce corrupción gráfica falsa**: el
+fondo se dibuja con streaming incremental de tiles (`MAP_scrollTo`), y saltarse
+ese camino deja el plano con tiles obsoletos. Se ve basura en pantalla que NO
+existe jugando.
+
+Pasó de verdad: llevó a diagnosticar un "desbordamiento de VRAM del bosque" que
+no existía. El control que lo desmontó: un fondo de **12 tiles únicos**
+(`forest_simple_*`, en `res_backgrounds.res`) se corrompía **igual** que el
+bosque real de 832, mientras que el bosque real recorrido con la vía legítima
+(`scroll_background()`) sale **impecable**.
+
+- Para avanzar el escenario en una verificación, usa `scroll_background(dx)`
+  desde un parche temporal de la smoke ROM, no escrituras a `offset_BGA`.
+- Si necesitas saltar a un punto del nivel, hazlo por guion (`wait_scroll`) o
+  arrancando la escena con `HACK_START_SCENE`.
+
 ## 10. Qué cubre y qué queda
 
 ### Qué cubre hoy

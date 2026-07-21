@@ -89,9 +89,21 @@ Para que quepa:
   puntos ordenado tipo Bayer), no aleatorias.
 - **Alinea los elementos a la rejilla de 8 píxeles** siempre que puedas.
 
-Si te pasas, el juego mostrará basura en pantalla o el build fallará con un aviso
-de que no puede compilar el mapa. (Hoy mismo el bosque tiene este problema
-pendiente de arreglar: está anotado en `docs/acto1.md`.)
+Si te pasas, el build falla con un aviso de que no puede compilar el mapa.
+
+**Cuánto margen tienes**: caben del orden de **950 cuadraditos** entre las dos
+capas. Para hacerte una idea, estos son los fondos actuales (contando ya los
+repetidos y los volteados, que no cuentan doble):
+
+| Fondo | Únicos | Reutilización |
+|---|---|---|
+| bosque (delante + detrás) | 704 + 128 = **832** | 7,7× |
+| costa | 189 + 80 = 269 | 12,7× |
+| choza | 256 + 67 = 323 | 8,8× |
+| dormitorio | 551 + 107 = 658 | 1,7× |
+
+El bosque es el más caro y **aun así entra y funciona** (verificado recorriéndolo
+entero). Si tu fondo se acerca a esa cifra, aplica los consejos de arriba.
 
 ### Dónde va
 

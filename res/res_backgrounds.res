@@ -26,6 +26,14 @@ MAP forest_bg_map "gfx/backgrounds/act1/forest_bg_back.png" forest_bg_tile BEST
 PALETTE forest_pal "gfx/backgrounds/act1/forest.pal"
 PALETTE forest_dark_pal "gfx/backgrounds/act1/forest_dark.pal"
 
+# Bosque SIMPLE: control del experimento de VRAM (12 tiles únicos frente a 832
+# del bosque real). Misma paleta y mismas dimensiones; sirve para aislar si la
+# corrupción gráfica viene del número de tiles del fondo. Ver docs/acto1.md.
+TILESET forest_simple_front_tile "gfx/backgrounds/act1/forest_simple_bg_front.png" BEST
+MAP forest_simple_front_map "gfx/backgrounds/act1/forest_simple_bg_front.png" forest_simple_front_tile BEST
+TILESET forest_simple_bg_tile "gfx/backgrounds/act1/forest_simple_bg_back.png" BEST
+MAP forest_simple_bg_map "gfx/backgrounds/act1/forest_simple_bg_back.png" forest_simple_bg_tile BEST
+
 # Act 1 - Scene 4 y 7 - Costa de la Isla de los Tejedores
 # *** PLACEHOLDER (arte generado por código; sustituir por .ase definitivo) ***
 # Área jugable y=0..175: front transparente y back negro por debajo de 176
