@@ -164,7 +164,8 @@ act1_coast,A1_COAST_ONWARDb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Demasiado quie
 act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_island,A1_ISLAND_COMBAT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,"¡@[Madre@], detrás!","@[Mother@], behind you!"
-act1_island,A1_ISLAND_COMBATb,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Golpea con el botón @[A@],Strike with the @[A@] button
+act1_island,A1_ISLAND_COMBATb,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,Pulsa @[A@] para actuar,Press @[A@] to act
+act1_island,A1_ISLAND_COMBATc,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,A lo mejor les|asusta el fuego,Maybe the fire|will scare them
 act1_island,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_island,A1_ISLAND_HURT,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¡@[Madre@]!|Estás herida,@[Mother@]!|You're hurt
 act1_island,A1_ISLAND_HURTb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,No es grave,It's not serious
