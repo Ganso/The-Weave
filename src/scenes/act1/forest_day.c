@@ -43,7 +43,7 @@ void act1_fday_boars(void)    // Primer combate físico: 3 jabalíes (Linus sin 
     // El combate lo ejecuta el op `combat` de la escena, justo tras este hook
 }
 
-#define BITE_GAP     26   // a qué distancia de Clio se planta el jabalí
+#define BITE_GAP     32   // a qué distancia de Clio se planta el jabalí
 #define BITE_RUN_IN   3   // px/frame de la carrera de entrada
 #define BITE_RUN_OUT  4   // px/frame de la huida
 
@@ -84,9 +84,10 @@ void act1_fday_bite(void)
     wait_seconds(1);
 
     // Clio encaja el golpe UNA vez y se queda herida en el suelo
-    look_left(CHR_clio, true);           // mirando al jabalí (a su izquierda)
+    look_left(CHR_clio, true);           // encaja el golpe mirando al jabalí
     anim_character(CHR_clio, ANIM_HURT);
     wait_seconds(1);
+    look_left(CHR_clio, false);          // la pose de herida está dibujada mirando a la DERECHA
     set_character_anim(CHR_clio, ANIM_WOUNDED);
 
     // El jabalí se larga por donde vino
