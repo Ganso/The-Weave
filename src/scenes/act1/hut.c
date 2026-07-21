@@ -58,9 +58,9 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
 
     // El rayo cae por el agujero del techo sobre el bastón (posición según scroll)
     s16 bolt_x = HUT_STAFF_X - FASTFIX32_TO_INT(offset_BGA) - 12;
-    PAL_setPalette(PAL3, fx_lightning_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, fx_lightning_sprite.palette->data, DMA);
     Sprite *bolt = SPR_addSpriteSafe(&fx_lightning_sprite, bolt_x, 8,
-                                     TILE_ATTR(PAL3, TRUE, false, false));
+                                     TILE_ATTR(PAL_ENEMIES, TRUE, false, false));
     play_sample(snd_ambient_thunder, sizeof(snd_ambient_thunder));
 
     u16 old1 = PAL_getColor(1), old2 = PAL_getColor(2);   // cielo nocturno (capa B)
@@ -101,9 +101,9 @@ void act1_hut_lightning(void)    // Rayo + recogida del bastón + patrón Electr
 void act1_hut_shadow(void)
 {
     s16 sx = HUT_LOOM_X - FASTFIX32_TO_INT(offset_BGA);
-    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, weaver_ghost_sprite.palette->data, DMA);
     Sprite *shade = SPR_addSpriteSafe(&weaver_ghost_sprite, sx, 40,
-                                      TILE_ATTR(PAL3, FALSE, false, false));
+                                      TILE_ATTR(PAL_ENEMIES, FALSE, false, false));
     play_sample(snd_effect_magic_disappear, sizeof(snd_effect_magic_disappear));
     for (u16 i = 0; i < SCREEN_FPS && shade; i++) {
         SPR_setPosition(shade, sx - i, 40 + (i >> 2));

@@ -22,7 +22,7 @@ void act1_fday_start(void)    // Bosque del atardecer: Linus lleva la antorcha
 
 void act1_fday_boars(void)    // Primer combate físico: 3 jabalíes (Linus sin vara)
 {
-    PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, boar_sprite.palette->data, DMA);
     static const s16 spawn[3][2] = {    // {x esquina, y de pies}
         { SCREEN_WIDTH + 12, 146 },
         { SCREEN_WIDTH + 40, 170 },

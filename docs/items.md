@@ -61,7 +61,7 @@ guion de la escena (`data/scenes/<acto>/<escena>.scene`), en el bloque de
 montaje, con la orden `item`:
 
 ```
-item 3 item_taller_anvil PAL0 200 150 32 0 12 4 CALCULATE_DEPTH
+item 3 item_taller_anvil PAL_BACKGROUND 200 150 32 0 12 4 CALCULATE_DEPTH
 ```
 
 Los trozos, en orden:
@@ -70,7 +70,7 @@ Los trozos, en orden:
 |---|---|
 | `3` | **el hueco** que ocupa (0 a 14). Cada objeto de la escena usa uno distinto; es el número con el que lo reconocerás luego. |
 | `item_taller_anvil` | el nombre que declaraste en el `.res` |
-| `PAL0` | qué paleta usa (`PAL0` = la del fondo; es lo normal) |
+| `PAL_BACKGROUND` | qué paleta usa (`PAL_BACKGROUND` = la del fondo; es lo normal) |
 | `200` | posición **x** dentro del escenario (no de la pantalla: si el nivel es ancho, cuenta desde el principio del todo) |
 | `150` | posición **y** del **borde superior** del dibujo |
 | `32 0 12 4` | **la caja de interacción** (ver abajo) |
@@ -181,7 +181,7 @@ paso está en `docs/scenes.md`.
 | **No puedo pasar** por ahí | La caja está a la altura de los pies. Súbela por encima de y=145. |
 | Aparece **encima** del personaje | Cambia `FORCE_FOREGROUND` por `CALCULATE_DEPTH`. |
 | Se ve un **cuadrado de color** alrededor | El color transparente no es el primero de la paleta. |
-| Colores raros | Está usando una paleta que no es la del fondo (`PAL0`). |
+| Colores raros | Está usando una paleta que no es la del fondo (`PAL_BACKGROUND`). |
 | Interactúa **una sola vez** | Falta `last_interacted_item = ITEM_NONE;` en su `case`. |
 
 ---
@@ -191,7 +191,7 @@ paso está en `docs/scenes.md`.
 1. Dibujar el PNG (múltiplos de 8, transparente en el primer color, paleta del
    fondo) y guardarlo en `res/gfx/items/<acto>/`.
 2. Declararlo en `res/res_items.res`.
-3. Colocarlo en el guion con `item <hueco> <sprite> PAL0 <x> <y> <caja> <profundidad>`.
+3. Colocarlo en el guion con `item <hueco> <sprite> PAL_BACKGROUND <x> <y> <caja> <profundidad>`.
 4. Si es interactivo: añadir su `case` al gancho de objetos de la escena,
    registrarlo y llamarlo con `call`.
 5. Sus frases van en `data/texts.csv` (guía en `docs/texts.md`).

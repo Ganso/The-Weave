@@ -1,6 +1,8 @@
 #ifndef _CONSTANTS_SPELLS_H_
 #define _CONSTANTS_SPELLS_H_
 
+#include "core/config.h"   // PAL_BACKGROUND (reparto de paletas)
+
 // Identificadores y constantes del sistema de hechizos.
 // ESPACIO DE IDS UNIFICADO: jugador y enemigo comparten numeración (a diferencia
 // del sistema antiguo, donde THUNDER==EN_THUNDER==0 y el solape causó bugs).
@@ -43,7 +45,8 @@
 #define ENEMY_FRAMES_PER_NOTE SCREEN_FPS/4     // Cadencia de notas del enemigo
 
 // Palette entry helpers compartidos por los efectos (B19)
-#define PAL_ENTRY(pal,col)  (((pal)<<4)|(col))
-#define PAL0_COL4           PAL_ENTRY(0,4)
+#define PAL_ENTRY(pal,col)      (((pal)<<4)|(col))
+// Color 4 del fondo: el "cielo/ambiente" que hacen parpadear trueno, fuego y luz
+#define PAL_BACKGROUND_COL4     PAL_ENTRY(PAL_BACKGROUND, 4)
 
 #endif

@@ -34,7 +34,7 @@ void update_character_shadow(u16 nchar)    // Update shadow sprite position base
 
 void init_character(u16 nchar)    // Create new character instance with sprites and collision
 {
-    u8 npal = PAL1;
+    u8 npal = PAL_CHARACTERS;
     u8 x_size, y_size; // We can get them from the Sprite Definition
     u8 collision_x_offset=0;
     u8 collision_y_offset=0;
@@ -113,7 +113,7 @@ void init_character(u16 nchar)    // Create new character instance with sprites 
     // Initialize shadow if character drops one
     if (obj_character[nchar].drops_shadow) {
         dprintf(2,"Adding shadow sprite for character %d\n", nchar);
-        spr_chr_shadow[nchar] = SPR_addSpriteSafe(nsprite_shadow, 0, 0, TILE_ATTR(PAL1, TRUE, FALSE, FALSE));
+        spr_chr_shadow[nchar] = SPR_addSpriteSafe(nsprite_shadow, 0, 0, TILE_ATTR(PAL_CHARACTERS, TRUE, FALSE, FALSE));
         
         if (spr_chr_shadow[nchar] != NULL) {
             SPR_setVisibility(spr_chr_shadow[nchar], HIDDEN);
@@ -169,7 +169,7 @@ void reinit_character_sprite(u16 nchar)
 
 void init_face(u16 nface)    // Create new character face sprite for dialogs
 {
-    u8 npal = PAL1;
+    u8 npal = PAL_CHARACTERS;
     const SpriteDefinition *nsprite = NULL;
 
     if (obj_face[nface].sd == NULL) { // Object never initialized

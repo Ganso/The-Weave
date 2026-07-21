@@ -53,7 +53,7 @@ Ejemplo real: `res/gfx/enemies/boar.png`, fotogramas de 48×32, 6 columnas.
 ### 2.2 La paleta
 
 Los enemigos **no comparten paleta** con los personajes: cada uno usa **su
-propia paleta** (hasta 16 colores), que la escena carga en la ranura `PAL3`
+propia paleta** (hasta 16 colores), que la escena carga en la ranura `PAL_ENEMIES`
 justo antes de que aparezca. Así que dibuja con libertad; solo recuerda que son
 16 colores contando el transparente.
 
@@ -163,7 +163,7 @@ archivo de la escena, por ejemplo `src/scenes/act2/nieve.c`:
 void act2_nieve_wolves(void)
 {
     // 1. Cargar SU paleta en la ranura de enemigos
-    PAL_setPalette(PAL3, wolf_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, wolf_sprite.palette->data, DMA);
 
     // 2. Colocar dos lobos fuera de pantalla, a distintas alturas
     static const s16 spawn[2][2] = { { -60, 150 }, { SCREEN_WIDTH + 20, 165 } };
@@ -226,7 +226,7 @@ pausas que hacen son comunes a todos y ya están afinadas.
 | Síntoma | Casi siempre es |
 |---|---|
 | Corre **de espaldas** | La hoja mira a la izquierda: voltéala. |
-| Colores raros | Falta el `PAL_setPalette(PAL3, ...)` en el gancho. |
+| Colores raros | Falta el `PAL_setPalette(PAL_ENEMIES, ...)` en el gancho. |
 | **No ataca nunca** | Es de contacto pero le falta el `ContactProfile` (o el rol está mal). |
 | No hace nada de nada | Es "a distancia" pero no le pusiste hechizos. |
 | El juego se **cuelga** | Pediste una animación que su hoja no tiene. |

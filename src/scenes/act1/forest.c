@@ -27,7 +27,7 @@ void act1_forest_enemies(void)    // Aparición de los dos WeaverGhosts (previo 
 {
     show_or_hide_interface(false);
 
-    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA); // Enemy palette
+    PAL_setPalette(PAL_ENEMIES, weaver_ghost_sprite.palette->data, DMA); // Enemy palette
 
     // Stop everybody before ghosts appear
     obj_character[active_character].state = STATE_IDLE;

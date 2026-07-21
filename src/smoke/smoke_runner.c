@@ -205,7 +205,7 @@ static void run_auto(void)
     smoke_phase = PH_CAST_THUNDER;
     // El TRUENO es el hechizo del bosque OSCURO: cambiar a forest_dark para ver
     // su destello real (toda la paleta de fondo alternando con la clara)
-    PAL_setPalette(PAL0, forest_dark_pal.data, DMA);
+    PAL_setPalette(PAL_BACKGROUND, forest_dark_pal.data, DMA);
     u16 thunder_expected = spell_defs[SPELL_THUNDER].baseDuration;
     u16 thunder_frames = 0;
     spell_narrative_cast(SPELL_THUNDER, false);
@@ -222,7 +222,7 @@ static void run_auto(void)
     // Cada espera lleva una guarda generosa: si la IA no progresa, el combate se da
     // por FAIL y la suite sigue hasta los resultados en vez de colgarse.
     smoke_phase = PH_COMBAT;
-    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, weaver_ghost_sprite.palette->data, DMA);
     init_enemy(0, ENEMY_CLS_WEAVERGHOST);
     obj_enemy[0].hitpoints = 1; // 1 HP para que muera de un solo counter
     move_enemy_instant(0, FASTFIX32_FROM_INT(250), FASTFIX32_FROM_INT(154));
@@ -256,7 +256,7 @@ static void run_auto(void)
 
     // --- 5. Pantalla de resultados (end_level dejó las paletas en negro) ---
     PAL_setColor(15, 0x0EEE);   // texto en blanco
-    VDP_setTextPalette(PAL0);
+    VDP_setTextPalette(PAL_BACKGROUND);
     VDP_clearPlane(BG_A, true);
     VDP_clearPlane(BG_B, true);
 

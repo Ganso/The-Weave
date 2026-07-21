@@ -20,7 +20,7 @@ void act1_return_start(void)    // Regreso nocturno: sopla el viento (ya no hay 
 
 void act1_return_boars(void)    // Segunda emboscada: sin antorcha, solo el TRUENO los ahuyenta
 {
-    PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, boar_sprite.palette->data, DMA);
     static const s16 spawn[3][2] = {    // {x esquina, y de pies}
         { -60,               146 },     // vamos hacia la izquierda: la manada corta el paso
         { SCREEN_WIDTH + 12, 158 },
@@ -46,7 +46,7 @@ void act1_return_ghosts(void)    // Espectros del Caos (combate por hechizos)
 {
     show_or_hide_interface(false);
 
-    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, weaver_ghost_sprite.palette->data, DMA);
 
     obj_character[active_character].state = STATE_IDLE;
     anim_character(active_character, ANIM_IDLE);

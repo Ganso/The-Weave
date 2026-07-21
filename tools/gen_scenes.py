@@ -100,6 +100,8 @@ OPS = {
     'enable_spell': ('SCENE_OP_ENABLE_SPELL', ['spell']),
 }
 PUZZLE_SEQ_MAX = 4
+# Ranuras de paleta del DSL: los mismos mnemónicos que en C (src/core/config.h)
+PAL_SLOTS = ('PAL_BACKGROUND', 'PAL_CHARACTERS', 'PAL_INTERFACE', 'PAL_ENEMIES')
 FLAGS = {'movement': 'SCENE_FLAG_MOVEMENT', 'scroll': 'SCENE_FLAG_SCROLL',
          'interface': 'SCENE_FLAG_INTERFACE', 'spells': 'SCENE_FLAG_SPELLS',
          'rod': 'SCENE_FLAG_ROD'}
@@ -204,10 +206,10 @@ def parse_scene(path, all_scene_names):
         if tok[0] == 'palette':
             # palette <PAL_slot> <pal_resource>
             if len(tok) != 3:
-                die(f"{where}: palette espera 2 argumentos: ranura (PAL0..PAL3) y recurso de paleta")
+                die(f"{where}: palette espera 2 argumentos: ranura ({'/'.join(PAL_SLOTS)}) y recurso de paleta")
             slot = tok[1]
-            if slot not in ('PAL0', 'PAL1', 'PAL2', 'PAL3'):
-                die(f"{where}: ranura de paleta '{slot}' inválida (PAL0..PAL3)")
+            if slot not in PAL_SLOTS:
+                die(f"{where}: ranura de paleta '{slot}' inválida ({', '.join(PAL_SLOTS)})")
             idx = len(scene_palettes)
             scene_palettes.append(res_ref(tok[2], where, 'de paleta'))
             steps.append({'op': 'SCENE_OP_PALETTE', 'args': [slot, str(idx)], 'label': None, 'where': where})
@@ -225,6 +227,8 @@ def parse_scene(path, all_scene_names):
                 int(tok[1]); int(tok[4]); int(tok[5])
             except ValueError:
                 die(f"{where}: slot/x/y de item deben ser números")
+            if tok[3] not in PAL_SLOTS:
+                die(f"{where}: paleta '{tok[3]}' inválida ({', '.join(PAL_SLOTS)})")
             depth = tok[10]
             if depth not in ('FORCE_BACKGROUND', 'FORCE_FOREGROUND', 'CALCULATE_DEPTH'):
                 die(f"{where}: depth '{depth}' inválido (FORCE_BACKGROUND/FORCE_FOREGROUND/CALCULATE_DEPTH)")

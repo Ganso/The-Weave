@@ -50,7 +50,7 @@ void init_enemy_classes(void)    // Setup enemy class definitions
 void init_enemy(u16 numenemy, u16 class)    // Create new enemy instance of given class with sprites and collision
 {
     u16 i;
-    u8 npal = PAL3;
+    u8 npal = PAL_ENEMIES;
     u8 x_size, y_size;
     u8 collision_x_offset=0,collision_y_offset=0,collision_width=0,collision_height=0;
     bool drops_shadow=true;

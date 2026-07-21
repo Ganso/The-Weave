@@ -19,7 +19,7 @@ void act1_test_boars(void)    // Combate de contacto: Linus sin vara contra 5 ja
     reinit_character_sprite(CHR_linus);
 
     // 5 jabalÃ­es fuera de pantalla: tres por la derecha y dos por la izquierda
-    PAL_setPalette(PAL3, boar_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, boar_sprite.palette->data, DMA);
     static const s16 boar_spawn[5][2] = {   // {x esquina, y de pies}
         { SCREEN_WIDTH + 12, 146 },         // derecha, arriba
         { -60,               152 },         // izquierda
@@ -53,7 +53,7 @@ void act1_test_boars_after(void)    // Tras el combate: restaurar la vara (el ba
 
 void act1_test_ghost2(void)    // Oleada 2: fantasma de TEST con dos hechizos (thunder + mordisco)
 {
-    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, weaver_ghost_sprite.palette->data, DMA);
 
     obj_character[active_character].state = STATE_IDLE;
     anim_character(active_character, ANIM_IDLE);
@@ -71,7 +71,7 @@ void act1_test_ghost(void)    // Un WeaverGhost para el combate de prueba (patrÃ
 
     player_max_hitpoints = 5;   // vida del jugador en este combate
 
-    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA); // Enemy palette
+    PAL_setPalette(PAL_ENEMIES, weaver_ghost_sprite.palette->data, DMA); // Enemy palette
 
     // Parar a todo el mundo antes de que aparezca
     obj_character[active_character].state = STATE_IDLE;

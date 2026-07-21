@@ -11,7 +11,7 @@
 static const SceneStep act1_bedroom_steps[] = {
     { SCENE_OP_LEVEL, 0, 0, 0, 0 }, // 0
     { SCENE_OP_LIMITS, 20, 145, 278, 176 }, // 1
-    { SCENE_OP_PALETTE, PAL1, 0, 0, 0 }, // 2
+    { SCENE_OP_PALETTE, PAL_CHARACTERS, 0, 0, 0 }, // 2
     { SCENE_OP_CHARACTER, CHR_swan, 0, 0, 0 }, // 3
     { SCENE_OP_CHARACTER, CHR_linus, 0, 0, 0 }, // 4
     { SCENE_OP_ITEM, 0, 0, 0, 0 }, // 5
@@ -444,44 +444,44 @@ const SceneLevel scene_levels[] = {
 };
 
 const SceneItem scene_items[] = {
-    { &item_bedroom_bed, PAL0, 31, 139, 93, 0, 23, 0, FORCE_BACKGROUND }, // 0
-    { &item_bedroom_chair, PAL0, 236, 110, 26, 0, 43, 0, FORCE_BACKGROUND }, // 1
-    { &item_bedroom_windowsill, PAL0, 125, 121, 99, 0, 22, 0, FORCE_BACKGROUND }, // 2
-    { &item_bedroom_cabinet, PAL0, 270, 79, 51, 0, 82, 0, FORCE_BACKGROUND }, // 3
-    { &item_bedroom_linus_sleeping, PAL0, 30, 112, 0, 0, 0, 0, FORCE_BACKGROUND }, // 4
-    { &item_bedroom_portrait, PAL0, 4, 120, 27, 0, 23, 39, FORCE_BACKGROUND }, // 5
-    { &item_bedroom_chest, PAL0, 176, 148, 40, 0, 7, 17, CALCULATE_DEPTH }, // 6
-    { &item_coast_seagull, PAL0, 520, 112, 0, 0, 0, 0, FORCE_BACKGROUND }, // 7
-    { &item_coast_leaves, PAL0, 478, 156, 24, 0, 8, 8, CALCULATE_DEPTH }, // 8
-    { &item_corridor_bookpedestal_sprite, PAL0, 600, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH }, // 9
-    { &item_corridor_bookpedestal_sprite, PAL0, 200, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH }, // 10
-    { &item_corridor_lamp_sprite, PAL0, 32, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 11
-    { &item_corridor_lamp_sprite, PAL0, 176, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 12
-    { &item_corridor_lamp_sprite, PAL0, 336, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 13
-    { &item_corridor_lamp_sprite, PAL0, 464, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 14
-    { &item_corridor_lamp_sprite, PAL0, 656, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 15
-    { &item_corridor_door_bottom_sprite, PAL0, 96, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 16
-    { &item_corridor_door_bottom_sprite, PAL0, 400, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 17
-    { &item_corridor_door_bottom_sprite, PAL0, 720, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 18
-    { &item_corridor_map_bottom_sprite, PAL0, 240, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 19
-    { &item_corridor_map_bottom_sprite, PAL0, 544, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 20
-    { &item_forest_fg1_sprite, PAL0, 260, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 21
-    { &item_forest_fg5_sprite, PAL0, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 22
-    { &item_forest_fg2_sprite, PAL0, 440, 152, 0, 0, 0, 0, FORCE_FOREGROUND }, // 23
-    { &item_forest_fg3_sprite, PAL0, 880, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 24
-    { &item_forest_fg4_sprite, PAL0, 1400, 104, 0, 0, 0, 0, FORCE_FOREGROUND }, // 25
-    { &item_forest_fg1_sprite, PAL0, 1050, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 26
-    { &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 27
-    { &item_hut_staff, PAL0, 430, 150, 40, 0, 10, 8, CALCULATE_DEPTH }, // 28
-    { &item_hut_loom_debris, PAL0, 200, 110, 48, 0, 6, 16, FORCE_BACKGROUND }, // 29
-    { &item_hut_threads, PAL0, 500, 146, 32, 0, 8, 12, CALCULATE_DEPTH }, // 30
-    { &item_forest_fg1_sprite, PAL0, 260, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 31
-    { &item_forest_fg5_sprite, PAL0, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 32
-    { &item_forest_fg2_sprite, PAL0, 440, 152, 0, 0, 0, 0, FORCE_FOREGROUND }, // 33
-    { &item_forest_fg3_sprite, PAL0, 880, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 34
-    { &item_forest_fg4_sprite, PAL0, 1400, 104, 0, 0, 0, 0, FORCE_FOREGROUND }, // 35
-    { &item_forest_fg1_sprite, PAL0, 1050, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 36
-    { &item_forest_fg5_sprite, PAL0, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 37
+    { &item_bedroom_bed, PAL_BACKGROUND, 31, 139, 93, 0, 23, 0, FORCE_BACKGROUND }, // 0
+    { &item_bedroom_chair, PAL_BACKGROUND, 236, 110, 26, 0, 43, 0, FORCE_BACKGROUND }, // 1
+    { &item_bedroom_windowsill, PAL_BACKGROUND, 125, 121, 99, 0, 22, 0, FORCE_BACKGROUND }, // 2
+    { &item_bedroom_cabinet, PAL_BACKGROUND, 270, 79, 51, 0, 82, 0, FORCE_BACKGROUND }, // 3
+    { &item_bedroom_linus_sleeping, PAL_BACKGROUND, 30, 112, 0, 0, 0, 0, FORCE_BACKGROUND }, // 4
+    { &item_bedroom_portrait, PAL_BACKGROUND, 4, 120, 27, 0, 23, 39, FORCE_BACKGROUND }, // 5
+    { &item_bedroom_chest, PAL_BACKGROUND, 176, 148, 40, 0, 7, 17, CALCULATE_DEPTH }, // 6
+    { &item_coast_seagull, PAL_BACKGROUND, 520, 112, 0, 0, 0, 0, FORCE_BACKGROUND }, // 7
+    { &item_coast_leaves, PAL_BACKGROUND, 478, 156, 24, 0, 8, 8, CALCULATE_DEPTH }, // 8
+    { &item_corridor_bookpedestal_sprite, PAL_BACKGROUND, 600, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH }, // 9
+    { &item_corridor_bookpedestal_sprite, PAL_BACKGROUND, 200, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH }, // 10
+    { &item_corridor_lamp_sprite, PAL_BACKGROUND, 32, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 11
+    { &item_corridor_lamp_sprite, PAL_BACKGROUND, 176, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 12
+    { &item_corridor_lamp_sprite, PAL_BACKGROUND, 336, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 13
+    { &item_corridor_lamp_sprite, PAL_BACKGROUND, 464, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 14
+    { &item_corridor_lamp_sprite, PAL_BACKGROUND, 656, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 15
+    { &item_corridor_door_bottom_sprite, PAL_BACKGROUND, 96, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 16
+    { &item_corridor_door_bottom_sprite, PAL_BACKGROUND, 400, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 17
+    { &item_corridor_door_bottom_sprite, PAL_BACKGROUND, 720, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 18
+    { &item_corridor_map_bottom_sprite, PAL_BACKGROUND, 240, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 19
+    { &item_corridor_map_bottom_sprite, PAL_BACKGROUND, 544, 120, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, COLLISION_DEFAULT, FORCE_BACKGROUND }, // 20
+    { &item_forest_fg1_sprite, PAL_BACKGROUND, 260, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 21
+    { &item_forest_fg5_sprite, PAL_BACKGROUND, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 22
+    { &item_forest_fg2_sprite, PAL_BACKGROUND, 440, 152, 0, 0, 0, 0, FORCE_FOREGROUND }, // 23
+    { &item_forest_fg3_sprite, PAL_BACKGROUND, 880, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 24
+    { &item_forest_fg4_sprite, PAL_BACKGROUND, 1400, 104, 0, 0, 0, 0, FORCE_FOREGROUND }, // 25
+    { &item_forest_fg1_sprite, PAL_BACKGROUND, 1050, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 26
+    { &item_forest_fg5_sprite, PAL_BACKGROUND, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 27
+    { &item_hut_staff, PAL_BACKGROUND, 430, 150, 40, 0, 10, 8, CALCULATE_DEPTH }, // 28
+    { &item_hut_loom_debris, PAL_BACKGROUND, 200, 110, 48, 0, 6, 16, FORCE_BACKGROUND }, // 29
+    { &item_hut_threads, PAL_BACKGROUND, 500, 146, 32, 0, 8, 12, CALCULATE_DEPTH }, // 30
+    { &item_forest_fg1_sprite, PAL_BACKGROUND, 260, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 31
+    { &item_forest_fg5_sprite, PAL_BACKGROUND, 180, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 32
+    { &item_forest_fg2_sprite, PAL_BACKGROUND, 440, 152, 0, 0, 0, 0, FORCE_FOREGROUND }, // 33
+    { &item_forest_fg3_sprite, PAL_BACKGROUND, 880, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 34
+    { &item_forest_fg4_sprite, PAL_BACKGROUND, 1400, 104, 0, 0, 0, 0, FORCE_FOREGROUND }, // 35
+    { &item_forest_fg1_sprite, PAL_BACKGROUND, 1050, 160, 0, 0, 0, 0, FORCE_FOREGROUND }, // 36
+    { &item_forest_fg5_sprite, PAL_BACKGROUND, 1270, 0, 0, 0, 0, 0, FORCE_FOREGROUND }, // 37
 };
 
 const ScenePalette scene_palettes[] = {

@@ -98,11 +98,11 @@ void show_or_hide_interface(bool visible)    // Toggle visibility of game's bott
 
     if (visible == true) {
         // Draw the rod and pentagram images in the window plane
-        VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 22, false, true);
+        VDP_drawImageEx(WINDOW, &int_screen_limit, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, tile_ind), 0, 22, false, true);
         tile_ind+=int_screen_limit.tileset->numTile;
-        VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 0, 24, false, true);
+        VDP_drawImageEx(WINDOW, &int_rod_image, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, tile_ind), 0, 24, false, true);
         tile_ind+=int_rod_image.tileset->numTile;
-        VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL2, false, false, false, tile_ind), 27, 22, false, true);
+        VDP_drawImageEx(WINDOW, &int_pentagram_image, TILE_ATTR_FULL(PAL_INTERFACE, false, false, false, tile_ind), 27, 22, false, true);
         tile_ind+=int_pentagram_image.tileset->numTile;
     } 
     else {
@@ -150,10 +150,10 @@ void show_note(u8 nnote, bool visible)
         // Create sprite if it does not yet exist
         if (*rodSpr == NULL)
             *rodSpr = SPR_addSpriteSafe(rodDef, rodX, 210,
-                                        TILE_ATTR(PAL2,false,false,false));
+                                        TILE_ATTR(PAL_INTERFACE,false,false,false));
         if (*pentSpr == NULL && player_patterns_enabled)
             *pentSpr = SPR_addSpriteSafe(pentDef, pentX, 178,
-                                        TILE_ATTR(PAL2,false,false,false));
+                                        TILE_ATTR(PAL_INTERFACE,false,false,false));
     } else {
         // Destroy sprite if present
         if (*rodSpr)  { SPR_releaseSprite(*rodSpr);  *rodSpr = NULL; }
@@ -216,7 +216,7 @@ void hide_pattern_icons(void)    // Remove all pattern spell icons from interfac
 
 void show_pattern_icon(u16 npattern, bool show, bool priority)    // Display or hide a pattern spell icon in interface
 {
-    u8 npal = PAL2;
+    u8 npal = PAL_INTERFACE;
     const SpriteDefinition *nsprite = NULL;
 
     if (show==TRUE) {
@@ -529,7 +529,7 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)    // Dis
 
     if (show==true) {
         x=251+nnote*16;
-        spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL2,true,false,false));
+        spr_pattern_list_note[nnote]=SPR_addSpriteSafe(pentsprite, x, 180, TILE_ATTR(PAL_INTERFACE,true,false,false));
     }
     else {
         if (spr_pattern_list_note[nnote] != NULL) {
@@ -541,7 +541,7 @@ void show_note_in_pause_pattern_list(u8 npattern, u8 nnote, bool show)    // Dis
 
 void show_icon_in_pause_list(u16 npattern, u8 nicon, u16 x, bool show, bool priority)    // Display a pattern icon in the pause screen list
 {
-    u8 npal = PAL2;
+    u8 npal = PAL_INTERFACE;
     const SpriteDefinition *nsprite = NULL;
 
     if (show==TRUE) {
@@ -608,7 +608,7 @@ void update_life_counter(void) {
        
     // Load the life counter sprite if it's null
     if (spr_int_life_counter == NULL) {
-        spr_int_life_counter  = SPR_addSprite(&int_life_counter_sprite, x, y, TILE_ATTR(PAL2, false, false, false));
+        spr_int_life_counter  = SPR_addSprite(&int_life_counter_sprite, x, y, TILE_ATTR(PAL_INTERFACE, false, false, false));
     } else {
         SPR_setPosition(spr_int_life_counter, x, y); // Update position if it already exists
     }

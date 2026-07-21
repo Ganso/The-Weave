@@ -46,31 +46,31 @@ void initialize(bool first_time)    // Initialize system hardware, sprites, cont
 
     // Load font and set text palette
     VDP_loadFont(font.tileset, DMA);
-    VDP_setTextPalette(PAL2);
+    VDP_setTextPalette(PAL_INTERFACE);
 
     // Initialize globals
 
     //  Plane A scrolls up to line 22 (176px)
     VDP_setWindowVPos(TRUE, 22);
 
-    // Initialize palettes
+    // Initialize palettes. PAL_BACKGROUND la carga new_level con el escenario y
+    // PAL_ENEMIES la carga cada encuentro con la paleta de su enemigo: aquí solo
+    // van las dos permanentes.
     dprintf(2,"Loading palettes (initialize)\n");
-    // PAL0 is the background palette. It's initialized with the background
-    PAL_setPalette(PAL1, characters_pal.data, DMA); // Characters palette
-    PAL_setPalette(PAL2, interface_pal.data, DMA); // Interface palette
-    // PAL2 is the enemies palette. It's initialized with the enemies
+    PAL_setPalette(PAL_CHARACTERS, characters_pal.data, DMA);
+    PAL_setPalette(PAL_INTERFACE, interface_pal.data, DMA);
 
     // Interface: Face backgrounds
     dprintf(2,"Loading face backgrounds\n");
-    spr_face_left = SPR_addSpriteSafe ( &face_left_sprite, 0, 160, TILE_ATTR(PAL1, false, false, true));
+    spr_face_left = SPR_addSpriteSafe ( &face_left_sprite, 0, 160, TILE_ATTR(PAL_CHARACTERS, false, false, true));
     SPR_setVisibility (spr_face_left, HIDDEN);
-    spr_face_right = SPR_addSpriteSafe ( &face_right_sprite, 256, 160, TILE_ATTR(PAL1, false, false, true));
+    spr_face_right = SPR_addSpriteSafe ( &face_right_sprite, 256, 160, TILE_ATTR(PAL_CHARACTERS, false, false, true));
     SPR_setVisibility (spr_face_right, HIDDEN);
     SPR_setDepth (spr_face_left, SPR_MIN_DEPTH+1); // Face background are above anything but faces
     SPR_setDepth (spr_face_right, SPR_MIN_DEPTH+1); // Face background are above anything but faces
 
     // Interface: Button A
-    spr_int_button_A = SPR_addSpriteSafe (&int_button_A_sprite, 0, 0, TILE_ATTR(PAL2, false, false, false));
+    spr_int_button_A = SPR_addSpriteSafe (&int_button_A_sprite, 0, 0, TILE_ATTR(PAL_INTERFACE, false, false, false));
     SPR_setVisibility (spr_int_button_A, HIDDEN);
 
     // Patterns & combat context
@@ -119,7 +119,7 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     if ((tile_bg!=NULL) && (map_bg!=NULL)) {
         dprintf(2,"Loading background tileset, tiles=%d\n", tile_bg->numTile);
         VDP_loadTileSet(tile_bg, tile_ind, CPU);
-        background_BGB = MAP_create(map_bg, BG_B, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+        background_BGB = MAP_create(map_bg, BG_B, TILE_ATTR_FULL(PAL_BACKGROUND, false, false, false, tile_ind));
         tile_ind += tile_bg->numTile;
     }
     else background_BGB=NULL;
@@ -127,14 +127,14 @@ void new_level(const TileSet *tile_bg, const MapDefinition *map_bg, const TileSe
     // Tile_front and Map_front are the foreground layer. Thay can't be NULL.
     dprintf(2,"Loading foreground tileset, tiles=%d\n", tile_front->numTile);
     VDP_loadTileSet(tile_front, tile_ind, CPU);
-    background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind));
+    background_BGA = MAP_create(map_front, BG_A, TILE_ATTR_FULL(PAL_BACKGROUND, false, false, false, tile_ind));
     tile_ind += tile_front->numTile;
 
     // Set palettes after loading all tiles to avoid flicker
     dprintf(2,"Loading palettes (new level)\n");
-    PAL_setPalette(PAL0, new_pal.data, DMA);
-    PAL_setPalette(PAL1, characters_pal.data, DMA);
-    PAL_setPalette(PAL2, interface_pal.data, DMA);
+    PAL_setPalette(PAL_BACKGROUND, new_pal.data, DMA);
+    PAL_setPalette(PAL_CHARACTERS, characters_pal.data, DMA);
+    PAL_setPalette(PAL_INTERFACE, interface_pal.data, DMA);
 
     background_scroll_mode=new_scroll_mode;
     scroll_speed=new_scroll_speed;

@@ -21,19 +21,19 @@ void theweave_intro(void)
     
     initialize(false);
 
-    PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
-    PAL_setPalette(PAL1, geesebumps_pal_black.data, DMA);
+    PAL_setPalette(PAL_BACKGROUND, geesebumps_pal_black.data, DMA);
+    PAL_setPalette(PAL_CHARACTERS, geesebumps_pal_black.data, DMA);
 
     // Initialize stars
     for (nstar=0;nstar<MAXSTARS;nstar++) {
         x=random()%320;
         y=random()%224;
-        star[nstar]=SPR_addSpriteSafe(&intro_stars_sprite, x, y, TILE_ATTR(PAL1, false, false, false));
+        star[nstar]=SPR_addSpriteSafe(&intro_stars_sprite, x, y, TILE_ATTR(PAL_CHARACTERS, false, false, false));
         SPR_setAnimAndFrame(star[nstar],random()%3,random()%8);
     }
 
     // Game Logo
-    VDP_drawImageEx(BG_A, &intro_logo_bg, TILE_ATTR_FULL(PAL0, true, false, false, tile_ind), 0, 0, false, true);
+    VDP_drawImageEx(BG_A, &intro_logo_bg, TILE_ATTR_FULL(PAL_BACKGROUND, true, false, false, tile_ind), 0, 0, false, true);
     tile_ind+=intro_logo_bg.tileset->numTile;
 
     // Version number

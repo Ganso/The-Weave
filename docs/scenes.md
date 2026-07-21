@@ -240,7 +240,7 @@ se escriben directamente en el guion, en orden, al principio.
   `limits 0 134 275 172`.
 
 - **`palette <ranura> <paleta>`** — carga una paleta de colores en una de las cuatro
-  ranuras (`PAL0`, `PAL1`, `PAL2`, `PAL3`). Ejemplo: `palette PAL1 swan_pal` (usa la
+  ranuras (`PAL_BACKGROUND`, `PAL_CHARACTERS`, `PAL_INTERFACE`, `PAL_ENEMIES`). Ejemplo: `palette PAL_CHARACTERS swan_pal` (usa la
   paleta del cisne en la ranura 1 en lugar de la de personajes).
   - **Cuándo:** cuando un personaje u objeto de la escena necesita unos colores que no
     son los normales.
@@ -268,7 +268,7 @@ se escriben directamente en el guion, en orden, al principio.
   objetos se numeran por su `<hueco>` (0, 1, 2...). Ejemplo:
 
   ```
-  item 0 item_bedroom_bed PAL0 31 139 93 0 23 0 FORCE_BACKGROUND
+  item 0 item_bedroom_bed PAL_BACKGROUND 31 139 93 0 23 0 FORCE_BACKGROUND
   ```
 
   - **sprite / paleta**: el gráfico del objeto y su juego de colores.
@@ -633,7 +633,7 @@ void act1_claro_enemy(void)
 {
     show_or_hide_interface(false);
     // Preparar y hacer aparecer un enemigo (un WeaverGhost) que entra caminando.
-    PAL_setPalette(PAL3, weaver_ghost_sprite.palette->data, DMA);
+    PAL_setPalette(PAL_ENEMIES, weaver_ghost_sprite.palette->data, DMA);
     obj_character[active_character].state = STATE_IDLE;
     anim_character(active_character, ANIM_IDLE);
     reset_character_animations();

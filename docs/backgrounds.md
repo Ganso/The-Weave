@@ -174,11 +174,18 @@ ejemplo, el jugador puede moverse por todo el ancho y entre las alturas 140 y 17
 Si preparaste dos paletas, cambiar de una a otra es una sola orden:
 
 ```
-palette PAL0 taller_night_pal
+palette PAL_BACKGROUND taller_night_pal
 ```
 
-`PAL0` es la ranura del fondo. (Las otras: `PAL1` personajes, `PAL2` interfaz,
-`PAL3` enemigos.)
+El juego reparte las cuatro paletas de la consola así, y cada una se nombra por
+lo que contiene (nunca por su número):
+
+| Ranura | Para qué |
+|---|---|
+| `PAL_BACKGROUND` | el fondo del escenario (la carga `level`) |
+| `PAL_CHARACTERS` | los personajes y sus caras |
+| `PAL_INTERFACE` | el HUD y las cajas de diálogo |
+| `PAL_ENEMIES` | los enemigos y los efectos con paleta propia |
 
 ---
 
@@ -196,7 +203,7 @@ palette PAL0 taller_night_pal
 | El build dice que **no puede compilar el MAP** | Demasiados cuadraditos únicos: simplifica el dibujo (punto 2.4). |
 | **Basura de colores** en pantalla | Lo mismo: el fondo no cabe en memoria de vídeo. |
 | Se ve el fondo **por debajo del interfaz** | No dejaste transparente/negro de y=176 para abajo. |
-| Colores raros en **personajes** | Tu paleta se cargó donde no debía: el fondo va en `PAL0`. |
+| Colores raros en **personajes** | Tu paleta se cargó donde no debía: el fondo va en `PAL_BACKGROUND`. |
 | El escenario **no se desplaza** | La anchura del `level` es 320 o menor, o el modo de scroll no es el que crees. |
 | El jugador **anda por el cielo** | Los `limits` están mal: baja `y_min` e `y_max`. |
 | Con `user_left` **no pasa nada** al esperar | Estás usando `wait_scroll` en vez de `wait_scroll_left`. |
@@ -214,4 +221,4 @@ palette PAL0 taller_night_pal
    `res/res_backgrounds.res`.
 5. En el guion: `level ...` con la anchura y el modo de scroll, y `limits ...`
    para la franja andable.
-6. Cambios de iluminación a mitad de escena con `palette PAL0 <otra_paleta>`.
+6. Cambios de iluminación a mitad de escena con `palette PAL_BACKGROUND <otra_paleta>`.

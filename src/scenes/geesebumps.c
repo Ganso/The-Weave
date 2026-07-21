@@ -27,22 +27,22 @@ void geesebumps_logo(void)
     JOY_setEventHandler(&joyEvent_Geesebumps);
 
     VDP_setBackgroundColor(13);
-    PAL_setPalette(PAL0, geesebumps_pal_black.data, DMA);
-    PAL_setPalette(PAL1, geesebumps_pal_white.data, DMA);
-    PAL_setPalette(PAL2, geesebumps_pal_white.data, DMA);
-    PAL_setPalette(PAL3, geesebumps_pal_white.data, DMA);
+    PAL_setPalette(PAL_BACKGROUND, geesebumps_pal_black.data, DMA);
+    PAL_setPalette(PAL_CHARACTERS, geesebumps_pal_white.data, DMA);
+    PAL_setPalette(PAL_INTERFACE, geesebumps_pal_white.data, DMA);
+    PAL_setPalette(PAL_ENEMIES, geesebumps_pal_white.data, DMA);
 
     // Background music
     play_music(music_geesebumps);
     
     // Fist part of the logo (Goose)
-    VDP_drawImageEx(BG_A, &geesebumps_logo_bg, TILE_ATTR_FULL(PAL0, false, false, false, tile_ind), 0, 0, false, true);
+    VDP_drawImageEx(BG_A, &geesebumps_logo_bg, TILE_ATTR_FULL(PAL_BACKGROUND, false, false, false, tile_ind), 0, 0, false, true);
     tile_ind+=geesebumps_logo_bg.tileset->numTile;
 
     // Load every other srpite
-    logo_text = SPR_addSpriteSafe(&geesebumps_logo_text, 60, 163, TILE_ATTR(PAL1, false, false, false));
-    logo_lines1 = SPR_addSpriteSafe(&geesebumps_logo_line1, 81-180, 55, TILE_ATTR(PAL2, false, false, false));
-    logo_lines2 = SPR_addSpriteSafe(&geesebumps_logo_line2, 81-180, 84, TILE_ATTR(PAL3, false, false, false));
+    logo_text = SPR_addSpriteSafe(&geesebumps_logo_text, 60, 163, TILE_ATTR(PAL_CHARACTERS, false, false, false));
+    logo_lines1 = SPR_addSpriteSafe(&geesebumps_logo_line1, 81-180, 55, TILE_ATTR(PAL_INTERFACE, false, false, false));
+    logo_lines2 = SPR_addSpriteSafe(&geesebumps_logo_line2, 81-180, 84, TILE_ATTR(PAL_ENEMIES, false, false, false));
     SPR_setVisibility(logo_text, HIDDEN);
     SPR_update();
 
@@ -55,7 +55,7 @@ void geesebumps_logo(void)
         while (PAL_isDoingFade() && !should_exit) {
             SYS_doVBlankProcess();
         }
-        PAL_setPalette(PAL0, geesebumps_logo_bg.palette->data, DMA);
+        PAL_setPalette(PAL_BACKGROUND, geesebumps_logo_bg.palette->data, DMA);
         SYS_doVBlankProcess();
 
         if (!should_exit) {
@@ -69,7 +69,7 @@ void geesebumps_logo(void)
             while (PAL_isDoingFade() && !should_exit) {
                 SYS_doVBlankProcess();
             }
-            PAL_setPalette(PAL1, geesebumps_logo_text.palette->data, DMA);
+            PAL_setPalette(PAL_CHARACTERS, geesebumps_logo_text.palette->data, DMA);
             SYS_doVBlankProcess();
         }
     }

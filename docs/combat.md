@@ -194,7 +194,7 @@ COMBAT_NO ──combat_start (hay ranged)──► COMBAT_STATE_IDLE
 
 ### Encuentro nuevo (cualquier mezcla de roles)
 
-1. Hook C: paleta (`PAL_setPalette(PAL3, ...)`), spawn (`init_enemy` +
+1. Hook C: paleta (`PAL_setPalette(PAL_ENEMIES, ...)`), spawn (`init_enemy` +
    `move_enemy_instant` + `show_enemy`), `player_max_hitpoints` si procede, y
    `combat_configure(&(CombatConfig){...})`.
 2. Escena: `set spells on/off` → `call hook` → `combat` → `if_defeated goto`.

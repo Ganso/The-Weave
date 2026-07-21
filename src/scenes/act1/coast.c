@@ -31,7 +31,7 @@ static void coast_gull_flies(void)
     s16 gx = 520 - FASTFIX32_TO_INT(offset_BGA), gy = 112;
     release_item(0);
     Sprite *gull = SPR_addSpriteSafe(&item_coast_seagull, gx, gy,
-                                     TILE_ATTR(PAL0, TRUE, false, false));
+                                     TILE_ATTR(PAL_BACKGROUND, TRUE, false, false));
     // Vuela hacia arriba y hacia el mar (izquierda), cruzando la pantalla
     for (u16 i = 0; i < SCREEN_FPS * 3 && gull; i++) {
         gx -= 2; gy -= 1;
@@ -78,8 +78,8 @@ void act1_end_epilogue(void)
     PAL_fadeOutAll(SCREEN_FPS * 2, false);
     show_character(CHR_linus, false);
     show_character(CHR_clio, false);
-    PAL_setPalette(PAL1, characters_pal.data, DMA);   // cara del cisne
-    PAL_setPalette(PAL2, interface_pal.data, DMA);    // caja de diálogo
+    PAL_setPalette(PAL_CHARACTERS, characters_pal.data, DMA);   // cara del cisne
+    PAL_setPalette(PAL_INTERFACE, interface_pal.data, DMA);    // caja de diálogo
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xEEEEEE));    // texto
     talk_cluster(&dialogs[ACT1_COAST_END][A1_END_BOBBIN], true);
     talk_dialog(&dialogs[ACT1_COAST_END][A1_END_FIN], true);

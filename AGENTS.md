@@ -140,7 +140,7 @@ tools/           → codegen python (gen_texts.py, gen_choices.py, gen_scenes.py
 src/
   boot/          → rom_head.c, sega.s
   core/          → main (bucle de escenas), init, controller, frame
-                   (next_frame/timing), config.h (SCREEN_WIDTH…), hack.h (toggles)
+                   (next_frame/timing), config.h (SCREEN_WIDTH, PAL_*), hack.h (toggles)
   world/         → background: scroll, límites, new_level/end_level
   actors/        → entity (base común), characters, enemies, items, collisions
   combat/        → el director de combate (combat.c: CombatConfig + start/tick/end/run)
@@ -293,6 +293,13 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
   `initialize`). Nada de tablas `const` con duraciones en frames: rellénalas en
   runtime (`SCREEN_FPS * n`). Milisegundos → ticks con `calc_ticks(ms)`.
 - **`u16` y restas**: compara antes de restar HP/contadores (underflow silencioso).
+- **Las paletas se nombran, no se numeran**: usa `PAL_BACKGROUND` /
+  `PAL_CHARACTERS` / `PAL_INTERFACE` / `PAL_ENEMIES` (definidos en `core/config.h`),
+  nunca `PAL0..PAL3` a pelo. Mismo reparto en el DSL (`item` y `palette` los validan
+  contra esa lista en `gen_scenes.py`). `PAL_BACKGROUND` la carga `new_level` con el
+  escenario y `PAL_ENEMIES` la carga cada encuentro con la paleta de su enemigo; las
+  otras dos son permanentes (`initialize`). Los efectos que parpadean el cielo usan
+  `PAL_BACKGROUND_COL4` (`constants_spells.h`).
 - **`next_frame(bool interactive)` es EL latido**: input + combate + animaciones +
   `SPR_update` + vblank. Los bloqueantes (`move_entity`, diálogos, `wait_seconds`) lo
   llaman por dentro. No dibujes ni proceses input fuera de él.
@@ -420,9 +427,9 @@ comprobación (con tabla de "si algo va mal") → resumen final.
 > `docs/testing/plan.md`; el detalle de cada dominio, en su guía.
 
 - **Paleta del cisne**: usa una paleta propia distinta de la de personajes. Cuando
-  habla en el dormitorio (PAL1 = swan_pal), los resaltados @[...@] del texto salen con
+  habla en el dormitorio (PAL_CHARACTERS = swan_pal), los resaltados @[...@] del texto salen con
   color equivocado (esperan la paleta de Linus); y cuando su CARA aparece en escenas
-  posteriores (PAL1 = characters_pal), la cara sale con los colores mal (espera
+  posteriores (PAL_CHARACTERS = characters_pal), la cara sale con los colores mal (espera
   swan_pal). Sin resolver (¿colores de resaltado/cara en una paleta estable, o cara
   del cisne redibujada con characters_pal?).
 - **Jingles de SLEEP, HEAL y EN_BITE sin componer**: falta su melodía propia en

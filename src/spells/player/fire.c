@@ -37,7 +37,7 @@ static bool fire_can_use(const SpellContext *ctx)
 static void fire_on_launch(SpellContext *ctx)
 {
     (void)ctx;
-    fire_saved_color = PAL_getColor(PAL0_COL4);
+    fire_saved_color = PAL_getColor(PAL_BACKGROUND_COL4);
 
     // Comportamiento condicional: el fuego se come al thunder enemigo en curso
     if (spell_active_id(SPELL_SLOT_ENEMY) == SPELL_EN_THUNDER)
@@ -50,13 +50,13 @@ static void fire_on_launch(SpellContext *ctx)
 static void fire_on_finish(SpellContext *ctx)
 {
     (void)ctx;
-    PAL_setColor(PAL0_COL4, fire_saved_color);   // restaurar el color original
+    PAL_setColor(PAL_BACKGROUND_COL4, fire_saved_color);   // restaurar el color original
 }
 
 void fire_init(void)    // Registra FIRE (llamado desde init_spells)
 {
     // Fases: [frames] — el motor las ejecuta; el daño puntual usa start==end
-    fire_phases[0] = (SpellPhase){ 0,              SCREEN_FPS * 2,  PHASE_VISUAL_FLASH, PAL0_COL4, COLOR_FIRE_VDP };
+    fire_phases[0] = (SpellPhase){ 0,              SCREEN_FPS * 2,  PHASE_VISUAL_FLASH, PAL_BACKGROUND_COL4, COLOR_FIRE_VDP };
     fire_phases[1] = (SpellPhase){ SCREEN_FPS,     SCREEN_FPS,      PHASE_LOGIC_DAMAGE, PHASE_TARGET_ENEMY_ACTIVE, 2 };
 
     spell_defs[SPELL_FIRE] = (SpellDef){

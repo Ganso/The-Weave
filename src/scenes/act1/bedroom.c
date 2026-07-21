@@ -44,7 +44,7 @@ void act1_bedroom_wake(void)    // Amanece: paleta de día, Linus se levanta, co
     talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_NEXT_MORNING], true); // (ES) "A la mañana siguiente..." - (EN) "The next morning..."
 
     release_item(4); // Linus sleeping
-    PAL_setPalette(PAL1, characters_pal.data, DMA);
+    PAL_setPalette(PAL_CHARACTERS, characters_pal.data, DMA);
     move_character_instant(CHR_linus, 35, 175);
     show_character(CHR_linus, true);
     talk_dialog(&dialogs[ACT1_BEDROOM][A1_BEDROOM_AWAKE], false); // (ES) "Otra vez|El mismo sueño..."

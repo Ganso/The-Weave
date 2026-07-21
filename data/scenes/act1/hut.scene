@@ -9,9 +9,9 @@ level hut_bg_tile hut_bg_map hut_front_tile hut_front_map hut_pal 640 user_right
 limits 0 134 275 172
 # Cajas de colisión explícitas: cubren el sprite VISIBLE para que interactuar
 # no exija colocarse por encima de donde se ve el objeto
-item 0 item_hut_staff PAL0 430 150 40 0 10 8 CALCULATE_DEPTH        # el bastón (resonando)
-item 1 item_hut_loom_debris PAL0 200 110 48 0 6 16 FORCE_BACKGROUND # bastidor roto (apoyado en la pared)
-item 2 item_hut_threads PAL0 500 146 32 0 8 12 CALCULATE_DEPTH      # hilos ennegrecidos
+item 0 item_hut_staff PAL_BACKGROUND 430 150 40 0 10 8 CALCULATE_DEPTH        # el bastón (resonando)
+item 1 item_hut_loom_debris PAL_BACKGROUND 200 110 48 0 6 16 FORCE_BACKGROUND # bastidor roto (apoyado en la pared)
+item 2 item_hut_threads PAL_BACKGROUND 500 146 32 0 8 12 CALCULATE_DEPTH      # hilos ennegrecidos
 set rod off
 call act1_hut_start           # dentro de la choza no hay antorcha: sprite norod
 character CHR_linus

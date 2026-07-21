@@ -198,7 +198,7 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool so
     u8 voice_talking;
 
     // Fade-in sprite
-    spr_fadein = SPR_addSprite(&int_fadein_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
+    spr_fadein = SPR_addSprite(&int_fadein_sprite, 0, 0, TILE_ATTR(PAL_INTERFACE, TRUE, FALSE, FALSE));
     SPR_setVisibility(spr_fadein, HIDDEN);
     SPR_setAnimationLoop(spr_fadein, false);
 
@@ -208,20 +208,20 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool so
         if (encoded_text != NULL) text = encoded_text;
     }
 
-    VDP_setTextPalette(PAL2);
+    VDP_setTextPalette(PAL_INTERFACE);
 
     // Print the text, character by character, handling palette escape codes
     while (text[i] != '\0') {
 
-        // Color start @[  -> switch to PAL1
+        // Color start @[  -> switch to PAL_CHARACTERS
         if (text[i] == '@' && text[i + 1] == '[') {
-            VDP_setTextPalette(PAL1);
+            VDP_setTextPalette(PAL_CHARACTERS);
             i += 2;
             continue;
         }
-        // Color end @] -> back to PAL2
+        // Color end @] -> back to PAL_INTERFACE
         if (text[i] == '@' && text[i + 1] == ']') {
-            VDP_setTextPalette(PAL2);
+            VDP_setTextPalette(PAL_INTERFACE);
             i += 2;
             continue;
         }
@@ -284,7 +284,7 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool so
         i++;
     }
 
-    VDP_setTextPalette(PAL2); // Ensure palette reset
+    VDP_setTextPalette(PAL_INTERFACE); // Ensure palette reset
 
     // If waiting, also wait for A release to avoid accidental skips on next text
     if (wait_for_frame) {
@@ -315,7 +315,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     dprintf(2, "Displaying choice with %d options\n", num_options);
 
     // Load magic animation sprite
-    Sprite* spr_magic_anim = SPR_addSprite(&int_magin_anim_sprite, 0, 0, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
+    Sprite* spr_magic_anim = SPR_addSprite(&int_magin_anim_sprite, 0, 0, TILE_ATTR(PAL_INTERFACE, TRUE, FALSE, FALSE));
     SPR_setVisibility(spr_magic_anim, HIDDEN);
     
     // If the active character is walking, stop it

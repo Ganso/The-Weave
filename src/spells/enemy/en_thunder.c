@@ -23,12 +23,12 @@ static void en_thunder_on_launch(SpellContext *ctx)
 static bool en_thunder_on_update(SpellContext *ctx)
 {
     if (!en_thunder_flash_on) {                    // primer frame del flash
-        PAL_setColor(PAL0_COL4, COLOR_ENEMY_FLASH);
+        PAL_setColor(PAL_BACKGROUND_COL4, COLOR_ENEMY_FLASH);
         play_spell_jingle(SPELL_EN_THUNDER);
         en_thunder_flash_on = true;
     } else if ((frame_counter & 1) == 0) {         // alternar cada 2 frames
-        u16 col = PAL_getColor(PAL0_COL4);
-        PAL_setColor(PAL0_COL4, (col == COLOR_ENEMY_FLASH) ? COLOR_INITIAL_SKY
+        u16 col = PAL_getColor(PAL_BACKGROUND_COL4);
+        PAL_setColor(PAL_BACKGROUND_COL4, (col == COLOR_ENEMY_FLASH) ? COLOR_INITIAL_SKY
                                                            : COLOR_ENEMY_FLASH);
     }
 
@@ -39,7 +39,7 @@ static bool en_thunder_on_update(SpellContext *ctx)
 
 static void en_thunder_on_finish(SpellContext *ctx)    // fin natural: el rayo alcanza al jugador
 {
-    PAL_setColor(PAL0_COL4, COLOR_INITIAL_SKY);    // restaurar cielo
+    PAL_setColor(PAL_BACKGROUND_COL4, COLOR_INITIAL_SKY);    // restaurar cielo
     en_thunder_flash_on = false;
     SPR_setAnim(spr_enemy[ctx->enemyId], ANIM_IDLE);
     hit_player(1);
@@ -48,7 +48,7 @@ static void en_thunder_on_finish(SpellContext *ctx)    // fin natural: el rayo a
 static void en_thunder_on_counter(SpellContext *ctx)    // contrarrestado: el rayo vuelve al lanzador
 {
     dprintf(2, "Enemy %d: Thunder countered", ctx->enemyId);
-    PAL_setColor(PAL0_COL4, COLOR_INITIAL_SKY);
+    PAL_setColor(PAL_BACKGROUND_COL4, COLOR_INITIAL_SKY);
     en_thunder_flash_on = false;
     hit_enemy(ctx->enemyId, 1);
 }
@@ -57,7 +57,7 @@ static void en_thunder_on_cancel(SpellContext *ctx)    // cancelado (hide, recha
 {
     dprintf(2, "Enemy %d: Thunder cancelled", ctx->enemyId);
     (void)ctx;
-    PAL_setColor(PAL0_COL4, COLOR_INITIAL_SKY);
+    PAL_setColor(PAL_BACKGROUND_COL4, COLOR_INITIAL_SKY);
     en_thunder_flash_on = false;
 }
 

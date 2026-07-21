@@ -265,7 +265,7 @@ Cada fase tiene cinco datos, en este orden:
   en inicio y fin. Así el daño se aplica una única vez, en ese instante.
 - **tipo_de_fase**: `PHASE_VISUAL_FLASH` o `PHASE_LOGIC_DAMAGE`.
 - **parámetro1 / parámetro2**: dependen del tipo:
-  - En un destello: parámetro1 es la ranura de paleta a tintar (usa `PAL0_COL4`, que
+  - En un destello: parámetro1 es la ranura de paleta a tintar (usa `PAL_BACKGROUND_COL4`, que
     es la que suele controlar el color del cielo/fondo) y parámetro2 es el color.
   - En un daño: parámetro1 es el objetivo (`PHASE_TARGET_ENEMY_ACTIVE` para el
     enemigo, `PHASE_TARGET_PLAYER` para el jugador) y parámetro2 es cuánto daño.
@@ -274,7 +274,7 @@ Ejemplo comentado:
 
 ```c
 // Destello naranja durante los 2 primeros segundos:
-fases[0] = (SpellPhase){ 0, SCREEN_FPS * 2, PHASE_VISUAL_FLASH, PAL0_COL4, COLOR_NARANJA };
+fases[0] = (SpellPhase){ 0, SCREEN_FPS * 2, PHASE_VISUAL_FLASH, PAL_BACKGROUND_COL4, COLOR_NARANJA };
 // 2 puntos de daño al enemigo, UNA vez, al llegar al segundo 1 (inicio == fin):
 fases[1] = (SpellPhase){ SCREEN_FPS, SCREEN_FPS, PHASE_LOGIC_DAMAGE, PHASE_TARGET_ENEMY_ACTIVE, 2 };
 ```
@@ -460,7 +460,7 @@ luego) y sonamos el jingle:
 static void wind_on_launch(SpellContext *ctx)
 {
     (void)ctx;
-    wind_saved_color = PAL_getColor(PAL0_COL4);  // guardar el color de antes
+    wind_saved_color = PAL_getColor(PAL_BACKGROUND_COL4);  // guardar el color de antes
     play_spell_jingle(SPELL_WIND);               // sonar el efecto de sonido
     // el destello verde y el daño los hacen las fases, no hace falta código aquí
 }
@@ -472,7 +472,7 @@ static void wind_on_launch(SpellContext *ctx)
 static void wind_on_finish(SpellContext *ctx)
 {
     (void)ctx;
-    PAL_setColor(PAL0_COL4, wind_saved_color);   // restaurar el cielo
+    PAL_setColor(PAL_BACKGROUND_COL4, wind_saved_color);   // restaurar el cielo
 }
 ```
 
@@ -483,7 +483,7 @@ dos fases y todos los campos:
 void wind_init(void)    // el juego llama a esto al arrancar
 {
     // Fase 1 (visual): destello verde durante el primer segundo.
-    wind_phases[0] = (SpellPhase){ 0, SCREEN_FPS, PHASE_VISUAL_FLASH, PAL0_COL4, COLOR_WIND_VDP };
+    wind_phases[0] = (SpellPhase){ 0, SCREEN_FPS, PHASE_VISUAL_FLASH, PAL_BACKGROUND_COL4, COLOR_WIND_VDP };
     // Fase 2 (daño): 1 punto de daño al enemigo, UNA vez, a mitad del efecto (inicio==fin).
     wind_phases[1] = (SpellPhase){ SCREEN_FPS/2, SCREEN_FPS/2, PHASE_LOGIC_DAMAGE, PHASE_TARGET_ENEMY_ACTIVE, 1 };
 

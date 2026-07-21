@@ -24,7 +24,7 @@ static u16 light_saved_color;
 static void light_on_launch(SpellContext *ctx)
 {
     (void)ctx;
-    light_saved_color = PAL_getColor(PAL0_COL4);
+    light_saved_color = PAL_getColor(PAL_BACKGROUND_COL4);
     play_spell_jingle(SPELL_LIGHT);
     // El efecto visual completo lo declaran las fases
 }
@@ -32,14 +32,14 @@ static void light_on_launch(SpellContext *ctx)
 static void light_on_finish(SpellContext *ctx)
 {
     (void)ctx;
-    PAL_setColor(PAL0_COL4, light_saved_color);   // restaurar el color original
+    PAL_setColor(PAL_BACKGROUND_COL4, light_saved_color);   // restaurar el color original
 }
 
 void light_init(void)    // Registra LUZ (llamado desde init_spells)
 {
     // Fase 1: cian la primera mitad; fase 2: blanco la segunda mitad
-    light_phases[0] = (SpellPhase){ 0,                  SCREEN_FPS * 3 / 4,  PHASE_VISUAL_FLASH, PAL0_COL4, COLOR_LIGHT_CYAN };
-    light_phases[1] = (SpellPhase){ SCREEN_FPS * 3 / 4, SCREEN_FPS * 3 / 2,  PHASE_VISUAL_FLASH, PAL0_COL4, COLOR_LIGHT_WHITE };
+    light_phases[0] = (SpellPhase){ 0,                  SCREEN_FPS * 3 / 4,  PHASE_VISUAL_FLASH, PAL_BACKGROUND_COL4, COLOR_LIGHT_CYAN };
+    light_phases[1] = (SpellPhase){ SCREEN_FPS * 3 / 4, SCREEN_FPS * 3 / 2,  PHASE_VISUAL_FLASH, PAL_BACKGROUND_COL4, COLOR_LIGHT_WHITE };
 
     spell_defs[SPELL_LIGHT] = (SpellDef){
         .id = SPELL_LIGHT,

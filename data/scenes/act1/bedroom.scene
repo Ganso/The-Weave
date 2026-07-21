@@ -4,22 +4,22 @@ scene act1_bedroom
 # --- Montaje del nivel, paleta del cisne, personajes e items (antes en act1_bedroom_setup) ---
 level bedroom_bg_tile bedroom_bg_map bedroom_front_tile bedroom_front_map bedroom_night_pal SCREEN_WIDTH auto_right 3
 limits 20 145 278 176
-palette PAL1 swan_pal         # usar la paleta del cisne en lugar de la de personajes
+palette PAL_CHARACTERS swan_pal         # usar la paleta del cisne en lugar de la de personajes
 character CHR_swan
 character CHR_linus
-item 0 item_bedroom_bed PAL0 31 139 93 0 23 0 FORCE_BACKGROUND              # cama
-item 1 item_bedroom_chair PAL0 236 110 26 0 43 0 FORCE_BACKGROUND           # silla
-item 2 item_bedroom_windowsill PAL0 125 121 99 0 22 0 FORCE_BACKGROUND      # alféizar
-item 3 item_bedroom_cabinet PAL0 270 79 51 0 82 0 FORCE_BACKGROUND          # armario + partitura
-item 4 item_bedroom_linus_sleeping PAL0 30 112 0 0 0 0 FORCE_BACKGROUND     # Linus dormido
+item 0 item_bedroom_bed PAL_BACKGROUND 31 139 93 0 23 0 FORCE_BACKGROUND              # cama
+item 1 item_bedroom_chair PAL_BACKGROUND 236 110 26 0 43 0 FORCE_BACKGROUND           # silla
+item 2 item_bedroom_windowsill PAL_BACKGROUND 125 121 99 0 22 0 FORCE_BACKGROUND      # alféizar
+item 3 item_bedroom_cabinet PAL_BACKGROUND 270 79 51 0 82 0 FORCE_BACKGROUND          # armario + partitura
+item 4 item_bedroom_linus_sleeping PAL_BACKGROUND 30 112 0 0 0 0 FORCE_BACKGROUND     # Linus dormido
 # Items del guión definitivo (sprites PLACEHOLDER). El retrato cuelga sobre el
 # cajón de la izquierda; su caja de interacción queda por ENCIMA de la franja
 # andable (y<145) para no bloquear el paso por abajo.
 # La caja del retrato rellena el hueco a la izquierda de la cama (bloquea
 # subirse a ella); la interacción del retrato la arbitra el hook: pulsar A en
 # la esquina izquierda (sobre la cabecera o junto al cajón) muestra el retrato
-item 5 item_bedroom_portrait PAL0 4 120 27 0 23 39 FORCE_BACKGROUND         # retrato familiar (izquierda del todo)
-item 7 item_bedroom_chest PAL0 176 148 40 0 7 17 CALCULATE_DEPTH          # baúl de infancia
+item 5 item_bedroom_portrait PAL_BACKGROUND 4 120 27 0 23 39 FORCE_BACKGROUND         # retrato familiar (izquierda del todo)
+item 7 item_bedroom_chest PAL_BACKGROUND 176 148 40 0 7 17 CALCULATE_DEPTH          # baúl de infancia
 
 call act1_bedroom_swan       # cinemática del cisne (flash + diálogo + flash)
 call act1_bedroom_wake       # amanece, Linus se levanta, control al jugador

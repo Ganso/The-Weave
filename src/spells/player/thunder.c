@@ -2,8 +2,8 @@
 //
 // Efecto de rayo (guión del acto 1): el escenario del bosque usa siempre la
 // paleta oscura (forest_dark). Al lanzar el trueno, el fondo PARPADEA con la
-// paleta clara (forest_pal) y, además, el color del cielo (PAL0_COL4) con
-// blanco. En escenas con otro fondo, el parpadeo de cielo sigue funcionando.
+// paleta clara (forest_pal) y, además, el color del cielo con blanco. En
+// escenas con otro fondo, el parpadeo del cielo sigue funcionando.
 //
 // Invertido: solo se permite dentro de la ventana de counter del trueno
 // enemigo (lo gestiona el motor via canUse + spell_try_counter).
@@ -22,22 +22,22 @@
 #define COLOR_WHITE_VDP  RGB24_TO_VDPCOLOR(0xFFFFFF)
 #define THUNDER_FLASH_PERIOD  4   // frames por medio ciclo del parpadeo
 
-static u16  thunder_saved_pal[16];   // PAL0 original (el fondo de la escena)
+static u16  thunder_saved_pal[16];   // el fondo original de la escena
 static bool thunder_bright;          // true = fotograma en "claro"
 static bool thunder_in_forest;       // true = el fondo es forest_dark → parpadea entero
 
 // Fotograma claro / oscuro. En el bosque (fondo forest_dark) el destello cambia
 // TODA la paleta a la clara (forest_pal); en cualquier otro escenario solo
-// parpadea el color del cielo (PAL0_COL4) y no se toca el resto del fondo.
+// parpadea el color del cielo y no se toca el resto del fondo.
 static void thunder_set_bright(bool bright)
 {
     thunder_bright = bright;
     if (bright) {
-        if (thunder_in_forest) PAL_setPalette(PAL0, forest_pal.data, DMA);
-        PAL_setColor(PAL0_COL4, COLOR_WHITE_VDP);                 // destello del cielo
+        if (thunder_in_forest) PAL_setPalette(PAL_BACKGROUND, forest_pal.data, DMA);
+        PAL_setColor(PAL_BACKGROUND_COL4, COLOR_WHITE_VDP);                 // destello del cielo
     } else {
         if (thunder_in_forest) PAL_setColors(0, thunder_saved_pal, 16, DMA);
-        else PAL_setColor(PAL0_COL4, thunder_saved_pal[4]);      // solo el cielo
+        else PAL_setColor(PAL_BACKGROUND_COL4, thunder_saved_pal[4]);      // solo el cielo
     }
 }
 

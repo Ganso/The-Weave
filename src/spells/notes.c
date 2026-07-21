@@ -175,7 +175,7 @@ void enemy_notes_add(u8 enemySlot, u8 noteCode)    // Muestra sprite + sonido de
 
     if (!spr_enemy_rod[idx]) { // crear una vez
         spr_enemy_rod[idx] =
-            SPR_addSpriteSafe(def, x, 184, TILE_ATTR(PAL2, false, false, false));
+            SPR_addSpriteSafe(def, x, 184, TILE_ATTR(PAL_INTERFACE, false, false, false));
         if (!spr_enemy_rod[idx]) return;        // VRAM llena
     } else {
         SPR_setVisibility(spr_enemy_rod[idx], VISIBLE);
