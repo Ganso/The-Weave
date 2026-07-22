@@ -168,6 +168,9 @@ case CHR_aiden:
 
 - `speed` es lo rápido que anda. Referencias: Linus `3/2` (1,5 px), Clio y
   Xander `3/4` (0,75 px).
+- `speed` marca la velocidad **horizontal**. El movimiento **vertical** usa la
+  mitad de ese valor (`step >> 1` en `handle_character_movement`), porque la
+  zona jugable en Y es corta y a igual velocidad se sentía demasiado rápido.
 - Si **no lleva sombra**, pon `drops_shadow = false;` y no asignes
   `nsprite_shadow` (mira el caso del cisne).
 

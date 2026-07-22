@@ -78,8 +78,9 @@ void handle_character_movement(s16 dx, s16 dy)    // Update character position w
     fastfix32 new_x_fixed = current_x_fixed;
     fastfix32 new_y_fixed = current_y_fixed;
 
+    fastfix32 step_v = step >> 1;   // vertical a la mitad: la zona jugable en Y es corta y se sentía muy rápido
     if (dx != 0) new_x_fixed += (dx > 0 ? step : -step);
-    if (dy != 0) new_y_fixed += (dy > 0 ? step : -step);
+    if (dy != 0) new_y_fixed += (dy > 0 ? step_v : -step_v);
 
     s16 current_x = FASTFIX32_TO_INT(current_x_fixed);
     s16 current_y = FASTFIX32_TO_INT(current_y_fixed);
