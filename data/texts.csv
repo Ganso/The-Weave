@@ -24,7 +24,7 @@ act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_corridor,A1_CORRIDOR_MYTH_COLLECTION,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Una colección de|mitos y leyendas|de los distintos gremios,A collection of|myths and legends|from the different guilds
 act1_corridor,A1_CORRIDOR_MYTH2,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Pastores que cantan|Herreros que forjan|Cristaleros que ven el mañana,Shepherds who sing|Blacksmiths who forge|Glassmakers who see tomorrow
 act1_corridor,A1_CORRIDOR_MYTH3,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Se cuenta que faltan|algunos gremios|perdidos en el tiempo,"They say some guilds|are missing,|lost in time"
-act1_corridor,A1_CORRIDOR_MYTH_PASTORS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Gracias a mi padre|tenemos documentadas|las que cantaban los @[Pastores@],Thanks to my father|we have documented|those the @[Shepherds@] sang
+act1_corridor,A1_CORRIDOR_MYTH_PASTORS,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Gracias a mi padre|tenemos documentadas algunas|canciones de los @[Pastores@],Thanks to my father|we have documented some|songs the @[Shepherds@] sang
 act1_corridor,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_corridor,A1_CORRIDOR_MYTH_AGAIN,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Mitos y leyendas|Y a veces verdades,Myths and legends|And sometimes truths
 act1_hall,A1_HALL_GUILD_YEAR,FACE_none,SIDE_LEFT,DEFAULT_TALK_TIME,@[Gremio de los historiadores@]|Año 8121,@[Historians guild@]|Year 8121
