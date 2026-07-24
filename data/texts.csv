@@ -157,7 +157,8 @@ act1_coast,A1_COAST_L1b,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Así que existía,
 act1_coast,A1_COAST_L1c,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,¿Dónde llevará el camino?,Where does the path lead?
 act1_coast,A1_COAST_L1d,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Está a punto de anochecer|Tendremos que|averiguarlo rápido,Night is almost here|We'll have to find out|quickly
 act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
-act1_coast,A1_COAST_TREE,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,@[Padre@] describía este árbol|exactamente así,@[Father@] described this tree|exactly like this
+act1_coast,A1_COAST_TREE,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Las últimas hojas de otoño,The last leaves of autumn
+act1_coast,A1_COAST_TREE_DESC,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,@[Padre@] describía este árbol|exactamente así,@[Father@] described this tree|exactly like this
 act1_coast,NULL,0,false,DEFAULT_TALK_TIME,,
 act1_coast,A1_COAST_ONWARD,FACE_linus,SIDE_RIGHT,DEFAULT_TALK_TIME,Todo parece quieto,Everything seems still
 act1_coast,A1_COAST_ONWARDb,FACE_clio,SIDE_LEFT,DEFAULT_TALK_TIME,Demasiado quieto,Too still

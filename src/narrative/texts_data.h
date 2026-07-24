@@ -188,11 +188,12 @@ enum Act1CoastId {
     A1_COAST_L1d = 5,
     A1_COAST_TERM_2 = 6,
     A1_COAST_TREE = 7,
-    A1_COAST_TERM_3 = 8,
-    A1_COAST_ONWARD = 9,
-    A1_COAST_ONWARDb = 10,
-    A1_COAST_TERM_4 = 11,
-    A1_COAST_COUNT = 12
+    A1_COAST_TREE_DESC = 8,
+    A1_COAST_TERM_3 = 9,
+    A1_COAST_ONWARD = 10,
+    A1_COAST_ONWARDb = 11,
+    A1_COAST_TERM_4 = 12,
+    A1_COAST_COUNT = 13
 };
 
 enum Act1IslandId {

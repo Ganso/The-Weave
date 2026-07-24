@@ -59,7 +59,7 @@ void act1_coast_explore(void)    // Paseo por toda la playa: gaviota al llegar a
 
         // El árbol rojo es un objeto (item 1: la caja de interacción representa las hojas al pie del tronco)
         if (last_interacted_item == 1) {
-            talk_dialog(&dialogs[ACT1_COAST][A1_COAST_TREE], false);
+            talk_cluster(&dialogs[ACT1_COAST][A1_COAST_TREE], false);
             last_interacted_item = ITEM_NONE;
         }
     }
