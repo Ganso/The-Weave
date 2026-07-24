@@ -26,7 +26,6 @@ SPRITE item_bedroom_chest "gfx/items/act1/bedroom_chest.png" 5 3 BEST
 # Act 1 - Scene 4/7 (costa)
 # *** PLACEHOLDER (sprite generado por código; sustituir por .ase definitivo) ***
 SPRITE item_coast_seagull "gfx/items/act1/coast_seagull.png" 3 2 BEST 6
-SPRITE item_coast_leaves "gfx/items/act1/coast_leaves.png" 3 2 BEST
 SPRITE item_coast_tree "gfx/items/act1/coast_tree.png" 14 17 BEST
 
 # Act 1 - Scene 5 (choza). El bastón tiene 2 frames: normal/resonando

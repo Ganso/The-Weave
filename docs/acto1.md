@@ -128,7 +128,7 @@ sin tocar código (mismo archivo, mismas dimensiones y paleta).
   la fila extra), Xander, cisne.
 - **Enemigos**: jabalí (con sombra) y WeaverGhost (hace de espectro del Caos).
 - **Items**: retrato y baúl (dormitorio), bastón (con frame «resonando»), bastidor
-  e hilos (choza), gaviota y hojas del árbol (costa) *(placeholder)*.
+  e hilos (choza), gaviota y árbol (costa) *(placeholder)*.
 - **FX**: rayo `fx_lightning_sprite` (3 frames) *(placeholder)*. El resto de
   flashes/resplandores se hacen por paleta, sin asset.
 - **Interfaz**: icono de patrón `pattern_heal` (Curación) *(placeholder)*.
