@@ -7,7 +7,8 @@ scene act1_coast
 level coast_bg_tile coast_bg_map coast_front_tile coast_front_map coast_pal 640 user_right 3
 limits 0 134 275 172
 item 0 item_coast_seagull PAL_BACKGROUND 520 112 0 0 0 0 FORCE_BACKGROUND    # gaviota (alza el vuelo al llegar al árbol)
-item 1 item_coast_leaves PAL_BACKGROUND 478 156 24 0 8 8 CALCULATE_DEPTH      # el árbol rojo (hojas al pie: objeto examinable)
+# item 1 item_coast_leaves PAL_BACKGROUND 478 156 24 0 8 8 CALCULATE_DEPTH      # el árbol rojo (hojas al pie: objeto examinable)
+item 1 item_coast_tree PAL_BACKGROUND 478 23 106 8 11 123 CALCULATE_DEPTH  # el árbol rojo
 set rod off                   # Linus aún no tiene el bastón
 character CHR_linus
 character CHR_clio

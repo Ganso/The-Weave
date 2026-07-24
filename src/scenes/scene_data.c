@@ -463,7 +463,7 @@ const SceneItem scene_items[] = {
     { &item_bedroom_portrait, PAL_BACKGROUND, 4, 120, 27, 0, 23, 39, FORCE_BACKGROUND }, // 5
     { &item_bedroom_chest, PAL_BACKGROUND, 176, 148, 40, 0, 7, 17, CALCULATE_DEPTH }, // 6
     { &item_coast_seagull, PAL_BACKGROUND, 520, 112, 0, 0, 0, 0, FORCE_BACKGROUND }, // 7
-    { &item_coast_leaves, PAL_BACKGROUND, 478, 156, 24, 0, 8, 8, CALCULATE_DEPTH }, // 8
+    { &item_coast_tree, PAL_BACKGROUND, 478, 23, 106, 8, 11, 123, CALCULATE_DEPTH }, // 8
     { &item_corridor_bookpedestal_sprite, PAL_BACKGROUND, 600, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH }, // 9
     { &item_corridor_bookpedestal_sprite, PAL_BACKGROUND, 200, 95, COLLISION_DEFAULT, COLLISION_DEFAULT, 8, 58, CALCULATE_DEPTH }, // 10
     { &item_corridor_lamp_sprite, PAL_BACKGROUND, 32, 0, 0, 0, 0, 0, FORCE_BACKGROUND }, // 11
