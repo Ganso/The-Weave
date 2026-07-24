@@ -321,7 +321,7 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     // Update character depth
     for (i = 0; i < MAX_CHR; i++) {
         if (obj_character[i].active==true) {
-            SPR_setDepth(spr_chr[i], -FASTFIX32_TO_INT(obj_character[i].y)-obj_character[i].y_size); // Negative of the bottom line of the sprite
+            SPR_setDepth(spr_chr[i], -FASTFIX32_TO_INT(obj_character[i].y)-obj_character[i].collision_y_offset-obj_character[i].collision_height); // Negative of the bottom line of the collision box
         }
     }
 
@@ -333,7 +333,7 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
             } else if (obj_item[i].check_depth==FORCE_FOREGROUND) {
                 SPR_setDepth(spr_item[i], SPR_MIN_DEPTH+100); // Foreground items are always at the front (add 100 so it doesn't interfere with frontend interface items)
             } else {
-                SPR_setDepth(spr_item[i], -FASTFIX32_TO_INT(obj_item[i].entity.y)-obj_item[i].entity.y_size); // Negative of the bottom line of the sprite
+                SPR_setDepth(spr_item[i], -FASTFIX32_TO_INT(obj_item[i].entity.y)-obj_item[i].entity.collision_y_offset-obj_item[i].entity.collision_height); // Negative of the bottom line of the collision box
             }
         }
     }
@@ -341,7 +341,7 @@ void update_sprites_depth(void)    // Sort sprite layers based on Y position for
     // Update enemies depth
     for (i = 0; i < MAX_ENEMIES; i++) {
         if (obj_enemy[i].obj_character.active==true) {
-            SPR_setDepth(spr_enemy[i], -FASTFIX32_TO_INT(obj_enemy[i].obj_character.y)-obj_enemy[i].obj_character.y_size); // Negative of the bottom line of the sprite
+            SPR_setDepth(spr_enemy[i], -FASTFIX32_TO_INT(obj_enemy[i].obj_character.y)-obj_enemy[i].obj_character.collision_y_offset-obj_enemy[i].obj_character.collision_height); // Negative of the bottom line of the collision box
         }
     }
 }
