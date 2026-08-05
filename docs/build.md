@@ -119,3 +119,14 @@ obsoleta y las versiones nuevas la rechazan al compilar. Se usa
 - **Comparar ROMs**: `GAMEVERSION` incrusta `__DATE__` — builds de días
   distintos difieren SIEMPRE a nivel binario. Compara comportamiento, no bytes.
 - **Debug**: todos los toggles en `src/core/hack.h` (ver AGENTS.md §debugear).
+- **`No rule to make target 'src/…/algo.h'`** tras MOVER un fichero de sitio → son los
+  `.d` y `.o` de la ubicación ANTIGUA, que siguen en `out/` y arrastran dependencias
+  muertas. Peor aún: un `.o` huérfano puede llegar a enlazarse. **Después de mover o
+  renombrar fuentes, `./build-theweave.sh clean` es obligatorio**, no opcional.
+  (Caso real de agosto 2026: `src/spells/spell.c` y compañía se movieron a
+  `src/spells/player/` y los objetos de julio seguían en `out/src/spells/`.)
+- **`res/*.h` aparecen modificados después de cada build, con solo una línea en blanco
+  de diferencia** → es ruido del `rescomp` de la imagen Docker actual, que genera la
+  cabecera distinta a la versión con la que se generaron los ficheros versionados. No
+  es un cambio real; da igual commitearlo que revertirlo, pero **no lo mezcles sin
+  darte cuenta** en un commit de código.

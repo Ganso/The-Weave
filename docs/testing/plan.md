@@ -126,6 +126,26 @@ oculto, sin recompilar. Con `DEBUG_MENU_ENABLED FALSE` la ROM queda idéntica a 
 > añade el menú; `HACK_START_SCENE` y `HACK_FORCE_LANGUAGE` se quedan compile-time
 > (solo tienen sentido en el arranque).
 
+> **Estado: PENDIENTE, pero con el diseño ya cerrado.** Lo de abajo se revisó contra el
+> código real el 2026-08-05, y las correcciones respecto al plan original están marcadas
+> como ⚠️. La referencia a portar es `../RedPlanet_MD/src/debug/` (unas 600 líneas entre
+> los cuatro módulos), que ya resuelve la forma de la tabla de entradas y la FSM del
+> código de acceso.
+
+### 4.0 Los seis puntos de consulta (ya localizados)
+
+Uno por toggle, la conversión es una línea en cada sitio:
+
+| Toggle | Dónde se consulta hoy |
+|---|---|
+| `fastDialogs` | `src/narrative/dialogs.c:26` |
+| `muteMusic` / `muteSfx` | `src/audio/sound.c:10` y `:23` |
+| `enemiesOneHp` / `playerInvulnerable` | `src/combat/combat.c:60` y `:92` |
+| `allSpells` | `src/spells/spell.c:79` — ⚠️ **NO es un toggle** |
+
+⚠️ `HACK_ALL_SPELLS` se consulta **una sola vez, dentro de `init_spells()`**. Como
+casilla del menú no haría nada, así que va como **acción** (ver 4.3).
+
 ### 4.1 `debug_hacks.c/.h`
 
 - `struct DebugHacks` con los campos bool de los toggles de gameplay; `g_hacks` global.
@@ -139,35 +159,75 @@ oculto, sin recompilar. Con `DEBUG_MENU_ENABLED FALSE` la ROM queda idéntica a 
 
 ### 4.2 `debug_code.c/.h` — detector de secuencia
 
-- Código de desarrollo `X Y X Y` (just-pressed, timeout ~1 s), con selector
-  `DEBUG_MENU_CODE_SIMPLE` para cambiar a un código "de producción". X/Y solo tocan
-  notas musicales; en el playtest, evaluar si se dispara tocando patrones — si molesta,
-  pasar a una secuencia con START (inerte fuera de pausa).
-- Alimentación: al final de `joy_check()` (`src/core/controller.c`). Limitación
-  aceptada v1: el menú no se abre dentro de diálogos ni pausa (sus bucles no pasan por
-  `joy_check`).
+FSM estilo Konami sobre just-pressed con timeout (~1 s), portada de
+`../RedPlanet_MD/src/debug/debug_code.c`. Dos correcciones sobre el plan original:
+
+- ⚠️ **El código NO puede ser `X Y X Y`**: en The Weave X/Y/Z **son notas musicales**
+  (LA/SI/DO), así que se dispararía tocando patrones. Usar una secuencia terminada en
+  START, que es inerte fuera de la pausa (p. ej. `A B C START`, o el Konami completo).
+- ⚠️ **Engancharlo en `next_frame()`** (`src/core/frame.c`), **no** en `joy_check()`:
+  `joy_check` solo corre con `movement_active`, mientras que `next_frame` es el latido
+  universal — los diálogos lo llaman en sus diez bucles (`dialogs.c` usa
+  `next_frame(false)`) y las cutscenes también. Enganchar ahí hace que el menú se abra
+  **también dentro de diálogos y cutscenes**, que es donde más falta hace. Queda fuera
+  solo el bucle de `pause_screen`, que usa `SYS_doVBlankProcess` directo.
+- Como en `next_frame` no interactivo nadie lee el pad, `debug_code_tick()` debe ser
+  **autónomo**: que llame él a `pad_read()` y calcule el flanco con su propio `prev`
+  estático (RedPlanet se apoya en un `input_justPressed()` global que aquí no existe).
+  Al pasar por `pad_read()`, el código de acceso también es pilotable por RAM.
 
 ### 4.3 `debug_menu.c/.h` — UI sobre el Window plane
 
-La window ya es del HUD/diálogos (VPos 22). El menú, al abrir, la sube a pantalla
-completa (`VDP_setWindowVPos(TRUE, alto)`) y congela el juego (solo VBlank + música); al
-cerrar restaura VPos 22, limpia el plano y repinta el HUD. Entradas:
+⚠️ **Modelarlo sobre `pause_screen()`** (`src/interface/interface.c:386`), no sobre el
+`debug_menu.c` de RedPlanet: allí el juego separa update de render y el menú es un
+estado más, mientras que aquí lo natural es un **bucle bloqueante propio** que llama
+`SYS_doVBlankProcess()`. Nunca `next_frame()`, que es desde donde se le invoca (sería
+reentrante). `pause_screen` ya hace exactamente este ciclo y tiene los helpers hechos.
 
-1. Toggles SI/NO de los hacks de gameplay.
-2. `DAR VARA + HECHIZOS` — acción inmediata (`debug_give_spells`).
-3. `IR A ESCENA >` — submenú con `scenes[].name`; fija `current_scene_id` y levanta un
-   flag que el bucle del `scene_vm` chequea por opcode para retornar limpio. **Riesgo**:
-   el estado a medio construir de la escena abandonada debe pasar por el teardown
-   normal; si el VM no tiene un punto único de salida, esta entrada se pospone a un
-   commit propio.
-4. `CERRAR` (también con START).
+Ciclo, calcado del de la pausa:
+
+1. Abrir: `hide_interface_sprites()` / `hide_all_sprites()` y `save_animation_states()`
+   (ya existen en `interface.h`); subir la window a pantalla completa con
+   `VDP_setWindowVPos(FALSE, 26)`.
+2. Bucle: UP/DOWN mueven el cursor, LEFT/RIGHT/A alternan, B o START cierran —
+   esperando a que el pad quede en reposo antes de devolver el control, para que la
+   pulsación de cierre no dispare una nota.
+3. Cerrar: restaurar `VDP_setWindowVPos(TRUE, 22)` (el valor que fija `init.c:58`),
+   `VDP_clearPlane(WINDOW, true)` y repintar el HUD con `show_or_hide_interface(true)`.
+
+Entradas:
+
+1. Casillas SI/NO: INVULNERABLE, ENEMIGOS 1 HP, DIALOGOS RAPIDOS, SIN MUSICA, SIN SFX.
+2. `DAR VARA Y HECHIZOS` — acción que replica el bloque de `spell.c:79`. ⚠️ **Trampa
+   crítica** (AGENTS §7): cambiar la forma de Linus a mitad de escena exige
+   `reinit_character_sprite`; darle la vara sin eso deja el sprite sin las filas de
+   animación que se le pedirán y **congela el VDP** en el siguiente `SPR_setAnim`.
+3. `CURAR` y `MATAR ENEMIGOS` — acciones baratas sobre `player_hitpoints` y `hit_enemy`.
+4. Línea INFO: escena actual (`scenes[current_scene_id].name`), FPS y RAM libre.
+5. `CERRAR` (también con START).
+
+⚠️ **Trampa de la fuente** (AGENTS §7): en texto CRUDO (`VDP_drawTextBG`, que es lo que
+usa el menú) la fuente tiene los glifos españoles en las posiciones ASCII de
+`/ < > ^ # $ % *`. El cursor `">"` de RedPlanet se dibujaría como `¡`. Usar las marcas
+que ya emplean `choice_dialog` y el menú de la smoke (`}` … `{`) y evitar esos ocho
+caracteres en todas las etiquetas.
+
+### 4.4 `IR A ESCENA` — deliberadamente fuera de la v1
+
+Se pospone a un commit propio: la VM **no tiene un punto único de salida**, y abandonar
+una escena a medio construir exige que los ops bloqueantes (`say`, `move`, `combat`)
+sepan abortar. La vía más limpia cuando se aborde: un flag que `scene_run()` compruebe
+en la cabecera de su bucle de steps y que ejecute la misma rutina que
+`SCENE_OP_NEXT_SCENE` (`end_level` + return), de modo que el teardown sea el normal.
+Mientras tanto, `HACK_START_SCENE` sigue cubriendo el caso a coste de recompilar.
 
 ### Verificación (Fase 4)
 
 - Agente: builds normal/smoke `--no-run` con `DEBUG_MENU_ENABLED` TRUE y FALSE; con
   FALSE, `symbol.txt` sin símbolos `debug_*` y ROM de tamaño ~igual al actual.
-- Javier: XYXY abre el menú en gameplay; cada toggle tiene efecto inmediato; IR A
-  ESCENA aterriza limpio; cerrar restaura el HUD intacto.
+- Javier: el código abre el menú **en gameplay y también dentro de un diálogo**; cada
+  casilla tiene efecto inmediato; DAR VARA Y HECHIZOS no cuelga el juego (es la trampa
+  del sprite); al cerrar, el HUD queda intacto.
 
 ---
 
