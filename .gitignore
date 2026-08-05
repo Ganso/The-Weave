@@ -80,3 +80,11 @@ tools/voice/synthesis_animalese/
 
 # Smoke test desatendido: capturas de la última run (tools/retroarch/mcp_driver.py)
 docs/testing/smoke-latest/
+
+# Recursos: la FUENTE es el .res (versionado); los .h/.rs/.d los genera rescomp
+# en cada build y el `clean` del Makefile los borra. res_all.h es la excepción:
+# es la metalibrería escrita a mano que agrega todos los demás.
+res/*.h
+!res/res_all.h
+res/*.rs
+res/*.d

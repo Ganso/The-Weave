@@ -125,8 +125,9 @@ obsoleta y las versiones nuevas la rechazan al compilar. Se usa
   renombrar fuentes, `./build-theweave.sh clean` es obligatorio**, no opcional.
   (Caso real de agosto 2026: `src/spells/spell.c` y compañía se movieron a
   `src/spells/player/` y los objetos de julio seguían en `out/src/spells/`.)
-- **`res/*.h` aparecen modificados después de cada build, con solo una línea en blanco
-  de diferencia** → es ruido del `rescomp` de la imagen Docker actual, que genera la
-  cabecera distinta a la versión con la que se generaron los ficheros versionados. No
-  es un cambio real; da igual commitearlo que revertirlo, pero **no lo mezcles sin
-  darte cuenta** en un commit de código.
+- **`res/*.h`: no los edites ni los commitees.** Los escribe `rescomp` en cada build
+  a partir del `.res`, que es la única fuente versionada. Están en `.gitignore` (con
+  `res_all.h` como excepción: esa metalibrería es nuestra, escrita a mano). Antes iban
+  versionados y aparecían modificados tras cada build —el `rescomp` de la imagen Docker
+  actual emite una línea en blanco menos— además de que el `clean` del Makefile los
+  borraba, dejando ficheros versionados en estado "deleted".

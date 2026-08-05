@@ -169,7 +169,8 @@ src/
   interface/     → HUD, pausa, contador de vida
   audio/         → sound (XGM2; jingles por spell id)
   smoke/         → smoke ROM: menú de casos (solo compila con -DHACK_SMOKE_BUILD)
-res/             → res_*.res (rescomp) + res_*.h/.c (GEN) + assets fuente:
+res/             → res_*.res (rescomp, VERSIONADO) + res_*.h/.c (GEN, gitignorados;
+                   res_all.h es la excepción: metalibrería a mano) + assets fuente:
   gfx/           → font.png, backgrounds/act1, characters, enemies, faces,
                    interface, items/act1, geesebumps, intro
   sfx/           → dialogs/{deep,man,woman}, effects, music, notes, patterns, player
@@ -398,6 +399,9 @@ DOS sitios: el enum `HOOK_*` de `scene_hooks.h` **y** la tabla de `scene_hooks.c
 - Assets fuente en `gfx/` (gráficos) y `sfx/` (sonido), con subcarpetas por tipo de
   actor/escena. Los `.res` (definiciones rescomp) y los `res_*.h/.c` generados viven
   en la **raíz** de `res/`. `res_all.h` los agrega todos.
+- **Solo el `.res` se versiona**: los `res_*.h` (y `.rs`/`.d`) los escribe rescomp en
+  cada build y están gitignorados. La única excepción es `res_all.h`, la metalibrería
+  escrita a mano. Si un `res_*.h` te aparece en `git status`, algo está mal configurado.
 - Al añadir un asset: ponlo en su carpeta `gfx/`/`sfx/` y referéncialo en el `.res`
   con esa ruta (`SPRITE nombre "gfx/interface/x.png" …`). **El NOMBRE declarado en el
   `.res` (no la ruta) es lo que genera el símbolo C** → mover un asset no cambia el

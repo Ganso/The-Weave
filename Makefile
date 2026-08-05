@@ -148,15 +148,22 @@ $(OUT)/rom_header.o: $(SRC)/boot/rom_header.c
 	$(CC) $(DEFAULT_FLAGS) -c $< -o $@
 
 # --- Reglas genéricas ---------------------------------------------------------
-$(OUT)/%.lst: %.c
+# Los res_*.h los escribe rescomp como efecto colateral de generar el .rs, y NO
+# van versionados (son artefactos: `clean` los borra, ver .gitignore). Como el
+# código los incluye ANTES de que exista ningún .d que lo declare, todo objeto
+# lleva $(RES_H) como prerequisito de solo-orden: garantiza que rescomp ha
+# pasado antes de compilar la primera fuente, también con make -j.
+$(RES_H): %.h: %.rs ;
+
+$(OUT)/%.lst: %.c | $(RES_H)
 	$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OUT)/%.o: %.c
+$(OUT)/%.o: %.c | $(RES_H)
 	$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS) -MMD -c $< -o $@
 
-$(OUT)/%.o: %.s
+$(OUT)/%.o: %.s | $(RES_H)
 	$(MKDIR) -p $(dir $@)
 	$(CC) -x assembler-with-cpp -Wa,--register-prefix-optional,--bitwise-or $(AFLAGS) -MMD -c $< -o $@
 

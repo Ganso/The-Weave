@@ -29,7 +29,7 @@ requiere emulador con GUI (BlastEm, RetroArch) lo ejecuta Javier y reporta.
 ## Qué queda, y en qué orden
 
 ```
-Fase 3 (embudo input + override)  — HECHA, salvo el caso smoke SIM (§3.4)
+Fase 3 (embudo input + override)  — HECHA y verificada en emulador
 Fase 4 (menú de debug runtime)    — independiente; pendiente
 Fase 6 (escenas bajo guion)       — ya desbloqueada por la Fase 3; pendiente
 ```
@@ -52,10 +52,12 @@ de la smoke).
 > global `smoke_result` (máscara de fallos, 0 = ALL PASS), para que una run desatendida
 > no dependa de mirar una captura.
 >
-> ⚠️ **El caso SIM está compilado pero NUNCA EJECUTADO**: RetroArch 1.20 con
-> `video_driver = "null"` ya no corre el bucle principal (carga la ROM, pero
-> `READ_CORE_RAM` da timeout y `frame_counter` no avanza), así que no hay vía headless
-> hoy. Hay que correrlo con emulador de verdad antes de darlo por bueno.
+> **Verificado en emulador el 2026-08-05**: el caso `SIM patron notas` da OK con
+> **4/4 notas** — las tres primeras se encolan y la cuarta dispara `SPELL_LIGHT`. Es
+> decir, el override funciona de verdad contra la detección de patrones, no solo
+> compila. (La verificación fue manual: RetroArch 1.20 con `video_driver = "null"` ya
+> no corre el bucle principal —carga la ROM, pero `READ_CORE_RAM` da timeout y
+> `frame_counter` no avanza—, así que hoy no hay vía headless.)
 >
 > Lo de abajo se conserva como registro de lo que se hizo y por qué.
 
