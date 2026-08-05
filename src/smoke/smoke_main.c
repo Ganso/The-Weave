@@ -40,6 +40,9 @@ static void menu_draw(void)
     if (first + MENU_ROWS < SMOKE_CASE_COUNT) VDP_drawText("...", 4, 3 + MENU_ROWS);
 }
 
+// EXCEPCIÓN al embudo de input (core/input.h): el menú de la smoke lee el mando
+// FÍSICO a propósito, no pad_read(). Si un caso SIM termina dejando el override
+// puesto, el menú tiene que seguir siendo navegable con el mando de verdad.
 static u16 wait_joy_press(void)    // Espera una pulsación nueva (con release previo)
 {
     u16 joy;

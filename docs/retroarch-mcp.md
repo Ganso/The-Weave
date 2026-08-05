@@ -182,17 +182,36 @@ DISPLAY=:0 retroarch -L /usr/lib/x86_64-linux-gnu/libretro/genesis_plus_gx_libre
 
 ---
 
-## 7. Límite clave: sin input de gamepad
+## 7. Pilotar el juego real: pulsar botones por RAM
 
-El NCI **no** puede pulsar botones. Para pruebas que requieran interacción:
+El NCI no puede mover el gamepad del emulador, pero **no hace falta**: el juego lee el
+pad por un único punto (`pad_read()`, `src/core/input.h`) que se puede secuestrar
+escribiendo dos variables en RAM. Localízalas en `out/symbol.txt` como cualquier otra
+(§4); `pad_read` en cambio NO aparece ahí, porque LTO la inlinea — se escriben las
+variables, no se llama a la función.
 
-- **Smoke ROM** (`docs/testing.md`): scriptea el caso dentro de la ROM
-  (`-DHACK_SMOKE_BUILD`) — es la vía natural para ejercitar hechizos/escenas sin mando.
-- **Toggles de arranque** (`src/core/hack.h`, `AGENTS.md` §2): `HACK_START_SCENE` para
-  entrar directo a una escena, `HACK_ALL_SPELLS`, etc.
-- **Save states**: prepara un estado manualmente una vez y recárgalo con `load_state`.
-- Para juegos que *sí* necesiten input programático hay `mcp-mgba` (GBA), fuera de este
-  proyecto.
+```python
+ra.write_u16(syms["g_inputOverrideActive"], 1)   # a partir de aquí el mando se ignora
+ra.write_u16(syms["g_inputOverride"], 0x0040)    # BUTTON_A pulsado
+# ... avanzar ~10 frames ...
+ra.write_u16(syms["g_inputOverride"], 0)         # SOLTAR el botón...
+# ... avanzar unos frames ...
+ra.write_u16(syms["g_inputOverrideActive"], 0)   # ...y solo entonces devolver el mando
+```
+
+Dos reglas que evitan el 90 % de los fallos al pilotar:
+
+1. **Emula pulsaciones humanas, no estados**. Los llamadores esperan FLANCOS (release →
+   press), cada uno con su propio `prev_joy_state`. Un botón que se queda a 1 para
+   siempre no avanza un diálogo: lo avanza una sola vez y luego nada.
+2. **Suelta el botón antes de soltar el override**. Si desactivas
+   `g_inputOverrideActive` con la máscara aún puesta, el frame siguiente lee el mando
+   físico (normalmente 0) y el flanco de release se pierde o llega a destiempo.
+
+Sigue habiendo alternativas cuando encajen mejor: la **smoke ROM** (`docs/testing.md`)
+scriptea el caso desde dentro y puede usar `input_setOverride()` directamente sin
+emulador de por medio; los **toggles de arranque** (`src/core/hack.h`) entran directos a
+una escena; y los **save states** (`load_state`) recuperan un estado preparado a mano.
 
 ---
 

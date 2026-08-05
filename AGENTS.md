@@ -125,9 +125,21 @@ Datos que conviene tener a mano aquí:
 `mcp-retroarch` (detección y setup en `docs/retroarch-mcp.md`), un agente puede arrancar
 la ROM y **leer/escribir RAM, avanzar frame a frame de forma determinista y sacar
 capturas** por el Network Control Interface (UDP :55355) — útil para verificación
-automatizada. No hay input de gamepad por esa vía: para interacción, usa la smoke ROM o
-los toggles de `hack.h`. Antes de ofrecerlo, comprueba disponibilidad con las
-comprobaciones del §3 de ese doc.
+automatizada. Antes de ofrecerlo, comprueba disponibilidad con las comprobaciones del §3
+de ese doc.
+
+**El embudo de input (`core/input.h`)**: TODO el juego lee el pad por `pad_read()`; las
+únicas `JOY_readJoypad` que quedan son la de dentro de `input.c` y las del menú de la
+smoke ROM (que lee el mando FÍSICO a propósito, para seguir siendo navegable si un caso
+deja el override puesto). Como hay un único punto de lectura, la entrada se puede
+**secuestrar**: con `g_inputOverrideActive != 0`, `pad_read()` devuelve `g_inputOverride`
+en vez del mando. Los dos son globales no-static y viven en RAM, así que el driver MCP
+puede pulsar botones escribiéndolos desde el host (receta en `docs/retroarch-mcp.md`);
+desde dentro de la ROM se usan `input_setOverride()` / `input_clearOverride()`. Ojo: los
+llamadores esperan FLANCOS y conservan cada uno su `prev_joy_state`, así que pilotar
+significa emular pulsaciones humanas (máscara N frames, luego 0). `pad_read` no aparece
+en `symbol.txt` porque LTO la inlinea: el driver escribe las variables, no llama a la
+función.
 
 ## 3. Estructura de directorios
 
@@ -143,7 +155,8 @@ src/
   boot/          → rom_header.c (cabecera de la ROM: título, autor, región).
                    El sega.s lo aporta SGDK; ver docs/build.md
   core/          → main (bucle de escenas), init, controller, frame
-                   (next_frame/timing), config.h (SCREEN_WIDTH, PAL_*), hack.h (toggles)
+                   (next_frame/timing), input (embudo del pad + override),
+                   config.h (SCREEN_WIDTH, PAL_*), hack.h (toggles)
   world/         → background: scroll, límites, new_level/end_level
   actors/        → entity (base común), characters, enemies, items, collisions
   combat/        → el director de combate (combat.c: CombatConfig + start/tick/end/run)

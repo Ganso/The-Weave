@@ -7,6 +7,7 @@
 #include "core/config.h"
 #include "core/hack.h"
 #include "core/frame.h"
+#include "core/input.h"
 #include "core/init.h"
 #include "core/controller.h"
 

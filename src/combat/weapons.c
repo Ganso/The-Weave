@@ -34,7 +34,7 @@ void weapons_reset(bool strike_enabled)
     strike_on = strike_enabled;
     attack_timer = 0;
     attack_cd = 15;                      // margen para no golpear con el A del diálogo
-    prev_joy = JOY_readJoypad(JOY_ALL);
+    prev_joy = pad_read();
     thunder_was_active = false;
 }
 
@@ -45,7 +45,7 @@ void weapons_tick(void)
 {
     if (!strike_on) return;
 
-    u16 joy = JOY_readJoypad(JOY_ALL);
+    u16 joy = pad_read();
     u16 pressed = joy & ~prev_joy;
     prev_joy = joy;
 

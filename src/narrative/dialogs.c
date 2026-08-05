@@ -90,19 +90,19 @@ void talk(u8 nface, bool isinleft, char *text, u16 max_seconds, bool sound_on)  
     // Wait for time or button A
     num_ticks=0;
     max_ticks=max_seconds*SCREEN_FPS;
-    joy_state=JOY_readJoypad (JOY_ALL);
+    joy_state=pad_read();
     while (num_ticks<max_ticks && ((joy_state & BUTTON_A)==0))
     {
         next_frame(false);
-        joy_state=JOY_readJoypad (JOY_ALL);
+        joy_state=pad_read();
         num_ticks++;
     }
 
     // Is button A is still pressed, wait until release
-    joy_state=JOY_readJoypad (JOY_ALL);
+    joy_state=pad_read();
     while (joy_state & BUTTON_A)
     {
-        joy_state=JOY_readJoypad (JOY_ALL);
+        joy_state=pad_read();
         next_frame(false);
     }
 
@@ -270,7 +270,7 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool so
         bool animation_done = false;
         if (wait_for_frame) {
             while (!animation_done) {
-                joy_state = JOY_readJoypad(JOY_ALL);
+                joy_state = pad_read();
                 if ((joy_state & BUTTON_A) == 0) {
                     next_frame(false);
                     animation_done = SPR_isAnimationDone(spr_fadein);
@@ -288,9 +288,9 @@ void print_line(char *text, u16 x, u16 y, bool wait_for_frame, u8 nface, bool so
 
     // If waiting, also wait for A release to avoid accidental skips on next text
     if (wait_for_frame) {
-        joy_state = JOY_readJoypad(JOY_ALL);
+        joy_state = pad_read();
         while ((joy_state & BUTTON_A) != 0) {
-            joy_state = JOY_readJoypad(JOY_ALL);
+            joy_state = pad_read();
             next_frame(false);
         }
     }
@@ -307,7 +307,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     u16 textposx[MAX_CHOICES] = {0};
     u8 choice_lenght[MAX_CHOICES];
     char *encoded_text = NULL;
-    u16 joy_state = JOY_readJoypad(JOY_ALL), prev_joy_state = 0;
+    u16 joy_state = pad_read(), prev_joy_state = 0;
     u8 current_option = 0;
     u16 num_ticks = 0;
     u16 max_ticks = max_seconds * SCREEN_FPS;
@@ -393,7 +393,7 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     while(num_ticks < max_ticks) {
         // Handle input
         prev_joy_state = joy_state;
-        joy_state = JOY_readJoypad(JOY_ALL);
+        joy_state = pad_read();
 
         // Only process new button presses
         u16 new_press = joy_state & ~prev_joy_state;
@@ -442,9 +442,9 @@ u8 choice(u8 nface, bool isinleft, char **options, u8 num_options, u16 max_secon
     }
 
     // Wait for button A release
-    joy_state = JOY_readJoypad(JOY_ALL);
+    joy_state = pad_read();
     while(joy_state & BUTTON_A) {
-        joy_state = JOY_readJoypad(JOY_ALL);
+        joy_state = pad_read();
         next_frame(false);
     }
 

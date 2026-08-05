@@ -29,22 +29,27 @@ requiere emulador con GUI (BlastEm, RetroArch) lo ejecuta Javier y reporta.
 ## Qué queda, y en qué orden
 
 ```
-Fase 3 (embudo input + override)  — independiente; habilita 6
-Fase 4 (menú de debug runtime)    — independiente
-Fase 6 (escenas bajo guion)       — necesita la Fase 3
+Fase 3 (embudo input + override)  — HECHA, salvo el caso smoke SIM (§3.4)
+Fase 4 (menú de debug runtime)    — independiente; pendiente
+Fase 6 (escenas bajo guion)       — ya desbloqueada por la Fase 3; pendiente
 ```
 
 Las tres son independientes entre sí salvo que la Fase 6 necesita el override de la
-Fase 3. La Fase 3 es la de mayor rentabilidad: mete las **escenas** en la verificación
-automática, hoy 100 % playtest manual.
+Fase 3 — que ya está, así que la 6 puede abordarse cuando se quiera: es la que mete las
+**escenas** en la verificación automática, hoy 100 % playtest manual.
 
 ---
 
-## Fase 3 — Embudo de input y override por RAM
+## Fase 3 — Embudo de input y override por RAM ✅ HECHA (salvo §3.4)
 
 Objetivo: que una **única** función lea el pad en todo el juego y que, con dos símbolos
 en RAM, se pueda pilotar la ROM real desde fuera (RetroArch) o desde dentro (casos SIM
-de la smoke). Hoy hay ~23 `JOY_readJoypad` dispersos (`grep -rn JOY_readJoypad src/`).
+de la smoke).
+
+> **Estado**: el seam (§3.1), la sustitución de los 24 llamadores (§3.2) y la receta de
+> pilotaje (§3.3, documentada en `docs/retroarch-mcp.md` §7) están hechos. Queda
+> **pendiente el §3.4**, el caso smoke `SIM patron notas` que ejercita el override desde
+> dentro de la ROM. Lo de abajo se conserva como registro de lo que se hizo y por qué.
 
 ### 3.1 El seam
 

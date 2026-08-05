@@ -115,7 +115,7 @@ bool intro_read_keys(void)
 {
     u16 joy_state;
 
-    joy_state=JOY_readJoypad (JOY_ALL);
+    joy_state=pad_read();
 
     switch (joy_state)
     {
@@ -123,7 +123,7 @@ bool intro_read_keys(void)
         case BUTTON_RIGHT:
         case BUTTON_UP:
         case BUTTON_DOWN:
-            while (JOY_readJoypad(JOY_ALL)!=0) SYS_doVBlankProcess();
+            while (pad_read()!=0) SYS_doVBlankProcess();
             if (game_language==LANG_ENGLISH) game_language=LANG_SPANISH;
             else game_language=LANG_ENGLISH;
             intro_update_language();

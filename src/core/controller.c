@@ -11,7 +11,7 @@ void joy_check(void)    // Process joystick input each frame for movement, actio
 {
     
     // Read the current state of the joystick
-    u16 joy_value = JOY_readJoypad(JOY_ALL);
+    u16 joy_value = pad_read();
 
     // Only process movement and action buttons if movement is allowed
     if (movement_active) {
@@ -210,7 +210,7 @@ void handle_pause_button(u16 joy_value)    // Handle START button press to show 
     if (joy_value & BUTTON_START) {
         // Wait for the START button to be released
         while (joy_value & BUTTON_START) {
-            joy_value = JOY_readJoypad(JOY_ALL);
+            joy_value = pad_read();
             SYS_doVBlankProcess();
         }
         pause_screen(); // Call the pause screen function

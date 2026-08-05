@@ -222,8 +222,8 @@ void scene_run(const SceneScript *s)    // Ejecuta una escena completa
 
             case SCENE_OP_WAIT_PRESS: { // pausa de cutscene: esperar pulsación de A (con release previo)
                 u16 joy;
-                do { next_frame(false); joy = JOY_readJoypad(JOY_1); } while (joy & BUTTON_A);
-                do { next_frame(false); joy = JOY_readJoypad(JOY_1); } while (!(joy & BUTTON_A));
+                do { next_frame(false); joy = pad_read(); } while (joy & BUTTON_A);
+                do { next_frame(false); joy = pad_read(); } while (!(joy & BUTTON_A));
                 break;
             }
 

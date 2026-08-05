@@ -417,9 +417,9 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
 
     if (num_active_patterns!=0) show_pause_pattern_list(true,selected_pattern);
 
-    value = JOY_readJoypad(JOY_ALL);
+    value = pad_read();
     while ( (value & BUTTON_START) == 0 ) { // Wait until START button is pressed again
-        value = JOY_readJoypad(JOY_ALL);
+        value = pad_read();
         if (num_active_patterns>1) { // Only allow pattern switching if there's more than one active pattern
             if (value & BUTTON_RIGHT) { // Find next active pattern
                 next_pattern_found=false;
@@ -449,7 +449,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
             }
             while ((value & BUTTON_LEFT) || (value & BUTTON_RIGHT)) // Wait until LEFT or RIGHT is released
             {
-                value = JOY_readJoypad(JOY_ALL);
+                value = pad_read();
                 SYS_doVBlankProcess();
             }
         }
@@ -457,7 +457,7 @@ void pause_screen(void)    // Handle pause screen with pattern spell selection
         SYS_doVBlankProcess();
     }
     while ( value & BUTTON_START ) { // Now wait until START is released
-        value = JOY_readJoypad(JOY_ALL);
+        value = pad_read();
         SYS_doVBlankProcess();
     }
 
