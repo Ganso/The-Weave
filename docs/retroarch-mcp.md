@@ -411,3 +411,35 @@ combate de patrones tiene su roadmap detallado en **`docs/testing/plan.md`**:
 - **Menú de debug runtime**: cambiar los toggles de `hack.h` en caliente sin recompilar.
 - **Escenas bajo guion de input** (opcional): recorrer las escenas `SCENE` de la smoke
   con guiones frame→máscara.
+
+---
+
+## 11. Correr la suite AUTO entera sin ayuda de nadie
+
+Receta verificada el 2026-08-06 (dio `RESULT: ALL PASS`, `smoke_result` = 0). Lo único
+que hay que tener claro es que **desatendido no significa headless**: se usa el display
+real, no `video_driver = "null"`.
+
+```bash
+./build-theweave.sh smoke -n            # out/smoke.bin + out/symbol.txt
+
+retroarch -L /usr/lib/x86_64-linux-gnu/libretro/genesis_plus_gx_libretro.so \
+          out/smoke.bin &               # sin --appendconfig: el cfg del usuario ya
+                                        # trae network_cmd_enable = "true"
+# la suite AUTO arranca sola a los pocos segundos si nadie pulsa A
+```
+
+Luego se sondean por NCI `frame_counter`, `smoke_phase` y `smoke_result` (offsets
+sacados de `out/symbol.txt`, §4), se saca `SCREENSHOT` cuando `smoke_phase` llega a
+`0xFFFF` y se cierra con `QUIT` + `pkill -x retroarch`. O directamente
+`tools/retroarch/mcp_driver.py --auto`, que hace todo eso y devuelve exit code.
+
+> ⚠️ **`video_driver = "null"` no sirve en RetroArch 1.20**: el core carga la ROM
+> (`Loading 1179648 bytes` en el log) pero el bucle principal **no corre**. Y engaña,
+> porque `VERSION` sigue contestando —lo atiende el hilo de red— mientras
+> `GET_STATUS` y `READ_CORE_RAM` dan timeout. De ahí la regla de §9: **nunca creerse una
+> lectura de RAM sin haber visto antes que `frame_counter` avanza**.
+>
+> Excepción legítima: en la pantalla final de resultados `frame_counter` se congela a
+> propósito, porque ese bucle ya no llama a `next_frame()`. Ahí el testigo válido es que
+> `GET_STATUS` siga diciendo `PLAYING`.

@@ -52,12 +52,15 @@ de la smoke).
 > global `smoke_result` (máscara de fallos, 0 = ALL PASS), para que una run desatendida
 > no dependa de mirar una captura.
 >
-> **Verificado en emulador el 2026-08-05**: el caso `SIM patron notas` da OK con
-> **4/4 notas** — las tres primeras se encolan y la cuarta dispara `SPELL_LIGHT`. Es
-> decir, el override funciona de verdad contra la detección de patrones, no solo
-> compila. (La verificación fue manual: RetroArch 1.20 con `video_driver = "null"` ya
-> no corre el bucle principal —carga la ROM, pero `READ_CORE_RAM` da timeout y
-> `frame_counter` no avanza—, así que hoy no hay vía headless.)
+> **Verificado el 2026-08-06, a mano y de forma desatendida**: la suite AUTO da
+> `RESULT: ALL PASS` con `SIM NOTAS OK (4/4)` y `smoke_result` = 0 — las tres primeras
+> notas se encolan y la cuarta dispara `SPELL_LIGHT`. El override funciona de verdad
+> contra la detección de patrones, no solo compila.
+>
+> ⚠️ Para la verificación desatendida, **RetroArch con vídeo real** (nada de
+> `--appendconfig` con `video_driver = "null"`: en la 1.20 el core carga la ROM pero el
+> bucle principal no corre — `VERSION` responde y `READ_CORE_RAM` da timeout). La receta
+> completa está en `docs/retroarch-mcp.md` §11.
 >
 > Lo de abajo se conserva como registro de lo que se hizo y por qué.
 
