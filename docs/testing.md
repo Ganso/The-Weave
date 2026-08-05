@@ -33,6 +33,11 @@ Los tipos viven en el enum `SmokeKind` (`src/smoke/smoke_cases.h`):
   juzga el humano. Cada hechizo se prueba en su **contexto real**: el TRUENO en el
   bosque OSCURO (`forest_dark_pal`), donde su destello cambia toda la paleta; el resto
   en el bosque de día.
+- **SIM** — **teclea** un patrón inyectando botones por el embudo de input
+  (`input_setOverride`, `src/core/input.h`) en vez de castear por guion: comprueba que
+  la cola recoge las cuatro notas una a una y que el motor reconoce el hechizo. Es el
+  único caso que valida la **detección de patrones** y el override desde dentro de la
+  ROM. Entra también en la suite AUTO.
 - **SCENE** — ejecuta la escena completa (interactiva: se juega). Al terminar vuelve
   al menú. Nota: `act1_forest` (vieja demo técnica, fuera del flujo del juego) termina
   con reset de consola — es su final real, comportamiento esperado.
@@ -59,14 +64,20 @@ La fila AUTO (`smoke_run_auto`, `src/smoke/smoke_runner.c`) hace, sin tocar el m
    rayo; el jugador lo contrarresta con **trueno invertido** (counter) y el enemigo
    muere. Cada espera lleva una guarda de frames: si la IA no progresa, el combate se
    marca FAIL y la suite sigue (nunca se cuelga).
-5. **Pantalla de resultados** con el desglose por bloque (`CHECKS n OK / m FAIL`,
-   `WALK`, `CAST LIGHT/THUNDER` con los frames medidos, `COMBAT`) y la línea final
-   `RESULT: ALL PASS` / `RESULT: FAIL`.
+5. **Input simulado**: teclea el patrón de `SPELL_LIGHT` (SOL LA SI DO = botones C X Y
+   Z) inyectando las pulsaciones por el embudo de input, y comprueba que las tres
+   primeras notas se encolan y la cuarta lanza el hechizo. Monta y desmonta su propio
+   nivel, así que va al final y no interfiere con el recorrido.
+6. **Pantalla de resultados** con el desglose por bloque (`CHECKS n OK / m FAIL`,
+   `WALK`, `CAST LIGHT/THUNDER` con los frames medidos, `COMBAT`, `SIM NOTAS`) y la
+   línea final `RESULT: ALL PASS` / `RESULT: FAIL`.
 
 Durante el recorrido la ROM publica su estado en globales de WRAM: `smoke_phase` (la
 fase actual; `0xFFFF` = resultados en pantalla), `smoke_gate` (puerta de
-sincronización que el host abre escribiendo un valor no nulo) y `smoke_scratch` (buffer
-libre para probar `write_ram`). Así un host puede leerlas por RAM y sincronizar
+sincronización que el host abre escribiendo un valor no nulo), `smoke_scratch` (buffer
+libre para probar `write_ram`) y `smoke_result` (el veredicto como máscara de fallos,
+`0` = ALL PASS; arranca a `0xFFFF` para que una suite colgada no falsee un aprobado).
+Así un host puede leerlas por RAM y sincronizar
 capturas. El detalle del contrato de marcadores, del gate y del driver que conduce la
 ROM desde el host está en **`docs/retroarch-mcp.md`** (§9-10).
 

@@ -37,7 +37,7 @@ static void menu_draw(void)
         VDP_drawText(smoke_cases[i].name, 4, 3 + row);
         VDP_drawText((i == cursor) ? "}" : " ", 2, 3 + row); // '}' = mismo glifo de selección que los diálogos
     }
-    if (first + MENU_ROWS < SMOKE_CASE_COUNT) VDP_drawText("...", 4, 3 + MENU_ROWS);
+    if (first + MENU_ROWS < (u16)SMOKE_CASE_COUNT) VDP_drawText("...", 4, 3 + MENU_ROWS);
 }
 
 // EXCEPCIÓN al embudo de input (core/input.h): el menú de la smoke lee el mando

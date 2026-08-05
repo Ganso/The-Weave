@@ -262,13 +262,28 @@ fundamental** del juego:
 Durante el recorrido, la ROM escribe la **fase actual** en la global `smoke_phase`
 (WRAM), lo que permite al host **sincronizar capturas leyendo RAM** (read_ram) en vez de
 adivinar por tiempo. Fases: `1` idle, `2` walk, `3` cast_light, `4` cast_thunder,
-`5` combat, `0xFFFE` esperando gate, `0xFFFF` resultados. La global `smoke_scratch` es
+`5` combat, `6` sim_notes, `0xFFFE` esperando gate, `0xFFFF` resultados. La global `smoke_scratch` es
 un buffer libre para probar `write_ram`. La global `smoke_gate` sirve como **puerta de
 sincronización (RAM Gate)**: la ROM se congela al inicio del test AUTO (`PH_WAIT_GATE`,
 `smoke_phase=0xFFFE`) hasta que el host escribe un valor no nulo (ej. `01 01`) en ella,
 garantizando que el emulador esté listo y no se pierdan trazas o frames. **El gate tiene
 un timeout de ~10 s**: si nadie lo abre (run a mano, hardware real), la suite arranca
-sola. Los offsets de todas estas globales se leen dinámicamente de `out/symbol.txt`
+sola.
+
+La global **`smoke_result`** es el **veredicto legible por RAM**, escrito justo antes de
+pintar la pantalla de resultados y válido solo cuando `smoke_phase == 0xFFFF`. Es una
+**máscara de FALLOS**, de modo que `0` significa ALL PASS: bit 0 `CHECKS`, bit 1
+`CAST LIGHT`, bit 2 `CAST THUNDER`, bit 3 `COMBAT`, bit 4 `SIM NOTAS`. Arranca a
+`0xFFFF` ("aún sin veredicto"), así que una suite que se cuelgue a mitad **no puede
+falsear un aprobado**. Antes de esto el resultado solo existía pintado en pantalla y
+había que fiarse de una captura.
+
+> **Antes de creerte CUALQUIER lectura de RAM, comprueba que `frame_counter` AVANZA.**
+> Si no avanza, la ROM no está ejecutando frames y todo lo que leas es basura — incluido
+> un `smoke_result` que parezca un aprobado. Y recuerda el byte-swap del §4: en
+> `READ_CORE_RAM addr b0 b1` el primer campo de la respuesta es la DIRECCIÓN, no un byte.
+
+Los offsets de todas estas globales se leen dinámicamente de `out/symbol.txt`
 (§4); cambian en cada build, así que léelos de ahí.
 
 ### Run automatizada con el driver host (la vía recomendada)

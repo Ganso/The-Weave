@@ -10,8 +10,9 @@
 typedef enum {
     SMOKE_CHECK,   // invariante de canUse: PASS si spell_can_use == expected
     SMOKE_CAST,    // cast scripted en un nivel de pruebas: PASS si termina en baseDuration±2
+    SMOKE_SIM,     // teclea un patrón inyectando botones por el embudo de input (core/input.h)
     SMOKE_SCENE,   // ejecuta la escena completa (interactiva)
-    SMOKE_AUTO     // corre todos los CHECK+CAST (los no-interactivos) y deja pantalla de resultados
+    SMOKE_AUTO     // corre todos los CHECK+CAST+SIM (los no-interactivos) y deja pantalla de resultados
 } SmokeKind;
 
 typedef struct {
@@ -45,6 +46,9 @@ static const SmokeCase smoke_cases[] = {
     {"CAST sleep (1.25s)",        SMOKE_CAST,  SPELL_SLEEP,   false, 0, false, NULL},
     {"CAST fire (2s naranja)",    SMOKE_CAST,  SPELL_FIRE,    false, 0, false, NULL},
     {"CAST light (cian-blanco)",  SMOKE_CAST,  SPELL_LIGHT,   false, 0, false, NULL},
+
+    // --- Input simulado: patrón tecleado por el embudo (core/input.h) ---
+    {"SIM patron notas (light)",  SMOKE_SIM,   SPELL_LIGHT,   false, 0, false, NULL},
 
     // --- Escenas completas (interactivas; forest acaba en reset: es su final) ---
     {"SCENE act1_bedroom",        SMOKE_SCENE, 0, false, 0, false, "act1_bedroom"},

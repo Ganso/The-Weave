@@ -33,7 +33,7 @@ OFF_SCRATCH = sym_off("smoke_scratch", 0x0bcc)
 OFF_PHASE   = sym_off("smoke_phase",   0x0bce)
 OFF_GATE    = sym_off("smoke_gate",    0x0bd0)
 PHASES = {0:"boot",1:"idle",2:"walk",3:"cast_light",4:"cast_thunder",5:"combat",
-          0xFFFE:"wait_gate",0xFFFF:"done"}
+          6:"sim_notes",0xFFFE:"wait_gate",0xFFFF:"done"}
 report, covered = [], set()
 
 def log(tool, cmd, resp, ok):

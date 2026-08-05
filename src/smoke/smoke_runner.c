@@ -92,6 +92,108 @@ static void run_cast(const SmokeCase *c)
     VDP_drawText("A = volver al menu", 4, 20);
 }
 
+// --- SIM: teclear un patrón inyectando botones por el embudo de input --------
+// Es el único caso que ejercita core/input.h desde DENTRO de la ROM: en vez de
+// llamar a spell_narrative_cast (como hacen los CAST), TECLEA las cuatro notas
+// como lo haría un jugador, y comprueba que la cola las recoge una a una y que
+// el motor reconoce el hechizo al completar la cuarta. Valida de paso la
+// detección de patrones, que hasta ahora no tenía test.
+//
+// Se teclea LIGHT (SOL LA SI DO = botones C X Y Z): cuatro notas distintas en
+// cuatro botones distintos, y ninguna es A (que además interactúa con items).
+#define SIM_PRESS_FRAMES    4    // frames con el botón pulsado
+#define SIM_RELEASE_FRAMES  16   // frames sueltos: por encima de MIN_TIME_BETWEEN_NOTES (SCREEN_FPS/4)
+
+// Una pulsación humana: presionar, MEDIR, soltar y esperar. La medida se toma
+// con el botón aún pulsado porque la nota se registra en el primer frame del
+// flanco; al soltar, la cola puede haberse vaciado ya (la 4ª nota la vacía).
+static void sim_tap(u16 button, u8 *out_queued, u8 *out_spell)
+{
+    input_setOverride(button);
+    for (u8 f = 0; f < SIM_PRESS_FRAMES; f++) next_frame(true);
+
+    *out_queued = notes_player_count();
+    *out_spell  = spell_active_id(SPELL_SLOT_PLAYER);
+
+    input_setOverride(0);   // soltar el botón SIN levantar el override: lo que
+                            // esperan los llamadores es el FLANCO, no el estado
+    for (u8 f = 0; f < SIM_RELEASE_FRAMES; f++) next_frame(true);
+}
+
+// PASS si las 3 primeras notas se encolan (1, 2, 3) y la 4ª lanza LIGHT.
+// out_reached deja cuántas notas llegaron a registrarse, para el informe.
+static bool sim_notes_run(u16 *out_reached)
+{
+    static const u16 buttons[MAX_SPELL_NOTES] = { BUTTON_C, BUTTON_X, BUTTON_Y, BUTTON_Z };
+
+    // player_has_rod ANTES de init_character (trampa de la vara: AGENTS.md §7).
+    player_has_rod = true;
+    player_patterns_enabled = true;
+    player_note_limit = NOTE_DO;   // LIGHT termina en DO, la nota más alta
+
+    new_level(&forest_bg_tile, &forest_bg_map, &forest_front_tile, &forest_front_map,
+              forest_pal, 1440, BG_SCRL_USER_RIGHT, 3);
+    init_character(CHR_linus);
+    move_character_instant(CHR_linus, 140, 154);
+    show_character(CHR_linus, true);
+
+    movement_active = true;        // sin esto next_frame no llama a joy_check
+    spell_engine_reset();
+    spell_enable(SPELL_LIGHT);
+
+    // La primera nota también pasa por el debounce (note_timer arranca a 0).
+    for (u8 f = 0; f < SIM_RELEASE_FRAMES; f++) next_frame(true);
+
+    u16 reached = 0;
+    bool ok = true;
+
+    for (u8 i = 0; i < MAX_SPELL_NOTES; i++)
+    {
+        u8 queued = 0, spellId = SPELL_NONE;
+        sim_tap(buttons[i], &queued, &spellId);
+
+        if (i < MAX_SPELL_NOTES - 1)
+        {
+            if (queued != (u8)(i + 1)) { ok = false; break; }   // no llegó el botón
+            reached = i + 1;
+        }
+        else
+        {
+            reached = MAX_SPELL_NOTES;
+            if (spellId != SPELL_LIGHT) ok = false;             // patrón no reconocido
+        }
+        dprintf(2, "SIM nota %u: cola=%u spell=%u", i + 1, queued, spellId);
+    }
+
+    input_clearOverride();         // devolver el mando al jugador
+    movement_active = false;
+
+    // Dejar que el efecto termine antes de desmontar (acotado, como los CAST).
+    u16 guard = spell_defs[SPELL_LIGHT].baseDuration * 2;
+    while (spell_slot_active(SPELL_SLOT_PLAYER) && guard--) next_frame(true);
+
+    end_level();
+
+    if (out_reached) *out_reached = reached;
+    return ok;
+}
+
+static void run_sim(const SmokeCase *c)
+{
+    u16 reached = 0;
+    bool pass = sim_notes_run(&reached);
+
+    char buf[24];
+    PAL_setColor(15, 0x0EEE);            // end_level dejó las paletas en negro
+    VDP_setTextPalette(PAL_BACKGROUND);
+    VDP_clearPlane(BG_A, true);
+    VDP_drawText(c->name, 4, 8);
+    sprintf(buf, "%u / %u notas", reached, (u16)MAX_SPELL_NOTES);
+    result_line("tecleadas:", buf, 10);
+    result_line("resultado:", pass ? "PASS" : "FAIL", 12);
+    VDP_drawText("A = volver al menu", 4, 20);
+}
+
 // --- AUTO: recorrido scripted por las mecánicas + invariantes de canUse -------
 // Corre sin input: pensado para validación desatendida vía RetroArch NCI/MCP
 // (ver docs/retroarch-mcp.md). Tres globales en WRAM dejan que el host (el MCP)
@@ -102,13 +204,25 @@ static void run_cast(const SmokeCase *c)
 //                  que el host escribe un valor != 0 (garantiza que no se pierdan
 //                  frames) o expira el timeout (~10 s: una run a mano arranca sola).
 // volatile + escritas explícitas para que --gc-sections no las descarte.
+//   smoke_result  veredicto legible por RAM: máscara de FALLOS (0 = ALL PASS),
+//                  válida solo cuando smoke_phase == PH_DONE. Sin esto el
+//                  resultado solo existía PINTADO en pantalla, así que una run
+//                  headless (sin capturas) no podía saber si pasó.
 volatile u16 smoke_phase   = 0;
 volatile u16 smoke_scratch = 0;
 volatile u16 smoke_gate    = 0;
+volatile u16 smoke_result  = 0xFFFF;   // 0xFFFF = aún sin veredicto
+
+// Bits de smoke_result (encendido = ESE bloque falló)
+#define SMOKE_FAIL_CHECKS   0x0001
+#define SMOKE_FAIL_LIGHT    0x0002
+#define SMOKE_FAIL_THUNDER  0x0004
+#define SMOKE_FAIL_COMBAT   0x0008
+#define SMOKE_FAIL_SIM      0x0010
 
 typedef enum {
     PH_BOOT = 0, PH_IDLE = 1, PH_WALK = 2, PH_CAST_LIGHT = 3,
-    PH_CAST_THUNDER = 4, PH_COMBAT = 5,
+    PH_CAST_THUNDER = 4, PH_COMBAT = 5, PH_SIM_NOTES = 6,
     PH_WAIT_GATE = 0xFFFE, PH_DONE = 0xFFFF
 } SmokePhase;
 
@@ -254,13 +368,29 @@ static void run_auto(void)
     end_level();
     dprintf(3, "AUTO: post end_level, resultados");
 
-    // --- 5. Pantalla de resultados (end_level dejó las paletas en negro) ---
+    // --- 5. Input simulado (PH_SIM_NOTES): teclear un patrón por el embudo ----
+    // Va al final y monta/desmonta su propio nivel, para no interferir con el
+    // recorrido de arriba.
+    smoke_phase = PH_SIM_NOTES;
+    u16 sim_notes = 0;
+    bool sim_ok = sim_notes_run(&sim_notes);
+    dprintf(1, "AUTO SIM patron notas: %s (%u notas)", sim_ok ? "PASS" : "FAIL", sim_notes);
+
+    // --- 6. Pantalla de resultados (end_level dejó las paletas en negro) ---
     PAL_setColor(15, 0x0EEE);   // texto en blanco
     VDP_setTextPalette(PAL_BACKGROUND);
     VDP_clearPlane(BG_A, true);
     VDP_clearPlane(BG_B, true);
 
-    bool all_pass = (nfail == 0) && light_ok && thunder_ok && combat_ok;
+    bool all_pass = (nfail == 0) && light_ok && thunder_ok && combat_ok && sim_ok;
+
+    // Veredicto legible por RAM ANTES de pintar nada: una run headless (sin
+    // capturas) lee esto en vez de mirar la pantalla.
+    smoke_result = (nfail ? SMOKE_FAIL_CHECKS : 0)
+                 | (light_ok   ? 0 : SMOKE_FAIL_LIGHT)
+                 | (thunder_ok ? 0 : SMOKE_FAIL_THUNDER)
+                 | (combat_ok  ? 0 : SMOKE_FAIL_COMBAT)
+                 | (sim_ok     ? 0 : SMOKE_FAIL_SIM);
 
     char buf[40];
     VDP_drawText("SMOKE AUTO - WALKTHROUGH", 4, 2);
@@ -272,12 +402,14 @@ static void run_auto(void)
     VDP_drawText(buf, 4, 7);
     sprintf(buf, "COMBAT  %s", combat_ok ? "OK" : "FAIL");
     VDP_drawText(buf, 4, 8);
-    VDP_drawText(all_pass ? "RESULT: ALL PASS" : "RESULT: FAIL", 4, 10);
-    for (u16 i = 0; i < nfail && i < 8; i++) VDP_drawText(fails[i], 6, 12 + i);
+    sprintf(buf, "SIM     NOTAS %s (%u/4)", sim_ok ? "OK" : "FAIL", sim_notes);
+    VDP_drawText(buf, 4, 9);
+    VDP_drawText(all_pass ? "RESULT: ALL PASS" : "RESULT: FAIL", 4, 11);
+    for (u16 i = 0; i < nfail && i < 8; i++) VDP_drawText(fails[i], 6, 13 + i);
     VDP_drawText("A = menu", 4, 22);
 
-    dprintf(1, "AUTO DONE: checks %u/%u OK, light=%u thunder=%u combat=%u",
-            ok, n, light_ok, thunder_ok, combat_ok);
+    dprintf(1, "AUTO DONE: checks %u/%u OK, light=%u thunder=%u combat=%u sim=%u",
+            ok, n, light_ok, thunder_ok, combat_ok, sim_ok);
     smoke_phase = PH_DONE;      // señal al host: resultados en pantalla
 }
 
@@ -308,6 +440,7 @@ void smoke_run_case(const SmokeCase *c)    // Ejecuta el caso y deja el resultad
     {
         case SMOKE_CHECK: run_check(c); break;
         case SMOKE_CAST:  run_cast(c);  break;
+        case SMOKE_SIM:   run_sim(c);   break;
         case SMOKE_SCENE: run_scene(c); break;
         case SMOKE_AUTO:  run_auto();   break;
         default: break;

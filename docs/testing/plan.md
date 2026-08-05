@@ -40,16 +40,24 @@ Fase 3 — que ya está, así que la 6 puede abordarse cuando se quiera: es la q
 
 ---
 
-## Fase 3 — Embudo de input y override por RAM ✅ HECHA (salvo §3.4)
+## Fase 3 — Embudo de input y override por RAM ✅ HECHA
 
 Objetivo: que una **única** función lea el pad en todo el juego y que, con dos símbolos
 en RAM, se pueda pilotar la ROM real desde fuera (RetroArch) o desde dentro (casos SIM
 de la smoke).
 
-> **Estado**: el seam (§3.1), la sustitución de los 24 llamadores (§3.2) y la receta de
-> pilotaje (§3.3, documentada en `docs/retroarch-mcp.md` §7) están hechos. Queda
-> **pendiente el §3.4**, el caso smoke `SIM patron notas` que ejercita el override desde
-> dentro de la ROM. Lo de abajo se conserva como registro de lo que se hizo y por qué.
+> **Estado**: hechos el seam (§3.1), la sustitución de los 24 llamadores (§3.2), la
+> receta de pilotaje (§3.3, en `docs/retroarch-mcp.md` §7) y el caso smoke
+> `SIM patron notas` (§3.4). De propina, la suite AUTO publica ahora su veredicto en la
+> global `smoke_result` (máscara de fallos, 0 = ALL PASS), para que una run desatendida
+> no dependa de mirar una captura.
+>
+> ⚠️ **El caso SIM está compilado pero NUNCA EJECUTADO**: RetroArch 1.20 con
+> `video_driver = "null"` ya no corre el bucle principal (carga la ROM, pero
+> `READ_CORE_RAM` da timeout y `frame_counter` no avanza), así que no hay vía headless
+> hoy. Hay que correrlo con emulador de verdad antes de darlo por bueno.
+>
+> Lo de abajo se conserva como registro de lo que se hizo y por qué.
 
 ### 3.1 El seam
 
